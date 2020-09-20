@@ -5,8 +5,8 @@
       <router-link to="/my-queries">My queries</router-link>
     </div>
     <div>
-      <button>Save</button>
-      <button>Create</button>
+      <button class="primary">Save</button>
+      <button class="primary">Create</button>
     </div>
   </nav>
 </template>
@@ -29,5 +29,19 @@ nav {
   top: 0;
   left: 0;
   width: 100vw;
+  padding: 0 52px;
+}
+a {
+  font-size: 18px;
+  color: var(--color-text-base);
+  text-transform: none;
+  text-decoration: none;
+  margin-right: 28px;
+}
+a.router-link-active {
+  color: var(--color-accent);
+}
+button {
+  margin-left: 16px;
 }
 </style>

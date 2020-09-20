@@ -5,7 +5,8 @@ import store from './store'
 import VueReact from 'vue-react'
 import PlotlyEditor from 'react-chart-editor'
 
-import '@/assets/styles/colors.css'
+import '@/assets/styles/variables.css'
+import '@/assets/styles/buttons.css'
 
 Vue.use(VueReact)
 Vue.react('PlotlyEditor', PlotlyEditor)
