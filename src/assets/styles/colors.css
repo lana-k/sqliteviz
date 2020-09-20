@@ -1,0 +1,13 @@
+:root {
+    --color-bg-light: #F3F6FA;
+    --color-accent: #119DFF;
+    --color-accent-shade: #0D76BF;
+    --color-border-light: #DFE8F3;
+    --color-text-base: #506784;
+    --color-text-white: #ffffff;
+    --shadow: 0 1px 2px rgba(43, 63, 95, 0.7);
+  }
+  body {
+    margin: 0;
+  }
+
