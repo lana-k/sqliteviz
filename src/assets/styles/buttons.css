@@ -6,7 +6,7 @@ button.primary {
   height: 36px;
   padding: 0 12px;
   min-width: 83px;
-  color: var(--color-text-white);
+  color: var(--color-text-light);
   text-shadow: var(--shadow);
   font-size: 14px;
   font-weight: 600;
@@ -16,9 +16,17 @@ button.primary {
 button.primary:hover {
   background: var(--color-accent-shade);
   border: 1px solid var(--color-accent-shade);
-  color: var(--color-text-white);
+  color: var(--color-text-light);
   text-shadow: var(--shadow);
   font-size: 14px;
   font-weight: 600;
+}
+
+button.primary:disabled {
+  background: var(--color-bg-light-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-light-2);
+  text-shadow: none;
+  cursor: default;
 } 
 

@@ -1,10 +1,24 @@
 :root {
-    --color-bg-light: #F3F6FA;
-    --color-accent: #119DFF;
-    --color-accent-shade: #0D76BF;
-    --color-border-light: #DFE8F3;
-    --color-text-base: #506784;
-    --color-text-white: #ffffff;
+    --color-white: #ffffff;
+    --color-gray-light: #F3F6FA;
+    --color-gray-light-2: #DFE8F3;
+    --color-gray-light-3: #C8D4E3;
+    --color-gray-medium: #A2B1C6;
+    --color-gray-dark: #506784;
+    --color-blue-medium: #119DFF;
+    --color-blue-dark: #0D76BF;
+
+
+    --color-bg-light: var(--color-gray-light);
+    --color-bg-light-2: var(--color-gray-light-2);
+    --color-accent: var(--color-blue-medium);
+    --color-accent-shade: var(--color-blue-dark);
+    --color-border-light: var(--color-gray-light-2);
+    --color-border: var(--color-gray-light-3);
+    --color-text-light: var(--color-white);
+    --color-text-light-2: var(--color-gray-medium);
+    --color-text-base: var(--color-gray-dark);
+    --color-text-medium: var(--color-gray-medium);
 
     --shadow: 0 1px 2px rgba(42, 63, 95, 0.7);
 

@@ -5,7 +5,7 @@
       <router-link to="/my-queries">My queries</router-link>
     </div>
     <div>
-      <button class="primary">Save</button>
+      <button class="primary" disabled>Save</button>
       <button class="primary">Create</button>
     </div>
   </nav>
