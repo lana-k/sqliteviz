@@ -1,42 +1,58 @@
 <template>
   <div>
-    <div style="display:flex">
-      <div>
+    <splitpanes
+      class="schema-tabs-splitter"
+      :before="{ size: 20, max: 30 }"
+      :after="{ size: 80, max: 100 }"
+    >
+      <div slot="left-pane">
         <schema :schema="schema"/>
       </div>
-      <div>
-        <codemirror v-model="code" :options="cmOptions" @changes="onCmChange" />
-        <button id="execute" class="button" @click="execEditorContents">Execute</button>
-        <label class="button">
-          Load an SQLite database file: <input type='file' ref='dbfile' @change="loadDb">
-        </label>
+      <div slot="right-pane">
+        <splitpanes
+          class="query-results-splitter"
+          horizontal
+          :before="{ size: 50, max: 50 }"
+          :after="{ size: 50, max: 100 }"
+        >
+          <div slot="left-pane">
+            <div>
+              <codemirror v-model="code" :options="cmOptions" @changes="onCmChange" />
+              <button id="execute" class="button" @click="execEditorContents">Execute</button>
+              <label class="button">
+                Load an SQLite database file: <input type='file' ref='dbfile' @change="loadDb">
+              </label>
 
-        <div id="error" class="error"></div>
-
-        <pre ref="output" id="output">Results will be displayed here</pre>
-
-        <sql-table :data="result" />
+              <div id="error" class="error"></div>
+              <pre ref="output" id="output">Results will be displayed here</pre>
+              <sql-table :data="result" />
+            </div>
+          </div>
+          <div slot="right-pane">
+            <PlotlyEditor
+            :data="state.data"
+            :layout="state.layout"
+            :frames="state.frames"
+            :config="{ editable: true }"
+            :dataSources="dataSources"
+            :dataSourceOptions="dataSourceOptions"
+            :plotly="plotly"
+            @onUpdate="update"
+            :useResizeHandler="true"
+            :debug="true"
+            :advancedTraceTypeSelector="true"
+          />
+          </div>
+        </splitpanes>
       </div>
-    </div>
-    <PlotlyEditor
-      :data="state.data"
-      :layout="state.layout"
-      :frames="state.frames"
-      :config="{ editable: true }"
-      :dataSources="dataSources"
-      :dataSourceOptions="dataSourceOptions"
-      :plotly="plotly"
-      @onUpdate="update"
-      :useResizeHandler="true"
-      :debug="true"
-      :advancedTraceTypeSelector="true"
-    />
+    </splitpanes>
   </div>
 </template>
 
 <script>
 import SqlTable from '@/components/SqlTable'
 import Schema from '@/components/Schema'
+import Splitpanes from '@/components/splitpanes'
 
 import plotly from 'plotly.js/dist/plotly'
 import 'react-chart-editor/lib/react-chart-editor.min.css'
@@ -55,7 +71,8 @@ export default {
   components: {
     codemirror,
     SqlTable,
-    Schema
+    Schema,
+    Splitpanes
   },
   data () {
     return {
@@ -179,3 +196,13 @@ export default {
   }
 }
 </script>
+<style>
+.schema-tabs-splitter {
+  height: 100%;
+  margin-left: 6px;
+}
+.query-results-splitter {
+  height: calc(100vh - 74px);
+  margin-top: 6px;
+}
+</style>
