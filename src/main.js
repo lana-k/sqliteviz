@@ -7,6 +7,7 @@ import PlotlyEditor from 'react-chart-editor'
 
 import '@/assets/styles/variables.css'
 import '@/assets/styles/buttons.css'
+import '@/assets/styles/textFields.css'
 
 Vue.use(VueReact)
 Vue.react('PlotlyEditor', PlotlyEditor)

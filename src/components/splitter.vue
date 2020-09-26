@@ -58,7 +58,7 @@ export default {
 }
 .splitpanes__splitter .toggle-btn {
   background-color: var(--color-bg-light-2);
-  border-radius: 2px;
+  border-radius: var(--border-radius-small);
   position: absolute;
   top: 50%;
   left: 50%;

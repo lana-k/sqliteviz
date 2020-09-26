@@ -6,7 +6,7 @@
       :after="{ size: 80, max: 100 }"
     >
       <div slot="left-pane">
-        <schema :schema="schema"/>
+        <schema :schema="schema" :db-name="fileName"/>
       </div>
       <div slot="right-pane">
         <splitpanes
@@ -18,18 +18,21 @@
           <div slot="left-pane">
             <div>
               <codemirror v-model="code" :options="cmOptions" @changes="onCmChange" />
-              <button id="execute" class="button" @click="execEditorContents">Execute</button>
+              <button id="execute" class="button" @click="execEditorContents">Run</button>
               <label class="button">
                 Load an SQLite database file: <input type='file' ref='dbfile' @change="loadDb">
               </label>
-
+            </div>
+          </div>
+          <div slot="right-pane">
+            <view-switcher :view.sync="view" />
+            <div v-show="view === 'table'">
               <div id="error" class="error"></div>
               <pre ref="output" id="output">Results will be displayed here</pre>
               <sql-table :data="result" />
             </div>
-          </div>
-          <div slot="right-pane">
             <PlotlyEditor
+            v-show="view === 'chart'"
             :data="state.data"
             :layout="state.layout"
             :frames="state.frames"
@@ -53,6 +56,7 @@
 import SqlTable from '@/components/SqlTable'
 import Schema from '@/components/Schema'
 import Splitpanes from '@/components/splitpanes'
+import ViewSwitcher from '@/components/ViewSwitcher'
 
 import plotly from 'plotly.js/dist/plotly'
 import 'react-chart-editor/lib/react-chart-editor.min.css'
@@ -72,7 +76,8 @@ export default {
     codemirror,
     SqlTable,
     Schema,
-    Splitpanes
+    Splitpanes,
+    ViewSwitcher
   },
   data () {
     return {
@@ -93,6 +98,8 @@ export default {
       },
       result: null,
       schema: null,
+      fileName: null,
+      view: 'table',
       worker: this.$store.state.worker
     }
   },
@@ -171,7 +178,8 @@ export default {
     execEditorContents () {
       this.execute(this.code + ';')
     },
-    loadDb () {
+    loadDb (filename) {
+      this.fileName = this.$refs.dbfile.value.substr(this.$refs.dbfile.value.lastIndexOf('\\') + 1)
       const f = this.$refs.dbfile.files[0]
       const r = new FileReader()
       r.onload = () => {
