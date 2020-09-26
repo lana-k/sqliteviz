@@ -6,7 +6,7 @@
       :after="{ size: 80, max: 100 }"
     >
       <div slot="left-pane">
-        <schema :schema="schema" :db-name="fileName"/>
+        <schema />
       </div>
       <div slot="right-pane">
         <splitpanes
@@ -19,9 +19,6 @@
             <div>
               <codemirror v-model="code" :options="cmOptions" @changes="onCmChange" />
               <button id="execute" class="button" @click="execEditorContents">Run</button>
-              <label class="button">
-                Load an SQLite database file: <input type='file' ref='dbfile' @change="loadDb">
-              </label>
             </div>
           </div>
           <div slot="right-pane">
@@ -97,8 +94,6 @@ export default {
         line: true
       },
       result: null,
-      schema: null,
-      fileName: null,
       view: 'table',
       worker: this.$store.state.worker
     }
@@ -123,18 +118,6 @@ export default {
         label: name
       }))
     }
-  },
-  created () {
-    // Open a database
-    // worker.postMessage({ action: 'open' })
-    // let dbFile = this.$store.state.dbFile
-    // console.log(dbFile)
-    /* try {
-      worker.postMessage({ action: 'open', buffer: this.$store.state.dbFile }, [this.$store.state.dbFile])
-    } catch (exception) {
-      worker.postMessage({ action: 'open', buffer: this.$store.state.dbFile })
-    } */
-    this.schema = this.$store.state.schema
   },
   methods: {
     update (data, layout, frames) {
@@ -177,33 +160,11 @@ export default {
     },
     execEditorContents () {
       this.execute(this.code + ';')
-    },
-    loadDb (filename) {
-      this.fileName = this.$refs.dbfile.value.substr(this.$refs.dbfile.value.lastIndexOf('\\') + 1)
-      const f = this.$refs.dbfile.files[0]
-      const r = new FileReader()
-      r.onload = () => {
-        this.worker.onmessage = () => {
-          const getSchemaSql = `
-            SELECT name, sql
-            FROM sqlite_master
-            WHERE type='table' AND name NOT LIKE 'sqlite_%';`
-          this.worker.onmessage = event => {
-            this.schema = event.data.results[0].values
-          }
-          this.worker.postMessage({ action: 'exec', sql: getSchemaSql })
-        }
-        try {
-          this.worker.postMessage({ action: 'open', buffer: r.result }, [r.result])
-        } catch (exception) {
-          this.worker.postMessage({ action: 'open', buffer: r.result })
-        }
-      }
-      r.readAsArrayBuffer(f)
     }
   }
 }
 </script>
+
 <style>
 .schema-tabs-splitter {
   height: 100%;
