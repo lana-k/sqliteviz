@@ -13,11 +13,16 @@
           </div>
       </div>
       </div>
-      <div id="table-container" ref="table-container" @scroll="onScrollTable" :style="{height: `${height}px`}">
-      <table id="table">
+      <div
+        id="table-container"
+        ref="table-container"
+        @scroll="onScrollTable"
+        :style="{height: `${height}px`}"
+      >
+      <table ref="table">
         <thead>
           <tr>
-            <th v-for="(th,index) in data.columns" :key="index">
+            <th v-for="(th,index) in data.columns" :key="index" ref="th">
               <div class="cell-data" :style="cellStyle">{{ th }}</div>
             </th>
           </tr>
@@ -76,7 +81,7 @@ export default {
     calculateHeadersWidth () {
       this.tableWidth = this.$refs['table-container'].offsetWidth
       this.$nextTick(() => {
-        this.header = Array.from(document.querySelectorAll('th')).map(th => {
+        this.header = this.$refs.th.map(th => {
           return { name: th.innerText, width: th.offsetWidth }
         })
       })
@@ -89,7 +94,7 @@ export default {
     }
   },
   mounted () {
-    new ResizeObserver(this.calculateHeadersWidth).observe(document.getElementById('table'))
+    new ResizeObserver(this.calculateHeadersWidth).observe(this.$refs.table)
     this.calculateHeadersWidth()
   },
   watch: {
@@ -127,7 +132,6 @@ export default {
 }
 #table-container {
   width: 100%;
-  /* height: 200px; */
   overflow: auto;
 }
 table {
@@ -167,7 +171,6 @@ td > div.cell-data {
   width: -moz-max-content;
   width: max-content;
   white-space: nowrap;
-  /* max-width: 250px; */
   overflow: hidden;
   text-overflow: ellipsis;
 }

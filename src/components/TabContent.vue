@@ -1,41 +1,43 @@
 <template>
-  <splitpanes
-    class="query-results-splitter"
-    horizontal
-    :before="{ size: 50, max: 50 }"
-    :after="{ size: 50, max: 100 }"
-  >
-    <div slot="left-pane" class="query-editor">
-      <div class="codemirror-container">
-        <codemirror v-model="code" :options="cmOptions" @changes="onCmChange" />
+  <div class="tab-content-container" v-show="isActive">
+    <splitpanes
+      class="query-results-splitter"
+      horizontal
+      :before="{ size: 50, max: 50 }"
+      :after="{ size: 50, max: 100 }"
+    >
+      <div slot="left-pane" class="query-editor">
+        <div class="codemirror-container">
+          <codemirror v-model="code" :options="cmOptions" @changes="onCmChange" />
+        </div>
+        <div  class="run-btn-container">
+          <button class="primary run-btn" @click="execEditorContents">Run</button>
+        </div>
       </div>
-      <div  class="run-btn-container">
-        <button class="primary run-btn" @click="execEditorContents">Run</button>
+      <div slot="right-pane" id="bottomPane" ref="bottomPane">
+        <view-switcher :view.sync="view" />
+        <div v-show="view === 'table'" class="table-view">
+         <!--  <div id="error" class="error"></div>
+          <pre ref="output" id="output">Results will be displayed here</pre> -->
+          <sql-table v-if="result" :data="result" :height="tableViewHeight" />
+        </div>
+        <PlotlyEditor
+          v-show="view === 'chart'"
+          :data="state.data"
+          :layout="state.layout"
+          :frames="state.frames"
+          :config="{ editable: true }"
+          :dataSources="dataSources"
+          :dataSourceOptions="dataSourceOptions"
+          :plotly="plotly"
+          @onUpdate="update"
+          :useResizeHandler="true"
+          :debug="true"
+          :advancedTraceTypeSelector="true"
+        />
       </div>
-    </div>
-    <div slot="right-pane" id="bottomPane">
-      <view-switcher :view.sync="view" />
-      <div v-show="view === 'table'" class="table-view">
-       <!--  <div id="error" class="error"></div>
-        <pre ref="output" id="output">Results will be displayed here</pre> -->
-        <sql-table v-if="result" :data="result" :height="tableViewHeight" />
-      </div>
-      <PlotlyEditor
-        v-show="view === 'chart'"
-        :data="state.data"
-        :layout="state.layout"
-        :frames="state.frames"
-        :config="{ editable: true }"
-        :dataSources="dataSources"
-        :dataSourceOptions="dataSourceOptions"
-        :plotly="plotly"
-        @onUpdate="update"
-        :useResizeHandler="true"
-        :debug="true"
-        :advancedTraceTypeSelector="true"
-      />
-    </div>
-  </splitpanes>
+    </splitpanes>
+  </div>
 </template>
 
 <script>
@@ -57,6 +59,7 @@ import 'codemirror/addon/hint/sql-hint.js'
 
 export default {
   name: 'TabContent',
+  props: ['name', 'isActive'],
   components: {
     codemirror,
     SqlTable,
@@ -108,7 +111,7 @@ export default {
     }
   },
   mounted () {
-    new ResizeObserver(this.calculateTableHeight).observe(document.getElementById('bottomPane'))
+    new ResizeObserver(this.calculateTableHeight).observe(this.$refs.bottomPane)
     this.calculateTableHeight()
   },
   methods: {
@@ -154,7 +157,7 @@ export default {
       this.execute(this.code + ';')
     },
     calculateTableHeight () {
-      const bottomPane = document.getElementById('bottomPane')
+      const bottomPane = this.$refs.bottomPane
       // 88 - view swittcher height
       // 42 - table footer width
       // 30 - desirable space after the table
@@ -168,13 +171,19 @@ export default {
 </script>
 
 <style scoped>
+.tab-content-container {
+  padding-top: 6px;
+  background-color: var(--color-bg-light);
+  border-top: 1px solid var(--color-border-light);
+  margin-top: -1px;
+}
+
 #bottomPane {
   height: 100%;
 }
 
 .query-results-splitter {
-  height: calc(100vh - 74px);
-  margin-top: 6px;
+  height: calc(100vh - 110px);
   background-color: var(--color-bg-light);
 }
 
@@ -183,7 +192,7 @@ export default {
 }
 
 .query-editor {
-  padding: 0 52px 24px;
+  padding: 52px 52px 24px;
   display: flex;
   flex-direction: column;
   height: 100%;

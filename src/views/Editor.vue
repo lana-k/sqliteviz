@@ -9,7 +9,7 @@
         <schema />
       </div>
       <div slot="right-pane">
-        <tab-content />
+        <tabs />
       </div>
     </splitpanes>
   </div>
@@ -18,14 +18,14 @@
 <script>
 import Splitpanes from '@/components/splitpanes'
 import Schema from '@/components/Schema'
-import TabContent from '@/components/TabContent'
+import Tabs from '@/components/Tabs'
 
 export default {
   name: 'Editor',
   components: {
     Schema,
     Splitpanes,
-    TabContent
+    Tabs
   }
 }
 </script>
