@@ -13,12 +13,12 @@
         <button class="primary run-btn" @click="execEditorContents">Run</button>
       </div>
     </div>
-    <div slot="right-pane">
+    <div slot="right-pane" id="bottomPane">
       <view-switcher :view.sync="view" />
-      <div v-show="view === 'table'">
-        <div id="error" class="error"></div>
-        <pre ref="output" id="output">Results will be displayed here</pre>
-        <sql-table :data="result" />
+      <div v-show="view === 'table'" class="table-view">
+       <!--  <div id="error" class="error"></div>
+        <pre ref="output" id="output">Results will be displayed here</pre> -->
+        <sql-table v-if="result" :data="result" :height="tableViewHeight" />
       </div>
       <PlotlyEditor
         v-show="view === 'chart'"
@@ -33,7 +33,7 @@
         :useResizeHandler="true"
         :debug="true"
         :advancedTraceTypeSelector="true"
-    />
+      />
     </div>
   </splitpanes>
 </template>
@@ -82,6 +82,7 @@ export default {
       },
       result: null,
       view: 'table',
+      tableViewHeight: 0,
       worker: this.$store.state.worker
     }
   },
@@ -105,6 +106,10 @@ export default {
         label: name
       }))
     }
+  },
+  mounted () {
+    new ResizeObserver(this.calculateTableHeight).observe(document.getElementById('bottomPane'))
+    this.calculateTableHeight()
   },
   methods: {
     update (data, layout, frames) {
@@ -137,22 +142,36 @@ export default {
         this.result = event.data.results[0]
         if (!this.result) {
           console.log(event.data.error)
-          return
+          //  return
         }
 
-        this.$refs.output.innerHTML = ''
+        // this.$refs.output.innerHTML = ''
       }
       this.worker.postMessage({ action: 'exec', sql: commands })
-      this.$refs.output.textContent = 'Fetching results...'
+      // this.$refs.output.textContent = 'Fetching results...'
     },
     execEditorContents () {
       this.execute(this.code + ';')
+    },
+    calculateTableHeight () {
+      const bottomPane = document.getElementById('bottomPane')
+      // 88 - view swittcher height
+      // 42 - table footer width
+      // 30 - desirable space after the table
+      // 5 - padding-bottom of rounded table container
+      // 40 - height of table header
+      const freeSpace = bottomPane.offsetHeight - 88 - 42 - 30 - 5 - 40
+      this.tableViewHeight = freeSpace - (freeSpace % 40)
     }
   }
 }
 </script>
 
 <style scoped>
+#bottomPane {
+  height: 100%;
+}
+
 .query-results-splitter {
   height: calc(100vh - 74px);
   margin-top: 6px;
@@ -191,5 +210,8 @@ export default {
   border-radius: var(--border-radius-big);
   height: 100%;
   max-height: 100%;
+}
+.table-view {
+  margin: 0 52px;
 }
 </style>

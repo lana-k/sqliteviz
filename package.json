@@ -19,9 +19,9 @@
     "sqlite-parser": "^1.0.1",
     "vue": "^2.6.11",
     "vue-codemirror": "^4.0.6",
-    "vue-good-table": "^2.21.0",
     "vue-react": "^1.2.0",
     "vue-router": "^3.2.0",
+    "vuejs-paginate": "^2.1.0",
     "vuex": "^3.4.0"
   },
   "devDependencies": {

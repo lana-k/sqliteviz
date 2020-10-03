@@ -26,7 +26,8 @@ export default {
 .view-switcher {
   height: 28px;
   display: flex;
-  margin: 12px;
+  padding: 30px;
+  justify-content: center;
 }
 .view-switcher div {
   height: 100%;
