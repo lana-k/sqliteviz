@@ -25,7 +25,7 @@ export default {
     createNewQuery () {
       const tab = {
         id: Number(new Date()),
-        name: this.$store.state.untitledLastIndex === 3 ? 'Very good query' : null,
+        name: null,
         tempName: this.$store.state.untitledLastIndex
           ? `Untitled ${this.$store.state.untitledLastIndex}`
           : 'Untitled',
