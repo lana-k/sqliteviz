@@ -28,5 +28,9 @@ button.primary:disabled {
   color: var(--color-text-light-2);
   text-shadow: none;
   cursor: default;
-} 
+}
+
+button.primary:focus {
+  outline: none;
+}
 

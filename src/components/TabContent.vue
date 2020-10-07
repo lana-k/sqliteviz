@@ -8,7 +8,7 @@
     >
       <div slot="left-pane" class="query-editor">
         <div class="codemirror-container">
-          <codemirror v-model="code" :options="cmOptions" @changes="onCmChange" />
+          <codemirror v-model="query" :options="cmOptions" @changes="onCmChange" ref="codemirror" />
         </div>
         <div  class="run-btn-container">
           <button class="primary run-btn" @click="execEditorContents">Run</button>
@@ -59,7 +59,7 @@ import 'codemirror/addon/hint/sql-hint.js'
 
 export default {
   name: 'TabContent',
-  props: ['name', 'isActive'],
+  props: ['id', 'initName', 'initQuery', 'initPlotly', 'tabIndex'],
   components: {
     codemirror,
     SqlTable,
@@ -74,7 +74,7 @@ export default {
         layout: {},
         frames: []
       },
-      code: 'select * from albums',
+      query: 'select * from albums',
       cmOptions: {
         // codemirror options
         tabSize: 4,
@@ -86,10 +86,14 @@ export default {
       result: null,
       view: 'table',
       tableViewHeight: 0,
-      worker: this.$store.state.worker
+      worker: this.$store.state.worker,
+      isUnsaved: !this.name
     }
   },
   computed: {
+    isActive () {
+      return this.id === this.$store.state.currentTabId
+    },
     dataSources () {
       if (!this.result) {
         return {}
@@ -110,13 +114,30 @@ export default {
       }))
     }
   },
+  created () {
+    this.$store.commit('setCurrentTab', this)
+  },
   mounted () {
     new ResizeObserver(this.calculateTableHeight).observe(this.$refs.bottomPane)
     this.calculateTableHeight()
   },
+  watch: {
+    isActive () {
+      if (this.isActive) {
+        this.$store.commit('setCurrentTab', this)
+      }
+    },
+    query () {
+      this.isUnsaved = true
+    },
+    isUnsaved () {
+      this.$store.commit('updateTabState', { index: this.tabIndex, newValue: this.isUnsaved })
+    }
+  },
   methods: {
     update (data, layout, frames) {
       this.state = { data, layout, frames }
+      this.isUnsaved = true
       console.log(this.state)
     },
     onCmChange (editor) {
@@ -154,7 +175,7 @@ export default {
       // this.$refs.output.textContent = 'Fetching results...'
     },
     execEditorContents () {
-      this.execute(this.code + ';')
+      this.execute(this.query + ';')
     },
     calculateTableHeight () {
       const bottomPane = this.$refs.bottomPane

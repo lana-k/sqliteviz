@@ -5,15 +5,68 @@
       <router-link to="/my-queries">My queries</router-link>
     </div>
     <div>
-      <button class="primary" disabled>Save</button>
-      <button class="primary">Create</button>
+      <button
+        v-if="$store.state.tabs.length > 0"
+        class="primary"
+        :disabled="!$store.state.currentTab.isUnsaved"
+        @click="saveQuery"
+      >
+        Save
+      </button>
+      <button class="primary" @click="createNewQuery">Create</button>
     </div>
   </nav>
 </template>
 
 <script>
 export default {
-  name: 'MainMenu'
+  name: 'MainMenu',
+  methods: {
+    createNewQuery () {
+      const tab = {
+        id: Number(new Date()),
+        name: this.$store.state.untitledLastIndex === 3 ? 'Very good query' : null,
+        tempName: this.$store.state.untitledLastIndex
+          ? `Untitled ${this.$store.state.untitledLastIndex}`
+          : 'Untitled',
+        isUnsaved: true
+      }
+      this.$store.commit('addTab', tab)
+      this.$store.commit('setCurrentTabId', tab.id)
+      this.$store.commit('updateUntitledLastIndex')
+    },
+    saveQuery () {
+      const currentQuery = this.$store.state.currentTab
+      const isFromScratch = !this.$store.state.currentTab.initName
+      const value = {
+        id: currentQuery.id,
+        query: currentQuery.query
+        // TODO: save plotly settings
+      }
+
+      if (isFromScratch) {
+        value.name = prompt('query name')
+        // TODO: create dialog
+        this.$store.commit('updateTabName', { index: currentQuery.tabIndex, newName: value.name })
+        value.createdAt = new Date()
+      } else {
+        value.name = currentQuery.initName
+      }
+
+      let myQueries = JSON.parse(localStorage.getItem('myQueries'))
+      if (!myQueries) {
+        myQueries = [value]
+      } else if (isFromScratch) {
+        myQueries.push(value)
+      } else {
+        const queryIndex = myQueries.findIndex(query => query.id === currentQuery.id)
+        value.createdAt = myQueries[queryIndex].createdAt
+        myQueries[queryIndex] = value
+      }
+      localStorage.setItem('myQueries', JSON.stringify(myQueries))
+      currentQuery.isUnsaved = false
+    }
+  }
 }
 </script>
 <style scoped>

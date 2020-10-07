@@ -22,7 +22,6 @@
   --color-text-light: var(--color-white);
   --color-text-light-2: var(--color-gray-medium);
   --color-text-base: var(--color-gray-dark);
-  --color-text-medium: var(--color-gray-medium);
   --color-text-active: var(--color-blue-dark-2);
 
   --shadow: 0 1px 2px rgba(42, 63, 95, 0.7);
