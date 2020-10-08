@@ -1,6 +1,16 @@
 <template>
   <div>
     <div id="my-queries-content">
+      <div id="my-queries-toolbar">
+        <div id="toolbar-buttons">
+          <button>Import</button>
+          <button>Export</button>
+          <button>Delete</button>
+        </div>
+        <div id="toolbar-search">
+          <input type="text" placeholder="Search query by name"/>
+        </div>
+      </div>
       <div class="rounded-bg">
       <div class="header-container">
         <div>
@@ -87,15 +97,20 @@ export default {
 #my-queries-content {
   padding: 52px;
 }
-.rounded-bg {
+
+#my-queries-toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rounded-bg,
+#my-queries-toolbar {
   margin: 0 auto;
   max-width: 1500px;
   width: 100%;
 }
 table {
   margin-top: 0;
-  width: 100%;
-  max-width: 100%;
 }
 tbody tr td {
   overflow: hidden;

@@ -11,3 +11,8 @@ input[type="text"] {
 input[type="text"]::placeholder {
   color: var(--color-text-light-2);
 }
+
+input[type="text"]:focus {
+  outline: none;
+}
+
