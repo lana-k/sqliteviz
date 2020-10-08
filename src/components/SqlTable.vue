@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div id="rounded-bg">
-      <div id="header-container" ref="header-container">
+    <div class="rounded-bg">
+      <div class="header-container" ref="header-container">
         <div>
           <div
             v-for="(th, index) in header"
@@ -14,7 +14,7 @@
       </div>
       </div>
       <div
-        id="table-container"
+        class="table-container"
         ref="table-container"
         @scroll="onScrollTable"
         :style="{height: `${height}px`}"
@@ -107,80 +107,4 @@ export default {
 </script>
 
 <style scoped>
-#rounded-bg {
-  padding: 40px 5px 5px;
-  background-color: white;
-  border-radius: 5px;
-  position: relative;
-}
-#header-container {
-  overflow: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding-left: 6px;
-  width: 100%;
-  box-sizing: border-box;
-  background-color: var(--color-bg-dark);
-  border-radius: 5px 5px 0 0;
-}
-
-#header-container div {
-  display: flex;
-  width: fit-content;
-  padding-right: 10px;
-}
-#table-container {
-  width: 100%;
-  overflow: auto;
-}
-table {
-  min-width: 100%;
-  margin-top: -40px;
-  border-collapse: collapse;
-}
-thead th, .fixed-header {
-  font-size: 14px;
-  font-weight: 600;
-  box-sizing: border-box;
-  background-color: var(--color-bg-dark);
-  color: var(--color-text-light);
-  border-right: 1px solid var(--color-border-light);
-}
-tbody td {
-  font-size: 13px;
-  background-color:white;
-  color: var(--color-text-base);
-  box-sizing: border-box;
-  border-bottom: 1px solid var(--color-border-light);
-  border-right: 1px solid var(--color-border-light);
-}
-td, th, .fixed-header {
-  padding: 12px 24px;
-  white-space: nowrap;
-}
-
-tbody tr td:last-child,
-thead tr th:last-child,
-#header-container div .fixed-header:last-child {
-  border-right: none;
-}
-
-td > div.cell-data {
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.table-footer {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 12px;
-}
-.table-footer-count {
-  font-size: 11px;
-  color: var(--color-text-base);
-}
 </style>
