@@ -1,7 +1,9 @@
 <template>
   <div>
     <main-menu />
-    <router-view id="main-view" />
+    <keep-alive include="Editor">
+      <router-view id="main-view" />
+    </keep-alive>
   </div>
 </template>
 
