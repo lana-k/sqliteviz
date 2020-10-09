@@ -1,3 +1,7 @@
+button:focus {
+  outline: none;
+}
+
 button.primary {
   background: var(--color-accent);
   border: 1px solid var(--color-accent-shade);
@@ -30,7 +34,21 @@ button.primary:disabled {
   cursor: default;
 }
 
-button.primary:focus {
-  outline: none;
+button.toolbar {
+  background: transparent;
+  border: none;
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0 12px;
+  color: var(--color-text-base);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
 }
+
+button.toolbar:hover {
+  color: var(--color-accent);
+}
+
+
 

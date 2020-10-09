@@ -3,9 +3,9 @@
     <div id="my-queries-content">
       <div id="my-queries-toolbar">
         <div id="toolbar-buttons">
-          <button>Import</button>
-          <button>Export</button>
-          <button>Delete</button>
+          <button class="toolbar">Import</button>
+          <button class="toolbar">Export</button>
+          <button class="toolbar">Delete</button>
         </div>
         <div id="toolbar-search">
           <input type="text" placeholder="Search query by name"/>
