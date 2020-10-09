@@ -34,7 +34,7 @@
               </td>
               <td>
                 <div class="second-column">
-                  <div class="date-container">{{ query.createdAt }}</div>
+                  <div class="date-container">{{ query.createdAt | date }}</div>
                   <div class="icons-container">
                     <rename-icon />
                     <copy-icon />
@@ -77,6 +77,21 @@ export default {
   mounted () {
     new ResizeObserver(this.calcNameWidth).observe(this.$refs.table)
     this.calcNameWidth()
+  },
+  filters: {
+    date (value) {
+      if (!value) {
+        return ''
+      }
+      const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' }
+      const timeOptions = {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit'
+      }
+      return new Date(value).toLocaleDateString('en-GB', dateOptions) + ' ' +
+             new Date(value).toLocaleTimeString('en-GB', timeOptions)
+    }
   },
   methods: {
     calcNameWidth () {
