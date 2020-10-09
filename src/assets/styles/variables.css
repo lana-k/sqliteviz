@@ -4,6 +4,7 @@
   --color-gray-light-2: #DFE8F3;
   --color-gray-light-3: #C8D4E3;
   --color-gray-light-4:#EBF0F8;
+  --color-gray-light-5:#f8f8f9;
   --color-gray-medium: #A2B1C6;
   --color-gray-dark: #506784;
   --color-blue-medium: #119DFF;
@@ -14,6 +15,7 @@
 
   --color-bg-light: var(--color-gray-light);
   --color-bg-light-2: var(--color-gray-light-2);
+  --color-bg-light-3: var(--color-gray-light-5);
   --color-bg-dark: var(--color-gray-dark);
   --color-accent: var(--color-blue-medium);
   --color-accent-shade: var(--color-blue-dark);
