@@ -9,6 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "babel-plugin-transform-react-jsx": "^6.24.1",
     "codemirror": "^5.57.0",
     "core-js": "^3.6.5",
     "plotly.js": "^1.54.6",
