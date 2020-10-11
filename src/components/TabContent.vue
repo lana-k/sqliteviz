@@ -57,6 +57,8 @@ import 'codemirror/addon/hint/show-hint.js'
 import 'codemirror/addon/hint/show-hint.css'
 import 'codemirror/addon/hint/sql-hint.js'
 
+import PlotlyEditor from 'react-chart-editor'
+
 export default {
   name: 'TabContent',
   props: ['id', 'initName', 'initQuery', 'initPlotly', 'tabIndex'],
@@ -64,7 +66,8 @@ export default {
     codemirror,
     SqlTable,
     Splitpanes,
-    ViewSwitcher
+    ViewSwitcher,
+    PlotlyEditor
   },
   data () {
     return {
