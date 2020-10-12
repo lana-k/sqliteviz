@@ -36,7 +36,7 @@
                 <div class="second-column">
                   <div class="date-container">{{ query.createdAt | date }}</div>
                   <div class="icons-container">
-                    <rename-icon />
+                    <rename-icon @click="showRenameDialog" />
                     <copy-icon />
                     <export-icon />
                     <delete-icon />
@@ -49,14 +49,29 @@
       </div>
     </div>
   </div>
+
+  <modal name="rename" classes="dialog" height="auto">
+    <div class="dialog-header">
+      Rename query
+      <close-icon />
+    </div>
+    <div class="dialog-body">
+      <input type="text"/>
+    </div>
+    <div class="dialog-buttons-container">
+      <button class="secondary">Cancel</button>
+      <button class="primary">Rename</button>
+    </div>
+  </modal>
 </div>
 </template>
 
 <script>
-import RenameIcon from '@/components/svg/rename.vue'
-import CopyIcon from '@/components/svg/copy.vue'
-import ExportIcon from '@/components/svg/export.vue'
-import DeleteIcon from '@/components/svg/delete.vue'
+import RenameIcon from '@/components/svg/rename'
+import CopyIcon from '@/components/svg/copy'
+import ExportIcon from '@/components/svg/export'
+import DeleteIcon from '@/components/svg/delete'
+import CloseIcon from '@/components/svg/close'
 
 export default {
   name: 'MyQueries',
@@ -64,7 +79,8 @@ export default {
     RenameIcon,
     CopyIcon,
     ExportIcon,
-    DeleteIcon
+    DeleteIcon,
+    CloseIcon
   },
   data () {
     return {
@@ -103,6 +119,9 @@ export default {
       this.$store.commit('addTab', tab)
       this.$store.commit('setCurrentTabId', tab.id)
       this.$router.push('/editor')
+    },
+    showRenameDialog () {
+      this.$modal.show('rename')
     }
   }
 }
