@@ -34,6 +34,20 @@ button.primary:disabled {
   cursor: default;
 }
 
+button.secondary {
+  background: white;
+  border: 1px solid var(--color-border);
+  box-sizing: border-box;
+  border-radius: var(--border-radius-big);
+  height: 36px;
+  padding: 0 12px;
+  min-width: 83px;
+  color: var(--color-text-base);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 button.toolbar {
   background: transparent;
   border: none;
