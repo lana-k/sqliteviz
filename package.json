@@ -19,6 +19,7 @@
     "sqlite-parser": "^1.0.1",
     "vue": "^2.6.11",
     "vue-codemirror": "^4.0.6",
+    "vue-js-modal": "^2.0.0-rc.6",
     "vue-router": "^3.2.0",
     "vuejs-paginate": "^2.1.0",
     "vuera": "^0.2.7",
