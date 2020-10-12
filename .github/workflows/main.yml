@@ -3,9 +3,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-    - '*'	
-    branches:	
-      - master
+    - '*'
 
 jobs:
   deploy:
