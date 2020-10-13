@@ -37,7 +37,7 @@
                   <div class="date-container">{{ query.createdAt | date }}</div>
                   <div class="icons-container">
                     <rename-icon @click="showRenameDialog(index)" />
-                    <copy-icon />
+                    <copy-icon @click="duplicateQuery(index)"/>
                     <export-icon />
                     <delete-icon />
                   </div>
@@ -150,6 +150,14 @@ export default {
       if (tabIndex >= 0) {
         this.$store.commit('updateTabName', { index: tabIndex, newName: this.newName })
       }
+    },
+    duplicateQuery (index) {
+      const newQuery = JSON.parse(JSON.stringify(this.queries[index]))
+      newQuery.name = newQuery.name + ' Copy'
+      newQuery.id = Number(new Date())
+      newQuery.createdAt = new Date()
+      this.queries.push(newQuery)
+      this.saveQueriesInLocalStorage()
     },
     saveQueriesInLocalStorage () {
       localStorage.setItem('myQueries', JSON.stringify(this.queries))
