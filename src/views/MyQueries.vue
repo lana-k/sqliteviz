@@ -38,7 +38,7 @@
                   <div class="icons-container">
                     <rename-icon @click="showRenameDialog(index)" />
                     <copy-icon @click="duplicateQuery(index)"/>
-                    <export-icon />
+                    <export-icon @click="exportQuery(index)"/>
                     <delete-icon @click="showDeleteDialog(index)"/>
                   </div>
                 </div>
@@ -92,6 +92,7 @@
       <button class="primary" @click="deleteQuery">Delete</button>
     </div>
   </modal>
+  <a ref="downloader" />
 </div>
 </template>
 
@@ -200,6 +201,20 @@ export default {
     findTabIndex (id) {
       return this.$store.state.tabs.findIndex(tab => tab.id === id)
     },
+    exportQuery (index) {
+      this.currentQueryIndex = index
+      const downloader = this.$refs.downloader
+      const currentQuery = JSON.parse(JSON.stringify(this.queries[this.currentQueryIndex]))
+      delete currentQuery.id
+      delete currentQuery.createdAt
+      const json = JSON.stringify(currentQuery)
+      const blob = new Blob([json], { type: 'octet/stream' })
+      const url = window.URL.createObjectURL(blob)
+      downloader.href = url
+      downloader.download = `${currentQuery.name}.json`
+      downloader.click()
+      window.URL.revokeObjectURL(url)
+    },
     saveQueriesInLocalStorage () {
       localStorage.setItem('myQueries', JSON.stringify(this.queries))
     }
@@ -276,5 +291,8 @@ tbody tr:hover .icons-container {
 }
 .dialog input {
   width: 100%;
+}
+a {
+  display: none;
 }
 </style>
