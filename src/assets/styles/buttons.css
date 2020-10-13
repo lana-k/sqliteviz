@@ -1,3 +1,12 @@
+button {
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 button:focus {
   outline: none;
 }
@@ -5,16 +14,10 @@ button:focus {
 button.primary {
   background: var(--color-accent);
   border: 1px solid var(--color-accent-shade);
-  box-sizing: border-box;
   border-radius: var(--border-radius-big);
-  height: 36px;
-  padding: 0 12px;
   min-width: 83px;
   color: var(--color-text-light);
   text-shadow: var(--shadow);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
 }
 
 button.primary:hover {
@@ -22,8 +25,6 @@ button.primary:hover {
   border: 1px solid var(--color-accent-shade);
   color: var(--color-text-light);
   text-shadow: var(--shadow);
-  font-size: 14px;
-  font-weight: 600;
 }
 
 button.primary:disabled {
@@ -37,27 +38,20 @@ button.primary:disabled {
 button.secondary {
   background: white;
   border: 1px solid var(--color-border);
-  box-sizing: border-box;
   border-radius: var(--border-radius-big);
-  height: 36px;
-  padding: 0 12px;
   min-width: 83px;
   color: var(--color-text-base);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
+}
+
+button.secondary:hover {
+  border: 1px solid var(--color-text-light-2);
+  color: var(--color-text-active);
 }
 
 button.toolbar {
   background: transparent;
   border: none;
-  box-sizing: border-box;
-  height: 36px;
-  padding: 0 12px;
   color: var(--color-text-base);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
 }
 
 button.toolbar:hover {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input type="text" placeholder="Search table"/>
+    <text-field placeholder="Search table" width="100%"/>
     <div id="db">
       <div @click="schemaVisible = !schemaVisible" class="db-name">
         <svg
@@ -50,10 +50,11 @@
 
 <script>
 import TableDescription from '@/components/TableDescription'
+import TextField from '@/components/TextField'
 
 export default {
   name: 'Schema',
-  components: { TableDescription },
+  components: { TableDescription, TextField },
   data () {
     return {
       schemaVisible: true,

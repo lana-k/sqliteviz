@@ -10,6 +10,7 @@
   --color-blue-medium: #119DFF;
   --color-blue-dark: #0D76BF;
   --color-blue-dark-2: #2A3F5F;
+  --color-red: #EF553B;
 
 
 
@@ -25,6 +26,7 @@
   --color-text-light-2: var(--color-gray-medium);
   --color-text-base: var(--color-gray-dark);
   --color-text-active: var(--color-blue-dark-2);
+  --color-text-error: var(--color-red);
 
   --shadow: 0 1px 2px rgba(42, 63, 95, 0.7);
 

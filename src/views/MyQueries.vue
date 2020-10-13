@@ -8,7 +8,7 @@
           <button class="toolbar">Delete</button>
         </div>
         <div id="toolbar-search">
-          <input type="text" placeholder="Search query by name"/>
+          <text-field placeholder="Search query by name" width="300px"/>
         </div>
       </div>
       <div class="rounded-bg">
@@ -36,7 +36,7 @@
                 <div class="second-column">
                   <div class="date-container">{{ query.createdAt | date }}</div>
                   <div class="icons-container">
-                    <rename-icon @click="showRenameDialog" />
+                    <rename-icon @click="showRenameDialog(index)" />
                     <copy-icon />
                     <export-icon />
                     <delete-icon />
@@ -53,14 +53,19 @@
   <modal name="rename" classes="dialog" height="auto">
     <div class="dialog-header">
       Rename query
-      <close-icon />
+      <close-icon @click="$modal.hide('rename')"/>
     </div>
     <div class="dialog-body">
-      <input type="text"/>
+      <text-field
+        label="New query name"
+        :error-msg="errorMsg"
+        v-model="newName"
+        width="100%"
+      />
     </div>
     <div class="dialog-buttons-container">
-      <button class="secondary">Cancel</button>
-      <button class="primary">Rename</button>
+      <button class="secondary" @click="$modal.hide('rename')">Cancel</button>
+      <button class="primary" @click="renameQuery">Rename</button>
     </div>
   </modal>
 </div>
@@ -72,6 +77,7 @@ import CopyIcon from '@/components/svg/copy'
 import ExportIcon from '@/components/svg/export'
 import DeleteIcon from '@/components/svg/delete'
 import CloseIcon from '@/components/svg/close'
+import TextField from '@/components/TextField'
 
 export default {
   name: 'MyQueries',
@@ -80,11 +86,15 @@ export default {
     CopyIcon,
     ExportIcon,
     DeleteIcon,
-    CloseIcon
+    CloseIcon,
+    TextField
   },
   data () {
     return {
-      queries: []
+      queries: [],
+      newName: null,
+      currentQueryIndex: null,
+      errorMsg: null
     }
   },
   created () {
@@ -120,8 +130,29 @@ export default {
       this.$store.commit('setCurrentTabId', tab.id)
       this.$router.push('/editor')
     },
-    showRenameDialog () {
+    showRenameDialog (index) {
+      this.errorMsg = null
+      this.currentQueryIndex = index
+      this.newName = this.queries[this.currentQueryIndex].name
       this.$modal.show('rename')
+    },
+    renameQuery () {
+      if (!this.newName) {
+        this.errorMsg = 'Query name can\'t be empty'
+        return
+      }
+      const currentQuery = this.queries[this.currentQueryIndex]
+      currentQuery.name = this.newName
+      this.$set(this.queries, this.currentQueryIndex, currentQuery)
+      this.$modal.hide('rename')
+      this.saveQueriesInLocalStorage()
+      const tabIndex = this.$store.state.tabs.findIndex(tab => tab.id === currentQuery.id)
+      if (tabIndex >= 0) {
+        this.$store.commit('updateTabName', { index: tabIndex, newName: this.newName })
+      }
+    },
+    saveQueriesInLocalStorage () {
+      localStorage.setItem('myQueries', JSON.stringify(this.queries))
     }
   }
 }
@@ -135,10 +166,13 @@ export default {
 #my-queries-toolbar {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 18px;
+  margin: 0 auto 8px;
+  max-width: 1500px;
+  width: 100%;
 }
 
-.rounded-bg,
-#my-queries-toolbar {
+.rounded-bg {
   margin: 0 auto;
   max-width: 1500px;
   width: 100%;
@@ -190,5 +224,8 @@ tbody tr:hover td {
 }
 tbody tr:hover .icons-container {
   display: block;
+}
+.dialog input {
+  width: 100%;
 }
 </style>

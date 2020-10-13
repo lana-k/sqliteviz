@@ -7,7 +7,6 @@ import VModal from 'vue-js-modal'
 
 import '@/assets/styles/variables.css'
 import '@/assets/styles/buttons.css'
-import '@/assets/styles/textFields.css'
 import '@/assets/styles/tables.css'
 import '@/assets/styles/dialogs.css'
 

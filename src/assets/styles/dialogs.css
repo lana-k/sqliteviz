@@ -6,7 +6,7 @@
 .dialog-header {
   height: 46px;
   line-height: 46px;
-  padding: 0 12px;
+  padding: 0 22px 0 12px;
   color: var(--color-text-base);
   font-size: 16px;
   font-weight: 600;
@@ -27,4 +27,12 @@
   justify-content: flex-end;
   background-color: var(--color-bg-light);
   padding: 24px;
+}
+
+.dialog-buttons-container button {
+  margin-left: 16px;
+}
+
+.vm--overlay {
+  background-color: rgba(162, 177, 198, 0.5);
 }
