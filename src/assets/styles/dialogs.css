@@ -16,10 +16,12 @@
 }
 
 .dialog-body {
-  min-height: 100px;
+  min-height: 60px;
   background-color: var(--color-bg-light);
   padding: 24px;
   border-top: 1px solid var(--color-border-light);
+  color: var(--color-text-base);
+  font-size: 13px;
 }
 
 .dialog-buttons-container {

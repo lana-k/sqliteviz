@@ -39,7 +39,7 @@
                     <rename-icon @click="showRenameDialog(index)" />
                     <copy-icon @click="duplicateQuery(index)"/>
                     <export-icon />
-                    <delete-icon />
+                    <delete-icon @click="showDeleteDialog(index)"/>
                   </div>
                 </div>
               </td>
@@ -50,6 +50,7 @@
     </div>
   </div>
 
+  <!--Rename Query dialog  -->
   <modal name="rename" classes="dialog" height="auto">
     <div class="dialog-header">
       Rename query
@@ -66,6 +67,29 @@
     <div class="dialog-buttons-container">
       <button class="secondary" @click="$modal.hide('rename')">Cancel</button>
       <button class="primary" @click="renameQuery">Rename</button>
+    </div>
+  </modal>
+
+  <!--Delete Query dialog  -->
+  <modal name="delete" classes="dialog" height="auto">
+    <div class="dialog-header">
+      Delete query
+      <close-icon @click="$modal.hide('delete')"/>
+    </div>
+    <div
+      v-if="
+        currentQueryIndex !== null
+        && currentQueryIndex >= 0
+        && currentQueryIndex < queries.length
+      "
+      class="dialog-body"
+    >
+      Are you sure you want to delete
+      "{{ queries[currentQueryIndex].name }}"?
+    </div>
+    <div class="dialog-buttons-container">
+      <button class="secondary" @click="$modal.hide('delete')">Cancel</button>
+      <button class="primary" @click="deleteQuery">Delete</button>
     </div>
   </modal>
 </div>
@@ -146,7 +170,7 @@ export default {
       this.$set(this.queries, this.currentQueryIndex, currentQuery)
       this.$modal.hide('rename')
       this.saveQueriesInLocalStorage()
-      const tabIndex = this.$store.state.tabs.findIndex(tab => tab.id === currentQuery.id)
+      const tabIndex = this.findTabIndex(currentQuery.id)
       if (tabIndex >= 0) {
         this.$store.commit('updateTabName', { index: tabIndex, newName: this.newName })
       }
@@ -158,6 +182,23 @@ export default {
       newQuery.createdAt = new Date()
       this.queries.push(newQuery)
       this.saveQueriesInLocalStorage()
+    },
+    showDeleteDialog (index) {
+      this.currentQueryIndex = index
+      this.$modal.show('delete')
+    },
+    deleteQuery () {
+      this.$modal.hide('delete')
+      const id = this.queries[this.currentQueryIndex].id
+      this.queries.splice(this.currentQueryIndex, 1)
+      this.saveQueriesInLocalStorage()
+      const tabIndex = this.findTabIndex(id)
+      if (tabIndex >= 0) {
+        this.$store.commit('deleteTab', tabIndex)
+      }
+    },
+    findTabIndex (id) {
+      return this.$store.state.tabs.findIndex(tab => tab.id === id)
     },
     saveQueriesInLocalStorage () {
       localStorage.setItem('myQueries', JSON.stringify(this.queries))
