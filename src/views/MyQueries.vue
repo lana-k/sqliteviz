@@ -3,7 +3,18 @@
     <div id="my-queries-content">
       <div id="my-queries-toolbar">
         <div id="toolbar-buttons">
-          <button class="toolbar">Import</button>
+          <input
+            ref="importFile"
+            type="file"
+            accept=".json"
+            id="import-file"
+            @change="importQueries"
+          />
+            <button class="toolbar">
+              <label for="import-file">
+                Import
+              </label>
+            </button>
           <button class="toolbar">Export</button>
           <button class="toolbar">Delete</button>
         </div>
@@ -103,6 +114,7 @@ import ExportIcon from '@/components/svg/export'
 import DeleteIcon from '@/components/svg/delete'
 import CloseIcon from '@/components/svg/close'
 import TextField from '@/components/TextField'
+import { nanoid } from 'nanoid'
 
 export default {
   name: 'MyQueries',
@@ -179,7 +191,7 @@ export default {
     duplicateQuery (index) {
       const newQuery = JSON.parse(JSON.stringify(this.queries[index]))
       newQuery.name = newQuery.name + ' Copy'
-      newQuery.id = Number(new Date())
+      newQuery.id = nanoid()
       newQuery.createdAt = new Date()
       this.queries.push(newQuery)
       this.saveQueriesInLocalStorage()
@@ -214,6 +226,27 @@ export default {
       downloader.download = `${currentQuery.name}.json`
       downloader.click()
       window.URL.revokeObjectURL(url)
+    },
+    importQueries () {
+      const file = this.$refs.importFile.files[0]
+      const reader = new FileReader()
+      reader.onload = () => {
+        let importedQueries = JSON.parse(event.target.result)
+
+        if (!Array.isArray(importedQueries)) {
+          importedQueries = [importedQueries]
+        }
+
+        importedQueries.forEach(query => {
+          query.id = nanoid()
+          query.createdAt = new Date()
+        })
+
+        this.queries = this.queries.concat(importedQueries)
+        this.saveQueriesInLocalStorage()
+        this.$refs.importFile.value = null
+      }
+      reader.readAsText(file)
     },
     saveQueriesInLocalStorage () {
       localStorage.setItem('myQueries', JSON.stringify(this.queries))
@@ -292,7 +325,17 @@ tbody tr:hover .icons-container {
 .dialog input {
   width: 100%;
 }
-a {
+a, #import-file {
   display: none;
+}
+button.toolbar {
+  margin-right: 16px;
+}
+button label {
+  display: block;
+  line-height: 36px;
+}
+button label:hover {
+  cursor: pointer;
 }
 </style>

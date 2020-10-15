@@ -19,12 +19,14 @@
 </template>
 
 <script>
+import { nanoid } from 'nanoid'
+
 export default {
   name: 'MainMenu',
   methods: {
     createNewQuery () {
       const tab = {
-        id: Number(new Date()),
+        id: nanoid(),
         name: null,
         tempName: this.$store.state.untitledLastIndex
           ? `Untitled ${this.$store.state.untitledLastIndex}`
@@ -69,6 +71,7 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 nav {
   height: 68px;

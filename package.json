@@ -11,6 +11,7 @@
   "dependencies": {
     "codemirror": "^5.57.0",
     "core-js": "^3.6.5",
+    "nanoid": "^3.1.12",
     "plotly.js": "^1.54.6",
     "react": "^16.13.1",
     "react-chart-editor": "^0.41.7",

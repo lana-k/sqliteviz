@@ -52,6 +52,7 @@ button.toolbar {
   background: transparent;
   border: none;
   color: var(--color-text-base);
+  padding: 0;
 }
 
 button.toolbar:hover {
