@@ -15,8 +15,8 @@
                 Import
               </label>
             </button>
-          <button class="toolbar">Export</button>
-          <button class="toolbar">Delete</button>
+          <button class="toolbar" v-show="selectedQueries.length > 0">Export</button>
+          <button class="toolbar" v-show="selectedQueries.length > 0">Delete</button>
         </div>
         <div id="toolbar-search">
           <text-field placeholder="Search query by name" width="300px"/>
@@ -131,7 +131,8 @@ export default {
       queries: [],
       newName: null,
       currentQueryIndex: null,
-      errorMsg: null
+      errorMsg: null,
+      selectedQueries: []
     }
   },
   created () {
