@@ -26,7 +26,8 @@
       <div class="header-container">
         <div>
           <div class="fixed-header" ref="name-th">
-            Name
+            <check-box theme="light"/>
+            <div class="name-th">Name</div>
           </div>
           <div class="fixed-header">
             Created at
@@ -41,7 +42,10 @@
           <tbody>
             <tr v-for="(query, index) in queries" :key="query.id" @click="openQuery(index)">
               <td ref="name-td">
-                  {{ query.name }}
+                 <div class="cell-data">
+                    <check-box />
+                    <div class="name">{{ query.name }}</div>
+                 </div>
               </td>
               <td>
                 <div class="second-column">
@@ -114,6 +118,7 @@ import ExportIcon from '@/components/svg/export'
 import DeleteIcon from '@/components/svg/delete'
 import CloseIcon from '@/components/svg/close'
 import TextField from '@/components/TextField'
+import CheckBox from '@/components/CheckBox'
 import { nanoid } from 'nanoid'
 
 export default {
@@ -124,7 +129,8 @@ export default {
     ExportIcon,
     DeleteIcon,
     CloseIcon,
-    TextField
+    TextField,
+    CheckBox
   },
   data () {
     return {
@@ -275,24 +281,43 @@ export default {
   max-width: 1500px;
   width: 100%;
 }
+.fixed-header:first-child {
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+}
+.fixed-header:first-child .name-th {
+  margin-left: 24px;
+}
 table {
   margin-top: 0;
 }
+
 tbody tr td {
-  overflow: hidden;
   min-width: 0;
-  text-overflow: ellipsis;
-  padding: 0 24px;
   line-height: 40px;
 }
 
 tbody tr td:first-child {
   width: 70%;
   max-width: 0;
+  padding: 0 12px;
 }
 tbody tr td:last-child {
   width: 30%;
   max-width: 0;
+  padding: 0 24px;
+}
+
+tbody .cell-data {
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+}
+tbody .cell-data div.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 24px;
 }
 
 tbody tr:hover td {
