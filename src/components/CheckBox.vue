@@ -51,6 +51,10 @@ export default {
   border-radius: var(--border-radius-medium);
   box-sizing: border-box;
 }
+.unchecked:hover {
+  background-color: var(--color-bg-light);
+}
+
 img {
     display: block;
 }
