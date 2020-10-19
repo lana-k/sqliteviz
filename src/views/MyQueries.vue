@@ -19,7 +19,7 @@
           <button class="toolbar" v-show="selectedQueries.length > 0">Delete</button>
         </div>
         <div id="toolbar-search">
-          <text-field placeholder="Search query by name" width="300px"/>
+          <text-field placeholder="Search query by name" width="300px" v-model="filter"/>
         </div>
       </div>
       <div class="rounded-bg">
@@ -40,7 +40,7 @@
       >
         <table ref="table">
           <tbody>
-            <tr v-for="(query, index) in queries" :key="query.id" @click="openQuery(index)">
+            <tr v-for="(query, index) in showedQueries" :key="query.id" @click="openQuery(index)">
               <td ref="name-td">
                  <div class="cell-data">
                     <check-box />
@@ -51,10 +51,10 @@
                 <div class="second-column">
                   <div class="date-container">{{ query.createdAt | date }}</div>
                   <div class="icons-container">
-                    <rename-icon @click="showRenameDialog(index)" />
+                    <rename-icon @click="showRenameDialog(query.id)" />
                     <copy-icon @click="duplicateQuery(index)"/>
                     <export-icon @click="exportQuery(index)"/>
-                    <delete-icon @click="showDeleteDialog(index)"/>
+                    <delete-icon @click="showDeleteDialog(query.id)"/>
                   </div>
                 </div>
               </td>
@@ -135,10 +135,23 @@ export default {
   data () {
     return {
       queries: [],
+      filter: null,
       newName: null,
-      currentQueryIndex: null,
+      currentQueryId: null,
       errorMsg: null,
       selectedQueries: []
+    }
+  },
+  computed: {
+    showedQueries () {
+      if (!this.filter) {
+        return this.queries
+      } else {
+        return this.queries.filter(query => query.name.toUpperCase().indexOf(this.filter.toUpperCase()) >= 0)
+      }
+    },
+    currentQueryIndex () {
+      return this.queries.findIndex(query => query.id === this.currentQueryId)
     }
   },
   created () {
@@ -168,15 +181,15 @@ export default {
       this.$refs['name-th'].style = `width: ${this.$refs['name-td'][0].offsetWidth}px`
     },
     openQuery (index) {
-      const tab = this.queries[index]
+      const tab = this.showedQueries[index]
       tab.isUnsaved = false
       this.$store.commit('addTab', tab)
       this.$store.commit('setCurrentTabId', tab.id)
       this.$router.push('/editor')
     },
-    showRenameDialog (index) {
+    showRenameDialog (id) {
       this.errorMsg = null
-      this.currentQueryIndex = index
+      this.currentQueryId = id
       this.newName = this.queries[this.currentQueryIndex].name
       this.$modal.show('rename')
     },
@@ -196,23 +209,22 @@ export default {
       }
     },
     duplicateQuery (index) {
-      const newQuery = JSON.parse(JSON.stringify(this.queries[index]))
+      const newQuery = JSON.parse(JSON.stringify(this.showedQueries[index]))
       newQuery.name = newQuery.name + ' Copy'
       newQuery.id = nanoid()
       newQuery.createdAt = new Date()
       this.queries.push(newQuery)
       this.saveQueriesInLocalStorage()
     },
-    showDeleteDialog (index) {
-      this.currentQueryIndex = index
+    showDeleteDialog (id) {
+      this.currentQueryId = id
       this.$modal.show('delete')
     },
     deleteQuery () {
       this.$modal.hide('delete')
-      const id = this.queries[this.currentQueryIndex].id
       this.queries.splice(this.currentQueryIndex, 1)
       this.saveQueriesInLocalStorage()
-      const tabIndex = this.findTabIndex(id)
+      const tabIndex = this.findTabIndex(this.currentQueryId)
       if (tabIndex >= 0) {
         this.$store.commit('deleteTab', tabIndex)
       }
@@ -221,9 +233,8 @@ export default {
       return this.$store.state.tabs.findIndex(tab => tab.id === id)
     },
     exportQuery (index) {
-      this.currentQueryIndex = index
       const downloader = this.$refs.downloader
-      const currentQuery = JSON.parse(JSON.stringify(this.queries[this.currentQueryIndex]))
+      const currentQuery = JSON.parse(JSON.stringify(this.showedQueries[index]))
       delete currentQuery.id
       delete currentQuery.createdAt
       const json = JSON.stringify(currentQuery)
