@@ -1,5 +1,5 @@
 <template>
-  <div class="checkbox-container" @click.stop="checked = !checked">
+  <div class="checkbox-container" @click.stop="onClick">
     <div v-show="!checked" class="unchecked" />
     <img
       v-show="checked && theme === 'accent'"
@@ -23,16 +23,27 @@ export default {
       validator: (value) => {
         return ['accent', 'light'].includes(value)
       }
+    },
+    init: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data () {
     return {
-      checked: false
+      checked: this.init
     }
   },
   watch: {
     checked () {
       this.$emit('change', this.checked)
+    }
+  },
+  methods: {
+    onClick () {
+      this.checked = !this.checked
+      this.$emit('click', this.checked)
     }
   }
 }

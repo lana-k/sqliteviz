@@ -15,8 +15,14 @@
                 Import
               </label>
             </button>
-          <button class="toolbar" v-show="selectedQueries.length > 0">Export</button>
-          <button class="toolbar" v-show="selectedQueries.length > 0">Delete</button>
+          <button
+            class="toolbar"
+            v-show="hasSelectedRows"
+            @click="exportQuery(selectedQueries)"
+          >
+            Export
+          </button>
+          <button class="toolbar" v-show="hasSelectedRows" @click="groupDelete">Delete</button>
         </div>
         <div id="toolbar-search">
           <text-field placeholder="Search query by name" width="300px" v-model="filter"/>
@@ -26,7 +32,7 @@
       <div class="header-container">
         <div>
           <div class="fixed-header" ref="name-th">
-            <check-box theme="light"/>
+            <check-box ref="mainCheckBox" theme="light" @click="toggleSelectAll"/>
             <div class="name-th">Name</div>
           </div>
           <div class="fixed-header">
@@ -43,7 +49,11 @@
             <tr v-for="(query, index) in showedQueries" :key="query.id" @click="openQuery(index)">
               <td ref="name-td">
                  <div class="cell-data">
-                    <check-box />
+                    <check-box
+                      ref="rowCheckBox"
+                      :init="selectAll || selectedQueries.has(query.id)"
+                      @change="toggleRow($event, query.id)"
+                    />
                     <div class="name">{{ query.name }}</div>
                  </div>
               </td>
@@ -139,7 +149,9 @@ export default {
       newName: null,
       currentQueryId: null,
       errorMsg: null,
-      selectedQueries: []
+      selectedQueries: new Set(),
+      selectAll: false,
+      hasSelectedRows: false
     }
   },
   computed: {
@@ -233,15 +245,35 @@ export default {
       return this.$store.state.tabs.findIndex(tab => tab.id === id)
     },
     exportQuery (index) {
+      let data
+      let name
+
+      // single operation
+      if (typeof index === 'number') {
+        console.log('single')
+        data = JSON.parse(JSON.stringify(this.showedQueries[index]))
+        name = data.name
+        delete data.id
+        delete data.createdAt
+      } else {
+        // group operation
+        console.log(this.queries.filter(query => this.selectedQueries.has(query.id)))
+        data = this.selectAll
+          ? JSON.parse(JSON.stringify(this.queries))
+          : this.queries.filter(query => this.selectedQueries.has(query.id))
+        name = 'My sqliteviz queries'
+        data.forEach(query => {
+          delete query.id
+          delete query.createdAt
+        })
+      }
+      // export data to file
       const downloader = this.$refs.downloader
-      const currentQuery = JSON.parse(JSON.stringify(this.showedQueries[index]))
-      delete currentQuery.id
-      delete currentQuery.createdAt
-      const json = JSON.stringify(currentQuery)
+      const json = JSON.stringify(data, null, 4)
       const blob = new Blob([json], { type: 'octet/stream' })
       const url = window.URL.createObjectURL(blob)
       downloader.href = url
-      downloader.download = `${currentQuery.name}.json`
+      downloader.download = `${name}.json`
       downloader.click()
       window.URL.revokeObjectURL(url)
     },
@@ -268,7 +300,26 @@ export default {
     },
     saveQueriesInLocalStorage () {
       localStorage.setItem('myQueries', JSON.stringify(this.queries))
-    }
+    },
+    toggleSelectAll (checked) {
+      this.selectAll = checked
+      this.$refs.rowCheckBox.forEach(item => { item.checked = checked })
+      this.selectedQueries = checked ? new Set(this.queries.map(query => query.id)) : new Set()
+      this.hasSelectedRows = checked
+    },
+    toggleRow (checked, id) {
+      if (checked) {
+        this.selectedQueries.add(id)
+      } else {
+        if (this.selectedQueries.size === this.queries.length) {
+          this.$refs.mainCheckBox.checked = false
+          this.selectAll = false
+        }
+        this.selectedQueries.delete(id)
+      }
+      this.hasSelectedRows = this.selectedQueries.size > 0
+    },
+    groupDelete () {}
   }
 }
 </script>
