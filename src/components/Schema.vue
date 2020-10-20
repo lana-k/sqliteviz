@@ -57,8 +57,7 @@ export default {
   components: { TableDescription, TextField },
   data () {
     return {
-      schemaVisible: true,
-      worker: this.$store.state.worker
+      schemaVisible: true
     }
   },
   computed: {
@@ -71,29 +70,7 @@ export default {
   },
   methods: {
     changeDb () {
-      const dbName = this.$refs.dbfile.value.substr(this.$refs.dbfile.value.lastIndexOf('\\') + 1)
-      this.$store.commit('saveDbName', dbName)
-      const f = this.$refs.dbfile.files[0]
-      const r = new FileReader()
-      r.onload = () => {
-        this.worker.onmessage = () => {
-          const getSchemaSql = `
-            SELECT name, sql
-            FROM sqlite_master
-            WHERE type='table' AND name NOT LIKE 'sqlite_%';`
-          this.worker.onmessage = event => {
-            this.$store.commit('saveSchema', event.data.results[0].values)
-          }
-          this.worker.postMessage({ action: 'exec', sql: getSchemaSql })
-        }
-        this.$store.commit('saveDbFile', r.result)
-        try {
-          this.worker.postMessage({ action: 'open', buffer: r.result }, [r.result])
-        } catch (exception) {
-          this.worker.postMessage({ action: 'open', buffer: r.result })
-        }
-      }
-      r.readAsArrayBuffer(f)
+      this.$db.loadDb(this.$refs.dbfile.files[0])
     }
   }
 }

@@ -89,7 +89,6 @@ export default {
       result: null,
       view: 'table',
       tableViewHeight: 0,
-      worker: this.$store.state.worker,
       isUnsaved: !this.name
     }
   },
@@ -164,18 +163,10 @@ export default {
     },
     // Run a command in the database
     execute (commands) {
-      this.worker.onmessage = (event) => {
-        // if it was more than one select - take only the first one
-        this.result = event.data.results[0]
-        if (!this.result) {
-          console.log(event.data.error)
-          //  return
-        }
-
-        // this.$refs.output.innerHTML = ''
-      }
-      this.worker.postMessage({ action: 'exec', sql: commands })
-      // this.$refs.output.textContent = 'Fetching results...'
+      // this.$refs.output.textContent = 'Fetching results...' */
+      this.$db.execute(commands)
+        .then(result => { this.result = result })
+        .catch(err => alert(err))
     },
     execEditorContents () {
       this.execute(this.query + ';')

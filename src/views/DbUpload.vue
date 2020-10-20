@@ -25,41 +25,13 @@
 <script>
 export default {
   name: 'DbUpload',
-  data () {
-    return {
-      worker: this.$store.state.worker
-    }
-  },
   methods: {
     loadDb () {
-      const dbName = this.$refs.file.value.substr(this.$refs.file.value.lastIndexOf('\\') + 1)
-      this.$store.commit('saveDbName', dbName)
-      const f = this.$refs.file.files[0]
-      const r = new FileReader()
-      r.onload = () => {
-        this.worker.onmessage = () => {
-          const getSchemaSql = `
-            SELECT name, sql
-            FROM sqlite_master
-            WHERE type='table' AND name NOT LIKE 'sqlite_%';`
-          this.worker.onmessage = event => {
-            this.$store.commit('saveSchema', event.data.results[0].values)
-            this.$router.push('/editor')
-          }
-          this.worker.postMessage({ action: 'exec', sql: getSchemaSql })
-        }
-        this.$store.commit('saveDbFile', r.result)
-        try {
-          this.worker.postMessage({ action: 'open', buffer: r.result }, [r.result])
-        } catch (exception) {
-          this.worker.postMessage({ action: 'open', buffer: r.result })
-        }
-      }
-      r.readAsArrayBuffer(f)
+      this.$db.loadDb(this.$refs.file.files[0])
     },
     dragover (event) {
       event.preventDefault()
-      // TODO: Add some visual fluff to show the user can drop its files
+      // TODO: Add some visual stuff to show the user can drop its files
       if (!event.currentTarget.classList.contains('bg-green-300')) {
         event.currentTarget.classList.remove('bg-gray-100')
         event.currentTarget.classList.add('bg-green-300')

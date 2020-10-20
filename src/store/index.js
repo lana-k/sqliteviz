@@ -8,7 +8,6 @@ export default new Vuex.Store({
     schema: null,
     dbFile: null,
     dbName: null,
-    worker: new Worker('js/worker.sql-wasm.js'),
     tabs: [],
     currentTab: null,
     currentTabId: null,
