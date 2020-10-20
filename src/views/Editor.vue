@@ -5,12 +5,12 @@
       :before="{ size: 20, max: 30 }"
       :after="{ size: 80, max: 100 }"
     >
-      <div slot="left-pane">
+      <template #left-pane>
         <schema />
-      </div>
-      <div slot="right-pane">
+      </template>
+      <template #right-pane>
         <tabs />
-      </div>
+      </template>
     </splitpanes>
   </div>
 </template>

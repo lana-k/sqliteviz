@@ -1,6 +1,6 @@
 <template>
-   <div>
-    <div id="tabs__header">
+   <div id="tabs-container">
+    <div id="tabs__header" v-if="tabs.length > 0">
       <div
         v-for="(tab, index) in tabs"
         :key="tab.id"
@@ -36,6 +36,11 @@
       :init-name="tab.name"
       :tab-index="index"
     />
+    <div v-if="tabs.length === 0" id="start-guid">
+      <span class="link" @click="$root.$emit('createNewQuery')">Create</span>
+      a new query from scratch or open the one from
+      <router-link class="link" to="/my-queries">My queries</router-link>
+    </div>
   </div>
 </template>
 
@@ -70,6 +75,10 @@ export default {
 </script>
 
 <style>
+#tabs-container {
+  position: relative;
+  height: 100%;
+}
 #tabs__header {
   display: flex;
   margin: 0;
@@ -127,6 +136,20 @@ export default {
 
 .close-icon:hover path {
   fill: var(--color-text-base);
+  cursor: pointer;
+}
+#start-guid {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--color-text-base);
+  font-size: 14px;
+  text-align: center;
+}
+.link {
+  color: var(--color-accent);
+  text-decoration: none;
   cursor: pointer;
 }
 </style>

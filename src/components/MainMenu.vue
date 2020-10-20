@@ -8,7 +8,7 @@
       <button
         v-if="$store.state.tabs.length > 0"
         class="primary"
-        :disabled="!$store.state.currentTab.isUnsaved"
+        :disabled="$store.state.currentTab && !$store.state.currentTab.isUnsaved"
         @click="saveQuery"
       >
         Save
@@ -23,6 +23,9 @@ import { nanoid } from 'nanoid'
 
 export default {
   name: 'MainMenu',
+  created () {
+    this.$root.$on('createNewQuery', this.createNewQuery)
+  },
   methods: {
     createNewQuery () {
       const tab = {
