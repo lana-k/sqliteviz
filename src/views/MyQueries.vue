@@ -17,12 +17,18 @@
             </button>
           <button
             class="toolbar"
-            v-show="hasSelectedRows"
-            @click="exportQuery(selectedQueries)"
+            v-show="selectedQueriesCount > 0"
+            @click="exportQuery(selectedQueriesIds)"
           >
             Export
           </button>
-          <button class="toolbar" v-show="hasSelectedRows" @click="groupDelete">Delete</button>
+          <button
+            class="toolbar"
+            v-show="selectedQueriesCount > 0"
+            @click="showDeleteDialog(selectedQueriesIds)"
+          >
+            Delete
+          </button>
         </div>
         <div id="toolbar-search">
           <text-field placeholder="Search query by name" width="300px" v-model="filter"/>
@@ -51,7 +57,7 @@
                  <div class="cell-data">
                     <check-box
                       ref="rowCheckBox"
-                      :init="selectAll || selectedQueries.has(query.id)"
+                      :init="selectAll || selectedQueriesIds.has(query.id)"
                       @change="toggleRow($event, query.id)"
                     />
                     <div class="name">{{ query.name }}</div>
@@ -98,19 +104,24 @@
   <!--Delete Query dialog  -->
   <modal name="delete" classes="dialog" height="auto">
     <div class="dialog-header">
-      Delete query
+      Delete {{ deleteGroup ? 'queries' : 'query' }}
       <close-icon @click="$modal.hide('delete')"/>
     </div>
     <div
       v-if="
-        currentQueryIndex !== null
-        && currentQueryIndex >= 0
-        && currentQueryIndex < queries.length
+        deleteGroup || (
+          currentQueryIndex !== null
+          && currentQueryIndex >= 0
+          && currentQueryIndex < queries.length
+        )
       "
       class="dialog-body"
     >
       Are you sure you want to delete
-      "{{ queries[currentQueryIndex].name }}"?
+      {{ deleteGroup
+        ? `${selectedQueriesCount} ${selectedQueriesCount > 1 ? 'queries' : 'query'}`
+        : `"${queries[currentQueryIndex].name}"`
+      }}?
     </div>
     <div class="dialog-buttons-container">
       <button class="secondary" @click="$modal.hide('delete')">Cancel</button>
@@ -149,9 +160,10 @@ export default {
       newName: null,
       currentQueryId: null,
       errorMsg: null,
-      selectedQueries: new Set(),
+      selectedQueriesIds: new Set(),
+      selectedQueriesCount: 0,
       selectAll: false,
-      hasSelectedRows: false
+      deleteGroup: false
     }
   },
   computed: {
@@ -226,20 +238,44 @@ export default {
       newQuery.id = nanoid()
       newQuery.createdAt = new Date()
       this.queries.push(newQuery)
+      if (this.selectAll) {
+        this.selectedQueriesIds.add(newQuery.id)
+        this.selectedQueriesCount = this.selectedQueriesIds.size
+      }
       this.saveQueriesInLocalStorage()
     },
     showDeleteDialog (id) {
-      this.currentQueryId = id
+      this.deleteGroup = typeof id !== 'string'
+      if (!this.deleteGroup) {
+        this.currentQueryId = id
+      }
       this.$modal.show('delete')
     },
     deleteQuery () {
       this.$modal.hide('delete')
-      this.queries.splice(this.currentQueryIndex, 1)
-      this.saveQueriesInLocalStorage()
-      const tabIndex = this.findTabIndex(this.currentQueryId)
-      if (tabIndex >= 0) {
-        this.$store.commit('deleteTab', tabIndex)
+      if (!this.deleteGroup) {
+        this.queries.splice(this.currentQueryIndex, 1)
+        const tabIndex = this.findTabIndex(this.currentQueryId)
+        if (tabIndex >= 0) {
+          this.$store.commit('deleteTab', tabIndex)
+        }
+        if (this.selectedQueriesIds.has(this.currentQueryId)) {
+          this.selectedQueriesIds.delete(this.currentQueryId)
+        }
+      } else {
+        this.queries = this.selectAll
+          ? []
+          : this.queries.filter(query => !this.selectedQueriesIds.has(query.id))
+        const tabs = this.$store.state.tabs
+        for (let i = tabs.length - 1; i >= 0; i--) {
+          if (this.selectedQueriesIds.has(tabs[i].id)) {
+            this.$store.commit('deleteTab', i)
+          }
+        }
+        this.selectedQueriesIds.clear()
       }
+      this.selectedQueriesCount = this.selectedQueriesIds.size
+      this.saveQueriesInLocalStorage()
     },
     findTabIndex (id) {
       return this.$store.state.tabs.findIndex(tab => tab.id === id)
@@ -257,10 +293,9 @@ export default {
         delete data.createdAt
       } else {
         // group operation
-        console.log(this.queries.filter(query => this.selectedQueries.has(query.id)))
         data = this.selectAll
           ? JSON.parse(JSON.stringify(this.queries))
-          : this.queries.filter(query => this.selectedQueries.has(query.id))
+          : this.queries.filter(query => this.selectedQueriesIds.has(query.id))
         name = 'My sqliteviz queries'
         data.forEach(query => {
           delete query.id
@@ -290,6 +325,10 @@ export default {
         importedQueries.forEach(query => {
           query.id = nanoid()
           query.createdAt = new Date()
+          if (this.selectAll) {
+            this.selectedQueriesIds.add(query.id)
+            this.selectedQueriesCount = this.selectedQueriesIds.size
+          }
         })
 
         this.queries = this.queries.concat(importedQueries)
@@ -304,22 +343,21 @@ export default {
     toggleSelectAll (checked) {
       this.selectAll = checked
       this.$refs.rowCheckBox.forEach(item => { item.checked = checked })
-      this.selectedQueries = checked ? new Set(this.queries.map(query => query.id)) : new Set()
-      this.hasSelectedRows = checked
+      this.selectedQueriesIds = checked ? new Set(this.queries.map(query => query.id)) : new Set()
+      this.selectedQueriesCount = this.selectedQueriesIds.size
     },
     toggleRow (checked, id) {
       if (checked) {
-        this.selectedQueries.add(id)
+        this.selectedQueriesIds.add(id)
       } else {
-        if (this.selectedQueries.size === this.queries.length) {
+        if (this.selectedQueriesIds.size === this.queries.length) {
           this.$refs.mainCheckBox.checked = false
           this.selectAll = false
         }
-        this.selectedQueries.delete(id)
+        this.selectedQueriesIds.delete(id)
       }
-      this.hasSelectedRows = this.selectedQueries.size > 0
-    },
-    groupDelete () {}
+      this.selectedQueriesCount = this.selectedQueriesIds.size
+    }
   }
 }
 </script>
