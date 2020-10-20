@@ -16,6 +16,9 @@
       </div>
     </label>
     <div id="error" class="error"></div>
+    <button id ="skip" class="secondary" @click="$router.push('/editor')">
+      Skip database connection for now
+    </button>
   </div>
 </template>
 
@@ -98,17 +101,21 @@ label {
   border-radius: var(--border-radius-big);
 }
 #drop-area {
-  width: 231px;
-  height: 153px;
+  width: 628px;
+  height: 490px;
   background-color: var(--color-bg-light-3);
   border-radius: var(--border-radius-big);
   color: var(--color-text-base);
   font-size: 13px;
-  padding: 44px 15px;
+  padding: 200px 144px;
   text-align: center;
   box-sizing: border-box;
 }
 input {
   display: none;
+}
+#skip {
+  position: absolute;
+  bottom: 50px;
 }
 </style>
