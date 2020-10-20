@@ -36,7 +36,7 @@
       :init-name="tab.name"
       :tab-index="index"
     />
-    <div v-if="tabs.length === 0" id="start-guid">
+    <div v-if="tabs.length === 0" id="start-guide">
       <span class="link" @click="$root.$emit('createNewQuery')">Create</span>
       a new query from scratch or open the one from
       <router-link class="link" to="/my-queries">My queries</router-link>
@@ -138,7 +138,7 @@ export default {
   fill: var(--color-text-base);
   cursor: pointer;
 }
-#start-guid {
+#start-guide {
   position: absolute;
   top: 50%;
   left: 50%;
