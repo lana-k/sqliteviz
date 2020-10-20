@@ -11,7 +11,13 @@
           <codemirror v-model="query" :options="cmOptions" @changes="onCmChange" ref="codemirror" />
         </div>
         <div  class="run-btn-container">
-          <button class="primary run-btn" @click="execEditorContents">Run</button>
+          <button
+            class="primary run-btn"
+            @click="execEditorContents"
+            :disabled="!$store.state.schema"
+          >
+            Run
+          </button>
         </div>
       </div>
       <div slot="right-pane" id="bottomPane" ref="bottomPane">
