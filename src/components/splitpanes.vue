@@ -1,8 +1,13 @@
 <template>
   <div
     ref="container"
-    :class="['splitpanes', `splitpanes--${horizontal ? 'horizontal' : 'vertical'}`, { 'splitpanes--dragging': touch.dragging }]"
+    :class="[
+      'splitpanes',
+      `splitpanes--${horizontal ? 'horizontal' : 'vertical'}`,
+      { 'splitpanes--dragging': touch.dragging }
+    ]"
   >
+    <div class="movable-splitter" ref="movableSplitter" :style="movableSplitterStyle" />
     <div
       class="splitpanes__pane"
       ref="left"
@@ -12,13 +17,21 @@
     >
       <slot name="left-pane" />
     </div>
-
-    <splitter
+    <!-- Splitter start-->
+    <div
+      class="splitpanes__splitter"
       @mousedown="onMouseDown"
-      @toggle="toggleFirstPane"
-      :expanded="paneBefore.size !== 0"
-    />
-
+      @touchstart="onMouseDown"
+    >
+      <div class="toggle-btn" @click="toggleFirstPane">
+        <img
+          class="direction-icon"
+          :src="require('@/assets/images/chevron.svg')"
+          :style="directionIconStyle"
+        >
+      </div>
+    </div>
+    <!-- splitter end -->
     <div
       class="splitpanes__pane"
       ref="right"
@@ -30,33 +43,58 @@
 </template>
 
 <script>
-import Splitter from '@/components/splitter'
 
 export default {
   name: 'splitpanes',
-  components: { Splitter },
   props: {
     horizontal: { type: Boolean, default: false },
     before: { type: Object },
     after: { type: Object }
   },
-  data: () => ({
-    container: null,
-    paneBefore: null,
-    paneAfter: null,
-    beforeMinimising: 20,
-    touch: {
-      mouseDown: false,
-      dragging: false
+  data () {
+    return {
+      container: null,
+      paneBefore: this.before,
+      paneAfter: this.after,
+      beforeMinimising: this.before.size,
+      touch: {
+        mouseDown: false,
+        dragging: false
+      },
+      movableSplitter: {
+        top: 0,
+        left: 0,
+        visibility: 'hidden'
+      }
     }
-  }),
-
+  },
   computed: {
     styles () {
       return [
         { [this.horizontal ? 'height' : 'width']: `${this.paneBefore.size}%` },
         { [this.horizontal ? 'height' : 'width']: `${this.paneAfter.size}%` }
       ]
+    },
+    movableSplitterStyle () {
+      const style = { ...this.movableSplitter }
+      style.top += '%'
+      style.left += '%'
+      return style
+    },
+    expanded () {
+      return this.paneBefore.size !== 0
+    },
+    directionIconStyle () {
+      const translation = 'translate(-50%, -50%)'
+      if (this.horizontal) {
+        return {
+          transform: `${translation} ${this.expanded ? 'rotate(-90deg)' : 'rotate(90deg)'}`
+        }
+      } else {
+        return {
+          transform: `${translation} ${this.expanded ? 'rotate(180deg)' : ''}`
+        }
+      }
     }
   },
 
@@ -92,12 +130,28 @@ export default {
         // Prevent scrolling while touch dragging (only works with an active event, eg. passive: false).
         event.preventDefault()
         this.touch.dragging = true
-        this.calculatePanesSize(this.getCurrentMouseDrag(event))
+        this.$set(this.movableSplitter, 'visibility', 'visible')
+        this.moveSplitter(event)
       }
     },
 
     onMouseUp () {
       this.touch.mouseDown = false
+      if (this.touch.dragging) {
+        const dragPercentage = this.horizontal
+          ? this.movableSplitter.top
+          : this.movableSplitter.left
+
+        this.paneBefore.size = dragPercentage
+        this.paneAfter.size = 100 - dragPercentage
+
+        this.movableSplitter = {
+          top: 0,
+          left: 0,
+          visibility: 'hidden'
+        }
+      }
+
       // Keep dragging flag until click event is finished (click happens immediately after mouseup)
       // in order to prevent emitting `splitter-click` event if splitter was dragged.
       setTimeout(() => {
@@ -109,8 +163,9 @@ export default {
     // Get the cursor position relative to the splitpane container.
     getCurrentMouseDrag (event) {
       const rect = this.container.getBoundingClientRect()
-      const { clientX, clientY } = ('ontouchstart' in window && event.touches) ? event.touches[0] : event
-
+      const { clientX, clientY } = ('ontouchstart' in window && event.touches)
+        ? event.touches[0]
+        : event
       return {
         x: clientX - rect.left,
         y: clientY - rect.top
@@ -126,27 +181,26 @@ export default {
       return drag * 100 / containerSize
     },
 
-    calculatePanesSize (drag) {
-      const dragPercentage = this.getCurrentDragPercentage(drag)
-      // If not pushing other panes, panes to resize are right before and right after splitter.
+    moveSplitter (event) {
+      const dragPercentage = this.getCurrentDragPercentage(this.getCurrentMouseDrag(event))
       const paneBefore = this.paneBefore
       const paneAfter = this.paneAfter
 
       const paneBeforeMaxReached = paneBefore.max < 100 && (dragPercentage >= paneBefore.max)
       const paneAfterMaxReached = paneAfter.max < 100 && (dragPercentage <= 100 - paneAfter.max)
+
+      const dir = this.horizontal ? 'top' : 'left'
+
       // Prevent dragging beyond pane max.
       if (paneBeforeMaxReached || paneAfterMaxReached) {
         if (paneBeforeMaxReached) {
-          paneBefore.size = paneBefore.max
-          paneAfter.size = Math.max(100 - paneBefore.max, 0)
+          this.$set(this.movableSplitter, dir, paneBefore.max)
         } else {
-          paneBefore.size = Math.max(100 - paneAfter.max, 0)
-          paneAfter.size = paneAfter.max
+          this.$set(this.movableSplitter, dir, Math.max(100 - paneAfter.max, 0))
         }
-        return
+      } else {
+        this.$set(this.movableSplitter, dir, Math.min(Math.max(dragPercentage, 0), paneBefore.max))
       }
-      paneBefore.size = Math.min(Math.max(dragPercentage, 0), paneBefore.max)
-      paneAfter.size = Math.min(Math.max(100 - dragPercentage, 0), paneAfter.max)
     },
     toggleFirstPane () {
       if (this.paneBefore.size > 0) {
@@ -160,10 +214,6 @@ export default {
   },
   mounted () {
     this.container = this.$refs.container
-  },
-  created () {
-    this.paneBefore = this.before
-    this.paneAfter = this.after
   }
 }
 </script>
@@ -172,6 +222,7 @@ export default {
 .splitpanes {
   display: flex;
   height: 100%;
+  position: relative;
 }
 
 .splitpanes--vertical {flex-direction: row;}
@@ -182,5 +233,69 @@ export default {
   width: 100%;
   height: 100%;
   overflow: auto;
+}
+
+/* Splitter */
+
+.splitpanes--vertical > .splitpanes__splitter,
+.splitpanes--vertical.splitpanes--dragging {
+  cursor: col-resize;
+}
+.splitpanes--horizontal > .splitpanes__splitter,
+.splitpanes--horizontal.splitpanes--dragging {
+  cursor: row-resize;
+}
+
+.splitpanes__splitter {
+  touch-action: none;
+  background-color: var(--color-bg-light-2);
+  box-sizing: border-box;
+  position: relative;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.movable-splitter {
+  position: absolute;
+  background-color:rgba(162, 177, 198, 0.5);
+}
+
+.splitpanes--vertical > .splitpanes__splitter,
+.splitpanes--vertical .movable-splitter {
+  width: 3px;
+  z-index: 5;
+  height: 100%
+}
+
+.splitpanes--horizontal > .splitpanes__splitter,
+.splitpanes--horizontal .movable-splitter {
+  height: 3px;
+  width: 100%;
+}
+.splitpanes__splitter .toggle-btn {
+  background-color: var(--color-bg-light-2);
+  border-radius: var(--border-radius-small);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.splitpanes__splitter .toggle-btn:hover {
+  cursor: pointer;
+}
+
+.splitpanes--vertical .toggle-btn {
+  height: 68px;
+  width: 15px;
+}
+.splitpanes--horizontal .toggle-btn {
+  width: 68px;
+  height: 15px;
+}
+.splitpanes__splitter .toggle-btn .direction-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
 }
 </style>
