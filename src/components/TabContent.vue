@@ -30,19 +30,12 @@
             <pre ref="output" id="output">Results will be displayed here</pre> -->
             <sql-table v-if="result" :data="result" :height="tableViewHeight" />
           </div>
-          <PlotlyEditor
-            v-show="view === 'chart'"
-            :data="state.data"
-            :layout="state.layout"
-            :frames="state.frames"
-            :config="{ editable: true }"
-            :dataSources="dataSources"
-            :dataSourceOptions="dataSourceOptions"
-            :plotly="plotly"
-            @onUpdate="update"
-            :useResizeHandler="true"
-            :debug="true"
-            :advancedTraceTypeSelector="true"
+          <Chart
+            :visible="view === 'chart'"
+            :sql-result="result"
+            :init-chart="initChart"
+            ref="chart"
+            @update="isUnsaved = true"
           />
         </div>
       </template>
@@ -54,9 +47,7 @@
 import SqlTable from '@/components/SqlTable'
 import Splitpanes from '@/components/splitpanes'
 import ViewSwitcher from '@/components/ViewSwitcher'
-
-import plotly from 'plotly.js/dist/plotly'
-import 'react-chart-editor/lib/react-chart-editor.min.css'
+import Chart from '@/components/Chart'
 
 import CM from 'codemirror'
 import { codemirror } from 'vue-codemirror'
@@ -67,27 +58,18 @@ import 'codemirror/addon/hint/show-hint.js'
 import 'codemirror/addon/hint/show-hint.css'
 import 'codemirror/addon/hint/sql-hint.js'
 
-import PlotlyEditor from 'react-chart-editor'
-import dereference from 'react-chart-editor/lib/lib/dereference'
-
 export default {
   name: 'TabContent',
-  props: ['id', 'initName', 'initQuery', 'initPlotly', 'tabIndex'],
+  props: ['id', 'initName', 'initQuery', 'initChart', 'tabIndex'],
   components: {
     codemirror,
     SqlTable,
     Splitpanes,
     ViewSwitcher,
-    PlotlyEditor
+    Chart
   },
   data () {
     return {
-      plotly: plotly,
-      state: this.initPlotly || {
-        data: [],
-        layout: {},
-        frames: []
-      },
       query: this.initQuery,
       cmOptions: {
         // codemirror options
@@ -100,7 +82,7 @@ export default {
       result: null,
       view: 'table',
       tableViewHeight: 0,
-      isUnsaved: !this.name
+      isUnsaved: !this.initName
     }
   },
   computed: {
@@ -145,19 +127,9 @@ export default {
     },
     isUnsaved () {
       this.$store.commit('updateTabState', { index: this.tabIndex, newValue: this.isUnsaved })
-    },
-    dataSources () {
-      // we need to update state.data in order to update the graph
-      // https://github.com/plotly/react-chart-editor/issues/948
-      dereference(this.state.data, this.dataSources)
     }
   },
   methods: {
-    update (data, layout, frames) {
-      this.state = { data, layout, frames }
-      this.isUnsaved = true
-      console.log(this.state)
-    },
     onCmChange (editor) {
       // Don't show autocomplete after a space or semicolon
       const ch = editor.getTokenAt(editor.getCursor()).string.slice(-1)
@@ -188,7 +160,9 @@ export default {
       if (this.view === 'chart') {
         // hack react-chart editor: hidden and show in order to make the graph resize
         this.view = 'not chart'
-        this.view = 'chart'
+        this.$nextTick(() => {
+          this.view = 'chart'
+        })
       }
       this.calculateTableHeight()
     },
@@ -202,16 +176,8 @@ export default {
       const freeSpace = bottomPane.offsetHeight - 88 - 42 - 30 - 5 - 40
       this.tableViewHeight = freeSpace - (freeSpace % 40)
     },
-    getPlotlySatateForSave () {
-      // we don't need to save the data, only settings
-      // so we modify state.data using dereference
-      const stateCopy = JSON.parse(JSON.stringify(this.state))
-      const emptySources = {}
-      for (const key in this.dataSources) {
-        emptySources[key] = []
-      }
-      dereference(stateCopy.data, emptySources)
-      return stateCopy
+    getChartSatateForSave () {
+      return this.$refs.chart.getChartSatateForSave()
     }
   }
 }

@@ -35,7 +35,7 @@
       :id="tab.id"
       :init-name="tab.name"
       :init-query="tab.query"
-      :init-plotly="tab.plotly"
+      :init-chart="tab.chart"
       :tab-index="index"
     />
     <div v-if="tabs.length === 0" id="start-guide">

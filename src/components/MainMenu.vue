@@ -46,7 +46,7 @@ export default {
       const value = {
         id: currentQuery.id,
         query: currentQuery.query,
-        plotly: currentQuery.getPlotlySatateForSave()
+        chart: currentQuery.getChartSatateForSave()
       }
 
       if (isFromScratch) {
