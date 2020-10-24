@@ -45,8 +45,8 @@ export default {
       const isFromScratch = !this.$store.state.currentTab.initName
       const value = {
         id: currentQuery.id,
-        query: currentQuery.query
-        // TODO: save plotly settings
+        query: currentQuery.query,
+        plotly: currentQuery.getPlotlySatateForSave()
       }
 
       if (isFromScratch) {

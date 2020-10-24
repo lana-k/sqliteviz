@@ -6,42 +6,46 @@
       :before="{ size: 50, max: 50 }"
       :after="{ size: 50, max: 100 }"
     >
-      <div slot="left-pane" class="query-editor">
-        <div class="codemirror-container">
-          <codemirror v-model="query" :options="cmOptions" @changes="onCmChange" ref="codemirror" />
+      <template #left-pane>
+        <div class="query-editor">
+          <div class="codemirror-container">
+            <codemirror v-model="query" :options="cmOptions" @changes="onCmChange" ref="codemirror" />
+          </div>
+          <div  class="run-btn-container">
+            <button
+              class="primary run-btn"
+              @click="execute(query)"
+              :disabled="!$store.state.schema"
+            >
+              Run
+            </button>
+          </div>
         </div>
-        <div  class="run-btn-container">
-          <button
-            class="primary run-btn"
-            @click="execEditorContents"
-            :disabled="!$store.state.schema"
-          >
-            Run
-          </button>
+      </template>
+      <template #right-pane>
+        <div id="bottomPane" ref="bottomPane">
+          <view-switcher :view.sync="view" />
+          <div v-show="view === 'table'" class="table-view">
+           <!--  <div id="error" class="error"></div>
+            <pre ref="output" id="output">Results will be displayed here</pre> -->
+            <sql-table v-if="result" :data="result" :height="tableViewHeight" />
+          </div>
+          <PlotlyEditor
+            v-show="view === 'chart'"
+            :data="state.data"
+            :layout="state.layout"
+            :frames="state.frames"
+            :config="{ editable: true }"
+            :dataSources="dataSources"
+            :dataSourceOptions="dataSourceOptions"
+            :plotly="plotly"
+            @onUpdate="update"
+            :useResizeHandler="true"
+            :debug="true"
+            :advancedTraceTypeSelector="true"
+          />
         </div>
-      </div>
-      <div slot="right-pane" id="bottomPane" ref="bottomPane">
-        <view-switcher :view.sync="view" />
-        <div v-show="view === 'table'" class="table-view">
-         <!--  <div id="error" class="error"></div>
-          <pre ref="output" id="output">Results will be displayed here</pre> -->
-          <sql-table v-if="result" :data="result" :height="tableViewHeight" />
-        </div>
-        <PlotlyEditor
-          v-show="view === 'chart'"
-          :data="state.data"
-          :layout="state.layout"
-          :frames="state.frames"
-          :config="{ editable: true }"
-          :dataSources="dataSources"
-          :dataSourceOptions="dataSourceOptions"
-          :plotly="plotly"
-          @onUpdate="update"
-          :useResizeHandler="true"
-          :debug="true"
-          :advancedTraceTypeSelector="true"
-        />
-      </div>
+      </template>
     </splitpanes>
   </div>
 </template>
@@ -64,6 +68,7 @@ import 'codemirror/addon/hint/show-hint.css'
 import 'codemirror/addon/hint/sql-hint.js'
 
 import PlotlyEditor from 'react-chart-editor'
+import dereference from 'react-chart-editor/lib/lib/dereference'
 
 export default {
   name: 'TabContent',
@@ -78,12 +83,12 @@ export default {
   data () {
     return {
       plotly: plotly,
-      state: {
+      state: this.initPlotly || {
         data: [],
         layout: {},
         frames: []
       },
-      query: 'select * from albums',
+      query: this.initQuery,
       cmOptions: {
         // codemirror options
         tabSize: 4,
@@ -126,7 +131,7 @@ export default {
     this.$store.commit('setCurrentTab', this)
   },
   mounted () {
-    new ResizeObserver(this.calculateTableHeight).observe(this.$refs.bottomPane)
+    new ResizeObserver(this.handleResize).observe(this.$refs.bottomPane)
     this.calculateTableHeight()
   },
   watch: {
@@ -140,6 +145,11 @@ export default {
     },
     isUnsaved () {
       this.$store.commit('updateTabState', { index: this.tabIndex, newValue: this.isUnsaved })
+    },
+    dataSources () {
+      // we need to update state.data in order to update the graph
+      // https://github.com/plotly/react-chart-editor/issues/948
+      dereference(this.state.data, this.dataSources)
     }
   },
   methods: {
@@ -170,12 +180,17 @@ export default {
     // Run a command in the database
     execute (commands) {
       // this.$refs.output.textContent = 'Fetching results...' */
-      this.$db.execute(commands)
+      this.$db.execute(commands + ';')
         .then(result => { this.result = result })
         .catch(err => alert(err))
     },
-    execEditorContents () {
-      this.execute(this.query + ';')
+    handleResize () {
+      if (this.view === 'chart') {
+        // hack react-chart editor: hidden and show in order to make the graph resize
+        this.view = 'not chart'
+        this.view = 'chart'
+      }
+      this.calculateTableHeight()
     },
     calculateTableHeight () {
       const bottomPane = this.$refs.bottomPane
@@ -186,6 +201,17 @@ export default {
       // 40 - height of table header
       const freeSpace = bottomPane.offsetHeight - 88 - 42 - 30 - 5 - 40
       this.tableViewHeight = freeSpace - (freeSpace % 40)
+    },
+    getPlotlySatateForSave () {
+      // we don't need to save the data, only settings
+      // so we modify state.data using dereference
+      const stateCopy = JSON.parse(JSON.stringify(this.state))
+      const emptySources = {}
+      for (const key in this.dataSources) {
+        emptySources[key] = []
+      }
+      dereference(stateCopy.data, emptySources)
+      return stateCopy
     }
   }
 }
