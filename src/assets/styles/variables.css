@@ -11,6 +11,7 @@
   --color-blue-dark: #0D76BF;
   --color-blue-dark-2: #2A3F5F;
   --color-red: #EF553B;
+  --color-yellow: #FBEFCB;
 
 
 
@@ -18,6 +19,7 @@
   --color-bg-light-2: var(--color-gray-light-2);
   --color-bg-light-3: var(--color-gray-light-5);
   --color-bg-dark: var(--color-gray-dark);
+  --color-bg-warning: var(--color-yellow);
   --color-accent: var(--color-blue-medium);
   --color-accent-shade: var(--color-blue-dark);
   --color-border-light: var(--color-gray-light-2);
