@@ -13,7 +13,7 @@
             <button
               class="primary run-btn"
               @click="execute"
-              :disabled="!$store.state.schema"
+              :disabled="!$store.state.schema || !query"
             >
               Run
             </button>
@@ -24,8 +24,18 @@
         <div id="bottomPane" ref="bottomPane">
           <view-switcher :view.sync="view" />
           <div v-show="view === 'table'" class="table-view">
-           <!--  <div id="error" class="error"></div>
-            <pre ref="output" id="output">Results will be displayed here</pre> -->
+            <div v-show="result === null && !isGettingResults && !error" class="table-preview">
+              Run your query and get results here
+            </div>
+            <div v-show="isGettingResults" class="table-preview">
+              Fetching results...
+            </div>
+            <div v-show="result === undefined && !isGettingResults && !error" class="table-preview">
+              No rows retrieved according to your query
+            </div>
+            <div v-show="error" class="table-preview error">
+              {{ error }}
+            </div>
             <sql-table v-if="result" :data="result" :height="tableViewHeight" />
           </div>
           <chart
@@ -64,7 +74,9 @@ export default {
       result: null,
       view: 'table',
       tableViewHeight: 0,
-      isUnsaved: !this.initName
+      isUnsaved: !this.initName,
+      isGettingResults: false,
+      error: null
     }
   },
   computed: {
@@ -96,9 +108,19 @@ export default {
     // Run a command in the database
     execute () {
       // this.$refs.output.textContent = 'Fetching results...' */
+      this.isGettingResults = true
+      this.result = null
+      this.error = null
       this.$db.execute(this.query + ';')
-        .then(result => { this.result = result })
-        .catch(err => alert(err))
+        .then(result => {
+          this.result = result
+        })
+        .catch(err => {
+          this.error = err
+        })
+        .finally(() => {
+          this.isGettingResults = false
+        })
     },
     handleResize () {
       if (this.view === 'chart') {
@@ -164,5 +186,24 @@ export default {
 
 .table-view {
   margin: 0 52px;
+  height: calc(100% - 88px);
+  position: relative;
+}
+
+.table-preview {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--color-text-base);
+  font-size: 13px;
+}
+
+.table-preview.error {
+  color: var(--color-text-error);
+}
+
+.table-preview.error::first-letter {
+  text-transform: capitalize;
 }
 </style>
