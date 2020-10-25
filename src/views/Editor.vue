@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import Splitpanes from '@/components/splitpanes'
+import Splitpanes from '@/components/Splitpanes'
 import Schema from '@/components/Schema'
 import Tabs from '@/components/Tabs'
 

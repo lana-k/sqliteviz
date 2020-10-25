@@ -44,7 +44,7 @@
 <script>
 import SqlTable from '@/components/SqlTable'
 import SqlEditor from '@/components/SqlEditor'
-import Splitpanes from '@/components/splitpanes'
+import Splitpanes from '@/components/Splitpanes'
 import ViewSwitcher from '@/components/ViewSwitcher'
 import Chart from '@/components/Chart'
 

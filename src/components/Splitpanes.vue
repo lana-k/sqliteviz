@@ -45,7 +45,7 @@
 <script>
 
 export default {
-  name: 'splitpanes',
+  name: 'Splitpanes',
   props: {
     horizontal: { type: Boolean, default: false },
     before: { type: Object },
