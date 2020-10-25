@@ -17,7 +17,7 @@
         class="table-container"
         ref="table-container"
         @scroll="onScrollTable"
-        :style="{height: `${height}px`}"
+        :style="{maxHeight: `${height}px`}"
       >
       <table ref="table">
         <thead>

@@ -155,7 +155,7 @@ export default {
   height: 100%;
   max-height: 100%;
   box-sizing: border-box;
-  min-height: 150px;
+  min-height: 190px;
 }
 
 .run-btn-container {
