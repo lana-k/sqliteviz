@@ -3,21 +3,12 @@
     <splitpanes
       class="query-results-splitter"
       horizontal
-      :before="{ size: 50, max: 50 }"
+      :before="{ size: 50, max: 70 }"
       :after="{ size: 50, max: 100 }"
     >
       <template #left-pane>
         <div class="query-editor">
           <sql-editor v-model="query" />
-          <div  class="run-btn-container">
-            <button
-              class="primary run-btn"
-              @click="execute"
-              :disabled="!$store.state.schema || !query"
-            >
-              Run
-            </button>
-          </div>
         </div>
       </template>
       <template #right-pane>
@@ -171,22 +162,14 @@ export default {
   background-color: var(--color-bg-light);
 }
 
-.run-btn {
-  margin-top: 24px;
-}
-
 .query-editor {
-  padding: 52px 52px 24px;
+  padding: 52px;
   display: flex;
   flex-direction: column;
   height: 100%;
   max-height: 100%;
   box-sizing: border-box;
   min-height: 190px;
-}
-
-.run-btn-container {
-  text-align: right;
 }
 
 .table-view {

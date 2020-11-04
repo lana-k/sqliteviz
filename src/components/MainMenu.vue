@@ -8,6 +8,14 @@
       <button
         v-if="$store.state.tabs.length > 0"
         class="primary"
+        :disabled="currentQuery && !$store.state.schema || !currentQuery.query"
+        @click="currentQuery.execute"
+      >
+        Run
+      </button>
+      <button
+        v-if="$store.state.tabs.length > 0"
+        class="primary"
         :disabled="currentQuery && !currentQuery.isUnsaved"
         @click="checkQueryBeforeSave"
       >

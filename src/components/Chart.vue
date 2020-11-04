@@ -1,10 +1,9 @@
 <template>
-<div class="chart-container">
+<div v-show="visible" class="chart-container">
   <div class="chart-worning" v-show="!sqlResult && visible">
     There is no data to build a chart. Run your sql query and make sure the result is not empty.
   </div>
   <PlotlyEditor
-    v-show="visible"
     :data="state.data"
     :layout="state.layout"
     :frames="state.frames"
@@ -106,6 +105,7 @@ export default {
 }
 .chart {
   border-top: 1px solid var(--color-border);
+  min-height: 242px;
 }
 
 >>> .editor_controls .sidebar__item:before {
