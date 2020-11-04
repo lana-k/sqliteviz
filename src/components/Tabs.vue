@@ -3,7 +3,7 @@
     <div id="tabs__header" v-if="tabs.length > 0">
       <div
         v-for="(tab, index) in tabs"
-        :key="tab.id"
+        :key="index"
         @click="selectTab(tab.id)"
         :class="[{'tab__selected': (tab.id === selectedIndex)}, 'tab']"
       >
@@ -29,13 +29,14 @@
         </div>
       </div>
     </div>
-    <tab-content
+    <tab
       v-for="(tab, index) in tabs"
       :key="tab.id"
       :id="tab.id"
       :init-name="tab.name"
       :init-query="tab.query"
       :init-chart="tab.chart"
+      :is-predefined="tab.isPredefined"
       :tab-index="index"
     />
     <div v-if="tabs.length === 0" id="start-guide">
@@ -47,11 +48,11 @@
 </template>
 
 <script>
-import TabContent from '@/components/TabContent'
+import Tab from '@/components/Tab'
 
 export default {
   components: {
-    TabContent
+    Tab
   },
   data () {
     return {
@@ -153,5 +154,6 @@ export default {
   color: var(--color-accent);
   text-decoration: none;
   cursor: pointer;
+  white-space: nowrap;
 }
 </style>

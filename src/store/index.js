@@ -11,7 +11,8 @@ export default new Vuex.Store({
     tabs: [],
     currentTab: null,
     currentTabId: null,
-    untitledLastIndex: 0
+    untitledLastIndex: 0,
+    predefinedQueries: []
   },
   mutations: {
     saveSchema (state, schema) {
@@ -25,14 +26,29 @@ export default new Vuex.Store({
     },
     addTab (state, tab) {
       state.tabs.push(tab)
+
+      if (!tab.name) {
+        state.untitledLastIndex += 1
+      }
     },
-    updateTabName (state, { index, newName }) {
+    updateTab (state, { index, name, id, query, chart, isUnsaved }) {
       const tab = state.tabs[index]
-      tab.name = newName
+      const oldId = tab.id
+
+      if (state.currentTabId === oldId) {
+        state.currentTabId = id
+      }
+
+      tab.id = id
+      if (name) { tab.name = name }
+      if (query) { tab.query = query }
+      if (chart) { tab.chart = chart }
+      if (isUnsaved !== undefined) { tab.isUnsaved = isUnsaved }
+      delete tab.isPredefined
+
       Vue.set(state.tabs, index, tab)
     },
     updateTabState (state, { index, newValue }) {
-      console.log(index, newValue)
       const tab = state.tabs[index]
       tab.isUnsaved = newValue
       Vue.set(state.tabs, index, tab)
@@ -45,6 +61,7 @@ export default new Vuex.Store({
         state.currentTabId = state.tabs[index - 1].id
       } else {
         state.currentTabId = null
+        state.currentTab = null
         state.untitledLastIndex = 0
       }
       state.tabs.splice(index, 1)
@@ -55,12 +72,14 @@ export default new Vuex.Store({
     setCurrentTab (state, tab) {
       state.currentTab = tab
     },
-    updateUntitledLastIndex (state) {
-      state.untitledLastIndex += 1
+    updatePredefinedQueries (state, queries) {
+      if (Array.isArray(queries)) {
+        state.predefinedQueries = queries
+      } else {
+        state.predefinedQueries = [queries]
+      }
     }
   },
   actions: {
-  },
-  modules: {
   }
 })

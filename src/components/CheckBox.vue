@@ -35,11 +35,6 @@ export default {
       checked: this.init
     }
   },
-  watch: {
-    checked () {
-      this.$emit('change', this.checked)
-    }
-  },
   methods: {
     onClick () {
       this.checked = !this.checked

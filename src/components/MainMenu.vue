@@ -8,21 +8,70 @@
       <button
         v-if="$store.state.tabs.length > 0"
         class="primary"
-        :disabled="$store.state.currentTab && !$store.state.currentTab.isUnsaved"
-        @click="saveQuery"
+        :disabled="currentQuery && !currentQuery.isUnsaved"
+        @click="checkQueryBeforeSave"
       >
         Save
       </button>
       <button class="primary" @click="createNewQuery">Create</button>
     </div>
+
+    <!--Save Query dialog  -->
+    <modal name="save" classes="dialog" height="auto">
+      <div class="dialog-header">
+        Save query
+        <close-icon @click="$modal.hide('save')"/>
+      </div>
+      <div class="dialog-body">
+        <div v-show="isPredefined" id="save-note">
+          <img :src="require('@/assets/images/info.svg')">
+          Note: Predefined queries can't be edited.
+          That's why your modifications will be saved as a new query. Enter the name for it.
+        </div>
+        <text-field
+          label="Query name"
+          :error-msg="errorMsg"
+          v-model="name"
+          width="100%"
+        />
+      </div>
+      <div class="dialog-buttons-container">
+        <button class="secondary" @click="$modal.hide('save')">Cancel</button>
+        <button class="primary" @click="saveQuery">Save</button>
+      </div>
+    </modal>
   </nav>
 </template>
 
 <script>
 import { nanoid } from 'nanoid'
+import TextField from '@/components/TextField'
+import CloseIcon from '@/components/svg/close'
 
 export default {
   name: 'MainMenu',
+  components: {
+    TextField,
+    CloseIcon
+  },
+  data () {
+    return {
+      name: '',
+      errorMsg: null
+    }
+  },
+  computed: {
+    currentQuery () {
+      return this.$store.state.currentTab
+    },
+    isPredefined () {
+      if (this.currentQuery) {
+        return this.currentQuery.isPredefined
+      } else {
+        return false
+      }
+    }
+  },
   created () {
     this.$root.$on('createNewQuery', this.createNewQuery)
   },
@@ -38,38 +87,69 @@ export default {
       }
       this.$store.commit('addTab', tab)
       this.$store.commit('setCurrentTabId', tab.id)
-      this.$store.commit('updateUntitledLastIndex')
+    },
+    checkQueryBeforeSave () {
+      this.errorMsg = null
+      const isFromScratch = !this.currentQuery.initName
+
+      if (isFromScratch || this.isPredefined) {
+        this.$modal.show('save')
+      } else {
+        this.saveQuery()
+      }
     },
     saveQuery () {
-      const currentQuery = this.$store.state.currentTab
-      const isFromScratch = !this.$store.state.currentTab.initName
+      const isFromScratch = !this.currentQuery.initName
+      if ((isFromScratch || this.isPredefined) && !this.name) {
+        this.errorMsg = 'Query name can\'t be empty'
+        return
+      }
+      const dataSet = this.currentQuery.result
+      const tabView = this.currentQuery.view
+      // Prepare query
       const value = {
-        id: currentQuery.id,
-        query: currentQuery.query,
-        chart: currentQuery.getChartSatateForSave()
+        id: this.isPredefined ? nanoid() : this.currentQuery.id,
+        query: this.currentQuery.query,
+        chart: this.currentQuery.getChartSatateForSave(),
+        name: (!this.isPredefined && this.currentQuery.initName) || this.name,
+        createdAt: new Date()
       }
 
-      if (isFromScratch) {
-        value.name = prompt('query name')
-        // TODO: create dialog
-        this.$store.commit('updateTabName', { index: currentQuery.tabIndex, newName: value.name })
-        value.createdAt = new Date()
-      } else {
-        value.name = currentQuery.initName
-      }
-
+      // Save query
       let myQueries = JSON.parse(localStorage.getItem('myQueries'))
       if (!myQueries) {
         myQueries = [value]
-      } else if (isFromScratch) {
+      } else if (isFromScratch || this.isPredefined) {
         myQueries.push(value)
       } else {
-        const queryIndex = myQueries.findIndex(query => query.id === currentQuery.id)
+        const queryIndex = myQueries.findIndex(query => query.id === this.currentQuery.id)
         value.createdAt = myQueries[queryIndex].createdAt
         myQueries[queryIndex] = value
       }
       localStorage.setItem('myQueries', JSON.stringify(myQueries))
-      currentQuery.isUnsaved = false
+
+      // Update tab
+      this.$store.commit('updateTab', {
+        index: this.currentQuery.tabIndex,
+        name: value.name,
+        id: value.id,
+        query: value.query,
+        chart: value.chart,
+        isUnsaved: false
+      })
+
+      // Restore data:
+      // e.g. if we save predefined query the tab will be created again
+      // (because of new id) and
+      // it will be without sql result and has default view - table.
+      // That's why we need to restore data and view
+      this.$nextTick(() => {
+        this.currentQuery.result = dataSet
+        this.currentQuery.view = tabView
+      })
+
+      // Hide dialog
+      this.$modal.hide('save')
     }
   }
 }
@@ -89,6 +169,7 @@ nav {
   left: 0;
   width: 100vw;
   padding: 0 52px;
+  z-index: 999;
 }
 a {
   font-size: 18px;
@@ -102,5 +183,14 @@ a.router-link-active {
 }
 button {
   margin-left: 16px;
+}
+
+#save-note {
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+}
+#save-note img {
+  margin: -3px 6px 0 0;
 }
 </style>

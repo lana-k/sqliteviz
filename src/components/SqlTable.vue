@@ -22,7 +22,7 @@
       <table ref="table">
         <thead>
           <tr>
-            <th v-for="(th,index) in data.columns" :key="index" ref="th">
+            <th v-for="(th,index) in dataSet.columns" :key="index" ref="th">
               <div class="cell-data" :style="cellStyle">{{ th }}</div>
             </th>
           </tr>
@@ -39,7 +39,7 @@
     </div>
     <div class="table-footer">
       <div class="table-footer-count">
-        {{ data.values.length}} {{data.values.length === 1 ? 'row' : 'rows'}} retrieved
+        {{ dataSet.values.length}} {{dataSet.values.length === 1 ? 'row' : 'rows'}} retrieved
       </div>
       <pager v-show="pageCount > 1" :page-count="pageCount" v-model="currentPage" />
     </div>
@@ -52,17 +52,18 @@ import Pager from '@/components/Pager'
 export default {
   name: 'SqlTable',
   components: { Pager },
-  props: ['data', 'height'],
+  props: ['dataSet', 'height'],
   data () {
     return {
       header: null,
       tableWidth: null,
-      currentPage: 1
+      currentPage: 1,
+      resizeObserver: null
     }
   },
   computed: {
     cellStyle () {
-      const eq = this.tableWidth / this.data.columns.length
+      const eq = this.tableWidth / this.dataSet.columns.length
 
       return { maxWidth: `${Math.max(eq, 100)}px` }
     },
@@ -70,11 +71,11 @@ export default {
       return Math.max(Math.floor(this.height / 40), 20)
     },
     pageCount () {
-      return Math.ceil(this.data.values.length / this.pageSize)
+      return Math.ceil(this.dataSet.values.length / this.pageSize)
     },
     currentPageData () {
       const start = (this.currentPage - 1) * this.pageSize
-      return this.data.values.slice(start, start + this.pageSize)
+      return this.dataSet.values.slice(start, start + this.pageSize)
     }
   },
   methods: {
@@ -94,12 +95,16 @@ export default {
     }
   },
   mounted () {
-    new ResizeObserver(this.calculateHeadersWidth).observe(this.$refs.table)
+    this.resizeObserver = new ResizeObserver(this.calculateHeadersWidth)
+    this.resizeObserver.observe(this.$refs.table)
     this.calculateHeadersWidth()
+  },
+  beforeDestroy () {
+    this.resizeObserver.unobserve(this.$refs.table)
   },
   watch: {
     currentPageData: 'calculateHeadersWidth',
-    data () {
+    dataSet () {
       this.currentPage = 1
     }
   }

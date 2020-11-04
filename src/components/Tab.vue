@@ -36,7 +36,7 @@
             <div v-show="error" class="table-preview error">
               {{ error }}
             </div>
-            <sql-table v-if="result" :data="result" :height="tableViewHeight" />
+            <sql-table v-if="result" :data-set="result" :height="tableViewHeight" />
           </div>
           <chart
             :visible="view === 'chart'"
@@ -59,8 +59,8 @@ import ViewSwitcher from '@/components/ViewSwitcher'
 import Chart from '@/components/Chart'
 
 export default {
-  name: 'TabContent',
-  props: ['id', 'initName', 'initQuery', 'initChart', 'tabIndex'],
+  name: 'Tab',
+  props: ['id', 'initName', 'initQuery', 'initChart', 'tabIndex', 'isPredefined'],
   components: {
     SqlEditor,
     SqlTable,
@@ -76,7 +76,8 @@ export default {
       tableViewHeight: 0,
       isUnsaved: !this.initName,
       isGettingResults: false,
-      error: null
+      error: null,
+      resizeObserver: null
     }
   },
   computed: {
@@ -88,8 +89,12 @@ export default {
     this.$store.commit('setCurrentTab', this)
   },
   mounted () {
-    new ResizeObserver(this.handleResize).observe(this.$refs.bottomPane)
+    this.resizeObserver = new ResizeObserver(this.handleResize)
+    this.resizeObserver.observe(this.$refs.bottomPane)
     this.calculateTableHeight()
+  },
+  beforeDestroy () {
+    this.resizeObserver.unobserve(this.$refs.bottomPane)
   },
   watch: {
     isActive () {

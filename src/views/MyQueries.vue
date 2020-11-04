@@ -24,7 +24,7 @@
           </button>
           <button
             class="toolbar"
-            v-show="selectedQueriesCount > 0"
+            v-show="selectedNotPredefinedCount > 0"
             @click="showDeleteDialog(selectedQueriesIds)"
           >
             Delete
@@ -52,25 +52,31 @@
       >
         <table ref="table">
           <tbody>
-            <tr v-for="(query, index) in showedQueries" :key="query.id" @click="openQuery(index)">
+            <tr
+              v-for="(query, index) in showedQueries"
+              :key="query.id"
+              :class="{ 'predefined': query.isPredefined }"
+              @click="openQuery(index)"
+            >
               <td ref="name-td">
                  <div class="cell-data">
                     <check-box
                       ref="rowCheckBox"
                       :init="selectAll || selectedQueriesIds.has(query.id)"
-                      @change="toggleRow($event, query.id)"
+                      @click="toggleRow($event, query.id)"
                     />
                     <div class="name">{{ query.name }}</div>
+                    <div class="badge">Predefined</div>
                  </div>
               </td>
               <td>
                 <div class="second-column">
                   <div class="date-container">{{ query.createdAt | date }}</div>
                   <div class="icons-container">
-                    <rename-icon @click="showRenameDialog(query.id)" />
+                    <rename-icon v-if="!query.isPredefined" @click="showRenameDialog(query.id)" />
                     <copy-icon @click="duplicateQuery(index)"/>
                     <export-icon @click="exportQuery(index)"/>
-                    <delete-icon @click="showDeleteDialog(query.id)"/>
+                    <delete-icon v-if="!query.isPredefined" @click="showDeleteDialog(query.id)"/>
                   </div>
                 </div>
               </td>
@@ -119,9 +125,13 @@
     >
       Are you sure you want to delete
       {{ deleteGroup
-        ? `${selectedQueriesCount} ${selectedQueriesCount > 1 ? 'queries' : 'query'}`
+        ? `${selectedNotPredefinedCount} ${selectedNotPredefinedCount > 1 ? 'queries' : 'query'}`
         : `"${queries[currentQueryIndex].name}"`
       }}?
+      <div v-show="selectedQueriesCount > selectedNotPredefinedCount" id="note">
+        <img :src="require('@/assets/images/info.svg')">
+        Note: Predefined queries you've selected won't be deleted
+      </div>
     </div>
     <div class="dialog-buttons-container">
       <button class="secondary" @click="$modal.hide('delete')">Cancel</button>
@@ -162,28 +172,48 @@ export default {
       errorMsg: null,
       selectedQueriesIds: new Set(),
       selectedQueriesCount: 0,
+      selectedNotPredefinedCount: 0,
       selectAll: false,
-      deleteGroup: false
+      deleteGroup: false,
+      resizeObserver: null
     }
   },
   computed: {
+    predefinedQueries () {
+      return this.$store.state.predefinedQueries.map(query => {
+        query.isPredefined = true
+        return query
+      })
+    },
+    predefinedQueriesIds () {
+      return new Set(this.predefinedQueries.map(query => query.id))
+    },
     showedQueries () {
-      if (!this.filter) {
-        return this.queries
-      } else {
-        return this.queries.filter(query => query.name.toUpperCase().indexOf(this.filter.toUpperCase()) >= 0)
+      let showedQueries = this.allQueries
+      if (this.filter) {
+        showedQueries = showedQueries.filter(
+          query => query.name.toUpperCase().indexOf(this.filter.toUpperCase()) >= 0
+        )
       }
+      return showedQueries
+    },
+    allQueries () {
+      return this.predefinedQueries.concat(this.queries)
     },
     currentQueryIndex () {
       return this.queries.findIndex(query => query.id === this.currentQueryId)
     }
   },
   created () {
-    this.queries = JSON.parse(localStorage.getItem('myQueries'))
+    this.queries = JSON.parse(localStorage.getItem('myQueries')) || []
   },
   mounted () {
-    new ResizeObserver(this.calcNameWidth).observe(this.$refs.table)
+    this.resizeObserver = new ResizeObserver(this.calcNameWidth)
+    this.resizeObserver.observe(this.$refs.table)
     this.calcNameWidth()
+  },
+  beforeDestroy () {
+    this.resizeObserver.unobserve(this.$refs.table)
   },
   filters: {
     date (value) {
@@ -205,7 +235,7 @@ export default {
       this.$refs['name-th'].style = `width: ${this.$refs['name-td'][0].offsetWidth}px`
     },
     openQuery (index) {
-      const tab = this.showedQueries[index]
+      const tab = JSON.parse(JSON.stringify(this.showedQueries[index]))
       tab.isUnsaved = false
       this.$store.commit('addTab', tab)
       this.$store.commit('setCurrentTabId', tab.id)
@@ -225,23 +255,33 @@ export default {
       const currentQuery = this.queries[this.currentQueryIndex]
       currentQuery.name = this.newName
       this.$set(this.queries, this.currentQueryIndex, currentQuery)
-      this.$modal.hide('rename')
+
+      // update queries in local storage
       this.saveQueriesInLocalStorage()
+
+      // update tab, if renamed query is opened
       const tabIndex = this.findTabIndex(currentQuery.id)
       if (tabIndex >= 0) {
-        this.$store.commit('updateTabName', { index: tabIndex, newName: this.newName })
+        this.$store.commit('updateTab', {
+          index: tabIndex,
+          name: this.newName,
+          id: currentQuery.id
+        })
       }
+      // hide dialog
+      this.$modal.hide('rename')
     },
     duplicateQuery (index) {
       const newQuery = JSON.parse(JSON.stringify(this.showedQueries[index]))
       newQuery.name = newQuery.name + ' Copy'
       newQuery.id = nanoid()
       newQuery.createdAt = new Date()
-      this.queries.push(newQuery)
+      delete newQuery.isPredefined
       if (this.selectAll) {
         this.selectedQueriesIds.add(newQuery.id)
         this.selectedQueriesCount = this.selectedQueriesIds.size
       }
+      this.queries.push(newQuery)
       this.saveQueriesInLocalStorage()
     },
     showDeleteDialog (id) {
@@ -286,22 +326,18 @@ export default {
 
       // single operation
       if (typeof index === 'number') {
-        console.log('single')
         data = JSON.parse(JSON.stringify(this.showedQueries[index]))
         name = data.name
-        delete data.id
-        delete data.createdAt
+        delete data.isPredefined
       } else {
         // group operation
         data = this.selectAll
-          ? JSON.parse(JSON.stringify(this.queries))
-          : this.queries.filter(query => this.selectedQueriesIds.has(query.id))
+          ? JSON.parse(JSON.stringify(this.allQueries))
+          : this.allQueries.filter(query => this.selectedQueriesIds.has(query.id))
         name = 'My sqliteviz queries'
-        data.forEach(query => {
-          delete query.id
-          delete query.createdAt
-        })
+        data.forEach(query => delete query.isPredefined)
       }
+
       // export data to file
       const downloader = this.$refs.downloader
       const json = JSON.stringify(data, null, 4)
@@ -323,13 +359,18 @@ export default {
         }
 
         importedQueries.forEach(query => {
-          query.id = nanoid()
-          query.createdAt = new Date()
-          if (this.selectAll) {
-            this.selectedQueriesIds.add(query.id)
-            this.selectedQueriesCount = this.selectedQueriesIds.size
+          const allQueriesIds = this.allQueries.map(query => query.id)
+          if (new Set(allQueriesIds).has(query.id)) {
+            query.id = nanoid()
           }
         })
+
+        if (this.selectAll) {
+          importedQueries.forEach(query => {
+            this.selectedQueriesIds.add(query.id)
+          })
+          this.selectedQueriesCount = this.selectedQueriesIds.size
+        }
 
         this.queries = this.queries.concat(importedQueries)
         this.saveQueriesInLocalStorage()
@@ -343,18 +384,30 @@ export default {
     toggleSelectAll (checked) {
       this.selectAll = checked
       this.$refs.rowCheckBox.forEach(item => { item.checked = checked })
-      this.selectedQueriesIds = checked ? new Set(this.queries.map(query => query.id)) : new Set()
+
+      this.selectedQueriesIds = checked
+        ? new Set(this.allQueries.map(query => query.id))
+        : new Set()
+
       this.selectedQueriesCount = this.selectedQueriesIds.size
+      this.selectedNotPredefinedCount = checked ? this.queries.length : 0
     },
     toggleRow (checked, id) {
+      const isPredefined = this.predefinedQueriesIds.has(id)
       if (checked) {
         this.selectedQueriesIds.add(id)
+        if (!isPredefined) {
+          this.selectedNotPredefinedCount += 1
+        }
       } else {
-        if (this.selectedQueriesIds.size === this.queries.length) {
+        if (this.selectedQueriesIds.size === this.allQueries.length) {
           this.$refs.mainCheckBox.checked = false
           this.selectAll = false
         }
         this.selectedQueriesIds.delete(id)
+        if (!isPredefined) {
+          this.selectedNotPredefinedCount -= 1
+        }
       }
       this.selectedQueriesCount = this.selectedQueriesIds.size
     }
@@ -413,6 +466,7 @@ tbody .cell-data {
   display: flex;
   align-items: center;
   max-width: 100%;
+  width: 100%;
 }
 tbody .cell-data div.name {
   overflow: hidden;
@@ -438,6 +492,7 @@ tbody tr:hover td {
 
 .icons-container {
   display: none;
+  margin-right: -12px;
 }
 .date-container {
   flex-shrink: 1;
@@ -457,11 +512,34 @@ a, #import-file {
 button.toolbar {
   margin-right: 16px;
 }
+
 button label {
   display: block;
   line-height: 36px;
 }
+
 button label:hover {
   cursor: pointer;
+}
+
+.badge {
+  display: none;
+  background-color: var(--color-gray-light-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-small);
+  padding: 2px 6px;
+  font-size: 11px;
+  line-height: normal;
+  margin-left: 12px;
+}
+
+tbody tr.predefined:hover .badge {
+  display: block;
+}
+#note {
+  margin-top: 24px;
+}
+#note img {
+  vertical-align: middle;
 }
 </style>

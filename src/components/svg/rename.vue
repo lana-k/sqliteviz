@@ -13,7 +13,7 @@ export default {
 <style scoped>
 .icon {
   vertical-align: middle;
-  margin: 0 12px 0 6px;
+  margin: 0 12px;
 }
 
 .icon:hover path {

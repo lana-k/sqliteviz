@@ -1,0 +1,47 @@
+{
+    "query": "select * from invoices",
+    "chart": {
+        "data": [
+            {
+                "type": "scatter",
+                "mode": "lines",
+                "x": null,
+                "xsrc": "InvoiceId",
+                "meta": {
+                    "columnNames": {
+                        "x": "InvoiceId",
+                        "y": "Total"
+                    }
+                },
+                "y": null,
+                "ysrc": "Total"
+            }
+        ],
+        "layout": {
+            "xaxis": {
+                "range": [
+                    1,
+                    412
+                ],
+                "autorange": true,
+                "type": "linear"
+            },
+            "yaxis": {
+                "range": [
+                    -0.39166666666666683,
+                    27.241666666666667
+                ],
+                "autorange": true,
+                "type": "linear"
+            },
+            "autosize": true,
+            "mapbox": {
+                "style": "open-street-map"
+            }
+        },
+        "frames": []
+    },
+    "name": "Invoices",
+    "id": "ieZfcITwDUTADwOmQlYyL",
+    "createdAt": "2020-11-03T14:17:49.524Z"
+}
