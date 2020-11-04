@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="schema-container">
     <text-field placeholder="Search table" width="100%"/>
     <div id="db">
       <div @click="schemaVisible = !schemaVisible" class="db-name">
@@ -77,6 +77,10 @@ export default {
 </script>
 
 <style scoped>
+#schema-container {
+  padding: 24px 12px;
+}
+
 .schema {
   margin-left: 12px;
 }
@@ -88,6 +92,7 @@ export default {
 #db {
   display: flex;
   align-items: center;
+  margin-top: 24px;
 }
 
 .db-name {
