@@ -1,6 +1,8 @@
 <template>
   <div id="schema-container">
-    <text-field placeholder="Search table" width="100%"/>
+    <div id="schema-filter">
+      <text-field placeholder="Search table" width="100%"/>
+    </div>
     <div id="db">
       <div @click="schemaVisible = !schemaVisible" class="db-name">
         <svg
@@ -78,11 +80,24 @@ export default {
 
 <style scoped>
 #schema-container {
-  padding: 24px 12px;
+  position: relative;
+  padding-bottom: 24px;
 }
 
 .schema {
   margin-left: 12px;
+  padding: 0 12px;
+}
+#schema-filter {
+  padding: 32px 12px;
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  width: 100%;
+  height: 100px;
+  box-sizing: border-box;
+  background-image: linear-gradient(white 73%, transparent);;
+  z-index: 2;
 }
 .schema, .db-name {
   color: var(--color-text-base);
@@ -92,7 +107,8 @@ export default {
 #db {
   display: flex;
   align-items: center;
-  margin-top: 24px;
+  margin-top: -5px;
+  padding: 0 12px;
 }
 
 .db-name {
