@@ -15,30 +15,18 @@
       fill="#A2B1C6"
     />
   </svg>
-  <span class="db-edit-tooltip" :style="tooltipStyle">
+  <span class="icon-tooltip" :style="tooltipStyle">
     Change database
   </span>
 </div>
 </template>
 
 <script>
+import tooltipMixin from '@/mixins/tooltips'
+
 export default {
   name: 'changeDbIcon',
-  data () {
-    return {
-      tooltipStyle: {}
-    }
-  },
-  methods: {
-    showTooltip (e) {
-      this.tooltipStyle = {
-        visibility: 'visible',
-        position: 'fixed',
-        top: e.clientY - 12 + 'px',
-        left: e.clientX + 12 + 'px'
-      }
-    }
-  }
+  mixins: [tooltipMixin]
 }
 </script>
 
@@ -49,22 +37,5 @@ export default {
 }
 .db-edit-icon:hover path {
   fill: var(--color-accent);
-}
-.db-edit-tooltip {
-  visibility: hidden;
-  background-color: rgba(80, 103, 132, 0.75);
-  color: #fff;
-  text-align: center;
-  font-size: 11px;
-  padding: 0 6px;
-  line-height: 19px;;
-  position: fixed;
-  z-index: 5;
-  height: 19px;
-  left: 100px;
-  top: 100px;
-  border-radius: var(--border-radius-medium);
-  white-space: nowrap;
-  z-index: 999;
 }
 </style>

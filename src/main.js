@@ -10,6 +10,7 @@ import '@/assets/styles/variables.css'
 import '@/assets/styles/buttons.css'
 import '@/assets/styles/tables.css'
 import '@/assets/styles/dialogs.css'
+import '@/assets/styles/tooltips.css'
 
 Vue.use(VuePlugin)
 Vue.use(VModal)

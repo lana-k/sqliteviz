@@ -66,7 +66,17 @@
                       @click="toggleRow($event, query.id)"
                     />
                     <div class="name">{{ query.name }}</div>
-                    <div class="badge">Predefined</div>
+                    <div
+                      class="badge"
+                      @mouseover="showTooltip"
+                      @mouseout="$set(tooltipStyle, 'visibility', 'hidden')"
+                    >
+                      Predefined
+                      <span class="icon-tooltip" :style="tooltipStyle">
+                        Predefined queries come from the server.
+                        These queries can’t be deleted or renamed.
+                      </span>
+                    </div>
                  </div>
               </td>
               <td>
@@ -150,6 +160,7 @@ import DeleteIcon from '@/components/svg/delete'
 import CloseIcon from '@/components/svg/close'
 import TextField from '@/components/TextField'
 import CheckBox from '@/components/CheckBox'
+import tooltipMixin from '@/mixins/tooltips'
 import { nanoid } from 'nanoid'
 
 export default {
@@ -163,6 +174,7 @@ export default {
     TextField,
     CheckBox
   },
+  mixins: [tooltipMixin],
   data () {
     return {
       queries: [],
@@ -541,5 +553,13 @@ tbody tr.predefined:hover .badge {
 }
 #note img {
   vertical-align: middle;
+}
+.icon-tooltip {
+  display: block;
+  width: 149px;
+  white-space: normal;
+  height: auto;
+  line-height: normal;
+  padding: 6px;
 }
 </style>
