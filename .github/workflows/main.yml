@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages and create release
 on:
   workflow_dispatch:
   push:
