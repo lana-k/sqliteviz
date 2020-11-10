@@ -23,7 +23,7 @@ jobs:
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-        artifact: "dist"
+        artifacts: "dist"
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Deploy 🚀
