@@ -20,10 +20,13 @@ jobs:
         npm install
         npm run build
 
+    - name: Create archive
+      run: zip -9 -r  dist.zip . -x "js/*.map"
+
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "dist"
+        artifacts: "dist.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Deploy 🚀
