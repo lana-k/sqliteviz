@@ -81,6 +81,7 @@ export default {
 #tabs-container {
   position: relative;
   height: 100%;
+  background-color: var(--color-bg-light);
 }
 #tabs__header {
   display: flex;
@@ -119,18 +120,10 @@ export default {
   color: var(--color-text-active);
   font-weight: 600;
   border-bottom: none;
+  background-color: var(--color-white);
 }
 #tabs__header .tab__selected:hover {
     cursor: default;
-}
-#tabs__header .tab__selected:before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 5px;
-  background-color: var(--color-accent);
-  top: 0;
-  left: 0;
 }
 
 .close-icon {

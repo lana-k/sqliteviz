@@ -148,13 +148,14 @@ export default {
 <style scoped>
 .tab-content-container {
   padding-top: 6px;
-  background-color: var(--color-bg-light);
+  background-color: var(--color-white);
   border-top: 1px solid var(--color-border-light);
   margin-top: -1px;
 }
 
 #bottomPane {
   height: 100%;
+  background-color: var(--color-bg-light);
 }
 
 .query-results-splitter {
@@ -163,7 +164,6 @@ export default {
 }
 
 .query-editor {
-  padding: 52px;
   display: flex;
   flex-direction: column;
   height: 100%;

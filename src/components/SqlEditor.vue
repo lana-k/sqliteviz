@@ -74,8 +74,6 @@ export default {
   max-height: 100%;
 }
 >>> .CodeMirror {
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-big);
   height: 100%;
   max-height: 100%;
 }

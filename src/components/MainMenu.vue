@@ -171,6 +171,7 @@ nav {
   align-items: center;
   background-color: var(--color-bg-light);
   border-bottom: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-1);
   box-sizing: border-box;
   position: fixed;
   top: 0;

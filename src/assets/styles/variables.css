@@ -31,6 +31,7 @@
   --color-text-error: var(--color-red);
 
   --shadow: 0 1px 2px rgba(42, 63, 95, 0.7);
+  --shadow-1: 0 2px 9px rgba(80, 103, 132, 0.2);
 
   --border-radius-big: 5px;
   --border-radius-medium: 3px;
