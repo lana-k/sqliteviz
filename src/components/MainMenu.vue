@@ -6,15 +6,15 @@
     </div>
     <div>
       <button
-        v-if="$store.state.tabs.length > 0"
+        v-if="currentQuery"
         class="primary"
-        :disabled="currentQuery && !$store.state.schema || !currentQuery.query"
+        :disabled="currentQuery && (!$store.state.schema || !currentQuery.query)"
         @click="currentQuery.execute"
       >
         Run
       </button>
       <button
-        v-if="$store.state.tabs.length > 0"
+        v-if="currentQuery"
         class="primary"
         :disabled="currentQuery && !currentQuery.isUnsaved"
         @click="checkQueryBeforeSave"

@@ -13,6 +13,19 @@ import 'codemirror/theme/neo.css'
 import 'codemirror/addon/hint/show-hint.js'
 import 'codemirror/addon/hint/show-hint.css'
 import 'codemirror/addon/hint/sql-hint.js'
+import { debounce } from 'debounce'
+
+const sqlHint = CM.hint.sql
+CM.hint.sql = (cm, options) => {
+  const token = cm.getTokenAt(cm.getCursor()).string
+  const result = sqlHint(cm, options)
+  // Don't show the hint if there is only one option
+  // and the token is already completed with this option
+  if (result.list.length === 1 && result.list[0].text === token) {
+    result.list = []
+  }
+  return result
+}
 
 export default {
   name: 'SqlEditor',
@@ -30,8 +43,7 @@ export default {
         theme: 'neo',
         lineNumbers: true,
         line: true
-      },
-      result: null
+      }
     }
   },
   watch: {
@@ -40,25 +52,23 @@ export default {
     }
   },
   methods: {
-    onCmChange (editor) {
-      // Don't show autocomplete after a space or semicolon
+    onCmChange: debounce((editor) => {
+      // Don't show autocomplete after a space or semicolon or in string literals
       const ch = editor.getTokenAt(editor.getCursor()).string.slice(-1)
-      if (!ch || ch === ' ' || ch === ';') {
+      const tokenType = editor.getTokenAt(editor.getCursor()).type
+      if (tokenType === 'string' || !ch || ch === ' ' || ch === ';') {
         return
       }
 
       const hintOptions = {
-      //   tables: this.state.tables,
+      //   tables: {table: [col1, col2], table2: [colA, colB]},
         completeSingle: false,
-        completeOnSingleClick: true
+        completeOnSingleClick: true,
+        alignWithWord: false
       }
 
-      // editor.hint.sql is defined when importing codemirror/addon/hint/sql-hint
-      // (this is mentioned in codemirror addon documentation)
-      // Reference the hint function imported here when including other hint addons
-      // or supply your own
       CM.showHint(editor, CM.hint.sql, hintOptions)
-    }
+    }, 400)
   }
 }
 </script>
