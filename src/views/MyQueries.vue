@@ -1,6 +1,12 @@
 <template>
   <div>
-    <div id="my-queries-content">
+    <div id="start-guide" v-if="showedQueries.length === 0">
+      You don't have saved queries so far.
+      <span class="link" @click="create">Create</span>
+      the one from scratch or
+      <label for="import-file" class="link">import</label> from a file.
+    </div>
+    <div id="my-queries-content" v-show="showedQueries.length > 0">
       <div id="my-queries-toolbar">
         <div id="toolbar-buttons">
           <input
@@ -10,11 +16,11 @@
             id="import-file"
             @change="importQueries"
           />
-            <button class="toolbar">
-              <label for="import-file">
-                Import
-              </label>
-            </button>
+          <button class="toolbar">
+            <label for="import-file">
+              Import
+            </label>
+          </button>
           <button
             class="toolbar"
             v-show="selectedQueriesCount > 0"
@@ -244,7 +250,12 @@ export default {
   },
   methods: {
     calcNameWidth () {
-      this.$refs['name-th'].style = `width: ${this.$refs['name-td'][0].offsetWidth}px`
+      const nameWidth = this.$refs['name-td'] ? this.$refs['name-td'][0].offsetWidth : 0
+      this.$refs['name-th'].style = `width: ${nameWidth}px`
+    },
+    create () {
+      this.$root.$emit('createNewQuery')
+      this.$router.push('/editor')
     },
     openQuery (index) {
       const tab = JSON.parse(JSON.stringify(this.showedQueries[index]))
@@ -428,6 +439,16 @@ export default {
 </script>
 
 <style scoped>
+#start-guide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--color-text-base);
+  font-size: 14px;
+  text-align: center;
+}
+
 #my-queries-content {
   padding: 52px;
 }
