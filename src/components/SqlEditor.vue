@@ -17,11 +17,11 @@ import { debounce } from 'debounce'
 
 const sqlHint = CM.hint.sql
 CM.hint.sql = (cm, options) => {
-  const token = cm.getTokenAt(cm.getCursor()).string
+  const token = cm.getTokenAt(cm.getCursor()).string.toUpperCase()
   const result = sqlHint(cm, options)
   // Don't show the hint if there is only one option
   // and the token is already completed with this option
-  if (result.list.length === 1 && result.list[0].text === token) {
+  if (result.list.length === 1 && result.list[0].text.toUpperCase() === token) {
     result.list = []
   }
   return result
@@ -46,13 +46,24 @@ export default {
       }
     }
   },
+  computed: {
+    tables () {
+      const tables = {}
+      if (this.$store.state.schema) {
+        this.$store.state.schema.forEach(table => {
+          tables[table.name] = table.columns.map(column => column.name)
+        })
+      }
+      return tables
+    }
+  },
   watch: {
     query () {
       this.$emit('input', this.query)
     }
   },
   methods: {
-    onCmChange: debounce((editor) => {
+    onCmChange: debounce(function (editor) {
       // Don't show autocomplete after a space or semicolon or in string literals
       const ch = editor.getTokenAt(editor.getCursor()).string.slice(-1)
       const tokenType = editor.getTokenAt(editor.getCursor()).type
@@ -61,7 +72,7 @@ export default {
       }
 
       const hintOptions = {
-      //   tables: {table: [col1, col2], table2: [colA, colB]},
+        tables: this.tables,
         completeSingle: false,
         completeOnSingleClick: true,
         alignWithWord: false

@@ -1,7 +1,45 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import sqliteParser from 'sqlite-parser'
 
 Vue.use(Vuex)
+
+function getAst (sql) {
+  // There is a bug is sqlite-parser
+  // It throws an error if tokenizer has an arguments:
+  // https://github.com/codeschool/sqlite-parser/issues/59
+  const fixedSql = sql
+    .replace(/(?<=tokenize=.+)"tokenchars=.+"/, '')
+    .replace(/(?<=tokenize=.+)"remove_diacritics=.+"/, '')
+    .replace(/(?<=tokenize=.+)"separators=.+"/, '')
+    .replace(/tokenize=.+(?=(,|\)))/, 'tokenize=unicode61')
+
+  return sqliteParser(fixedSql)
+}
+
+function getColumns (sql) {
+  const columns = []
+  const ast = getAst(sql)
+
+  const columnDefinition = ast.statement[0].format === 'table'
+    ? ast.statement[0].definition
+    : ast.statement[0].result.args.expression // virtual table
+
+  columnDefinition.forEach(item => {
+    if (item.variant === 'column' && ['identifier', 'definition'].includes(item.type)) {
+      let type = item.datatype ? item.datatype.variant : 'N/A'
+      if (item.datatype && item.datatype.args) {
+        type = type + '(' + item.datatype.args.expression[0].value
+        if (item.datatype.args.expression.length === 2) {
+          type = type + ', ' + item.datatype.args.expression[1].value
+        }
+        type = type + ')'
+      }
+      columns.push({ name: item.name, type: type })
+    }
+  })
+  return columns
+}
 
 export default new Vuex.Store({
   state: {
@@ -16,7 +54,14 @@ export default new Vuex.Store({
   },
   mutations: {
     saveSchema (state, schema) {
-      state.schema = schema
+      const parsedSchema = []
+      schema.forEach(item => {
+        parsedSchema.push({
+          name: item[0],
+          columns: getColumns(item[1])
+        })
+      })
+      state.schema = parsedSchema
     },
     saveDbFile (state, file) {
       state.dbFile = file

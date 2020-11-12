@@ -27,50 +27,13 @@
 </template>
 
 <script>
-import sqliteParser from 'sqlite-parser'
 
 export default {
   name: 'TableDescription',
-  props: ['name', 'sql'],
+  props: ['name', 'columns'],
   data () {
     return {
       colVisible: false
-    }
-  },
-  computed: {
-    ast () {
-      // There is a bug is sqlite-parser
-      // It throws an error if tokenizer has an arguments:
-      // https://github.com/codeschool/sqlite-parser/issues/59
-      const fixedSql = this.sql
-        .replace(/(?<=tokenize=.+)"tokenchars=.+"/, '')
-        .replace(/(?<=tokenize=.+)"remove_diacritics=.+"/, '')
-        .replace(/(?<=tokenize=.+)"separators=.+"/, '')
-        .replace(/tokenize=.+(?=(,|\)))/, 'tokenize=unicode61')
-
-      return sqliteParser(fixedSql)
-    },
-    columns () {
-      const columns = []
-
-      const columnDefinition = this.ast.statement[0].format === 'table'
-        ? this.ast.statement[0].definition
-        : this.ast.statement[0].result.args.expression // virtual table
-
-      columnDefinition.forEach(item => {
-        if (item.variant === 'column' && ['identifier', 'definition'].includes(item.type)) {
-          let type = item.datatype ? item.datatype.variant : 'N/A'
-          if (item.datatype && item.datatype.args) {
-            type = type + '(' + item.datatype.args.expression[0].value
-            if (item.datatype.args.expression.length === 2) {
-              type = type + ', ' + item.datatype.args.expression[1].value
-            }
-            type = type + ')'
-          }
-          columns.push({ name: item.name, type: type })
-        }
-      })
-      return columns
     }
   }
 }

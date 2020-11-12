@@ -31,9 +31,9 @@
     <div v-if="schemaVisible" class="schema">
       <table-description
         v-for="table in schema"
-        :key="table[0]"
-        :name="table[0]"
-        :sql="table[1]"
+        :key="table.name"
+        :name="table.name"
+        :columns="table.columns"
       />
     </div>
   </div>
