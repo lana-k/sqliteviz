@@ -88,11 +88,11 @@ export default {
       const translation = 'translate(-50%, -50%)'
       if (this.horizontal) {
         return {
-          transform: `${translation} ${this.expanded ? 'rotate(-90deg)' : 'rotate(90deg)'}`
+          transform: `${translation} ${this.expanded ? 'rotate(90deg)' : 'rotate(-90deg)'}`
         }
       } else {
         return {
-          transform: `${translation} ${this.expanded ? 'rotate(180deg)' : ''}`
+          transform: `${translation} ${this.expanded ? 'rotate(0deg)' : 'rotate(180deg)'}`
         }
       }
     }
@@ -248,11 +248,21 @@ export default {
 
 .splitpanes__splitter {
   touch-action: none;
-  background-color: var(--color-bg-light-2);
+  background-color: var(--color-bg-light);
   box-sizing: border-box;
   position: relative;
   flex-shrink: 0;
   z-index: 1;
+}
+
+.splitpanes--horizontal > .splitpanes__splitter {
+  border-top: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.splitpanes--vertical > .splitpanes__splitter {
+  border-left: 1px solid var(--color-border-light);
+  border-right: 1px solid var(--color-border-light);
 }
 
 .movable-splitter {
@@ -262,23 +272,25 @@ export default {
 
 .splitpanes--vertical > .splitpanes__splitter,
 .splitpanes--vertical .movable-splitter {
-  width: 3px;
+  width: 8px;
   z-index: 5;
   height: 100%
 }
 
 .splitpanes--horizontal > .splitpanes__splitter,
 .splitpanes--horizontal .movable-splitter {
-  height: 3px;
+  height: 8px;
   width: 100%;
 }
 .splitpanes__splitter .toggle-btn {
-  background-color: var(--color-bg-light-2);
+  background-color: var(--color-border-light);
   border-radius: var(--border-radius-small);
+  border: 1px solid var(--color-border);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  box-sizing: border-box;
 }
 
 .splitpanes__splitter .toggle-btn:hover {
@@ -286,12 +298,12 @@ export default {
 }
 
 .splitpanes--vertical .toggle-btn {
-  height: 68px;
-  width: 15px;
+  height: 49px;
+  width: 8px;
 }
 .splitpanes--horizontal .toggle-btn {
-  width: 68px;
-  height: 15px;
+  width: 49px;
+  height: 8px;
 }
 .splitpanes__splitter .toggle-btn .direction-icon {
   position: absolute;

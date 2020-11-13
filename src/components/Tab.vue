@@ -147,7 +147,6 @@ export default {
 
 <style scoped>
 .tab-content-container {
-  padding-top: 6px;
   background-color: var(--color-white);
   border-top: 1px solid var(--color-border-light);
   margin-top: -1px;
