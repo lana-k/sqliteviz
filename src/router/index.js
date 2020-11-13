@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Editor from '../views/Editor'
 import MyQueries from '../views/MyQueries'
-import DbUpload from '../views/DbUpload'
+import Home from '../views/Home'
 import MainView from '../views/MainView'
 
 Vue.use(VueRouter)
@@ -11,7 +11,7 @@ const routes = [
   {
     path: '/',
     name: 'Welcome',
-    component: DbUpload
+    component: Home
   },
   {
     path: '/',

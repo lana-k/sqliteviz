@@ -1,21 +1,7 @@
 <template>
   <div id="dbloader-container">
     <h1>Sqliteviz</h1>
-    <label for="assetsFieldHandle">
-      <div id="drop-area" @dragover="dragover" @dragleave="dragleave" @drop="drop">
-        <input
-          type="file"
-          id="assetsFieldHandle"
-          @change="loadDb"
-          ref="file"
-          accept=".db"
-        />
-        <div>
-          Drop the database file to upload here or click to choose a file from your computer.
-        </div>
-      </div>
-    </label>
-    <div id="error" class="error"></div>
+    <db-upload />
     <button id ="skip" class="secondary" @click="$router.push('/editor')">
       Skip database connection for now
     </button>
@@ -23,8 +9,11 @@
 </template>
 
 <script>
+import dbUpload from '@/components/DbUpload'
+
 export default {
-  name: 'DbUpload',
+  name: 'Home',
+  components: { dbUpload },
   methods: {
     loadDb () {
       this.$db.loadDb(this.$refs.file.files[0])
@@ -63,31 +52,19 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
 h1 {
   color: var(--color-accent);
 }
-label {
-  display: inline-block;
-  border: 1px dashed var(--color-border);
-  padding: 8px;
-  border-radius: var(--border-radius-big);
-}
-#drop-area {
-  width: 628px;
-  height: 490px;
-  background-color: var(--color-bg-light-3);
-  border-radius: var(--border-radius-big);
-  color: var(--color-text-base);
-  font-size: 13px;
-  padding: 200px 144px;
-  text-align: center;
-  box-sizing: border-box;
-}
-input {
-  display: none;
-}
+
 #skip {
   position: absolute;
   bottom: 50px;
+}
+
+>>>.drop-area {
+  width: 628px;
+  height: 490px;
+  padding: 0 150px;
 }
 </style>
