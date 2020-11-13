@@ -56,6 +56,8 @@ label {
   border: 1px dashed var(--color-border);
   padding: 8px;
   border-radius: var(--border-radius-big);
+  height: 100%;
+  box-sizing: border-box;
 }
 .drop-area {
   background-color: var(--color-bg-light-3);
@@ -67,6 +69,7 @@ label {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
 }
 input {
   display: none;

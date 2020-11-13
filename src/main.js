@@ -11,6 +11,7 @@ import '@/assets/styles/buttons.css'
 import '@/assets/styles/tables.css'
 import '@/assets/styles/dialogs.css'
 import '@/assets/styles/tooltips.css'
+import '@/assets/styles/messages.css'
 
 Vue.use(VuePlugin)
 Vue.use(VModal)
