@@ -91,14 +91,17 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 .chart-container {
   height: calc(100% - 89px);
 }
+
 .chart-warning {
   height: 40px;
   line-height: 40px;
 }
+
 .chart {
   border-top: 1px solid var(--color-border);
   min-height: 242px;
@@ -106,22 +109,5 @@ export default {
 
 >>> .editor_controls .sidebar__item:before {
   width: 0;
-}
-
->>> .sidebar {
-  width: 120px;
-  min-width: 120px;
-  max-width: 120px;
-}
-
->>> .editor_controls__wrapper>.panel,
->>> .editor_controls .panel__empty {
-  width: 315px;
-}
->>> .editor_controls .sidebar__group__title {
-  padding-left: 10px;
-}
->>> .editor_controls .sidebar__item {
-  padding-left: 32px;
 }
 </style>
