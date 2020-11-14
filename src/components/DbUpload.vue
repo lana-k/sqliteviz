@@ -7,7 +7,7 @@
           id="assetsFieldHandle"
           @change="loadDb"
           ref="file"
-          accept=".db"
+          accept=".db,.sqlite,.sqlite3"
         />
         <div>
           Drop the database file to upload here or click to choose a file from your computer.

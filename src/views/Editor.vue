@@ -8,7 +8,7 @@
       <template #left-pane>
         <schema v-if="$store.state.schema"/>
         <div v-else id="empty-schema-container">
-          <div class="worning">
+          <div class="warning">
             Database is not uploaded. Queries can’t be run without database.
           </div>
           <db-upload id="db-uploader"/>
@@ -56,7 +56,7 @@ export default {
   margin: 24px;
 }
 
-.worning {
+.warning {
   padding: 12px 24px;
 }
 

@@ -1,6 +1,6 @@
 <template>
 <div v-show="visible" class="chart-container">
-  <div class="worning chart-worning" v-show="!sqlResult && visible">
+  <div class="warning chart-warning" v-show="!sqlResult && visible">
     There is no data to build a chart. Run your sql query and make sure the result is not empty.
   </div>
   <PlotlyEditor
@@ -95,7 +95,7 @@ export default {
 .chart-container {
   height: calc(100% - 89px);
 }
-.chart-worning {
+.chart-warning {
   height: 40px;
   line-height: 40px;
 }
