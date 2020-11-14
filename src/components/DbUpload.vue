@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="db-upload-container">
     <label for="assetsFieldHandle">
       <div class="drop-area" @dragover="dragover" @dragleave="dragleave" @drop="drop">
         <input
@@ -9,7 +9,7 @@
           ref="file"
           accept=".db,.sqlite,.sqlite3"
         />
-        <div>
+        <div class="text">
           Drop the database file to upload here or click to choose a file from your computer.
         </div>
       </div>
@@ -57,8 +57,10 @@ label {
   padding: 8px;
   border-radius: var(--border-radius-big);
   height: 100%;
+  width: 100%;
   box-sizing: border-box;
 }
+
 .drop-area {
   background-color: var(--color-bg-light-3);
   border-radius: var(--border-radius-big);
@@ -71,6 +73,7 @@ label {
   justify-content: center;
   height: 100%;
 }
+
 input {
   display: none;
 }

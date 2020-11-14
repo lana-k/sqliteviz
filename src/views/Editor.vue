@@ -53,14 +53,26 @@ export default {
 
 #db-uploader {
   flex-grow: 1;
-  margin: 24px;
+  padding: 24px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .warning {
   padding: 12px 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+>>> .db-upload-container {
+  width: 100%;
 }
 
 >>>.drop-area {
   padding: 0 15px;
+}
+
+>>>.drop-area .text {
+  max-width: 200px;
 }
 </style>
