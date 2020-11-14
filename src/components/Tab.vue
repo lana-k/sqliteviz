@@ -3,7 +3,7 @@
     <splitpanes
       class="query-results-splitter"
       horizontal
-      :before="{ size: 50, max: 70 }"
+      :before="{ size: 50, max: 100 }"
       :after="{ size: 50, max: 100 }"
     >
       <template #left-pane>
@@ -158,7 +158,7 @@ export default {
 }
 
 .query-results-splitter {
-  height: calc(100vh - 110px);
+  height: calc(100vh - 104px);
   background-color: var(--color-bg-light);
 }
 

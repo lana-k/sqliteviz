@@ -13,7 +13,7 @@
       ref="left"
       :size="paneBefore.size"
       max-size="30"
-      :style="styles[0]"
+      :style="styles.before"
     >
       <slot name="left-pane" />
     </div>
@@ -23,19 +23,41 @@
       @mousedown="onMouseDown"
       @touchstart="onMouseDown"
     >
-      <div class="toggle-btn" @click="toggleFirstPane">
-        <img
-          class="direction-icon"
-          :src="require('@/assets/images/chevron.svg')"
-          :style="directionIconStyle"
+      <div
+        :class="[
+          'toggle-btns',
+          {'both': after.max === 100 && before.max === 100 && after.size > 0 && before.size > 0}
+        ]"
+      >
+        <div
+          v-if="after.max === 100  && after.size > 0"
+          class="toggle-btn"
+          @click="togglePane('before')"
         >
+          <img
+            class="direction-icon"
+            :src="require('@/assets/images/chevron.svg')"
+            :style="directionBeforeIconStyle"
+          >
+        </div>
+        <div
+          v-if="before.max === 100 && before.size > 0"
+          class="toggle-btn"
+          @click="togglePane('after')"
+        >
+          <img
+            class="direction-icon"
+            :src="require('@/assets/images/chevron.svg')"
+            :style="directionAfterIconStyle"
+          >
+        </div>
       </div>
     </div>
     <!-- splitter end -->
     <div
       class="splitpanes__pane"
       ref="right"
-      :style="styles[1]"
+      :style="styles.after"
     >
       <slot name="right-pane" />
     </div>
@@ -56,7 +78,10 @@ export default {
       container: null,
       paneBefore: this.before,
       paneAfter: this.after,
-      beforeMinimising: this.before.size,
+      beforeMinimising: {
+        before: this.before.size,
+        after: this.after.size
+      },
       touch: {
         mouseDown: false,
         dragging: false
@@ -70,10 +95,10 @@ export default {
   },
   computed: {
     styles () {
-      return [
-        { [this.horizontal ? 'height' : 'width']: `${this.paneBefore.size}%` },
-        { [this.horizontal ? 'height' : 'width']: `${this.paneAfter.size}%` }
-      ]
+      return {
+        before: { [this.horizontal ? 'height' : 'width']: `${this.paneBefore.size}%` },
+        after: { [this.horizontal ? 'height' : 'width']: `${this.paneAfter.size}%` }
+      }
     },
     movableSplitterStyle () {
       const style = { ...this.movableSplitter }
@@ -81,18 +106,29 @@ export default {
       style.left += '%'
       return style
     },
-    expanded () {
-      return this.paneBefore.size !== 0
-    },
-    directionIconStyle () {
+    directionBeforeIconStyle () {
+      const expanded = this.paneBefore.size !== 0
       const translation = 'translate(-50%, -50%)'
       if (this.horizontal) {
         return {
-          transform: `${translation} ${this.expanded ? 'rotate(90deg)' : 'rotate(-90deg)'}`
+          transform: `${translation} ${expanded ? 'rotate(90deg)' : 'rotate(-90deg)'}`
         }
       } else {
         return {
-          transform: `${translation} ${this.expanded ? 'rotate(0deg)' : 'rotate(180deg)'}`
+          transform: `${translation} ${expanded ? 'rotate(0deg)' : 'rotate(180deg)'}`
+        }
+      }
+    },
+    directionAfterIconStyle () {
+      const expanded = this.paneAfter.size !== 0
+      const translation = 'translate(-50%, -50%)'
+      if (this.horizontal) {
+        return {
+          transform: `${translation} ${expanded ? 'rotate(-90deg)' : 'rotate(90deg)'}`
+        }
+      } else {
+        return {
+          transform: `${translation} ${expanded ? 'rotate(180deg)' : 'rotate(0deg)'}`
         }
       }
     }
@@ -202,14 +238,18 @@ export default {
         this.$set(this.movableSplitter, dir, Math.min(Math.max(dragPercentage, 0), paneBefore.max))
       }
     },
-    toggleFirstPane () {
-      if (this.paneBefore.size > 0) {
-        this.beforeMinimising = this.paneBefore.size
-        this.paneBefore.size = 0
+    togglePane (toggledPane) {
+      const pane = toggledPane === 'before' ? this.paneBefore : this.paneAfter
+      if (pane.size > 0) {
+        this.beforeMinimising.before = this.paneBefore.size
+        this.beforeMinimising.after = this.paneAfter.size
+        pane.size = 0
+        const otherPane = toggledPane === 'before' ? this.paneAfter : this.paneBefore
+        otherPane.size = 100 - pane.size
       } else {
-        this.paneBefore.size = this.beforeMinimising
+        this.paneBefore.size = this.beforeMinimising.before
+        this.paneAfter.size = this.beforeMinimising.after
       }
-      this.paneAfter.size = 100 - this.paneBefore.size
     }
   },
   mounted () {
@@ -271,43 +311,75 @@ export default {
 }
 
 .splitpanes--vertical > .splitpanes__splitter,
-.splitpanes--vertical .movable-splitter {
+.splitpanes--vertical > .movable-splitter {
   width: 8px;
   z-index: 5;
   height: 100%
 }
 
 .splitpanes--horizontal > .splitpanes__splitter,
-.splitpanes--horizontal .movable-splitter {
+.splitpanes--horizontal > .movable-splitter {
   height: 8px;
   width: 100%;
+  z-index: 5;
 }
-.splitpanes__splitter .toggle-btn {
-  background-color: var(--color-border-light);
-  border-radius: var(--border-radius-small);
-  border: 1px solid var(--color-border);
+/* Toggle buttons */
+.toggle-btns {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  box-sizing: border-box;
+  display: flex;
 }
 
-.splitpanes__splitter .toggle-btn:hover {
+.splitpanes--vertical > .splitpanes__splitter .toggle-btns {
+  flex-direction: column;
+}
+
+.splitpanes--horizontal > .splitpanes__splitter .toggle-btns {
+  flex-direction: row;
+}
+
+.toggle-btn {
+  background-color: var(--color-border-light);
+  border-radius: var(--border-radius-small);
+  border: 1px solid var(--color-border);
+  box-sizing: border-box;
+  position: relative;
   cursor: pointer;
 }
 
-.splitpanes--vertical .toggle-btn {
+.splitpanes--vertical > .splitpanes__splitter .toggle-btn {
   height: 49px;
   width: 8px;
 }
-.splitpanes--horizontal .toggle-btn {
+
+.splitpanes--horizontal > .splitpanes__splitter .toggle-btn {
   width: 49px;
   height: 8px;
 }
-.splitpanes__splitter .toggle-btn .direction-icon {
+
+.toggle-btn .direction-icon {
   position: absolute;
   top: 50%;
   left: 50%;
+}
+
+.splitpanes--horizontal > .splitpanes__splitter .toggle-btns.both .toggle-btn:first-child {
+  border-radius: var(--border-radius-small) 0 0 var(--border-radius-small);
+}
+
+.splitpanes--horizontal > .splitpanes__splitter .toggle-btns.both .toggle-btn:last-child {
+  border-radius: 0 var(--border-radius-small) var(--border-radius-small) 0;
+  margin-left: -1px;
+}
+
+.splitpanes--vertical > .splitpanes__splitter .toggle-btns.both .toggle-btn:first-child {
+  border-radius: var(--border-radius-small) var(--border-radius-small) 0 0;
+}
+
+.splitpanes--vertical > .splitpanes__splitter .toggle-btns.both .toggle-btn:last-child {
+  border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
+  margin-top: -1px;
 }
 </style>
