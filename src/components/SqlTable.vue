@@ -83,7 +83,7 @@ export default {
       this.tableWidth = this.$refs['table-container'].offsetWidth
       this.$nextTick(() => {
         this.header = this.$refs.th.map(th => {
-          return { name: th.innerText, width: th.offsetWidth }
+          return { name: th.innerText, width: th.getBoundingClientRect().width }
         })
       })
     },

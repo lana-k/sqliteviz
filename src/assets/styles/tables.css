@@ -9,7 +9,7 @@
 .header-container {
   overflow: hidden;
   position: absolute;
-  top: -1px;;
+  top: -1px;
   left: -1px;
   width: calc(100% + 2px);
   padding-left: 7px;
@@ -18,10 +18,17 @@
   border-radius: 5px 5px 0 0;
 }
 
+@supports (-moz-appearance:none) {
+  .header-container {
+    top: 0;
+    padding-left: 6px;
+  }
+}
+
 .header-container > div {
   display: flex;
   width: fit-content;
-  padding-right: 10px;
+  padding-right: 30px;
 }
 .table-container {
   width: 100%;

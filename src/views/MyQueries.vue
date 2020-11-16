@@ -226,16 +226,17 @@ export default {
     this.queries = JSON.parse(localStorage.getItem('myQueries')) || []
   },
   mounted () {
-    this.resizeObserver = new ResizeObserver(() => {
-      this.calcNameWidth()
-      this.calcMaxTableHeight()
-    })
+    this.resizeObserver = new ResizeObserver(this.calcMaxTableHeight)
     this.resizeObserver.observe(this.$refs['my-queries-content'])
+
+    this.tableResizeObserver = new ResizeObserver(this.calcNameWidth)
+    this.tableResizeObserver.observe(this.$refs.table)
     this.calcNameWidth()
     this.calcMaxTableHeight()
   },
   beforeDestroy () {
     this.resizeObserver.unobserve(this.$refs['my-queries-content'])
+    this.tableResizeObserver.unobserve(this.$refs.table)
   },
   filters: {
     date (value) {
@@ -254,7 +255,9 @@ export default {
   },
   methods: {
     calcNameWidth () {
-      const nameWidth = this.$refs['name-td'] ? this.$refs['name-td'][0].offsetWidth : 0
+      const nameWidth = this.$refs['name-td']
+        ? this.$refs['name-td'][0].getBoundingClientRect().width
+        : 0
       this.$refs['name-th'].style = `width: ${nameWidth}px`
     },
     calcMaxTableHeight () {
@@ -382,8 +385,8 @@ export default {
     importQueries () {
       const file = this.$refs.importFile.files[0]
       const reader = new FileReader()
-      reader.onload = () => {
-        let importedQueries = JSON.parse(event.target.result)
+      reader.onload = (e) => {
+        let importedQueries = JSON.parse(e.target.result)
 
         if (!Array.isArray(importedQueries)) {
           importedQueries = [importedQueries]
