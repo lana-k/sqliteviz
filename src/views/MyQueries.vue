@@ -6,7 +6,7 @@
       the one from scratch or
       <label for="import-file" class="link">import</label> from a file.
     </div>
-    <div id="my-queries-content" v-show="showedQueries.length > 0">
+    <div id="my-queries-content" ref="my-queries-content" v-show="showedQueries.length > 0">
       <div id="my-queries-toolbar">
         <div id="toolbar-buttons">
           <input
@@ -53,8 +53,7 @@
         </div>
       </div>
       <div
-        class="table-container"
-        ref="table-container"
+        class="table-container" :style="{ 'max-height': `${maxTableHeight}px` }"
       >
         <table ref="table">
           <tbody>
@@ -193,7 +192,8 @@ export default {
       selectedNotPredefinedCount: 0,
       selectAll: false,
       deleteGroup: false,
-      resizeObserver: null
+      resizeObserver: null,
+      maxTableHeight: 0
     }
   },
   computed: {
@@ -226,12 +226,16 @@ export default {
     this.queries = JSON.parse(localStorage.getItem('myQueries')) || []
   },
   mounted () {
-    this.resizeObserver = new ResizeObserver(this.calcNameWidth)
-    this.resizeObserver.observe(this.$refs.table)
+    this.resizeObserver = new ResizeObserver(() => {
+      this.calcNameWidth()
+      this.calcMaxTableHeight()
+    })
+    this.resizeObserver.observe(this.$refs['my-queries-content'])
     this.calcNameWidth()
+    this.calcMaxTableHeight()
   },
   beforeDestroy () {
-    this.resizeObserver.unobserve(this.$refs.table)
+    this.resizeObserver.unobserve(this.$refs['my-queries-content'])
   },
   filters: {
     date (value) {
@@ -252,6 +256,10 @@ export default {
     calcNameWidth () {
       const nameWidth = this.$refs['name-td'] ? this.$refs['name-td'][0].offsetWidth : 0
       this.$refs['name-th'].style = `width: ${nameWidth}px`
+    },
+    calcMaxTableHeight () {
+      const freeSpace = this.$refs['my-queries-content'].offsetHeight - 200
+      this.maxTableHeight = freeSpace - (freeSpace % 40) + 1
     },
     create () {
       this.$root.$emit('createNewQuery')
@@ -451,6 +459,8 @@ export default {
 
 #my-queries-content {
   padding: 52px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 #my-queries-toolbar {
@@ -467,6 +477,9 @@ export default {
   max-width: 1500px;
   width: 100%;
 }
+.fixed-header {
+  padding: 11px 24px;
+}
 .fixed-header:first-child {
   display: flex;
   align-items: center;
@@ -475,13 +488,14 @@ export default {
 .fixed-header:first-child .name-th {
   margin-left: 24px;
 }
+
 table {
   margin-top: 0;
 }
 
 tbody tr td {
   min-width: 0;
-  line-height: 40px;
+  height: 40px;
 }
 
 tbody tr td:first-child {
