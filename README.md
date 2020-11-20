@@ -1,3 +1,13 @@
+<p align="center">
+   <img
+        srcset="src/assets/images/logo.png,
+                src/assets/images/logo@2x.png 2x,
+                src/assets/images/logo@3x.png 3x,
+                src/assets/images/logo@4x.png 4x"
+        src="src/assets/images/logo.png"
+   />
+</p>
+
 # sqliteviz
 
 **Note: This is a work-in-progress project.**
