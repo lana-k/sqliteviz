@@ -23,7 +23,13 @@ export default {
   name: 'DbUpload',
   methods: {
     loadDb () {
-      this.$db.loadDb(this.$refs.file.files[0])
+      return this.$db.loadDb(this.$refs.file.files[0])
+        .then((schema) => {
+          this.$store.commit('saveSchema', schema)
+          if (this.$route.path !== '/editor') {
+            this.$router.push('/editor')
+          }
+        })
     },
     dragover (event) {
       event.preventDefault()
@@ -42,9 +48,11 @@ export default {
       event.preventDefault()
       this.$refs.file.files = event.dataTransfer.files
       this.loadDb()
-      // Clean up
-      event.currentTarget.classList.add('bg-gray-100')
-      event.currentTarget.classList.remove('bg-green-300')
+        .then(() => {
+          // Clean up
+          event.currentTarget.classList.add('bg-gray-100')
+          event.currentTarget.classList.remove('bg-green-300')
+        })
     }
   }
 }
