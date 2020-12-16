@@ -9,7 +9,7 @@
         <schema v-if="$store.state.schema"/>
         <div v-else id="empty-schema-container">
           <div class="warning">
-            Database is not uploaded. Queries can’t be run without database.
+            Database is not loaded. Queries can’t be run without database.
           </div>
           <db-upload id="db-uploader"/>
         </div>

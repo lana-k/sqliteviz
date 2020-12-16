@@ -10,7 +10,7 @@
           accept=".db,.sqlite,.sqlite3"
         />
         <div class="text">
-          Drop the database file to upload here or click to choose a file from your computer.
+          Drop the database file here or click to choose a file from your computer.
         </div>
       </div>
     </label>

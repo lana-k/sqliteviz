@@ -3,7 +3,7 @@
     <h1>Sqliteviz</h1>
     <db-upload />
     <button id ="skip" class="secondary" @click="$router.push('/editor')">
-      Skip database connection for now
+      Skip database loading for now
     </button>
   </div>
 </template>
