@@ -29,7 +29,7 @@ export default {
         xhr.onload = () => {
           if (xhr.readyState === 4) {
             if (xhr.status === 200) {
-              resolve(JSON.parse(xhr.responseText))
+              resolve(JSON.parse(xhr.responseText || '[]'))
             } else {
               reject(xhr.statusText)
             }
