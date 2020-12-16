@@ -4,7 +4,6 @@ const path = require("path");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 
 function resolve(dir) {
-  console.log('HELLO!!!', path.join(__dirname, dir))
   return path.join(__dirname, dir);
 }
 
@@ -18,8 +17,21 @@ module.exports = function(config) {
     frameworks: ["mocha", "sinon-chai"],
 
     // list of files / patterns to load in the browser
-    files: ["tests/unit/*.spec.js"],
-    // files: ["./karma.files.js"],
+    files: [
+      "tests/unit/*.spec.js",
+      { pattern: 'node_modules/sql.js/dist/sql-wasm.wasm',
+        watched: false,
+        included: false,
+        served: true,
+        nocache: false
+      },
+      { pattern: 'node_modules/sql.js/dist/worker.sql-wasm.js',
+        watched: false,
+        included: false,
+        served: true,
+        nocache: false
+      }
+    ],
 
     // list of files / patterns to exclude
     exclude: [],
@@ -28,7 +40,6 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       "tests/unit/*.spec.js": ["webpack"]
-      //"./karma.files.js": ["webpack"]
     },
 
     // test results reporter to use
@@ -150,7 +161,13 @@ module.exports = function(config) {
           }
         ]
       },
-      plugins: [new VueLoaderPlugin()]
+      plugins: [new VueLoaderPlugin()],
+      node: {
+        fs: 'empty'
+      }
+    },
+    proxies: {
+      "/js/": "/base/node_modules/sql.js/dist/"
     }
   });
 };
