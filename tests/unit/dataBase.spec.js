@@ -24,7 +24,7 @@ describe('dataBase.js', () => {
     return initSqlJs(config)
     .then(SQL => {
       const dataBase = new SQL.Database()
-      dataBase.run("CREATE TABLE test (col1, col2);")
+      dataBase.run('CREATE TABLE test (col1, col2);')
 
       const data = dataBase.export()
       const buffer = new Blob([data])
