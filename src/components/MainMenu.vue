@@ -101,6 +101,7 @@ export default {
       const isFromScratch = !this.currentQuery.initName
 
       if (isFromScratch || this.isPredefined) {
+        this.name = ''
         this.$modal.show('save')
       } else {
         this.saveQuery()
