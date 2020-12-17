@@ -98,4 +98,8 @@ export default {
   height: 100%;
   max-height: 100%;
 }
+>>> .CodeMirror-cursor {
+  width: 1px;
+  background: var(--color-text-base);
+}
 </style>
