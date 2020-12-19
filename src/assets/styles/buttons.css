@@ -5,6 +5,7 @@ button {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  font-family: Open-Sans, Helvetica, Arial, sans-serif;
 }
 
 button:focus {
