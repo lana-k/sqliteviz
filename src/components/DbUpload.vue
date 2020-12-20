@@ -4,8 +4,8 @@
       <div
         class="drop-area"
         @dragover.prevent="state = 'dragover'"
-        @dragleave="state=''"
-        @drop="drop"
+        @dragleave.prevent="state=''"
+        @drop.prevent="drop"
       >
         <input
           type="file"
@@ -28,12 +28,12 @@
       />
       <img
         id="file-img"
+        ref="fileImg"
         :class="{
           'swing': state === 'dragover',
           'fly': state === 'drop',
         }"
         :src="require('@/assets/images/file.png')"
-        @animationend="onFlyEnd"
       />
       <img id="drop-file-bottom-img" :src="require('@/assets/images/dropFileBottom.png')" />
       <img id="body-img" :src="require('@/assets/images/body.png')" />
@@ -59,13 +59,24 @@ export default {
   },
   data () {
     return {
-      state: ''
+      state: '',
+      animationPromise: Promise.resolve()
+    }
+  },
+  mounted () {
+    if (this.illustrated) {
+      this.animationPromise = new Promise((resolve) => {
+        this.$refs.fileImg.addEventListener('animationend', () => {
+          resolve()
+        })
+      })
     }
   },
   methods: {
     loadDb () {
-      return this.$db.loadDb(this.$refs.file.files[0])
-        .then((schema) => {
+      this.state = 'drop'
+      return Promise.all([this.$db.loadDb(this.$refs.file.files[0]), this.animationPromise])
+        .then(([schema]) => {
           this.$store.commit('saveSchema', schema)
           if (this.$route.path !== '/editor') {
             this.$router.push('/editor')
@@ -73,18 +84,8 @@ export default {
         })
     },
     drop (event) {
-      event.preventDefault()
       this.$refs.file.files = event.dataTransfer.files
-      this.state = 'drop'
       this.loadDb()
-        .then(() => {
-          // Clean up
-          // event.currentTarget.classList.add('bg-gray-100')
-          // event.currentTarget.classList.remove('bg-green-300')
-        })
-    },
-    onFlyEnd (event) {
-      console.log('END!!!', event.animationName.startsWith('fly'))
     }
   }
 }
