@@ -54,25 +54,23 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 #note {
-  position: absolute;
-  bottom: calc(15% + 36px);
+  margin-top: 27px;
   font-size: 13px;
   color: var(--color-text-base);
 }
+
 #skip {
-  position: absolute;
-  bottom: 5%;
+  margin-top: 83px;
 }
->>>.db-upload-container {
-  position: absolute;
-  top: 10%;
-}
+
 #img-container {
   position: absolute;
-  top: calc(10% + 50px);
+  top: calc(50% - 120px);
+  transform: translate(0, -50%);
   width: 450px;
   height: 338px;
   pointer-events: none;
