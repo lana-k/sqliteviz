@@ -31,7 +31,7 @@
         ref="fileImg"
         :class="{
           'swing': state === 'dragover',
-          'fly': state === 'drop',
+          'fly': state === 'drop'
         }"
         :src="require('@/assets/images/file.png')"
       />
@@ -66,8 +66,10 @@ export default {
   mounted () {
     if (this.illustrated) {
       this.animationPromise = new Promise((resolve) => {
-        this.$refs.fileImg.addEventListener('animationend', () => {
-          resolve()
+        this.$refs.fileImg.addEventListener('animationend', event => {
+          if (event.animationName.startsWith('fly')) {
+            resolve()
+          }
         })
       })
     }
@@ -168,7 +170,7 @@ input {
 }
 
 .swing {
-    animation: swing ease-in-out 0.6s infinite alternate;
+  animation: swing ease-in-out 0.6s infinite alternate;
 }
 #left-arm-img.swing {
   transform-origin: 9px 83px;
@@ -180,8 +182,8 @@ input {
    transform-origin: -74px 139px;
 }
 @keyframes swing {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(-7deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-7deg); }
 }
 
 #file-img.fly {
@@ -192,6 +194,6 @@ input {
   transition: top 1s ease-in-out, left 1s ease-in-out;
 }
 @keyframes fly {
-    100% { transform: rotate(360deg) scale(0.5); }
+  100% { transform: rotate(360deg) scale(0.5); }
 }
 </style>
