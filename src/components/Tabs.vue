@@ -13,19 +13,7 @@
           <span v-else class="tab-untitled">{{ tab.tempName }}</span>
         </div>
         <div>
-          <svg
-            class="close-icon"
-            @click.stop="closeTab(index)"
-            width="10"
-            height="10"
-            viewBox="0 0 14 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M14 1.41L12.59 0L7 5.59L1.41 0L0 1.41L5.59 7L0 12.59L1.41 14L7 8.41L12.59 14L14 12.59L8.41 7L14 1.41Z"
-              fill="#A2B1C6"/>
-          </svg>
+          <close-icon class="close-icon" :size="10" @click="closeTab(index)"/>
         </div>
       </div>
     </div>
@@ -49,10 +37,12 @@
 
 <script>
 import Tab from '@/components/Tab'
+import CloseIcon from '@/components/svg/close'
 
 export default {
   components: {
-    Tab
+    Tab,
+    CloseIcon
   },
   data () {
     return {
@@ -130,10 +120,6 @@ export default {
   margin-left: 5px;
 }
 
-.close-icon:hover path {
-  fill: var(--color-text-base);
-  cursor: pointer;
-}
 #start-guide {
   position: absolute;
   top: 50%;
