@@ -5,20 +5,7 @@
     </div>
     <div id="db">
       <div @click="schemaVisible = !schemaVisible" class="db-name">
-        <svg
-          :style="{ transform: schemaVisible ? 'rotate(90deg)' : 'rotate(0)' }"
-          class="chevron-icon"
-          width="9"
-          height="9"
-          viewBox="0 0 8 12"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M0.721924 9.93097L4.85292 5.79997L0.721924 1.66897L1.99992 0.399973L7.39992 5.79997L1.99992 11.2L0.721924 9.93097Z"
-            :fill="schemaVisible ? '#506784' : 'rgba(80, 103, 132, 0.5)'"
-          />
-        </svg>
+        <tree-chevron :expanded="schemaVisible"/>
         {{ dbName }}
       </div>
       <div class="db-edit">
@@ -43,13 +30,15 @@
 import TableDescription from '@/components/TableDescription'
 import TextField from '@/components/TextField'
 import ChangeDbIcon from '@/components/svg/changeDb'
+import TreeChevron from '@/components/svg/treeChevron'
 
 export default {
   name: 'Schema',
   components: {
     TableDescription,
     TextField,
-    ChangeDbIcon
+    ChangeDbIcon,
+    TreeChevron
   },
   data () {
     return {
@@ -66,7 +55,7 @@ export default {
       return !this.filter
         ? this.$store.state.schema
         : this.$store.state.schema.filter(
-          table => table[0].toUpperCase().indexOf(this.filter.toUpperCase()) !== -1
+          table => table.name.toUpperCase().indexOf(this.filter.toUpperCase()) !== -1
         )
     },
     dbName () {
@@ -120,12 +109,9 @@ export default {
 .db-name {
   cursor: pointer;
 }
->>> .chevron-icon {
-  -webkit-transition: transform .15s ease-in-out;
-  transition: transform .15s ease-in-out;
-}
+
 .db-name:hover .chevron-icon path,
 >>> .table-name:hover .chevron-icon path {
-  fill: #506784;
+  fill: var(--color-gray-dark);
 }
 </style>

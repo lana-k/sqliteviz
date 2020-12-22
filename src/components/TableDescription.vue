@@ -1,20 +1,7 @@
 <template>
   <div>
     <div @click="colVisible = !colVisible" class="table-name">
-      <svg
-        :style="{transform: colVisible ? 'rotate(90deg)' : 'rotate(0)'}"
-        class="chevron-icon"
-        width="9"
-        height="9"
-        viewBox="0 0 8 12"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M0.721924 9.93097L4.85292 5.79997L0.721924 1.66897L1.99992 0.399973L7.39992 5.79997L1.99992 11.2L0.721924 9.93097Z"
-          :fill="colVisible ? '#506784' : 'rgba(80, 103, 132, 0.5)'"
-        />
-      </svg>
+      <tree-chevron :expanded="colVisible"/>
       {{ name }}
     </div>
     <div v-show="colVisible" class="columns">
@@ -27,9 +14,11 @@
 </template>
 
 <script>
+import TreeChevron from '@/components/svg/treeChevron'
 
 export default {
   name: 'TableDescription',
+  components: { TreeChevron },
   props: ['name', 'columns'],
   data () {
     return {
