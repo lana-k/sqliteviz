@@ -70,10 +70,12 @@ export default new Vuex.Store({
       state.dbName = name
     },
     addTab (state, tab) {
-      state.tabs.push(tab)
-
-      if (!tab.name) {
-        state.untitledLastIndex += 1
+      // add new tab only if was not already opened
+      if (!state.tabs.some(openedTab => openedTab.id === tab.id)) {
+        state.tabs.push(tab)
+        if (!tab.name) {
+          state.untitledLastIndex += 1
+        }
       }
     },
     updateTab (state, { index, name, id, query, chart, isUnsaved }) {
