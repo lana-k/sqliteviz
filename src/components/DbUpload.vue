@@ -20,11 +20,11 @@
       </div>
     </label>
     <div v-if="illustrated" id="img-container">
-      <img id="drop-file-top-img" :src="require('@/assets/images/dropFileTop.png')" />
+      <img id="drop-file-top-img" :src="require('@/assets/images/top.svg')" />
       <img
         id="left-arm-img"
         :class="{'swing': state === 'dragover'}"
-        :src="require('@/assets/images/leftArm.png')"
+        :src="require('@/assets/images/leftArm.svg')"
       />
       <img
         id="file-img"
@@ -35,12 +35,12 @@
         }"
         :src="require('@/assets/images/file.png')"
       />
-      <img id="drop-file-bottom-img" :src="require('@/assets/images/dropFileBottom.png')" />
-      <img id="body-img" :src="require('@/assets/images/body.png')" />
+      <img id="drop-file-bottom-img" :src="require('@/assets/images/bottom.svg')" />
+      <img id="body-img" :src="require('@/assets/images/body.svg')" />
       <img
         id="right-arm-img"
         :class="{'swing': state === 'dragover'}"
-        :src="require('@/assets/images/rightArm.png')"
+        :src="require('@/assets/images/rightArm.svg')"
       />
     </div>
     <div id="error" class="error"></div>
@@ -130,9 +130,10 @@ input {
   height: 338px;
   pointer-events: none;
 }
+
 #drop-file-top-img {
   width: 450px;
-  height: 171px;
+  height: 175px;
   position: absolute;
   top: 0;
   left: 0;
