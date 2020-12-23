@@ -39,5 +39,9 @@
   --border-radius-small: 2px;
 }
 
+.plotly-editor--theme-provider {
+  --sidebar-width: 112px;
+}
+
 
 

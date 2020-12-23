@@ -36,7 +36,7 @@ export default {
 }
 
 #skip {
-  margin-top: 83px;
+  margin-top: 42px;
 }
 
 >>>.drop-area {
