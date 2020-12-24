@@ -95,9 +95,9 @@ export default new Vuex.Store({
 
       Vue.set(state.tabs, index, tab)
     },
-    updateTabState (state, { index, newValue }) {
+    updateTabState (state, { index, isUnsaved }) {
       const tab = state.tabs[index]
-      tab.isUnsaved = newValue
+      tab.isUnsaved = isUnsaved
       Vue.set(state.tabs, index, tab)
     },
     deleteTab (state, index) {

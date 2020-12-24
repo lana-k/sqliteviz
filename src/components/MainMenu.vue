@@ -16,7 +16,7 @@
       <button
         v-if="currentQuery"
         class="primary"
-        :disabled="currentQuery && !currentQuery.isUnsaved"
+        :disabled="currentQuery && !isUnsaved"
         @click="checkQueryBeforeSave"
       >
         Save
@@ -71,6 +71,13 @@ export default {
   computed: {
     currentQuery () {
       return this.$store.state.currentTab
+    },
+    isUnsaved () {
+      if (!this.currentQuery) {
+        return false
+      }
+      const tabIndex = this.currentQuery.tabIndex
+      return this.$store.state.tabs[tabIndex].isUnsaved
     },
     isPredefined () {
       if (this.currentQuery) {

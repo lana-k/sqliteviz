@@ -34,7 +34,7 @@
             :sql-result="result"
             :init-chart="initChart"
             ref="chart"
-            @update="isUnsaved = true"
+            @update="$store.commit('updateTabState', { index: tabIndex, isUnsaved: true })"
           />
         </div>
       </template>
@@ -65,7 +65,6 @@ export default {
       result: null,
       view: 'table',
       tableViewHeight: 0,
-      isUnsaved: !this.initName,
       isGettingResults: false,
       error: null,
       resizeObserver: null
@@ -94,10 +93,7 @@ export default {
       }
     },
     query () {
-      this.isUnsaved = true
-    },
-    isUnsaved () {
-      this.$store.commit('updateTabState', { index: this.tabIndex, newValue: this.isUnsaved })
+      this.$store.commit('updateTabState', { index: this.tabIndex, isUnsaved: true })
     }
   },
   methods: {
