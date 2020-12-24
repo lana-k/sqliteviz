@@ -28,7 +28,7 @@
     <modal name="save" classes="dialog" height="auto">
       <div class="dialog-header">
         Save query
-        <close-icon @click="$modal.hide('save')"/>
+        <close-icon @click="cancelSave"/>
       </div>
       <div class="dialog-body">
         <div v-show="isPredefined" id="save-note">
@@ -44,7 +44,7 @@
         />
       </div>
       <div class="dialog-buttons-container">
-        <button class="secondary" @click="$modal.hide('save')">Cancel</button>
+        <button class="secondary" @click="cancelSave">Cancel</button>
         <button class="primary" @click="saveQuery">Save</button>
       </div>
     </modal>
@@ -82,6 +82,7 @@ export default {
   },
   created () {
     this.$root.$on('createNewQuery', this.createNewQuery)
+    this.$root.$on('saveQuery', this.checkQueryBeforeSave)
   },
   methods: {
     createNewQuery () {
@@ -95,6 +96,10 @@ export default {
       }
       this.$store.commit('addTab', tab)
       this.$store.commit('setCurrentTabId', tab.id)
+    },
+    cancelSave () {
+      this.$modal.hide('save')
+      this.$root.$off('querySaved')
     },
     checkQueryBeforeSave () {
       this.errorMsg = null
@@ -159,6 +164,9 @@ export default {
 
       // Hide dialog
       this.$modal.hide('save')
+
+      // Signal about saving
+      this.$root.$emit('querySaved')
     }
   }
 }

@@ -13,7 +13,7 @@
           <span v-else class="tab-untitled">{{ tab.tempName }}</span>
         </div>
         <div>
-          <close-icon class="close-icon" :size="10" @click="closeTab(index)"/>
+          <close-icon class="close-icon" :size="10" @click="beforeCloseTab(index)"/>
         </div>
       </div>
     </div>
@@ -32,6 +32,32 @@
       a new query from scratch or open the one from
       <router-link class="link" to="/my-queries">My queries</router-link>
     </div>
+
+    <!--Close tab warning dialog  -->
+    <modal name="close-warn" classes="dialog" height="auto">
+      <div class="dialog-header">
+        Close tab {{
+          closingTabIndex !== null
+          ? (tabs[closingTabIndex].name || `[${tabs[closingTabIndex].tempName}]`)
+          : ''
+        }}
+        <close-icon @click="$modal.hide('close-warn')"/>
+      </div>
+      <div class="dialog-body">
+        You have unsaved changes. Save changes in {{
+          closingTabIndex !== null
+          ? (tabs[closingTabIndex].name || `[${tabs[closingTabIndex].tempName}]`)
+          : ''
+        }} before closing?
+      </div>
+      <div class="dialog-buttons-container">
+        <button class="secondary" @click="closeTab(closingTabIndex)">
+          Close without saving
+        </button>
+        <button class="secondary" @click="$modal.hide('close-warn')">Cancel</button>
+        <button class="primary" @click="saveAndClose(closingTabIndex)">Save and close</button>
+      </div>
+    </modal>
   </div>
 </template>
 
@@ -46,6 +72,7 @@ export default {
   },
   data () {
     return {
+      closingTabIndex: null
     }
   },
   computed: {
@@ -56,12 +83,45 @@ export default {
       return this.$store.state.currentTabId
     }
   },
+  created () {
+    window.addEventListener('beforeunload', this.leavingSqliteviz)
+  },
+  unmounted () {
+    window.removeEventListener('beforeunload', this.leavingSqliteviz)
+  },
   methods: {
+    leavingSqliteviz (event) {
+      if (this.tabs.some(tab => tab.isUnsaved)) {
+        event.preventDefault()
+        event.returnValue = ''
+      }
+    },
     selectTab (id) {
       this.$store.commit('setCurrentTabId', id)
     },
+    beforeCloseTab (index) {
+      this.closingTabIndex = index
+      if (this.tabs[index].isUnsaved) {
+        this.$modal.show('close-warn')
+      } else {
+        this.closeTab(index)
+      }
+    },
     closeTab (index) {
+      this.$modal.hide('close-warn')
+      this.closingTabIndex = null
       this.$store.commit('deleteTab', index)
+    },
+    saveAndClose (index) {
+      this.$root.$on('querySaved', () => {
+        this.closeTab(index)
+        this.$root.$off('querySaved')
+      })
+      this.selectTab(this.tabs[index].id)
+      this.$modal.hide('close-warn')
+      this.$nextTick(() => {
+        this.$root.$emit('saveQuery')
+      })
     }
   }
 }
