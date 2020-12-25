@@ -6,17 +6,17 @@
     </div>
     <div>
       <button
-        v-if="currentQuery"
+        v-if="currentQuery && $route.path === '/editor'"
         class="primary"
-        :disabled="currentQuery && (!$store.state.schema || !currentQuery.query)"
+        :disabled="runDisabled"
         @click="currentQuery.execute"
       >
         Run
       </button>
       <button
-        v-if="currentQuery"
+        v-show="currentQuery && $route.path === '/editor'"
         class="primary"
-        :disabled="currentQuery && !isUnsaved"
+        :disabled="!isUnsaved"
         @click="checkQueryBeforeSave"
       >
         Save
@@ -85,11 +85,18 @@ export default {
       } else {
         return false
       }
+    },
+    runDisabled () {
+      return this.currentQuery && (!this.$store.state.schema || !this.currentQuery.query)
     }
   },
   created () {
     this.$root.$on('createNewQuery', this.createNewQuery)
     this.$root.$on('saveQuery', this.checkQueryBeforeSave)
+    document.addEventListener('keydown', this._keyListener)
+  },
+  beforeDestroy () {
+    document.removeEventListener('keydown', this._keyListener)
   },
   methods: {
     createNewQuery () {
@@ -174,6 +181,31 @@ export default {
 
       // Signal about saving
       this.$root.$emit('querySaved')
+    },
+    _keyListener (e) {
+      if (this.$route.path === '/editor') {
+        // Run query Ctrl+R
+        if (e.key === 'r' && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault()
+          if (!this.runDisabled) {
+            this.currentQuery.execute()
+          }
+        }
+
+        // Save query Ctrl+S
+        if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault()
+          if (this.isUnsaved) {
+            this.checkQueryBeforeSave()
+          }
+        }
+
+        // New (blank) query Ctrl+B
+        if (e.key === 'b' && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault()
+          this.createNewQuery()
+        }
+      }
     }
   }
 }
