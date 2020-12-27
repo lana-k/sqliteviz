@@ -30,10 +30,14 @@ describe('dataBase.js', () => {
       const buffer = new Blob([data])
       return db.loadDb(buffer)
     })
-    .then(schema => {
+    .then(({dbName, schema}) => {
+      console.log(schema[0].columns)
       expect(schema.length).to.equal(1)
-      expect(schema[0][0]).to.equal('test') 
-      expect(schema[0][1]).to.equal('CREATE TABLE test (col1, col2)') 
+      expect(schema[0].name).to.equal('test') 
+      expect(schema[0].columns[0].name).to.equal('col1') 
+      expect(schema[0].columns[0].type).to.equal('N/A') 
+      expect(schema[0].columns[1].name).to.equal('col2') 
+      expect(schema[0].columns[1].type).to.equal('N/A') 
     })
   })
 })
