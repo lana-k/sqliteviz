@@ -70,9 +70,9 @@ function getAst (sql) {
   return sqliteParser(fixedSql)
 }
 
-/* 
+/*
  * Return an array of columns with name and type. E.g.:
- * [ 
+ * [
  *   { name: 'id',    type: 'INTEGER' },
  *   { name: 'title', type: 'NVARCHAR(30)' },
  * ]
