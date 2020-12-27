@@ -65,8 +65,8 @@ export default {
   methods: {
     changeDb () {
       this.$db.loadDb(this.$refs.dbfile.files[0])
-        .then((schema) => {
-          this.$store.commit('saveSchema', schema)
+        .then(({ dbName, schema }) => {
+          this.$store.commit('saveSchema', { dbName, schema })
         })
     }
   }

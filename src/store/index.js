@@ -53,7 +53,8 @@ export default new Vuex.Store({
     predefinedQueries: []
   },
   mutations: {
-    saveSchema (state, schema) {
+    saveSchema (state, { dbName, schema }) {
+      state.dbName = dbName
       const parsedSchema = []
       schema.forEach(item => {
         parsedSchema.push({
@@ -65,9 +66,6 @@ export default new Vuex.Store({
     },
     saveDbFile (state, file) {
       state.dbFile = file
-    },
-    saveDbName (state, name) {
-      state.dbName = name
     },
     addTab (state, tab) {
       // add new tab only if was not already opened

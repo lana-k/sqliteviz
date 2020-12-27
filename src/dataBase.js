@@ -1,11 +1,8 @@
-import store from '@/store'
 const worker = new Worker('js/worker.sql-wasm.js')
 
 export default {
   loadDb (file) {
     return new Promise((resolve, reject) => {
-      const dbName = file.name
-      store.commit('saveDbName', dbName)
       const f = file
       const r = new FileReader()
       r.onload = () => {
@@ -18,7 +15,10 @@ export default {
 
           // on 'action: exec' completed
           worker.onmessage = event => {
-            resolve(event.data.results[0].values)
+            resolve({
+              dbName: file.name,
+              schema: event.data.results[0].values
+            })
           }
           worker.postMessage({ action: 'exec', sql: getSchemaSql })
         }

@@ -78,8 +78,8 @@ export default {
     loadDb () {
       this.state = 'drop'
       return Promise.all([this.$db.loadDb(this.$refs.file.files[0]), this.animationPromise])
-        .then(([schema]) => {
-          this.$store.commit('saveSchema', schema)
+        .then(([{ dbName, schema }]) => {
+          this.$store.commit('saveSchema', { dbName, schema })
           if (this.$route.path !== '/editor') {
             this.$router.push('/editor')
           }
