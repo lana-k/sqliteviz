@@ -14,24 +14,23 @@ export default {
             FROM sqlite_master
             WHERE type='table' AND name NOT LIKE 'sqlite_%';`
 
-          // on 'action: exec' completed
-          worker.onmessage = event => {
-            // Parse DDL statements to get column names and types
-            const parsedSchema = []
-            event.data.results[0].values.forEach(item => {
-              parsedSchema.push({
-                name: item[0],
-                columns: getColumns(item[1])
+          this.execute(getSchemaSql)
+            .then(result => {
+              // Parse DDL statements to get column names and types
+              const parsedSchema = []
+              result.values.forEach(item => {
+                parsedSchema.push({
+                  name: item[0],
+                  columns: getColumns(item[1])
+                })
+              })
+
+              // Return db name and schema
+              resolve({
+                dbName: file.name,
+                schema: parsedSchema
               })
             })
-
-            // Return db name and schema
-            resolve({
-              dbName: file.name,
-              schema: parsedSchema
-            })
-          }
-          worker.postMessage({ action: 'exec', sql: getSchemaSql })
         }
 
         try {

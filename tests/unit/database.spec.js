@@ -14,19 +14,26 @@ describe('HelloWorld.vue', () => {
  */
 import { expect } from 'chai'
 import initSqlJs from 'sql.js'
-import db from '@/dataBase.js'
+import db from '@/database.js'
 
-describe('dataBase.js', () => {
+describe('database.js', () => {
   it('creates schema', () => {
     const config = {
       locateFile: filename => `js/sql-wasm.wasm`
     }
     return initSqlJs(config)
     .then(SQL => {
-      const dataBase = new SQL.Database()
-      dataBase.run('CREATE TABLE test (col1, col2);')
+      const database = new SQL.Database()
+      database.run(`
+        CREATE TABLE test (
+          col1,
+          col2 integer,
+          col3 decimal(5,2),
+          col4 varchar(30)
+        )
+      `)
 
-      const data = dataBase.export()
+      const data = database.export()
       const buffer = new Blob([data])
       return db.loadDb(buffer)
     })
@@ -37,7 +44,11 @@ describe('dataBase.js', () => {
       expect(schema[0].columns[0].name).to.equal('col1') 
       expect(schema[0].columns[0].type).to.equal('N/A') 
       expect(schema[0].columns[1].name).to.equal('col2') 
-      expect(schema[0].columns[1].type).to.equal('N/A') 
+      expect(schema[0].columns[1].type).to.equal('integer') 
+      expect(schema[0].columns[2].name).to.equal('col3') 
+      expect(schema[0].columns[2].type).to.equal('decimal(5, 2)') 
+      expect(schema[0].columns[3].name).to.equal('col4') 
+      expect(schema[0].columns[3].type).to.equal('varchar(30)') 
     })
   })
 })
