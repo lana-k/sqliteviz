@@ -18,7 +18,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      "tests/unit/*.spec.js",
+      "./karma.files.js",
       { pattern: 'node_modules/sql.js/dist/sql-wasm.wasm',
         watched: false,
         included: false,
@@ -39,7 +39,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      "tests/unit/*.spec.js": ["webpack"]
+      "./karma.files.js": ["webpack"]
     },
 
     // test results reporter to use
@@ -118,7 +118,14 @@ module.exports = function(config) {
             use: [
               {
                 loader: "babel-loader"
-              },
+              }
+            ]
+          },
+          {
+            test: /\.js$/,
+            include: /src/,
+            exclude: /(node_modules|bower_components|\.spec\.js$|\/file)/,
+            use: [
               {
                 loader: "istanbul-instrumenter-loader",
                 options: {
