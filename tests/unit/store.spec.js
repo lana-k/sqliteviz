@@ -25,7 +25,7 @@ describe('mutations', () => {
       schema
     })
     expect(state.dbName).to.equal('test')
-    expect(JSON.stringify(state.schema)).to.equal(JSON.stringify(schema))
+    expect(state.schema).to.eql(schema)
   })
 
   it('addTab (new)', () => {
@@ -44,7 +44,7 @@ describe('mutations', () => {
       isUnsaved: true
     }
     addTab(state, tab)
-    expect(JSON.stringify(state.tabs[0])).to.equal(JSON.stringify(tab))
+    expect(state.tabs[0]).to.eql(tab)
     expect(state.untitledLastIndex).to.equal(1)
   })
 
@@ -63,7 +63,7 @@ describe('mutations', () => {
       isUnsaved: false
     }
     addTab(state, tab)
-    expect(JSON.stringify(state.tabs[0])).to.equal(JSON.stringify(tab))
+    expect(state.tabs[0]).to.eql(tab)
     expect(state.untitledLastIndex).to.equal(0)
   })
 
@@ -395,7 +395,7 @@ describe('mutations', () => {
     }
 
     setCurrentTab(state, { id: 2 })
-    expect(JSON.stringify(state.currentTab)).to.equal('{"id":2}')
+    expect(state.currentTab).to.eql({ id: 2 })
   })
 
   it('updatePredefinedQueries (single)', () => {
@@ -412,7 +412,7 @@ describe('mutations', () => {
     }
 
     updatePredefinedQueries(state, query)
-    expect(JSON.stringify(state.predefinedQueries)).to.equal(`[${JSON.stringify(query)}]`)
+    expect(state.predefinedQueries).to.eql([query])
   })
 
   it('updatePredefinedQueries (array)', () => {
@@ -436,6 +436,6 @@ describe('mutations', () => {
     }
 
     updatePredefinedQueries(state, queries)
-    expect(JSON.stringify(state.predefinedQueries)).to.equal(JSON.stringify(queries))
+    expect(state.predefinedQueries).to.eql(queries)
   })
 })

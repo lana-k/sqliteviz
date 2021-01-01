@@ -2,12 +2,10 @@
   <div class="checkbox-container" @click.stop="onClick">
     <div v-show="!checked" class="unchecked" />
     <img
-      v-show="checked && theme === 'accent'"
-      :src="require('@/assets/images/checkbox_checked.svg')"
-    />
-    <img
-      v-show="checked && theme === 'light'"
-      :src="require('@/assets/images/checkbox_checked_light.svg')"
+      v-show="checked"
+      :src="theme === 'light'
+        ? require('@/assets/images/checkbox_checked_light.svg')
+        : require('@/assets/images/checkbox_checked.svg')"
     />
   </div>
 </template>
