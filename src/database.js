@@ -47,9 +47,10 @@ export default {
       worker.onmessage = (event) => {
         if (event.data.error) {
           reject(event.data.error)
+        } else {
+          // if it was more than one select - take only the first one
+          resolve(event.data.results[0])
         }
-        // if it was more than one select - take only the first one
-        resolve(event.data.results[0])
       }
       worker.postMessage({ action: 'exec', sql: commands })
     })

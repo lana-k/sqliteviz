@@ -34,7 +34,7 @@
             :sql-result="result"
             :init-chart="initChart"
             ref="chart"
-            @update="$store.commit('updateTabState', { index: tabIndex, isUnsaved: true })"
+            @update="$store.commit('updateTab', { index: tabIndex, isUnsaved: true })"
           />
         </div>
       </template>
@@ -93,7 +93,7 @@ export default {
       }
     },
     query () {
-      this.$store.commit('updateTabState', { index: this.tabIndex, isUnsaved: true })
+      this.$store.commit('updateTab', { index: this.tabIndex, isUnsaved: true })
     }
   },
   methods: {
