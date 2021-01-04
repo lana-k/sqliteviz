@@ -52,9 +52,9 @@
 </template>
 
 <script>
-import { nanoid } from 'nanoid'
 import TextField from '@/components/TextField'
 import CloseIcon from '@/components/svg/close'
+import queryTab from '@/queryTab'
 
 export default {
   name: 'MainMenu',
@@ -100,14 +100,7 @@ export default {
   },
   methods: {
     createNewQuery () {
-      const tab = {
-        id: nanoid(),
-        name: null,
-        tempName: this.$store.state.untitledLastIndex
-          ? `Untitled ${this.$store.state.untitledLastIndex}`
-          : 'Untitled',
-        isUnsaved: true
-      }
+      const tab = queryTab.newBlankTab()
       this.$store.commit('addTab', tab)
       this.$store.commit('setCurrentTabId', tab.id)
     },
@@ -117,46 +110,27 @@ export default {
     },
     checkQueryBeforeSave () {
       this.errorMsg = null
-      const isFromScratch = !this.currentQuery.initName
+      this.name = ''
 
-      if (isFromScratch || this.isPredefined) {
-        this.name = ''
+      if (queryTab.isTabNeedName(this.currentQuery)) {
         this.$modal.show('save')
       } else {
         this.saveQuery()
       }
     },
     saveQuery () {
-      const isFromScratch = !this.currentQuery.initName
-      if ((isFromScratch || this.isPredefined) && !this.name) {
+      const isNeedName = queryTab.isTabNeedName(this.currentQuery)
+      if (isNeedName && !this.name) {
         this.errorMsg = 'Query name can\'t be empty'
         return
       }
       const dataSet = this.currentQuery.result
       const tabView = this.currentQuery.view
-      // Prepare query
-      const value = {
-        id: this.isPredefined ? nanoid() : this.currentQuery.id,
-        query: this.currentQuery.query,
-        chart: this.currentQuery.getChartSatateForSave(),
-        name: (!this.isPredefined && this.currentQuery.initName) || this.name,
-        createdAt: new Date()
-      }
 
       // Save query
-      let myQueries = JSON.parse(localStorage.getItem('myQueries'))
-      if (!myQueries) {
-        myQueries = [value]
-      } else if (isFromScratch || this.isPredefined) {
-        myQueries.push(value)
-      } else {
-        const queryIndex = myQueries.findIndex(query => query.id === this.currentQuery.id)
-        value.createdAt = myQueries[queryIndex].createdAt
-        myQueries[queryIndex] = value
-      }
-      localStorage.setItem('myQueries', JSON.stringify(myQueries))
+      const value = queryTab.save(this.currentQuery, this.name)
 
-      // Update tab
+      // Update tab in store
       this.$store.commit('updateTab', {
         index: this.currentQuery.tabIndex,
         name: value.name,
