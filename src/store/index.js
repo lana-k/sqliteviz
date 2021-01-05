@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { nanoid } from 'nanoid'
 
 Vue.use(Vuex)
 
@@ -19,15 +20,7 @@ export const mutations = {
     state.dbName = dbName
     state.schema = schema
   },
-  addTab (state, tab) {
-    // add new tab only if was not already opened
-    if (!state.tabs.some(openedTab => openedTab.id === tab.id)) {
-      state.tabs.push(tab)
-      if (!tab.name) {
-        state.untitledLastIndex += 1
-      }
-    }
-  },
+
   updateTab (state, { index, name, id, query, chart, isUnsaved }) {
     const tab = state.tabs[index]
     const oldId = tab.id
@@ -78,7 +71,34 @@ export const mutations = {
   }
 }
 
+export const actions = {
+  async addTab ({ state }, tab) {
+    // If no tab then create a new blank one...
+    if (!tab) {
+      tab = {
+        id: nanoid(),
+        name: null,
+        tempName: state.untitledLastIndex
+          ? `Untitled ${state.untitledLastIndex}`
+          : 'Untitled',
+        isUnsaved: true
+      }
+    }
+
+    // add new tab only if was not already opened
+    if (!state.tabs.some(openedTab => openedTab.id === tab.id)) {
+      state.tabs.push(tab)
+      if (!tab.name) {
+        state.untitledLastIndex += 1
+      }
+    }
+
+    return tab.id
+  }
+}
+
 export default new Vuex.Store({
   state,
-  mutations
+  mutations,
+  actions
 })

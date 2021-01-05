@@ -153,7 +153,6 @@
       <button class="primary" @click="deleteQuery">Delete</button>
     </div>
   </modal>
-  <a ref="downloader" />
 </div>
 </template>
 
@@ -167,6 +166,7 @@ import TextField from '@/components/TextField'
 import CheckBox from '@/components/CheckBox'
 import tooltipMixin from '@/mixins/tooltips'
 import { nanoid } from 'nanoid'
+import storedQueries from '@/storedQueries'
 
 export default {
   name: 'MyQueries',
@@ -223,7 +223,7 @@ export default {
     }
   },
   created () {
-    this.queries = JSON.parse(localStorage.getItem('myQueries')) || []
+    this.queries = storedQueries.getStoredQueries()
   },
   mounted () {
     this.resizeObserver = new ResizeObserver(this.calcMaxTableHeight)
@@ -271,9 +271,10 @@ export default {
     openQuery (index) {
       const tab = JSON.parse(JSON.stringify(this.showedQueries[index]))
       tab.isUnsaved = false
-      this.$store.commit('addTab', tab)
-      this.$store.commit('setCurrentTabId', tab.id)
-      this.$router.push('/editor')
+      this.$store.dispatch('addTab', tab).then(id => {
+        this.$store.commit('setCurrentTabId', id)
+        this.$router.push('/editor')
+      })
     },
     showRenameDialog (id) {
       this.errorMsg = null
@@ -291,7 +292,7 @@ export default {
       this.$set(this.queries, this.currentQueryIndex, currentQuery)
 
       // update queries in local storage
-      this.saveQueriesInLocalStorage()
+      storedQueries.updateStorage(this.queries)
 
       // update tab, if renamed query is opened
       const tabIndex = this.findTabIndex(currentQuery.id)
@@ -306,17 +307,13 @@ export default {
       this.$modal.hide('rename')
     },
     duplicateQuery (index) {
-      const newQuery = JSON.parse(JSON.stringify(this.showedQueries[index]))
-      newQuery.name = newQuery.name + ' Copy'
-      newQuery.id = nanoid()
-      newQuery.createdAt = new Date()
-      delete newQuery.isPredefined
+      const newQuery = storedQueries.duplicateQuery(this.showedQueries[index])
       if (this.selectAll) {
         this.selectedQueriesIds.add(newQuery.id)
         this.selectedQueriesCount = this.selectedQueriesIds.size
       }
       this.queries.push(newQuery)
-      this.saveQueriesInLocalStorage()
+      storedQueries.updateStorage(this.queries)
     },
     showDeleteDialog (id) {
       this.deleteGroup = typeof id !== 'string'
@@ -349,38 +346,28 @@ export default {
         this.selectedQueriesIds.clear()
       }
       this.selectedQueriesCount = this.selectedQueriesIds.size
-      this.saveQueriesInLocalStorage()
+      storedQueries.updateStorage(this.queries)
     },
     findTabIndex (id) {
       return this.$store.state.tabs.findIndex(tab => tab.id === id)
     },
     exportQuery (index) {
       let data
-      let name
 
       // single operation
       if (typeof index === 'number') {
         data = JSON.parse(JSON.stringify(this.showedQueries[index]))
-        name = data.name
         delete data.isPredefined
       } else {
         // group operation
         data = this.selectAll
           ? JSON.parse(JSON.stringify(this.allQueries))
           : this.allQueries.filter(query => this.selectedQueriesIds.has(query.id))
-        name = 'My sqliteviz queries'
         data.forEach(query => delete query.isPredefined)
       }
 
       // export data to file
-      const downloader = this.$refs.downloader
-      const json = JSON.stringify(data, null, 4)
-      const blob = new Blob([json], { type: 'octet/stream' })
-      const url = window.URL.createObjectURL(blob)
-      downloader.href = url
-      downloader.download = `${name}.json`
-      downloader.click()
-      window.URL.revokeObjectURL(url)
+      storedQueries.export(data)
     },
     importQueries () {
       const file = this.$refs.importFile.files[0]
@@ -407,13 +394,10 @@ export default {
         }
 
         this.queries = this.queries.concat(importedQueries)
-        this.saveQueriesInLocalStorage()
+        storedQueries.updateStorage(this.queries)
         this.$refs.importFile.value = null
       }
       reader.readAsText(file)
-    },
-    saveQueriesInLocalStorage () {
-      localStorage.setItem('myQueries', JSON.stringify(this.queries))
     },
     toggleSelectAll (checked) {
       this.selectAll = checked
@@ -556,7 +540,7 @@ tbody tr:hover .icons-container {
 .dialog input {
   width: 100%;
 }
-a, #import-file {
+#import-file {
   display: none;
 }
 button.toolbar {

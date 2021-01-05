@@ -1,14 +1,15 @@
 import { expect } from 'chai'
-import { mutations } from '@/store'
+import { mutations, actions } from '@/store'
 const { 
   saveSchema,
-  addTab,
   updateTab,
   deleteTab,
   setCurrentTabId,
   setCurrentTab,
   updatePredefinedQueries
 } = mutations
+
+const { addTab } = actions
 
 describe('mutations', () => {
   it('saveSchema', () => {
@@ -26,75 +27,6 @@ describe('mutations', () => {
     })
     expect(state.dbName).to.equal('test')
     expect(state.schema).to.eql(schema)
-  })
-
-  it('addTab (new)', () => {
-    // mock state
-    const state = {
-      tabs: [],
-      untitledLastIndex: 0
-    }
-
-    const tab = {
-      id: 1,
-      name: null,
-      tempName: 'Untitled',
-      query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: true
-    }
-    addTab(state, tab)
-    expect(state.tabs[0]).to.eql(tab)
-    expect(state.untitledLastIndex).to.equal(1)
-  })
-
-  it('addTab (saved)', () => {
-    // mock state
-    const state = {
-      tabs: [],
-      untitledLastIndex: 0
-    }
-    const tab = {
-      id: 1,
-      name: 'test',
-      tempName: null,
-      query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: false
-    }
-    addTab(state, tab)
-    expect(state.tabs[0]).to.eql(tab)
-    expect(state.untitledLastIndex).to.equal(0)
-  })
-
-  it('addTab (existed)', () => {
-    const tab1 = {
-      id: 1,
-      name: 'test',
-      tempName: null,
-      query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: false
-    }
-
-    const tab2 = {
-      id: 2,
-      name: 'bar',
-      tempName: null,
-      query: 'SELECT * from bar',
-      chart: {},
-      isUnsaved: false
-    }
-
-    // mock state
-    const state = {
-      tabs: [ tab1, tab2 ],
-      untitledLastIndex: 0,
-    }
-
-    addTab(state, tab1)
-    expect(state.tabs.length).to.equal(2)
-    expect(state.untitledLastIndex).to.equal(0)
   })
 
   it('updateTab (save)', () => {
@@ -437,5 +369,72 @@ describe('mutations', () => {
 
     updatePredefinedQueries(state, queries)
     expect(state.predefinedQueries).to.eql(queries)
+  })
+})
+
+
+describe('actions', () => {
+  it('addTab (new)', async () => {
+    // mock state
+    const state = {
+      tabs: [],
+      untitledLastIndex: 0
+    }
+
+    const id = await addTab({ state })
+    expect(state.tabs[0].id).to.eql(id)
+    expect(state.tabs[0].name).to.eql(null)
+    expect(state.tabs[0].tempName).to.eql('Untitled')
+    expect(state.tabs[0].isUnsaved).to.eql(true)
+    expect(state.untitledLastIndex).to.equal(1)
+  })
+
+  it('addTab (saved)', async () => {
+    // mock state
+    const state = {
+      tabs: [],
+      untitledLastIndex: 0
+    }
+    const tab = {
+      id: 1,
+      name: 'test',
+      tempName: null,
+      query: 'SELECT * from foo',
+      chart: {},
+      isUnsaved: false
+    }
+    await addTab({ state }, tab)
+    expect(state.tabs[0]).to.eql(tab)
+    expect(state.untitledLastIndex).to.equal(0)
+  })
+
+  it('addTab (existed)', async () => {
+    const tab1 = {
+      id: 1,
+      name: 'test',
+      tempName: null,
+      query: 'SELECT * from foo',
+      chart: {},
+      isUnsaved: false
+    }
+
+    const tab2 = {
+      id: 2,
+      name: 'bar',
+      tempName: null,
+      query: 'SELECT * from bar',
+      chart: {},
+      isUnsaved: false
+    }
+
+    // mock state
+    const state = {
+      tabs: [ tab1, tab2 ],
+      untitledLastIndex: 0,
+    }
+
+    await addTab({ state }, tab1)
+    expect(state.tabs.length).to.equal(2)
+    expect(state.untitledLastIndex).to.equal(0)
   })
 })

@@ -54,7 +54,7 @@
 <script>
 import TextField from '@/components/TextField'
 import CloseIcon from '@/components/svg/close'
-import queryTab from '@/queryTab'
+import storedQueries from '@/storedQueries'
 
 export default {
   name: 'MainMenu',
@@ -100,9 +100,9 @@ export default {
   },
   methods: {
     createNewQuery () {
-      const tab = queryTab.newBlankTab()
-      this.$store.commit('addTab', tab)
-      this.$store.commit('setCurrentTabId', tab.id)
+      this.$store.dispatch('addTab').then(id => {
+        this.$store.commit('setCurrentTabId', id)
+      })
     },
     cancelSave () {
       this.$modal.hide('save')
@@ -112,14 +112,14 @@ export default {
       this.errorMsg = null
       this.name = ''
 
-      if (queryTab.isTabNeedName(this.currentQuery)) {
+      if (storedQueries.isTabNeedName(this.currentQuery)) {
         this.$modal.show('save')
       } else {
         this.saveQuery()
       }
     },
     saveQuery () {
-      const isNeedName = queryTab.isTabNeedName(this.currentQuery)
+      const isNeedName = storedQueries.isTabNeedName(this.currentQuery)
       if (isNeedName && !this.name) {
         this.errorMsg = 'Query name can\'t be empty'
         return
@@ -128,7 +128,7 @@ export default {
       const tabView = this.currentQuery.view
 
       // Save query
-      const value = queryTab.save(this.currentQuery, this.name)
+      const value = storedQueries.save(this.currentQuery, this.name)
 
       // Update tab in store
       this.$store.commit('updateTab', {

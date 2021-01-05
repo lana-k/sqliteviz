@@ -13,6 +13,7 @@ import 'codemirror/theme/neo.css'
 import 'codemirror/addon/hint/show-hint.js'
 import 'codemirror/addon/hint/show-hint.css'
 import 'codemirror/addon/hint/sql-hint.js'
+import 'codemirror/addon/display/autorefresh.js'
 import { debounce } from 'debounce'
 
 const sqlHint = CM.hint.sql
@@ -42,7 +43,9 @@ export default {
         mode: 'text/x-mysql',
         theme: 'neo',
         lineNumbers: true,
-        line: true
+        line: true,
+        autofocus: true,
+        autoRefresh: true
       }
     }
   },
