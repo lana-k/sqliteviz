@@ -72,9 +72,10 @@ export const mutations = {
 }
 
 export const actions = {
-  async addTab ({ state }, tab) {
-    // If no tab then create a new blank one...
-    if (!tab) {
+  async addTab ({ state }, data) {
+    let tab
+    // If no data then create a new blank one...
+    if (!data) {
       tab = {
         id: nanoid(),
         name: null,
@@ -83,6 +84,9 @@ export const actions = {
           : 'Untitled',
         isUnsaved: true
       }
+    } else {
+      tab = JSON.parse(JSON.stringify(data))
+      tab.isUnsaved = false
     }
 
     // add new tab only if was not already opened

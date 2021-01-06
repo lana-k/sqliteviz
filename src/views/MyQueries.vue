@@ -9,17 +9,8 @@
     <div id="my-queries-content" ref="my-queries-content" v-show="showedQueries.length > 0">
       <div id="my-queries-toolbar">
         <div id="toolbar-buttons">
-          <input
-            ref="importFile"
-            type="file"
-            accept=".json"
-            id="import-file"
-            @change="importQueries"
-          />
-          <button class="toolbar">
-            <label for="import-file">
-              Import
-            </label>
+          <button class="toolbar" @click="importQueries">
+            Import
           </button>
           <button
             class="toolbar"
@@ -165,7 +156,6 @@ import CloseIcon from '@/components/svg/close'
 import TextField from '@/components/TextField'
 import CheckBox from '@/components/CheckBox'
 import tooltipMixin from '@/mixins/tooltips'
-import { nanoid } from 'nanoid'
 import storedQueries from '@/storedQueries'
 
 export default {
@@ -269,8 +259,7 @@ export default {
       this.$router.push('/editor')
     },
     openQuery (index) {
-      const tab = JSON.parse(JSON.stringify(this.showedQueries[index]))
-      tab.isUnsaved = false
+      const tab = this.showedQueries[index]
       this.$store.dispatch('addTab', tab).then(id => {
         this.$store.commit('setCurrentTabId', id)
         this.$router.push('/editor')
@@ -326,10 +315,14 @@ export default {
       this.$modal.hide('delete')
       if (!this.deleteGroup) {
         this.queries.splice(this.currentQueryIndex, 1)
+
+        // Close deleted query tab if it was opened
         const tabIndex = this.findTabIndex(this.currentQueryId)
         if (tabIndex >= 0) {
           this.$store.commit('deleteTab', tabIndex)
         }
+
+        // Clear checkboxes
         if (this.selectedQueriesIds.has(this.currentQueryId)) {
           this.selectedQueriesIds.delete(this.currentQueryId)
         }
@@ -337,12 +330,16 @@ export default {
         this.queries = this.selectAll
           ? []
           : this.queries.filter(query => !this.selectedQueriesIds.has(query.id))
+
+        // Close deleted queries if it was opened
         const tabs = this.$store.state.tabs
         for (let i = tabs.length - 1; i >= 0; i--) {
           if (this.selectedQueriesIds.has(tabs[i].id)) {
             this.$store.commit('deleteTab', i)
           }
         }
+
+        // Clear checkboxes
         this.selectedQueriesIds.clear()
       }
       this.selectedQueriesCount = this.selectedQueriesIds.size
@@ -354,38 +351,21 @@ export default {
     exportQuery (index) {
       let data
 
-      // single operation
       if (typeof index === 'number') {
-        data = JSON.parse(JSON.stringify(this.showedQueries[index]))
-        delete data.isPredefined
+        // single operation
+        data = this.showedQueries[index]
       } else {
         // group operation
         data = this.selectAll
-          ? JSON.parse(JSON.stringify(this.allQueries))
+          ? this.allQueries
           : this.allQueries.filter(query => this.selectedQueriesIds.has(query.id))
-        data.forEach(query => delete query.isPredefined)
       }
 
       // export data to file
-      storedQueries.export(data)
+      storedQueries.exportQueries(data)
     },
     importQueries () {
-      const file = this.$refs.importFile.files[0]
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        let importedQueries = JSON.parse(e.target.result)
-
-        if (!Array.isArray(importedQueries)) {
-          importedQueries = [importedQueries]
-        }
-
-        importedQueries.forEach(query => {
-          const allQueriesIds = this.allQueries.map(query => query.id)
-          if (new Set(allQueriesIds).has(query.id)) {
-            query.id = nanoid()
-          }
-        })
-
+      const onSuccess = (importedQueries) => {
         if (this.selectAll) {
           importedQueries.forEach(query => {
             this.selectedQueriesIds.add(query.id)
@@ -395,9 +375,8 @@ export default {
 
         this.queries = this.queries.concat(importedQueries)
         storedQueries.updateStorage(this.queries)
-        this.$refs.importFile.value = null
       }
-      reader.readAsText(file)
+      storedQueries.importQueries(onSuccess)
     },
     toggleSelectAll (checked) {
       this.selectAll = checked
@@ -540,9 +519,7 @@ tbody tr:hover .icons-container {
 .dialog input {
   width: 100%;
 }
-#import-file {
-  display: none;
-}
+
 button.toolbar {
   margin-right: 16px;
 }
