@@ -88,7 +88,7 @@ describe('mutations', () => {
     }
 
     updateTab(state, newTab)
-    expect(state.tabs.length).to.equal(1)
+    expect(state.tabs).to.have.lengthOf(1)
     expect(state.currentTabId).to.equal(2)
     expect(state.tabs[0].id).to.equal(2)
     expect(state.tabs[0].name).to.equal('new test')
@@ -119,7 +119,7 @@ describe('mutations', () => {
     }
 
     updateTab(state, newTab)
-    expect(state.tabs.length).to.equal(1)
+    expect(state.tabs).to.have.lengthOf(1)
     expect(state.tabs[0].id).to.equal(1)
     expect(state.tabs[0].name).to.equal('new test')
     expect(state.tabs[0].query).to.equal('SELECT * from foo')
@@ -148,7 +148,7 @@ describe('mutations', () => {
     }
 
     updateTab(state, newTab)
-    expect(state.tabs.length).to.equal(1)
+    expect(state.tabs).to.have.lengthOf(1)
     expect(state.tabs[0].id).to.equal(1)
     expect(state.tabs[0].name).to.equal('test')
     expect(state.tabs[0].query).to.equal('SELECT * from foo')
@@ -181,7 +181,7 @@ describe('mutations', () => {
     }
 
     deleteTab(state, 0)
-    expect(state.tabs.length).to.equal(1)
+    expect(state.tabs).to.have.lengthOf(1)
     expect(state.tabs[0].id).to.equal(2)
     expect(state.currentTabId).to.equal(2)
   })
@@ -212,7 +212,7 @@ describe('mutations', () => {
     }
 
     deleteTab(state, 1)
-    expect(state.tabs.length).to.equal(1)
+    expect(state.tabs).to.have.lengthOf(1)
     expect(state.tabs[0].id).to.equal(1)
     expect(state.currentTabId).to.equal(1)
   })
@@ -252,7 +252,7 @@ describe('mutations', () => {
     }
 
     deleteTab(state, 1)
-    expect(state.tabs.length).to.equal(2)
+    expect(state.tabs).to.have.lengthOf(2)
     expect(state.tabs[0].id).to.equal(1)
     expect(state.tabs[1].id).to.equal(3)
     expect(state.currentTabId).to.equal(3)
@@ -275,7 +275,7 @@ describe('mutations', () => {
     }
 
     deleteTab(state, 0)
-    expect(state.tabs.length).to.equal(0)
+    expect(state.tabs).to.have.lengthOf(0)
     expect(state.currentTabId).to.equal(null)
   })
 
@@ -305,7 +305,7 @@ describe('mutations', () => {
     }
 
     deleteTab(state, 1)
-    expect(state.tabs.length).to.equal(1)
+    expect(state.tabs).to.have.lengthOf(1)
     expect(state.tabs[0].id).to.equal(1)
     expect(state.currentTabId).to.equal(1)
   })
@@ -434,7 +434,7 @@ describe('actions', () => {
     }
 
     await addTab({ state }, tab1)
-    expect(state.tabs.length).to.equal(2)
+    expect(state.tabs).to.have.lengthOf(2)
     expect(state.untitledLastIndex).to.equal(0)
   })
 })

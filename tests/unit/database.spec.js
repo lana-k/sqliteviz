@@ -24,7 +24,7 @@ describe('database.js', () => {
       return db.loadDb(buffer)
     })
     .then(({dbName, schema}) => {
-      expect(schema.length).to.equal(1)
+      expect(schema).to.have.lengthOf(1)
       expect(schema[0].name).to.equal('test') 
       expect(schema[0].columns[0].name).to.equal('col1') 
       expect(schema[0].columns[0].type).to.equal('N/A') 
@@ -85,11 +85,11 @@ describe('database.js', () => {
       return db.execute('SELECT * from test') 
     })
     .then(result => {
-      expect(result.columns.length).to.equal(3)
+      expect(result.columns).to.have.lengthOf(3)
       expect(result.columns[0]).to.equal('id') 
       expect(result.columns[1]).to.equal('name') 
       expect(result.columns[2]).to.equal('faculty') 
-      expect(result.values.length).to.equal(2)
+      expect(result.values).to.have.lengthOf(2)
       expect(result.values[0][0]).to.equal(1)
       expect(result.values[0][1]).to.equal('Harry Potter')
       expect(result.values[0][2]).to.equal('Griffindor')

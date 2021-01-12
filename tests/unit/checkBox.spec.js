@@ -30,10 +30,10 @@ describe('CheckBox', () => {
   it('emits event on click', async () => {
     const wrapper = shallowMount(CheckBox)
     await wrapper.trigger('click')
-    expect(wrapper.emitted().click.length).to.equal(1)
+    expect(wrapper.emitted().click).to.have.lengthOf(1)
     expect(wrapper.emitted().click[0]).to.eql([true])
     await wrapper.trigger('click')
-    expect(wrapper.emitted().click.length).to.equal(2)
+    expect(wrapper.emitted().click).to.have.lengthOf(2)
     expect(wrapper.emitted().click[1]).to.eql([false])
   })
 })
