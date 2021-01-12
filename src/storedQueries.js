@@ -73,7 +73,7 @@ export default {
 
     // Create downloader
     const downloader = document.createElement('a')
-    downloader.style.display = 'none'
+    downloader.hidden = true
     document.body.appendChild(downloader)
 
     // Prepare data
@@ -106,7 +106,7 @@ export default {
       uploader.id = 'file-uploader'
       uploader.type = 'file'
       uploader.accept = '.json'
-      uploader.style.display = 'none'
+      uploader.hidden = true
 
       uploader.addEventListener('change', () => {
         const file = uploader.files[0]
