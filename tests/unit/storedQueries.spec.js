@@ -11,7 +11,7 @@ describe('storedQueries.js', () => {
     expect(queries).to.eql([])
   })
 
-  it('getStoredQueries', () => {
+  it('updateStorage and getStoredQueries', () => {
     const data = [
       { id: 1 },
       { id: 2 }
