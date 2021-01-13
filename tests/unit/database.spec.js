@@ -73,8 +73,8 @@ describe('database.js', () => {
         );
         INSERT INTO test (id, name, faculty)
         VALUES
-        ( 1,	'Harry Potter', 'Griffindor'),
-        ( 2,	'Draco Malfoy', 'Slytherin');
+        ( 1, 'Harry Potter', 'Griffindor'),
+        ( 2, 'Draco Malfoy', 'Slytherin');
       `)
 
         const data = database.export()
@@ -111,8 +111,8 @@ describe('database.js', () => {
         );
         INSERT INTO test (id, name, faculty)
         VALUES
-        ( 1,	'Harry Potter', 'Griffindor'),
-        ( 2,	'Draco Malfoy', 'Slytherin');
+        ( 1, 'Harry Potter', 'Griffindor'),
+        ( 2, 'Draco Malfoy', 'Slytherin');
       `)
 
         const data = database.export()

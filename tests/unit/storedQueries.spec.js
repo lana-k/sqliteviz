@@ -46,7 +46,7 @@ describe('storedQueries.js', () => {
     const tab = {
       initName: 'foo'
     }
-    expect(storedQueries.isTabNeedName(tab)).to.be.false
+    expect(storedQueries.isTabNeedName(tab)).to.equal(false)
   })
 
   it('isTabNeedName returns true when the query has no name and is not predefined', () => {
@@ -54,7 +54,7 @@ describe('storedQueries.js', () => {
       initName: null,
       tempName: 'Untitled'
     }
-    expect(storedQueries.isTabNeedName(tab)).to.be.true
+    expect(storedQueries.isTabNeedName(tab)).to.equal(true)
   })
 
   it('isTabNeedName returns true when the qiery is predefined', () => {
@@ -62,6 +62,7 @@ describe('storedQueries.js', () => {
       initName: 'foo',
       isPredefined: true
     }
-    expect(storedQueries.isTabNeedName(tab)).to.be.true
+
+    expect(storedQueries.isTabNeedName(tab)).to.equal(true)
   })
 })
