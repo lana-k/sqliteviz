@@ -1,31 +1,33 @@
 // Karma configuration
-"use strict";
-const path = require("path");
-const VueLoaderPlugin = require("vue-loader/lib/plugin");
+'use strict'
+const path = require('path')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
-function resolve(dir) {
-  return path.join(__dirname, dir);
+function resolve (dir) {
+  return path.join(__dirname, dir)
 }
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: "",
+    basePath: '',
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ["mocha", "sinon-chai"],
+    frameworks: ['mocha', 'sinon-chai'],
 
     // list of files / patterns to load in the browser
     files: [
-      "./karma.files.js",
-      { pattern: 'node_modules/sql.js/dist/sql-wasm.wasm',
+      './karma.files.js',
+      {
+        pattern: 'node_modules/sql.js/dist/sql-wasm.wasm',
         watched: false,
         included: false,
         served: true,
         nocache: false
       },
-      { pattern: 'node_modules/sql.js/dist/worker.sql-wasm.js',
+      {
+        pattern: 'node_modules/sql.js/dist/worker.sql-wasm.js',
         watched: false,
         included: false,
         served: true,
@@ -39,29 +41,29 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      "./karma.files.js": ["webpack"]
+      './karma.files.js': ['webpack']
     },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ["spec", "coverage"],
+    reporters: ['spec', 'coverage'],
 
     coverageReporter: {
-      dir: "coverage",
-      reporters: [{ type: "lcov", subdir: "." }, { type: "text-summary" }]
+      dir: 'coverage',
+      reporters: [{ type: 'lcov', subdir: '.' }, { type: 'text-summary' }]
     },
 
     // !!DONOT delete this reporter, or vue-cli-addon-ui-karma doesnot work
     jsonResultReporter: {
-      outputFile: "report/karma-result.json",
+      outputFile: 'report/karma-result.json',
       isSynchronous: true
     },
 
     junitReporter: {
-      outputDir: "report", // results will be saved as $outputDir/$browserName.xml
+      outputDir: 'report', // results will be saved as $outputDir/$browserName.xml
       outputFile: undefined, // if included, results will be saved as $outputDir/$browserName/$outputFile
-      suite: "", // suite will become the package name attribute in xml testsuite element
+      suite: '', // suite will become the package name attribute in xml testsuite element
       useBrowserName: true, // add browser name to report and classes names
       nameFormatter: undefined, // function (browser, result) to customize the name attribute in xml testcase element
       classNameFormatter: undefined, // function (browser, result) to customize the classname attribute in xml testcase element
@@ -83,7 +85,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ["ChromiumHeadless"],
+    browsers: ['ChromiumHeadless'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -98,16 +100,16 @@ module.exports = function(config) {
     },
     browserConsoleLogOptions: {
       terminal: true,
-      level: ""
+      level: ''
     },
     webpack: {
-      mode: "development",
-      entry: "./src/main.js",
+      mode: 'development',
+      entry: './src/main.js',
       resolve: {
-        extensions: [".js", ".vue", ".json"],
+        extensions: ['.js', '.vue', '.json'],
         alias: {
-          vue$: "vue/dist/vue.esm.js",
-          "@": resolve("src")
+          vue$: 'vue/dist/vue.esm.js',
+          '@': resolve('src')
         }
       },
       module: {
@@ -117,7 +119,7 @@ module.exports = function(config) {
             exclude: /(node_modules|bower_components)/,
             use: [
               {
-                loader: "babel-loader"
+                loader: 'babel-loader'
               }
             ]
           },
@@ -127,7 +129,7 @@ module.exports = function(config) {
             exclude: /(node_modules|bower_components|\.spec\.js$|\/file)/,
             use: [
               {
-                loader: "istanbul-instrumenter-loader",
+                loader: 'istanbul-instrumenter-loader',
                 options: {
                   esModules: true
                 }
@@ -136,34 +138,34 @@ module.exports = function(config) {
           },
           {
             test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-            loader: "url-loader"
+            loader: 'url-loader'
           },
           {
             test: /\.vue$/,
-            loader: "vue-loader",
+            loader: 'vue-loader',
             options: {
               loaders: {
-                js: "babel-loader"
+                js: 'babel-loader'
               },
               postLoaders: {
-                js: "istanbul-instrumenter-loader?esModules=true"
+                js: 'istanbul-instrumenter-loader?esModules=true'
               }
             }
           },
           {
             test: /\.css$/,
-            use: ["vue-style-loader", "css-loader"]
+            use: ['vue-style-loader', 'css-loader']
           },
           {
             test: /\.scss$/,
-            use: ["vue-style-loader", "css-loader", "sass-loader"]
+            use: ['vue-style-loader', 'css-loader', 'sass-loader']
           },
           {
             test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-            loader: "url-loader",
+            loader: 'url-loader',
             options: {
               limit: 10000,
-              name: resolve("fonts/[name].[hash:7].[ext]")
+              name: resolve('fonts/[name].[hash:7].[ext]')
             }
           }
         ]
@@ -174,7 +176,7 @@ module.exports = function(config) {
       }
     },
     proxies: {
-      "/js/": "/base/node_modules/sql.js/dist/"
+      '/js/': '/base/node_modules/sql.js/dist/'
     }
-  });
-};
+  })
+}

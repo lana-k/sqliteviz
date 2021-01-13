@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { mutations, actions } from '@/store'
-const { 
+const {
   saveSchema,
   updateTab,
   deleteTab,
@@ -15,11 +15,14 @@ describe('mutations', () => {
   it('saveSchema', () => {
     // mock state
     const state = {}
-    
+
     const schema = [
-      { name: 'table1', columns: [
-        { name: 'id',    type: 'INTEGER' }
-      ]}
+      {
+        name: 'table1',
+        columns: [
+          { name: 'id', type: 'INTEGER' }
+        ]
+      }
     ]
     saveSchema(state, {
       dbName: 'test',
@@ -323,7 +326,7 @@ describe('mutations', () => {
   it('setCurrentTab', () => {
     // mock state
     const state = {
-      currentTab: { id: 1}
+      currentTab: { id: 1 }
     }
 
     setCurrentTab(state, { id: 2 })
@@ -371,7 +374,6 @@ describe('mutations', () => {
     expect(state.predefinedQueries).to.eql(queries)
   })
 })
-
 
 describe('actions', () => {
   it('addTab (new)', async () => {
@@ -429,8 +431,8 @@ describe('actions', () => {
 
     // mock state
     const state = {
-      tabs: [ tab1, tab2 ],
-      untitledLastIndex: 0,
+      tabs: [tab1, tab2],
+      untitledLastIndex: 0
     }
 
     await addTab({ state }, tab1)

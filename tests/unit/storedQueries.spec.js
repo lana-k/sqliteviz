@@ -2,35 +2,35 @@ import { expect } from 'chai'
 import storedQueries from '@/storedQueries.js'
 
 describe('storedQueries.js', () => {
-  beforeEach(()=> {
+  beforeEach(() => {
     localStorage.removeItem('myQueries')
   })
 
   it('getStoredQueries(empty storage)', () => {
-    const queries = storedQueries.getStoredQueries() 
+    const queries = storedQueries.getStoredQueries()
     expect(queries).to.eql([])
-  })  
+  })
 
   it('getStoredQueries', () => {
     const data = [
       { id: 1 },
-      { id: 2 },
+      { id: 2 }
     ]
     storedQueries.updateStorage(data)
-    const queries = storedQueries.getStoredQueries() 
+    const queries = storedQueries.getStoredQueries()
     expect(queries).to.eql(data)
-  })  
+  })
 
   it('duplicateQuery', () => {
     const now = new Date()
-    const nowPlusMinute = new Date(now.getTime() + 60*1000)
+    const nowPlusMinute = new Date(now.getTime() + 60 * 1000)
     const base = {
       id: 1,
       name: 'foo',
       query: 'SELECT * from foo',
       chart: [],
       createdAt: new Date(2021, 0, 1),
-      isPredefined: true   
+      isPredefined: true
     }
 
     const copy = storedQueries.duplicateQuery(base)
@@ -43,14 +43,14 @@ describe('storedQueries.js', () => {
   })
 
   it('isTabNeedName returns false when the query has a name and is not predefined', () => {
-    let tab = {
+    const tab = {
       initName: 'foo'
     }
     expect(storedQueries.isTabNeedName(tab)).to.be.false
   })
 
   it('isTabNeedName returns true when the query has no name and is not predefined', () => {
-    let tab = {
+    const tab = {
       initName: null,
       tempName: 'Untitled'
     }
@@ -58,7 +58,7 @@ describe('storedQueries.js', () => {
   })
 
   it('isTabNeedName returns true when the qiery is predefined', () => {
-    let tab = {
+    const tab = {
       initName: 'foo',
       isPredefined: true
     }

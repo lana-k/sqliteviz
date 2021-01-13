@@ -1,0 +1,30 @@
+name: Run tests
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - 'master'
+
+jobs:
+  test:
+    name: Run karma tests
+    runs-on: ubuntu-latest    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - name: Install chromium
+      run:  
+        sudo DEBIAN_FRONTEND=noninteractive apt-get update && 
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y chromium-browser
+
+    - name: Install the project
+      run: npm install
+
+    - name: Run lint
+      run: npm run lint
+
+    - name: Run tests
+      run: npm run test:unit

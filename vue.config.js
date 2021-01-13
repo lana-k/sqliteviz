@@ -18,9 +18,9 @@ module.exports = {
     svgRule.uses.clear()
     svgRule
       .use('url-loader')
-        .loader('url-loader')
-        .options({
-          limit: 10000
-        })
+      .loader('url-loader')
+      .options({
+        limit: 10000
+      })
   }
 }
