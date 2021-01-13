@@ -17,7 +17,7 @@ export default {
 
   isTabNeedName (queryTab) {
     const isFromScratch = !queryTab.initName
-    return isFromScratch || queryTab.isPredefined
+    return queryTab.isPredefined || isFromScratch
   },
 
   save (queryTab, newName) {
@@ -74,7 +74,7 @@ export default {
     // Create downloader
     const downloader = document.createElement('a')
     downloader.hidden = true
-    document.body.appendChild(downloader)
+    document.body.append(downloader)
 
     // Prepare data
     const name = data.name || 'My sqlitevis queries'
@@ -137,7 +137,7 @@ export default {
         reader.readAsText(file)
       })
 
-      document.body.appendChild(uploader)
+      document.body.append(uploader)
     }
     uploader.click()
   }
