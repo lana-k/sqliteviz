@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    name: Run karma tests
+    name: Run tests
     runs-on: ubuntu-latest    
     steps:
     - uses: actions/checkout@v2
@@ -23,8 +23,12 @@ jobs:
     - name: Install the project
       run: npm install
 
+    - name: Fix watchers amount
+      run:  echo fs.inotify.max_user_watches=524288 |
+            sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
     - name: Run lint
       run: npm run lint
 
-    - name: Run tests
+    - name: Run karma tests
       run: npm run test:unit
