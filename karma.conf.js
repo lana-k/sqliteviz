@@ -105,6 +105,7 @@ module.exports = function (config) {
     webpack: {
       mode: 'development',
       entry: './src/main.js',
+      watch: false,
       resolve: {
         extensions: ['.js', '.vue', '.json'],
         alias: {

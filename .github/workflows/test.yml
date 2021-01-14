@@ -23,10 +23,6 @@ jobs:
     - name: Install the project
       run: npm install
 
-    - name: Fix watchers amount
-      run:  echo fs.inotify.max_user_watches=524288 |
-            sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-
     - name: Run lint
       run: npm run lint
 
