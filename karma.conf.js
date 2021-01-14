@@ -105,10 +105,6 @@ module.exports = function (config) {
     webpack: {
       mode: 'development',
       entry: './src/main.js',
-      watch: false,
-      watchOptions: {
-        ignored: ['node_modules/**']
-      },
       resolve: {
         extensions: ['.js', '.vue', '.json'],
         alias: {
@@ -181,7 +177,7 @@ module.exports = function (config) {
     },
     webpackMiddleware: {
       watchOptions: {
-        ignored: [/\/\./, 'node_modules']
+        ignored: /node_modules/
       }
     },
     proxies: {
