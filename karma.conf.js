@@ -106,6 +106,9 @@ module.exports = function (config) {
       mode: 'development',
       entry: './src/main.js',
       watch: false,
+      watchOptions: {
+        ignored: ['node_modules/**']
+      },
       resolve: {
         extensions: ['.js', '.vue', '.json'],
         alias: {
