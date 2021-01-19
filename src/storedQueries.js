@@ -59,36 +59,27 @@ export default {
     localStorage.setItem('myQueries', JSON.stringify(value))
   },
 
-  exportQueries (data) {
-    const preparedData = JSON.parse(JSON.stringify(data))
+  serialiseQueries (queryList) {
+    const preparedData = JSON.parse(JSON.stringify(queryList))
+    preparedData.forEach(query => delete query.isPredefined)
+    return JSON.stringify(preparedData, null, 4)
+  },
 
-    // Remove isPredefined mark for exported queries
-    if (Array.isArray(data)) {
-      // group operation
-      preparedData.forEach(query => delete query.isPredefined)
-    } else {
-      // single operation
-      delete preparedData.isPredefined
-    }
-
+  exportQueries (str, fileName, type = 'octet/stream') {
     // Create downloader
     const downloader = document.createElement('a')
-    downloader.hidden = true
-    document.body.append(downloader)
 
-    // Prepare data
-    const name = data.name || 'My sqlitevis queries'
-    const json = JSON.stringify(preparedData, null, 4)
-    const blob = new Blob([json], { type: 'octet/stream' })
-    const url = window.URL.createObjectURL(blob)
+    // const name = data.name || 'My sqlitevis queries'
+    const blob = new Blob([str], { type })
+    const url = URL.createObjectURL(blob)
     downloader.href = url
-    downloader.download = `${name}.json`
+    downloader.download = fileName
 
     // Trigger click
     downloader.click()
 
-    // Clear
-    window.URL.revokeObjectURL(url)
+    // Clean up
+    URL.revokeObjectURL(url)
     downloader.remove()
   },
 

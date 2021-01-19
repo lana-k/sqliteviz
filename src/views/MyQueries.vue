@@ -15,7 +15,7 @@
           <button
             class="toolbar"
             v-show="selectedQueriesCount > 0"
-            @click="exportQuery(selectedQueriesIds)"
+            @click="exportSelectedQueries()"
           >
             Export
           </button>
@@ -81,7 +81,7 @@
                   <div class="icons-container">
                     <rename-icon v-if="!query.isPredefined" @click="showRenameDialog(query.id)" />
                     <copy-icon @click="duplicateQuery(index)"/>
-                    <export-icon @click="exportQuery(index)"/>
+                    <export-icon @click="exportToFile([query], `${query.name}.json`)"/>
                     <delete-icon v-if="!query.isPredefined" @click="showDeleteDialog(query.id)"/>
                   </div>
                 </div>
@@ -348,21 +348,16 @@ export default {
     findTabIndex (id) {
       return this.$store.state.tabs.findIndex(tab => tab.id === id)
     },
-    exportQuery (index) {
-      let data
+    exportToFile (queryList, fileName) {
+      const jsonStr = storedQueries.serialiseQueries(queryList)
+      storedQueries.exportQueries(jsonStr, fileName)
+    },
+    exportSelectedQueries () {
+      const queryList = this.selectAll
+        ? this.allQueries
+        : this.allQueries.filter(query => this.selectedQueriesIds.has(query.id))
 
-      if (typeof index === 'number') {
-        // single operation
-        data = this.showedQueries[index]
-      } else {
-        // group operation
-        data = this.selectAll
-          ? this.allQueries
-          : this.allQueries.filter(query => this.selectedQueriesIds.has(query.id))
-      }
-
-      // export data to file
-      storedQueries.exportQueries(data)
+      this.exportToFile(queryList, 'My sqlitevis queries.json')
     },
     importQueries () {
       const onSuccess = (importedQueries) => {
