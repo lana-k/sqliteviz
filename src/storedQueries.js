@@ -65,24 +65,6 @@ export default {
     return JSON.stringify(preparedData, null, 4)
   },
 
-  exportQueries (str, fileName, type = 'octet/stream') {
-    // Create downloader
-    const downloader = document.createElement('a')
-
-    // const name = data.name || 'My sqlitevis queries'
-    const blob = new Blob([str], { type })
-    const url = URL.createObjectURL(blob)
-    downloader.href = url
-    downloader.download = fileName
-
-    // Trigger click
-    downloader.click()
-
-    // Clean up
-    URL.revokeObjectURL(url)
-    downloader.remove()
-  },
-
   /**
    * It calls onSuccess with imported queries as argument when
    * file read. We can't use Promises here because we can't

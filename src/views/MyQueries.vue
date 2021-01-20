@@ -157,6 +157,7 @@ import TextField from '@/components/TextField'
 import CheckBox from '@/components/CheckBox'
 import tooltipMixin from '@/mixins/tooltips'
 import storedQueries from '@/storedQueries'
+import fu from '@/fileUtilities'
 
 export default {
   name: 'MyQueries',
@@ -350,7 +351,7 @@ export default {
     },
     exportToFile (queryList, fileName) {
       const jsonStr = storedQueries.serialiseQueries(queryList)
-      storedQueries.exportQueries(jsonStr, fileName)
+      fu.exportToFile(jsonStr, fileName)
     },
     exportSelectedQueries () {
       const queryList = this.selectAll
