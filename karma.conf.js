@@ -126,7 +126,7 @@ module.exports = function (config) {
           {
             test: /\.js$/,
             include: /src/,
-            exclude: /(node_modules|bower_components|\.spec\.js$|\/file)/,
+            exclude: /(node_modules|bower_components|\.spec\.js$)/,
             use: [
               {
                 loader: 'istanbul-instrumenter-loader',
