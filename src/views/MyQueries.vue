@@ -214,7 +214,14 @@ export default {
     }
   },
   created () {
-    this.queries = storedQueries.getStoredQueries()
+    storedQueries.readPredefinedQueries()
+      .then(queries => {
+        this.$store.commit('updatePredefinedQueries', queries)
+      })
+      .catch(console.error)
+      .finally(() => {
+        this.queries = storedQueries.getStoredQueries()
+      })
   },
   mounted () {
     this.resizeObserver = new ResizeObserver(this.calcMaxTableHeight)

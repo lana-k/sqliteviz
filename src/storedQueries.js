@@ -113,5 +113,12 @@ export default {
       document.body.append(uploader)
     }
     uploader.click()
+  },
+
+  readPredefinedQueries () {
+    return fetch('./queries.json')
+      .then(resp => {
+        return resp.json()
+      })
   }
 }
