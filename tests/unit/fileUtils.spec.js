@@ -3,7 +3,7 @@ import fu from '@/fileUtils.js'
 import sinon from 'sinon'
 
 describe('fileUtils.js', () => {
-  afterEach(()=> {
+  afterEach(() => {
     document.createElement.restore()
     URL.revokeObjectURL.restore()
     URL.createObjectURL.restore()
@@ -18,16 +18,15 @@ describe('fileUtils.js', () => {
     sinon.spy(URL, 'createObjectURL')
     sinon.spy(URL, 'revokeObjectURL')
     sinon.spy(window, 'Blob')
-    
-    const str = 'foo'
-    fu.exportToFile('foo','foo.txt')
-    
+
+    fu.exportToFile('foo', 'foo.txt')
+
     expect(document.createElement.calledOnceWith('a')).to.equal(true)
-    
+
     expect(window.Blob.calledOnceWith(['foo'], { type: 'octet/stream' })).to.equal(true)
     const blob = window.Blob.returnValues[0]
-    expect(URL.createObjectURL.calledOnceWith(blob)).to.equal(true) 
-    
+    expect(URL.createObjectURL.calledOnceWith(blob)).to.equal(true)
+
     const url = URL.createObjectURL.returnValues[0]
     expect(spyAnchor.href).to.equal(url)
 
@@ -37,7 +36,7 @@ describe('fileUtils.js', () => {
 
     expect(spyAnchor.remove.calledOnce).to.equal(true)
     expect(URL.revokeObjectURL.calledOnceWith(url)).to.equal(true)
-  }),
+  })
 
   it('exportToFile', () => {
     const spyAnchor = document.createElement('a')
@@ -47,16 +46,15 @@ describe('fileUtils.js', () => {
     sinon.spy(URL, 'createObjectURL')
     sinon.spy(URL, 'revokeObjectURL')
     sinon.spy(window, 'Blob')
-    
-    const str = 'foo'
-    fu.exportToFile('foo','foo.html', 'text/html')
-    
+
+    fu.exportToFile('foo', 'foo.html', 'text/html')
+
     expect(document.createElement.calledOnceWith('a')).to.equal(true)
-    
+
     expect(window.Blob.calledOnceWith(['foo'], { type: 'text/html' })).to.equal(true)
     const blob = window.Blob.returnValues[0]
-    expect(URL.createObjectURL.calledOnceWith(blob)).to.equal(true) 
-    
+    expect(URL.createObjectURL.calledOnceWith(blob)).to.equal(true)
+
     const url = URL.createObjectURL.returnValues[0]
     expect(spyAnchor.href).to.equal(url)
 

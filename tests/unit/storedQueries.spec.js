@@ -66,26 +66,28 @@ describe('storedQueries.js', () => {
     expect(storedQueries.isTabNeedName(tab)).to.equal(true)
   })
 
-  it ('serialiseQueries', () => {
-    let queryList = [
-      { id: 1,
+  it('serialiseQueries', () => {
+    const queryList = [
+      {
+        id: 1,
         name: 'foo',
         query: 'SELECT from foo',
         chart: [],
-        createdAt:'2020-11-03T14:17:49.524Z',
+        createdAt: '2020-11-03T14:17:49.524Z',
         isPredefined: true
       },
-      { id: 2,
+      {
+        id: 2,
         name: 'bar',
         query: 'SELECT from bar',
         chart: [],
-        createdAt:'2020-12-03T14:17:49.524Z'
-      },
+        createdAt: '2020-12-03T14:17:49.524Z'
+      }
     ]
 
     const str = storedQueries.serialiseQueries(queryList)
     const parsedJson = JSON.parse(str)
-    
+
     expect(parsedJson).to.have.lengthOf(2)
     expect(parsedJson[1]).to.eql(queryList[1])
     expect(parsedJson[0].id).to.equal(queryList[0].id)
