@@ -368,18 +368,18 @@ export default {
       this.exportToFile(queryList, 'My sqlitevis queries.json')
     },
     importQueries () {
-      const onSuccess = (importedQueries) => {
-        if (this.selectAll) {
-          importedQueries.forEach(query => {
-            this.selectedQueriesIds.add(query.id)
-          })
-          this.selectedQueriesCount = this.selectedQueriesIds.size
-        }
+      storedQueries.importQueries()
+        .then(importedQueries => {
+          if (this.selectAll) {
+            importedQueries.forEach(query => {
+              this.selectedQueriesIds.add(query.id)
+            })
+            this.selectedQueriesCount = this.selectedQueriesIds.size
+          }
 
-        this.queries = this.queries.concat(importedQueries)
-        storedQueries.updateStorage(this.queries)
-      }
-      storedQueries.importQueries(onSuccess)
+          this.queries = this.queries.concat(importedQueries)
+          storedQueries.updateStorage(this.queries)
+        })
     },
     toggleSelectAll (checked) {
       this.selectAll = checked
