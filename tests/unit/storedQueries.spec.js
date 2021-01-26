@@ -6,7 +6,7 @@ describe('storedQueries.js', () => {
     localStorage.removeItem('myQueries')
   })
 
-  it('getStoredQueries(empty storage)', () => {
+  it('getStoredQueries returns emplty array when storage is empty', () => {
     const queries = storedQueries.getStoredQueries()
     expect(queries).to.eql([])
   })
@@ -96,5 +96,50 @@ describe('storedQueries.js', () => {
     expect(parsedJson[0].chart).to.eql(queryList[0].chart)
     expect(parsedJson[0].createdAt).to.eql(queryList[0].createdAt)
     expect(parsedJson[0].chart).to.not.have.property('isPredefined')
+  })
+
+  it('deserialiseQueries return array for one query', () => {
+    const str = `
+      {
+        "id": 1,
+        "name": "foo",
+        "query": "select * from foo",
+        "chart": [],
+        "createdAt": "2020-11-03T14:17:49.524Z" 
+      }
+    `
+    const query = storedQueries.deserialiseQueries(str)
+    expect(query).to.eql([JSON.parse(str)])
+  })
+
+  it('deserialiseQueries generates new id to avoid duplication', () => {
+    storedQueries.updateStorage([{id: 1}])
+    const str = `[
+      {
+        "id": 1,
+        "name": "foo",
+        "query": "select * from foo",
+        "chart": [],
+        "createdAt": "2020-11-03T14:17:49.524Z" 
+      },
+      {
+        "id": 2,
+        "name": "bar",
+        "query": "select * from bar",
+        "chart": [],
+        "createdAt": "2020-11-04T14:17:49.524Z" 
+      }
+    ]`
+    
+    const queries = storedQueries.deserialiseQueries(str)
+    const parsedStr = JSON.parse(str)
+    expect(queries[1]).to.eql(parsedStr[1])
+    expect(queries[0].id).to.not.equal(parsedStr[0].id)
+    expect(queries[0]).to.have.property('id')
+    expect(queries[0].id).to.not.equal(parsedStr[0].id)
+    expect(queries[0].name).to.equal(parsedStr[0].name)
+    expect(queries[0].query).to.equal(parsedStr[0].query)
+    expect(queries[0].chart).to.eql(parsedStr[0].chart)
+    expect(queries[0].createdAt).to.equal(parsedStr[0].createdAt)
   })
 })
