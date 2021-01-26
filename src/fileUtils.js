@@ -39,5 +39,9 @@ export default {
 
       uploader.click()
     })
+  },
+
+  readFile (path) {
+    return fetch(path)
   }
 }

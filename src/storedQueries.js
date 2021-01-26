@@ -92,7 +92,7 @@ export default {
   },
 
   readPredefinedQueries () {
-    return fetch('./queries.json')
+    return fu.readFile('./queries.json')
       .then(resp => {
         return resp.json()
       })
