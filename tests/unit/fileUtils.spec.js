@@ -5,9 +5,6 @@ import sinon from 'sinon'
 describe('fileUtils.js', () => {
   afterEach(() => {
     document.createElement.restore()
-    URL.revokeObjectURL.restore()
-    URL.createObjectURL.restore()
-    window.Blob.restore()
   })
 
   it('exportToFile (octet/stream by default)', () => {
@@ -36,6 +33,10 @@ describe('fileUtils.js', () => {
 
     expect(spyAnchor.remove.calledOnce).to.equal(true)
     expect(URL.revokeObjectURL.calledOnceWith(url)).to.equal(true)
+
+    URL.revokeObjectURL.restore()
+    URL.createObjectURL.restore()
+    window.Blob.restore()
   })
 
   it('exportToFile', () => {
@@ -64,5 +65,35 @@ describe('fileUtils.js', () => {
 
     expect(spyAnchor.remove.calledOnce).to.equal(true)
     expect(URL.revokeObjectURL.calledOnceWith(url)).to.equal(true)
+
+    URL.revokeObjectURL.restore()
+    URL.createObjectURL.restore()
+    window.Blob.restore()
+  })
+
+  it('importFile', () => {
+    const spyInput = document.createElement('input')
+    sinon.spy(spyInput, 'click')
+    sinon.spy(spyInput, 'remove')
+    
+    const blob = new Blob(['foo'])
+    Object.defineProperty(spyInput, 'files', {
+      value: [blob],
+      writable: false,
+    })
+
+    sinon.stub(document, 'createElement').returns(spyInput)
+
+    setTimeout(() => { spyInput.dispatchEvent(new Event('change')) })
+
+    return fu.importFile()
+      .then((data) => {
+        expect(data).to.equal('foo')
+        expect(document.createElement.calledOnceWith('input')).to.equal(true)
+        expect(spyInput.type).to.equal('file')
+        expect(spyInput.accept).to.equal('.json')
+        expect(spyInput.click.calledOnce).to.equal(true)
+        expect(spyInput.remove.calledOnce).to.equal(true)
+      })
   })
 })

@@ -24,7 +24,6 @@ export default {
     return new Promise((resolve, reject) => {
       const uploader = document.createElement('input')
 
-      uploader.id = 'file-uploader'
       uploader.type = 'file'
       uploader.accept = '.json'
 
@@ -32,6 +31,7 @@ export default {
         const file = uploader.files[0]
         const reader = new FileReader()
         reader.onload = (e) => {
+          uploader.remove()
           resolve(e.target.result)
         }
         reader.readAsText(file)
