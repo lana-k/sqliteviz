@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 import storedQueries from '@/storedQueries.js'
+import fu from '@/fileUtils'
 
 describe('storedQueries.js', () => {
   beforeEach(() => {
@@ -142,4 +143,112 @@ describe('storedQueries.js', () => {
     expect(queries[0].chart).to.eql(parsedStr[0].chart)
     expect(queries[0].createdAt).to.equal(parsedStr[0].createdAt)
   })
+
+  it('importQueries', async () => {
+    const str = `
+      {
+        "id": 1,
+        "name": "foo",
+        "query": "select * from foo",
+        "chart": [],
+        "createdAt": "2020-11-03T14:17:49.524Z" 
+      }
+    `
+    sinon.stub(fu, 'importFile').returns(Promise.resolve(str))
+    const queries = await storedQueries.importQueries()
+    fu.importFile.restore()
+    
+    expect(queries).to.eql([JSON.parse(str)])
+  })
+
+  it('readPredefinedQueries', async () => {
+    const str = `
+      {
+        "id": 1,
+        "name": "foo",
+        "query": "select * from foo",
+        "chart": [],
+        "createdAt": "2020-11-03T14:17:49.524Z" 
+      }
+    `
+    sinon.stub(fu, 'readFile').returns(Promise.resolve(new Response(str)))
+    const queries = await storedQueries.readPredefinedQueries()
+    expect(fu.readFile.calledOnceWith('./queries.json')).to.equal(true)
+    expect(queries).to.eql(JSON.parse(str))
+    fu.readFile.restore()
+  })
+
+  it('save adds new query in the storage', () => {
+    const now = new Date()
+    const nowPlusMinute = new Date(now.getTime() + 60 * 1000)
+    const tab = {
+      id: 1,
+      query: 'select * from foo',
+      chart: [],
+      initName: null,
+      getChartStateForSave () {
+        return []
+      }
+    }
+    const value = storedQueries.save(tab, 'foo')
+    expect(value.id).to.equal(tab.id)
+    expect(value.name).to.equal('foo')
+    expect(value.query).to.equal(tab.query)
+    expect(value.chart).to.eql(tab.getChartStateForSave())
+    expect(value).to.have.property('createdAt').which.within(now, nowPlusMinute)
+    const queries = storedQueries.getStoredQueries()
+    expect(JSON.stringify(queries)).to.equal(JSON.stringify([value]))
+  })
+
+  it('save updates existing query in the storage', () => {
+    const tab = {
+      id: 1,
+      query: 'select * from foo',
+      chart: [],
+      initName: null,
+      getChartStateForSave () {
+        return []
+      }
+    }
+
+    const first = storedQueries.save(tab, 'foo')
+
+    tab.initName = 'foo'
+    tab.query = 'select * from foo'
+    storedQueries.save(tab)
+    const queries = storedQueries.getStoredQueries()
+    const second = queries[0]
+    expect(queries).has.lengthOf(1)
+    expect(second.id).to.equal(first.id)
+    expect(second.name).to.equal(first.name)
+    expect(second.query).to.equal(tab.query)
+    expect(second.chart).to.eql(first.chart)
+    expect(new Date(second.createdAt).getTime()).to.equal(first.createdAt.getTime())
+  })
+
+  it("save adds a new query with new id if it's based on predefined query", () => {
+    const now = new Date()
+    const nowPlusMinute = new Date(now.getTime() + 60 * 1000)
+    const tab = {
+      id: 1,
+      query: 'select * from foo',
+      chart: [],
+      initName: 'foo predefined',
+      getChartStateForSave () {
+        return []
+      },
+      isPredefined: true
+    }
+    storedQueries.save(tab, 'foo')
+    
+    const queries = storedQueries.getStoredQueries()
+    expect(queries).has.lengthOf(1)
+    expect(queries[0]).to.have.property('id').which.not.equal(tab.id)
+    expect(queries[0].name).to.equal('foo')
+    expect(queries[0].query).to.equal(tab.query)
+    expect(queries[0].chart).to.eql(tab.getChartStateForSave())
+    expect(new Date(queries[0].createdAt)).to.be.within(now, nowPlusMinute)
+  })
 })
+
+    

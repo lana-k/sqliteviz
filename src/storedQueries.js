@@ -25,17 +25,15 @@ export default {
     const value = {
       id: queryTab.isPredefined ? nanoid() : queryTab.id,
       query: queryTab.query,
-      chart: queryTab.getChartSatateForSave(),
+      chart: queryTab.getChartStateForSave(),
       name: newName || queryTab.initName
     }
-
-    const isNeedName = this.isTabNeedName(queryTab)
 
     // Get queries from local storage
     let myQueries = this.getStoredQueries()
 
     // Set createdAt
-    if (isNeedName) {
+    if (newName) {
       value.createdAt = new Date()
     } else {
       var queryIndex = myQueries.findIndex(oldQuery => oldQuery.id === queryTab.id)
@@ -43,9 +41,7 @@ export default {
     }
 
     // Insert in queries list
-    if (!myQueries) {
-      myQueries = [value]
-    } else if (isNeedName) {
+    if (newName) {
       myQueries.push(value)
     } else {
       myQueries[queryIndex] = value

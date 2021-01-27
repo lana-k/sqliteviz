@@ -134,8 +134,8 @@ export default {
       const freeSpace = bottomPane.offsetHeight - 88 - 42 - 30 - 5 - 40
       this.tableViewHeight = freeSpace - (freeSpace % 40)
     },
-    getChartSatateForSave () {
-      return this.$refs.chart.getChartSatateForSave()
+    getChartStateForSave () {
+      return this.$refs.chart.getChartStateForSave()
     }
   }
 }

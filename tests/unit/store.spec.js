@@ -376,7 +376,7 @@ describe('mutations', () => {
 })
 
 describe('actions', () => {
-  it('addTab (new)', async () => {
+  it('addTab adds new blank tab', async () => {
     // mock state
     const state = {
       tabs: [],
@@ -391,7 +391,7 @@ describe('actions', () => {
     expect(state.untitledLastIndex).to.equal(1)
   })
 
-  it('addTab (saved)', async () => {
+  it('addTab adds tab from saved queries', async () => {
     // mock state
     const state = {
       tabs: [],
@@ -410,7 +410,7 @@ describe('actions', () => {
     expect(state.untitledLastIndex).to.equal(0)
   })
 
-  it('addTab (existed)', async () => {
+  it("addTab doesn't add anything when the query is already opened", async () => {
     const tab1 = {
       id: 1,
       name: 'test',

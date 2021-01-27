@@ -77,7 +77,7 @@ export default {
       this.state = { data, layout, frames }
       this.$emit('update')
     },
-    getChartSatateForSave () {
+    getChartStateForSave () {
       // we don't need to save the data, only settings
       // so we modify state.data using dereference
       const stateCopy = JSON.parse(JSON.stringify(this.state))
