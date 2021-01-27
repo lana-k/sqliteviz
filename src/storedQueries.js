@@ -30,7 +30,7 @@ export default {
     }
 
     // Get queries from local storage
-    let myQueries = this.getStoredQueries()
+    const myQueries = this.getStoredQueries()
 
     // Set createdAt
     if (newName) {

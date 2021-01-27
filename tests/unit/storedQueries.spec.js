@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sinon from 'sinon'
 import storedQueries from '@/storedQueries.js'
 import fu from '@/fileUtils'
 
@@ -114,7 +115,7 @@ describe('storedQueries.js', () => {
   })
 
   it('deserialiseQueries generates new id to avoid duplication', () => {
-    storedQueries.updateStorage([{id: 1}])
+    storedQueries.updateStorage([{ id: 1 }])
     const str = `[
       {
         "id": 1,
@@ -131,7 +132,7 @@ describe('storedQueries.js', () => {
         "createdAt": "2020-11-04T14:17:49.524Z" 
       }
     ]`
-    
+
     const queries = storedQueries.deserialiseQueries(str)
     const parsedStr = JSON.parse(str)
     expect(queries[1]).to.eql(parsedStr[1])
@@ -157,7 +158,7 @@ describe('storedQueries.js', () => {
     sinon.stub(fu, 'importFile').returns(Promise.resolve(str))
     const queries = await storedQueries.importQueries()
     fu.importFile.restore()
-    
+
     expect(queries).to.eql([JSON.parse(str)])
   })
 
@@ -240,7 +241,7 @@ describe('storedQueries.js', () => {
       isPredefined: true
     }
     storedQueries.save(tab, 'foo')
-    
+
     const queries = storedQueries.getStoredQueries()
     expect(queries).has.lengthOf(1)
     expect(queries[0]).to.have.property('id').which.not.equal(tab.id)
@@ -250,5 +251,3 @@ describe('storedQueries.js', () => {
     expect(new Date(queries[0].createdAt)).to.be.within(now, nowPlusMinute)
   })
 })
-
-    
