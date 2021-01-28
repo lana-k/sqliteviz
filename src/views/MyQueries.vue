@@ -43,9 +43,7 @@
           </div>
         </div>
       </div>
-      <div
-        class="table-container" :style="{ 'max-height': `${maxTableHeight}px` }"
-      >
+      <div class="table-container" :style="{ 'max-height': `${maxTableHeight}px` }">
         <table ref="table">
           <tbody>
             <tr
@@ -65,7 +63,7 @@
                     <div
                       class="badge"
                       @mouseover="showTooltip"
-                      @mouseout="$set(tooltipStyle, 'visibility', 'hidden')"
+                      @mouseout="hideTooltip"
                     >
                       Predefined
                       <span class="icon-tooltip" :style="tooltipStyle">
