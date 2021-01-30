@@ -18,7 +18,7 @@ describe('Schema.vue', () => {
     const store = new Vuex.Store({ state })
 
     // mout the component
-    const wrapper = mount(Schema, { store, localVue})
+    const wrapper = mount(Schema, { store, localVue })
 
     // check DB name and schema visibility
     expect(wrapper.find('.db-name').text()).to.equal('fooDB')
@@ -33,7 +33,7 @@ describe('Schema.vue', () => {
     const store = new Vuex.Store({ state })
 
     // mout the component
-    const wrapper = mount(Schema, { store, localVue})
+    const wrapper = mount(Schema, { store, localVue })
 
     // click and check visibility
     await wrapper.find('.db-name').trigger('click')
@@ -73,7 +73,7 @@ describe('Schema.vue', () => {
     const store = new Vuex.Store({ state })
 
     // mount the component
-    const wrapper = mount(Schema, { store, localVue})
+    const wrapper = mount(Schema, { store, localVue })
 
     // apply filters and check the list of tables
     await wrapper.find('#schema-filter input').setValue('foo')
@@ -81,7 +81,7 @@ describe('Schema.vue', () => {
     expect(tables).to.have.lengthOf(2)
     expect(tables.at(0).vm.name).to.equal('foo')
     expect(tables.at(1).vm.name).to.equal('foobar')
-    
+
     await wrapper.find('#schema-filter input').setValue('bar')
     tables = wrapper.findAllComponents(TableDescription)
     expect(tables).to.have.lengthOf(2)
@@ -125,12 +125,12 @@ describe('Schema.vue', () => {
     const store = new Vuex.Store({ state, mutations })
 
     // stub getFileFromUser
-    const file = { file: 'hello'}
+    const file = { file: 'hello' }
     sinon.stub(fu, 'getFileFromUser').resolves(file)
 
     // mock $db.loadDb()
-    const newSchema = { 
-      dbName: 'barDB', 
+    const newSchema = {
+      dbName: 'barDB',
       schema: [
         {
           name: 'bar',
@@ -158,16 +158,16 @@ describe('Schema.vue', () => {
     sinon.spy($db, 'loadDb')
 
     // mount the component
-    const wrapper = mount(Schema, { store, localVue, mocks: {$db}})
+    const wrapper = mount(Schema, { store, localVue, mocks: { $db } })
 
     // trigger the event
     await wrapper.find('#db-edit').trigger('click')
 
     expect(fu.getFileFromUser.calledOnceWith('.db,.sqlite,.sqlite3')).to.equal(true)
-    
+
     await fu.getFileFromUser.returnValues[0]
     expect($db.loadDb.calledOnceWith(file)).to.equal(true)
-    
+
     await $db.loadDb.returnValues[0]
     expect(mutations.saveSchema.calledOnceWith(state, newSchema)).to.equal(true)
   })
