@@ -20,25 +20,34 @@ export default {
    * it will be an unsettled promise. But it's grabbed by
    * the garbage collector (tested with FinalizationRegistry).
    */
-  importFile () {
-    return new Promise((resolve, reject) => {
+  getFileFromUser (type) {
+    return new Promise(resolve => {
       const uploader = document.createElement('input')
 
       uploader.type = 'file'
-      uploader.accept = '.json'
+      uploader.accept = type
 
       uploader.addEventListener('change', () => {
         const file = uploader.files[0]
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          uploader.remove()
-          resolve(e.target.result)
-        }
-        reader.readAsText(file)
+        uploader.remove()
+        resolve(file)
       })
 
       uploader.click()
     })
+  },
+
+  importFile () {
+    return this.getFileFromUser('.json')
+      .then(file => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = e => {
+            resolve(e.target.result)
+          }
+          reader.readAsText(file)
+        })
+      })
   },
 
   readFile (path) {

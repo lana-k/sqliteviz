@@ -8,14 +8,11 @@
         <tree-chevron :expanded="schemaVisible"/>
         {{ dbName }}
       </div>
-      <div class="db-edit">
-        <input type="file" id="actual-btn"  ref="dbfile" hidden @change="changeDb"/>
-        <label for="actual-btn">
-          <change-db-icon />
-        </label>
+      <div id="db-edit" @click="changeDb">
+        <change-db-icon />
       </div>
     </div>
-    <div v-if="schemaVisible" class="schema">
+    <div v-show="schemaVisible" class="schema">
       <table-description
         v-for="table in schema"
         :key="table.name"
@@ -31,6 +28,7 @@ import TableDescription from '@/components/TableDescription'
 import TextField from '@/components/TextField'
 import ChangeDbIcon from '@/components/svg/changeDb'
 import TreeChevron from '@/components/svg/treeChevron'
+import fu from '@/fileUtils'
 
 export default {
   name: 'Schema',
@@ -64,9 +62,12 @@ export default {
   },
   methods: {
     changeDb () {
-      this.$db.loadDb(this.$refs.dbfile.files[0])
-        .then(({ dbName, schema }) => {
-          this.$store.commit('saveSchema', { dbName, schema })
+      fu.getFileFromUser('.db,.sqlite,.sqlite3')
+        .then(file => {
+          return this.$db.loadDb(file)
+        })
+        .then((schema) => {
+          this.$store.commit('saveSchema', schema)
         })
     }
   }
