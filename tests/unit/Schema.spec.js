@@ -170,5 +170,8 @@ describe('Schema.vue', () => {
 
     await $db.loadDb.returnValues[0]
     expect(mutations.saveSchema.calledOnceWith(state, newSchema)).to.equal(true)
+
+    $db.loadDb.restore()
+    fu.getFileFromUser.restore()
   })
 })
