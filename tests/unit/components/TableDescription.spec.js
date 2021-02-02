@@ -1,10 +1,10 @@
 import { expect } from 'chai'
 import { shallowMount } from '@vue/test-utils'
-import tableDescription from '@/components/TableDescription.vue'
+import TableDescription from '@/components/TableDescription.vue'
 
 describe('TableDescription.vue', () => {
   it('Initially the columns are hidden and table name is rendered', () => {
-    const wrapper = shallowMount(tableDescription, {
+    const wrapper = shallowMount(TableDescription, {
       propsData: {
         name: 'Test table',
         columns: [
@@ -18,7 +18,7 @@ describe('TableDescription.vue', () => {
   })
 
   it('Columns are visible and correct when click on table name', async () => {
-    const wrapper = shallowMount(tableDescription, {
+    const wrapper = shallowMount(TableDescription, {
       propsData: {
         name: 'Test table',
         columns: [

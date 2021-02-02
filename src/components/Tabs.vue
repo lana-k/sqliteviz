@@ -1,14 +1,14 @@
 <template>
-   <div id="tabs-container">
-    <div id="tabs__header" v-if="tabs.length > 0">
+   <div id="tabs">
+    <div id="tabs-header" v-if="tabs.length > 0">
       <div
         v-for="(tab, index) in tabs"
         :key="index"
         @click="selectTab(tab.id)"
-        :class="[{'tab__selected': (tab.id === selectedIndex)}, 'tab']"
+        :class="[{'tab-selected': (tab.id === selectedIndex)}, 'tab']"
       >
         <div class="tab-name">
-          <span v-show="tab.isUnsaved">*</span>
+          <span v-show="tab.isUnsaved" class="star">*</span>
           <span v-if="tab.name">{{ tab.name }}</span>
           <span v-else class="tab-untitled">{{ tab.tempName }}</span>
         </div>
@@ -27,7 +27,7 @@
       :is-predefined="tab.isPredefined"
       :tab-index="index"
     />
-    <div v-if="tabs.length === 0" id="start-guide">
+    <div v-show="tabs.length === 0" id="start-guide">
       <span class="link" @click="$root.$emit('createNewQuery')">Create</span>
       a new query from scratch or open the one from
       <router-link class="link" to="/my-queries">My queries</router-link>
@@ -128,18 +128,18 @@ export default {
 </script>
 
 <style>
-#tabs-container {
+#tabs {
   position: relative;
   height: 100%;
   background-color: var(--color-bg-light);
 }
-#tabs__header {
+#tabs-header {
   display: flex;
   margin: 0;
   max-width: 100%;
   overflow: hidden;
 }
-#tabs__header .tab {
+#tabs-header .tab {
   height: 36px;
   background-color: var(--color-bg-light);
   border-right: 1px solid var(--color-border-light);
@@ -155,24 +155,24 @@ export default {
   flex-shrink: 1;
   min-width: 0;
 }
-#tabs__header .tab-name {
+#tabs-header .tab-name {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   flex-shrink: 1;
 }
 
-#tabs__header div:hover {
+#tabs-header div:hover {
   cursor: pointer;
 }
 
-#tabs__header .tab__selected {
+#tabs-header .tab-selected {
   color: var(--color-text-active);
   font-weight: 600;
   border-bottom: none;
   background-color: var(--color-white);
 }
-#tabs__header .tab__selected:hover {
+#tabs-header .tab-selected:hover {
     cursor: default;
 }
 
