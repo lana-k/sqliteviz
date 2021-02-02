@@ -1,5 +1,9 @@
 import Vue from 'vue'
+import { VuePlugin } from 'vuera'
+import VModal from 'vue-js-modal'
 
+Vue.use(VuePlugin)
+Vue.use(VModal)
 Vue.config.productionTip = false
 
 // require all test files (files that ends with .spec.js)
