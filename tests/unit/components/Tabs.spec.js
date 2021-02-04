@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sinon from 'sinon'
 import { shallowMount, mount, createWrapper } from '@vue/test-utils'
 import { mutations } from '@/store'
 import Vuex from 'vuex'
@@ -248,7 +249,7 @@ describe('Tabs.vue', () => {
     const event = new Event('beforeunload')
     sinon.spy(event, 'preventDefault')
     wrapper.vm.leavingSqliteviz(event)
-    
+
     expect(event.preventDefault.calledOnce).to.equal(true)
   })
 
@@ -269,7 +270,7 @@ describe('Tabs.vue', () => {
     const event = new Event('beforeunload')
     sinon.spy(event, 'preventDefault')
     wrapper.vm.leavingSqliteviz(event)
-    
+
     expect(event.preventDefault.calledOnce).to.equal(false)
   })
 })
