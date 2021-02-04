@@ -229,4 +229,47 @@ describe('Tabs.vue', () => {
     // check that the dialog is closed
     expect(wrapper.find('[data-modal="close-warn"]').exists()).to.equal(false)
   })
+
+  it('Prevents closing a tab of a browser if there is unsaved query', () => {
+    // mock store state
+    const state = {
+      tabs: [
+        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isUnsaved: false },
+        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isUnsaved: true }
+      ],
+      currentTabId: 2
+    }
+
+    const store = new Vuex.Store({ state, mutations })
+
+    // mount the component
+    const wrapper = shallowMount(Tabs, { store })
+
+    const event = new Event('beforeunload')
+    sinon.spy(event, 'preventDefault')
+    wrapper.vm.leavingSqliteviz(event)
+    
+    expect(event.preventDefault.calledOnce).to.equal(true)
+  })
+
+  it("Doesn't prevent closing a tab of a browser if there is unsaved query", () => {
+    // mock store state
+    const state = {
+      tabs: [
+        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isUnsaved: false }
+      ],
+      currentTabId: 1
+    }
+
+    const store = new Vuex.Store({ state, mutations })
+
+    // mount the component
+    const wrapper = shallowMount(Tabs, { store })
+
+    const event = new Event('beforeunload')
+    sinon.spy(event, 'preventDefault')
+    wrapper.vm.leavingSqliteviz(event)
+    
+    expect(event.preventDefault.calledOnce).to.equal(false)
+  })
 })

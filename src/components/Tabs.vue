@@ -86,9 +86,6 @@ export default {
   created () {
     window.addEventListener('beforeunload', this.leavingSqliteviz)
   },
-  unmounted () {
-    window.removeEventListener('beforeunload', this.leavingSqliteviz)
-  },
   methods: {
     leavingSqliteviz (event) {
       if (this.tabs.some(tab => tab.isUnsaved)) {
