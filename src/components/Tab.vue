@@ -15,13 +15,19 @@
         <div id="bottomPane" ref="bottomPane">
           <view-switcher :view.sync="view" />
           <div v-show="view === 'table'" class="table-view">
-            <div v-show="result === null && !isGettingResults && !error" class="table-preview">
+            <div
+              v-show="result === null && !isGettingResults && !error"
+              class="table-preview result-before"
+            >
               Run your query and get results here
             </div>
-            <div v-show="isGettingResults" class="table-preview">
+            <div v-show="isGettingResults" class="table-preview result-in-progress">
               Fetching results...
             </div>
-            <div v-show="result === undefined && !isGettingResults && !error" class="table-preview">
+            <div
+              v-show="result === undefined && !isGettingResults && !error"
+              class="table-preview result-empty"
+            >
               No rows retrieved according to your query
             </div>
             <div v-show="error" class="table-preview error">
@@ -103,7 +109,7 @@ export default {
       this.isGettingResults = true
       this.result = null
       this.error = null
-      this.$db.execute(this.query + ';')
+      return this.$db.execute(this.query + ';')
         .then(result => {
           this.result = result
         })

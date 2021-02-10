@@ -4,7 +4,6 @@ import { shallowMount, mount, createWrapper } from '@vue/test-utils'
 import { mutations } from '@/store'
 import Vuex from 'vuex'
 import Tabs from '@/components/Tabs.vue'
-import Tab from '@/components/Tab.vue'
 
 describe('Tabs.vue', () => {
   it('Renders start guide when there is no opened tabs', () => {
@@ -39,7 +38,7 @@ describe('Tabs.vue', () => {
     expect(wrapper.find('#start-guide').isVisible()).to.equal(false)
 
     // check tabs
-    expect(wrapper.findAllComponents(Tab)).to.have.lengthOf(2)
+    expect(wrapper.findAllComponents({ name: 'Tab' })).to.have.lengthOf(2)
 
     const firstTab = wrapper.findAll('.tab').at(0)
     expect(firstTab.text()).to.include('foo')
@@ -98,7 +97,7 @@ describe('Tabs.vue', () => {
     await firstTabCloseIcon.trigger('click')
 
     // check that the only one tab left and it's opened
-    expect(wrapper.findAllComponents(Tab)).to.have.lengthOf(1)
+    expect(wrapper.findAllComponents({name: 'Tab'})).to.have.lengthOf(1)
 
     const firstTab = wrapper.findAll('.tab').at(0)
     expect(firstTab.text()).to.include('Untitled')
@@ -138,7 +137,7 @@ describe('Tabs.vue', () => {
     await cancelBtn.trigger('click')
 
     // check that tab is still opened
-    expect(wrapper.findAllComponents(Tab)).to.have.lengthOf(2)
+    expect(wrapper.findAllComponents({ name: 'Tab' })).to.have.lengthOf(2)
 
     // check that the dialog is closed
     expect(wrapper.find('[data-modal="close-warn"]').exists()).to.equal(false)
@@ -172,7 +171,7 @@ describe('Tabs.vue', () => {
     await closeBtn.trigger('click')
 
     // check that tab is closed
-    expect(wrapper.findAllComponents(Tab)).to.have.lengthOf(1)
+    expect(wrapper.findAllComponents({ name: 'Tab' })).to.have.lengthOf(1)
     const firstTab = wrapper.findAll('.tab').at(0)
     expect(firstTab.text()).to.include('foo')
     expect(firstTab.find('.star').isVisible()).to.equal(false)
@@ -217,7 +216,7 @@ describe('Tabs.vue', () => {
     await wrapper.vm.$root.$emit('querySaved')
 
     // check that tab is closed
-    expect(wrapper.findAllComponents(Tab)).to.have.lengthOf(1)
+    expect(wrapper.findAllComponents({ name: 'Tab' })).to.have.lengthOf(1)
     const firstTab = wrapper.findAll('.tab').at(0)
     expect(firstTab.text()).to.include('foo')
     expect(firstTab.find('.star').isVisible()).to.equal(false)
