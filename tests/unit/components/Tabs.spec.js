@@ -97,7 +97,7 @@ describe('Tabs.vue', () => {
     await firstTabCloseIcon.trigger('click')
 
     // check that the only one tab left and it's opened
-    expect(wrapper.findAllComponents({name: 'Tab'})).to.have.lengthOf(1)
+    expect(wrapper.findAllComponents({ name: 'Tab' })).to.have.lengthOf(1)
 
     const firstTab = wrapper.findAll('.tab').at(0)
     expect(firstTab.text()).to.include('Untitled')

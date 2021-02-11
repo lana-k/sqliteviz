@@ -8,26 +8,26 @@ describe('hint.js', () => {
   it('Calculates table list for hint', () => {
     // mock store state
     const schema = [
-        {
-          name: 'foo',
-          columns: [
-            { name: 'fooId', type: 'INTEGER' },
-            { name: 'name', type: 'NVARCHAR(20)' }
-          ]
-        },
-        {
-          name: 'bar',
-          columns: [
-            { name: 'barId', type: 'INTEGER' }
-          ]
-        }
-      ]
+      {
+        name: 'foo',
+        columns: [
+          { name: 'fooId', type: 'INTEGER' },
+          { name: 'name', type: 'NVARCHAR(20)' }
+        ]
+      },
+      {
+        name: 'bar',
+        columns: [
+          { name: 'barId', type: 'INTEGER' }
+        ]
+      }
+    ]
     sinon.stub(state, 'schema').value(schema)
 
     // mock showHint and editor
     sinon.stub(CM, 'showHint')
     const editor = {
-      getTokenAt() {
+      getTokenAt () {
         return {
           string: 'SELECT',
           type: 'keyword'
@@ -36,7 +36,7 @@ describe('hint.js', () => {
       getCursor: sinon.stub()
     }
 
-    const clock = sinon.useFakeTimers();
+    const clock = sinon.useFakeTimers()
     hint.show(editor)
     clock.tick(500)
 
@@ -45,7 +45,7 @@ describe('hint.js', () => {
       foo: ['fooId', 'name'],
       bar: ['barId']
     })
-    
+
     sinon.restore()
   })
 
@@ -53,7 +53,7 @@ describe('hint.js', () => {
     // mock showHint and editor
     sinon.stub(CM, 'showHint')
     const editor = {
-      getTokenAt() {
+      getTokenAt () {
         return {
           string: 'foo',
           type: 'string'
@@ -65,9 +65,9 @@ describe('hint.js', () => {
     const clock = sinon.useFakeTimers()
     hint.show(editor)
     clock.tick(500)
-    
+
     expect(CM.showHint.called).to.equal(false)
-    
+
     sinon.restore()
   })
 
@@ -75,7 +75,7 @@ describe('hint.js', () => {
     // mock showHint and editor
     sinon.stub(CM, 'showHint')
     const editor = {
-      getTokenAt() {
+      getTokenAt () {
         return {
           string: ' ',
           type: null
@@ -87,9 +87,9 @@ describe('hint.js', () => {
     const clock = sinon.useFakeTimers()
     hint.show(editor)
     clock.tick(500)
-    
+
     expect(CM.showHint.called).to.equal(false)
-    
+
     sinon.restore()
   })
 
@@ -97,7 +97,7 @@ describe('hint.js', () => {
     // mock showHint and editor
     sinon.stub(CM, 'showHint')
     const editor = {
-      getTokenAt() {
+      getTokenAt () {
         return {
           string: ';',
           type: 'punctuation'
@@ -109,17 +109,17 @@ describe('hint.js', () => {
     const clock = sinon.useFakeTimers()
     hint.show(editor)
     clock.tick(500)
-    
+
     expect(CM.showHint.called).to.equal(false)
-    
+
     sinon.restore()
   })
 
-  it("getHints returns [ ] if there is only one option and the token is already completed with this option", () => {
+  it('getHints returns [ ] if there is only one option and the token is already completed with this option', () => {
     // mock CM.hint.sql and editor
     sinon.stub(CM.hint, 'sql').returns({ list: [{ text: 'SELECT' }] })
     const editor = {
-      getTokenAt() {
+      getTokenAt () {
         return {
           string: 'select',
           type: 'keyword'
@@ -130,19 +130,19 @@ describe('hint.js', () => {
 
     const hints = getHints(editor, {})
     expect(hints.list).to.eql([])
-    
+
     sinon.restore()
   })
 
-  it("getHints returns hints as is when there are more than one option", () => {
+  it('getHints returns hints as is when there are more than one option', () => {
     // mock CM.hint.sql and editor
-    let list = [
+    const list = [
       { text: 'SELECT' },
       { text: 'ST' }
     ]
     sinon.stub(CM.hint, 'sql').returns({ list })
     const editor = {
-      getTokenAt() {
+      getTokenAt () {
         return {
           string: 'se',
           type: 'keyword'
@@ -153,16 +153,16 @@ describe('hint.js', () => {
 
     const hints = getHints(editor, {})
     expect(hints.list).to.eql(list)
-    
+
     sinon.restore()
   })
 
-  it("getHints returns hints as is when there only one option but the token is not cpmpleted", () => {
+  it('getHints returns hints as is when there only one option but the token is not cpmpleted', () => {
     // mock CM.hint.sql and editor
-    let list = [{ text: 'SELECT' }]
+    const list = [{ text: 'SELECT' }]
     sinon.stub(CM.hint, 'sql').returns({ list })
     const editor = {
-      getTokenAt() {
+      getTokenAt () {
         return {
           string: 'sele',
           type: 'keyword'
@@ -173,7 +173,7 @@ describe('hint.js', () => {
 
     const hints = getHints(editor, {})
     expect(hints.list).to.eql(list)
-    
+
     sinon.restore()
   })
 
@@ -184,7 +184,7 @@ describe('hint.js', () => {
     // mock showHint and editor
     sinon.stub(CM, 'showHint')
     const editor = {
-      getTokenAt() {
+      getTokenAt () {
         return {
           string: 'SELECT',
           type: 'keyword'
@@ -193,13 +193,13 @@ describe('hint.js', () => {
       getCursor: sinon.stub()
     }
 
-    const clock = sinon.useFakeTimers();
+    const clock = sinon.useFakeTimers()
     hint.show(editor)
     clock.tick(500)
 
     expect(CM.showHint.called).to.equal(true)
     expect(CM.showHint.firstCall.args[2].tables).to.eql({})
-    
+
     sinon.restore()
   })
 })

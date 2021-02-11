@@ -17,12 +17,12 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
-      propsData: { 
-        id: 1, 
-        initName: 'foo', 
-        initQuery: 'SELECT * FROM foo', 
-        initChart: [], 
-        tabIndex: 0, 
+      propsData: {
+        id: 1,
+        initName: 'foo',
+        initQuery: 'SELECT * FROM foo',
+        initChart: [],
+        tabIndex: 0,
         isPredefined: false
       }
     })
@@ -43,7 +43,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
-      propsData: { 
+      propsData: {
         id: 1
       }
     })
@@ -62,7 +62,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
-      propsData: { 
+      propsData: {
         id: 1
       }
     })
@@ -73,7 +73,7 @@ describe('Tab.vue', () => {
     expect(wrapper.findComponent({ ref: 'chart' }).vm.visible).to.equal(true)
   })
 
-  it("Is not visible when not active", async () => {
+  it('Is not visible when not active', async () => {
     // mock store state
     const state = {
       currentTabId: 0
@@ -85,7 +85,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
-      propsData: { 
+      propsData: {
         id: 1
       }
     })
@@ -93,7 +93,7 @@ describe('Tab.vue', () => {
     expect(wrapper.find('.tab-content-container').isVisible()).to.equal(false)
   })
 
-  it("Calls setCurrentTab when becomes active", async () => {
+  it('Calls setCurrentTab when becomes active', async () => {
     // mock store state
     const state = {
       currentTabId: 0
@@ -105,12 +105,12 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
-      propsData: { 
+      propsData: {
         id: 1
       }
     })
 
-    state.currentTabId = 1    
+    state.currentTabId = 1
     expect(mutations.setCurrentTab.calledOnceWith(state, wrapper.vm)).to.equal(true)
   })
 
@@ -129,12 +129,12 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
-      propsData: { 
-        id: 1, 
-        initName: 'foo', 
-        initQuery: 'SELECT * FROM foo', 
-        initChart: [], 
-        tabIndex: 0, 
+      propsData: {
+        id: 1,
+        initName: 'foo',
+        initQuery: 'SELECT * FROM foo',
+        initChart: [],
+        tabIndex: 0,
         isPredefined: false
       }
     })
@@ -150,19 +150,19 @@ describe('Tab.vue', () => {
 
     const store = new Vuex.Store({ state, mutations })
     const $db = {
-      execute() { return new Promise(() => {}) }
+      execute () { return new Promise(() => {}) }
     }
     // mount the component
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
       mocks: { $db },
-      propsData: { 
-        id: 1, 
-        initName: 'foo', 
-        initQuery: 'SELECT * FROM foo', 
-        initChart: [], 
-        tabIndex: 0, 
+      propsData: {
+        id: 1,
+        initName: 'foo',
+        initQuery: 'SELECT * FROM foo',
+        initChart: [],
+        tabIndex: 0,
         isPredefined: false
       }
     })
@@ -183,19 +183,19 @@ describe('Tab.vue', () => {
 
     const store = new Vuex.Store({ state, mutations })
     const $db = {
-      execute() { return Promise.reject('There is no table foo') }
+      execute () { return Promise.reject('There is no table foo') }
     }
     // mount the component
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
       mocks: { $db },
-      propsData: { 
-        id: 1, 
-        initName: 'foo', 
-        initQuery: 'SELECT * FROM foo', 
-        initChart: [], 
-        tabIndex: 0, 
+      propsData: {
+        id: 1,
+        initName: 'foo',
+        initQuery: 'SELECT * FROM foo',
+        initChart: [],
+        tabIndex: 0,
         isPredefined: false
       }
     })
@@ -216,19 +216,19 @@ describe('Tab.vue', () => {
     const store = new Vuex.Store({ state, mutations })
     const result = ['this is table result']
     const $db = {
-      execute() { return Promise.resolve(result) }
+      execute () { return Promise.resolve(result) }
     }
     // mount the component
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
       mocks: { $db },
-      propsData: { 
-        id: 1, 
-        initName: 'foo', 
-        initQuery: 'SELECT * FROM foo', 
-        initChart: [], 
-        tabIndex: 0, 
+      propsData: {
+        id: 1,
+        initName: 'foo',
+        initQuery: 'SELECT * FROM foo',
+        initChart: [],
+        tabIndex: 0,
         isPredefined: false
       }
     })
