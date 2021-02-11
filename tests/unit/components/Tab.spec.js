@@ -183,7 +183,7 @@ describe('Tab.vue', () => {
 
     const store = new Vuex.Store({ state, mutations })
     const $db = {
-      execute () { return Promise.reject('There is no table foo') }
+      execute () { return Promise.reject(new Error('There is no table foo')) }
     }
     // mount the component
     const wrapper = mount(Tab, {
@@ -204,7 +204,7 @@ describe('Tab.vue', () => {
     expect(wrapper.find('.table-view .result-before').isVisible()).to.equal(false)
     expect(wrapper.find('.table-view .result-in-progress').isVisible()).to.equal(false)
     expect(wrapper.find('.table-preview.error').isVisible()).to.equal(true)
-    expect(wrapper.find('.table-preview.error').text()).to.equal('There is no table foo')
+    expect(wrapper.find('.table-preview.error').text()).to.include('There is no table foo')
   })
 
   it('Passes result to sql-table component', async () => {

@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import { state } from '@/store'
-import { default as hint, getHints } from '@/hint'
+import hint, { getHints } from '@/hint'
 import CM from 'codemirror'
 
 describe('hint.js', () => {
