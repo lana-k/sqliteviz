@@ -4,6 +4,10 @@ import * as chart from '@/chart'
 import * as dereference from 'react-chart-editor/lib/lib/dereference'
 
 describe('chart.js', () => {
+  afterEach(() => {
+    sinon.restore()
+  })
+
   it('getDataSourcesFromSqlResult', () => {
     const sqlResult = {
       columns: ['id', 'name'],
@@ -47,11 +51,12 @@ describe('chart.js', () => {
       name: ['foo', 'bar']
     }
     sinon.stub(dereference, 'default')
+    sinon.spy(JSON, 'parse')
 
     const ds = chart.getChartStateForSave(state, dataSources)
-    
+
     expect(dereference.default.calledOnce).to.equal(true)
-    
+
     const args = dereference.default.firstCall.args
     expect(args[0]).to.eql({
       foo: {},
@@ -61,5 +66,7 @@ describe('chart.js', () => {
       id: [],
       name: []
     })
+
+    expect(ds).to.equal(JSON.parse.returnValues[0])
   })
 })
