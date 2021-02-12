@@ -25,7 +25,7 @@ export default {
     const value = {
       id: queryTab.isPredefined ? nanoid() : queryTab.id,
       query: queryTab.query,
-      chart: queryTab.getChartStateForSave(),
+      chart: queryTab.$refs.chart.getChartStateForSave(),
       name: newName || queryTab.initName
     }
 

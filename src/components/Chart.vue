@@ -12,6 +12,7 @@
     :dataSourceOptions="dataSourceOptions"
     :plotly="plotly"
     @onUpdate="update"
+    @onRender="go"
     :useResizeHandler="true"
     :debug="true"
     :advancedTraceTypeSelector="true"
@@ -26,6 +27,11 @@ import plotly from 'plotly.js/dist/plotly'
 import 'react-chart-editor/lib/react-chart-editor.min.css'
 
 import PlotlyEditor from 'react-chart-editor'
+import {
+  getOptionsFromDataSources,
+  getDataSourcesFromSqlResult,
+  getChartStateForSave
+} from '@/chart'
 import dereference from 'react-chart-editor/lib/lib/dereference'
 
 export default {
@@ -46,23 +52,10 @@ export default {
   },
   computed: {
     dataSources () {
-      if (!this.sqlResult) {
-        return {}
-      }
-      const dataSorces = {}
-      const matrix = this.sqlResult.values
-      const [row] = matrix
-      const transposedMatrix = row.map((value, column) => matrix.map(row => row[column]))
-      this.sqlResult.columns.forEach((column, index) => {
-        dataSorces[column] = transposedMatrix[index]
-      })
-      return dataSorces
+      return getDataSourcesFromSqlResult(this.sqlResult)
     },
     dataSourceOptions () {
-      return Object.keys(this.dataSources).map(name => ({
-        value: name,
-        label: name
-      }))
+      return getOptionsFromDataSources(this.dataSources)
     }
   },
   watch: {
@@ -73,20 +66,15 @@ export default {
     }
   },
   methods: {
+    go (data, layout, frames) {
+      // TODO: check changes and enable Save button if needed
+    },
     update (data, layout, frames) {
       this.state = { data, layout, frames }
       this.$emit('update')
     },
     getChartStateForSave () {
-      // we don't need to save the data, only settings
-      // so we modify state.data using dereference
-      const stateCopy = JSON.parse(JSON.stringify(this.state))
-      const emptySources = {}
-      for (const key in this.dataSources) {
-        emptySources[key] = []
-      }
-      dereference(stateCopy.data, emptySources)
-      return stateCopy
+      return getChartStateForSave(this.state, this.dataSources)
     }
   }
 }

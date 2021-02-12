@@ -77,7 +77,8 @@ export default {
         return false
       }
       const tabIndex = this.currentQuery.tabIndex
-      return this.$store.state.tabs[tabIndex].isUnsaved
+      const tab = this.$store.state.tabs[tabIndex]
+      return tab && tab.isUnsaved
     },
     isPredefined () {
       if (this.currentQuery) {

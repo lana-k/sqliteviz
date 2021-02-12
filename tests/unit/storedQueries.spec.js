@@ -187,15 +187,19 @@ describe('storedQueries.js', () => {
       query: 'select * from foo',
       chart: [],
       initName: null,
-      getChartStateForSave () {
-        return []
+      $refs: {
+        chart: {
+          getChartStateForSave () {
+            return ['chart']
+          }
+        }
       }
     }
     const value = storedQueries.save(tab, 'foo')
     expect(value.id).to.equal(tab.id)
     expect(value.name).to.equal('foo')
     expect(value.query).to.equal(tab.query)
-    expect(value.chart).to.eql(tab.getChartStateForSave())
+    expect(value.chart).to.eql(['chart'])
     expect(value).to.have.property('createdAt').which.within(now, nowPlusMinute)
     const queries = storedQueries.getStoredQueries()
     expect(JSON.stringify(queries)).to.equal(JSON.stringify([value]))
@@ -207,8 +211,12 @@ describe('storedQueries.js', () => {
       query: 'select * from foo',
       chart: [],
       initName: null,
-      getChartStateForSave () {
-        return []
+      $refs: {
+        chart: {
+          getChartStateForSave () {
+            return ['chart']
+          }
+        }
       }
     }
 
@@ -223,7 +231,7 @@ describe('storedQueries.js', () => {
     expect(second.id).to.equal(first.id)
     expect(second.name).to.equal(first.name)
     expect(second.query).to.equal(tab.query)
-    expect(second.chart).to.eql(first.chart)
+    expect(second.chart).to.eql(['chart'])
     expect(new Date(second.createdAt).getTime()).to.equal(first.createdAt.getTime())
   })
 
@@ -235,8 +243,12 @@ describe('storedQueries.js', () => {
       query: 'select * from foo',
       chart: [],
       initName: 'foo predefined',
-      getChartStateForSave () {
-        return []
+      $refs: {
+        chart: {
+          getChartStateForSave () {
+            return ['chart']
+          }
+        }
       },
       isPredefined: true
     }
@@ -247,7 +259,7 @@ describe('storedQueries.js', () => {
     expect(queries[0]).to.have.property('id').which.not.equal(tab.id)
     expect(queries[0].name).to.equal('foo')
     expect(queries[0].query).to.equal(tab.query)
-    expect(queries[0].chart).to.eql(tab.getChartStateForSave())
+    expect(queries[0].chart).to.eql(['chart'])
     expect(new Date(queries[0].createdAt)).to.be.within(now, nowPlusMinute)
   })
 })
