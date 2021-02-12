@@ -11,7 +11,7 @@ describe('Tab.vue', () => {
     const state = {
       currentTabId: 1
     }
-    const store = new Vuex.Store({ state })
+    const store = new Vuex.Store({ state, mutations })
 
     // mount the component
     const wrapper = mount(Tab, {
@@ -37,7 +37,7 @@ describe('Tab.vue', () => {
     const state = {
       currentTabId: 0
     }
-    const store = new Vuex.Store({ state })
+    const store = new Vuex.Store({ state, mutations })
 
     // mount the component
     const wrapper = mount(Tab, {
@@ -56,7 +56,7 @@ describe('Tab.vue', () => {
       currentTabId: 1
     }
 
-    const store = new Vuex.Store({ state })
+    const store = new Vuex.Store({ state, mutations })
 
     // mount the component
     const wrapper = mount(Tab, {
@@ -79,7 +79,7 @@ describe('Tab.vue', () => {
       currentTabId: 0
     }
 
-    const store = new Vuex.Store({ state })
+    const store = new Vuex.Store({ state, mutations })
 
     // mount the component
     const wrapper = mount(Tab, {
@@ -214,7 +214,13 @@ describe('Tab.vue', () => {
     }
 
     const store = new Vuex.Store({ state, mutations })
-    const result = ['this is table result']
+    const result = {
+      columns: ['id', 'name'],
+      values: [
+        [1, 'foo'],
+        [2, 'bar']
+      ]
+    }
     const $db = {
       execute () { return Promise.resolve(result) }
     }
