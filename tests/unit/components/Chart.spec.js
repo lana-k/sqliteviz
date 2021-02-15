@@ -2,14 +2,14 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import { mount, shallowMount } from '@vue/test-utils'
 import Chart from '@/components/Chart.vue'
-import chart  from '@/chart.js'
+import chart from '@/chart.js'
 import * as dereference from 'react-chart-editor/lib/lib/dereference'
 
 describe('Chart.vue', () => {
   afterEach(() => {
     sinon.restore()
   })
-  
+
   it('getChartStateForSave called with proper arguments', () => {
     // mount the component
     const wrapper = shallowMount(Chart)
@@ -25,7 +25,7 @@ describe('Chart.vue', () => {
     const wrapper = shallowMount(Chart, {
       propsData: { visible: false }
     })
-    
+
     expect(wrapper.find('.chart-container').isVisible()).to.equal(false)
   })
 
@@ -34,7 +34,7 @@ describe('Chart.vue', () => {
     const wrapper = shallowMount(Chart, {
       propsData: { visible: true }
     })
-    
+
     expect(wrapper.find('.chart-container').isVisible()).to.equal(true)
   })
 
@@ -62,7 +62,7 @@ describe('Chart.vue', () => {
       values: [[2, 'bar']]
     }
 
-    await wrapper.setProps({sqlResult: newSqlResult})
+    await wrapper.setProps({ sqlResult: newSqlResult })
     expect(dereference.default.called).to.equal(true)
   })
 })
