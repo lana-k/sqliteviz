@@ -17,6 +17,7 @@
     :debug="true"
     :advancedTraceTypeSelector="true"
     class="chart"
+    ref="plotlyEditor"
     :style="{ height: !sqlResult ? 'calc(100% - 40px)' : '100%' }"
   />
 </div>
@@ -27,11 +28,7 @@ import plotly from 'plotly.js/dist/plotly'
 import 'react-chart-editor/lib/react-chart-editor.min.css'
 
 import PlotlyEditor from 'react-chart-editor'
-import {
-  getOptionsFromDataSources,
-  getDataSourcesFromSqlResult,
-  getChartStateForSave
-} from '@/chart'
+import chart from '@/chart'
 import dereference from 'react-chart-editor/lib/lib/dereference'
 
 export default {
@@ -52,10 +49,10 @@ export default {
   },
   computed: {
     dataSources () {
-      return getDataSourcesFromSqlResult(this.sqlResult)
+      return chart.getDataSourcesFromSqlResult(this.sqlResult)
     },
     dataSourceOptions () {
-      return getOptionsFromDataSources(this.dataSources)
+      return chart.getOptionsFromDataSources(this.dataSources)
     }
   },
   watch: {
@@ -74,7 +71,7 @@ export default {
       this.$emit('update')
     },
     getChartStateForSave () {
-      return getChartStateForSave(this.state, this.dataSources)
+      return chart.getChartStateForSave(this.state, this.dataSources)
     }
   }
 }

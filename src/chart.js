@@ -32,3 +32,9 @@ export function getChartStateForSave (state, dataSources) {
   dereference(stateCopy.data, emptySources)
   return stateCopy
 }
+
+export default {
+  getDataSourcesFromSqlResult,
+  getOptionsFromDataSources,
+  getChartStateForSave
+}
