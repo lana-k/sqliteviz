@@ -6,7 +6,7 @@ describe('fileUtils.js', () => {
   afterEach(() => {
     sinon.restore()
   })
-  
+
   it('exportToFile (octet/stream by default)', () => {
     const spyAnchor = document.createElement('a')
     sinon.spy(spyAnchor, 'click')
