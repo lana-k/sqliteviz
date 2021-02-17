@@ -12,7 +12,6 @@ export default {
 
     // Clean up
     URL.revokeObjectURL(url)
-    downloader.remove()
   },
 
   /**
@@ -29,7 +28,6 @@ export default {
 
       uploader.addEventListener('change', () => {
         const file = uploader.files[0]
-        uploader.remove()
         resolve(file)
       })
 

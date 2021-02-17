@@ -3,10 +3,13 @@ import fu from '@/fileUtils.js'
 import sinon from 'sinon'
 
 describe('fileUtils.js', () => {
+  afterEach(() => {
+    sinon.restore()
+  })
+  
   it('exportToFile (octet/stream by default)', () => {
     const spyAnchor = document.createElement('a')
     sinon.spy(spyAnchor, 'click')
-    sinon.spy(spyAnchor, 'remove')
     sinon.stub(document, 'createElement').returns(spyAnchor)
     sinon.spy(URL, 'createObjectURL')
     sinon.spy(URL, 'revokeObjectURL')
@@ -26,20 +29,12 @@ describe('fileUtils.js', () => {
     expect(spyAnchor.download).to.equal('foo.txt')
 
     expect(spyAnchor.click.calledOnce).to.equal(true)
-
-    expect(spyAnchor.remove.calledOnce).to.equal(true)
     expect(URL.revokeObjectURL.calledOnceWith(url)).to.equal(true)
-
-    URL.revokeObjectURL.restore()
-    URL.createObjectURL.restore()
-    window.Blob.restore()
-    document.createElement.restore()
   })
 
   it('exportToFile', () => {
     const spyAnchor = document.createElement('a')
     sinon.spy(spyAnchor, 'click')
-    sinon.spy(spyAnchor, 'remove')
     sinon.stub(document, 'createElement').returns(spyAnchor)
     sinon.spy(URL, 'createObjectURL')
     sinon.spy(URL, 'revokeObjectURL')
@@ -59,20 +54,12 @@ describe('fileUtils.js', () => {
     expect(spyAnchor.download).to.equal('foo.html')
 
     expect(spyAnchor.click.calledOnce).to.equal(true)
-
-    expect(spyAnchor.remove.calledOnce).to.equal(true)
     expect(URL.revokeObjectURL.calledOnceWith(url)).to.equal(true)
-
-    URL.revokeObjectURL.restore()
-    URL.createObjectURL.restore()
-    window.Blob.restore()
-    document.createElement.restore()
   })
 
   it('importFile', () => {
     const spyInput = document.createElement('input')
     sinon.spy(spyInput, 'click')
-    sinon.spy(spyInput, 'remove')
 
     const blob = new Blob(['foo'])
     Object.defineProperty(spyInput, 'files', {
@@ -91,8 +78,6 @@ describe('fileUtils.js', () => {
         expect(spyInput.type).to.equal('file')
         expect(spyInput.accept).to.equal('.json')
         expect(spyInput.click.calledOnce).to.equal(true)
-        expect(spyInput.remove.calledOnce).to.equal(true)
-        document.createElement.restore()
       })
   })
 
@@ -101,7 +86,5 @@ describe('fileUtils.js', () => {
 
     fu.readFile('./foo.bar')
     expect(window.fetch.calledOnceWith('./foo.bar')).to.equal(true)
-
-    window.fetch.restore()
   })
 })
