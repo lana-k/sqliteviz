@@ -20,8 +20,8 @@
     <!-- Splitter start-->
     <div
       class="splitpanes-splitter"
-      @mousedown="onMouseDown"
-      @touchstart="onMouseDown"
+      @mousedown="bindEvents"
+      @touchstart="bindEvents"
     >
       <div
         :class="[
@@ -137,8 +137,25 @@ export default {
   },
 
   methods: {
-    onMouseDown () {
-      splitter.bindEvents(this.onMouseMove, this.onMouseUp)
+    bindEvents () {
+      // Passive: false to prevent scrolling while touch dragging.
+      document.addEventListener('mousemove', this.onMouseMove, { passive: false })
+      document.addEventListener('mouseup', this.onMouseUp)
+
+      if ('ontouchstart' in window) {
+        document.addEventListener('touchmove', this.onMouseMove, { passive: false })
+        document.addEventListener('touchend', this.onMouseUp)
+      }
+    },
+
+    unbindEvents () {
+      document.removeEventListener('mousemove', this.onMouseMove, { passive: false })
+      document.removeEventListener('mouseup', this.onMouseUp)
+
+      if ('ontouchstart' in window) {
+        document.removeEventListener('touchmove', this.onMouseMove, { passive: false })
+        document.removeEventListener('touchend', this.onMouseUp)
+      }
     },
 
     onMouseMove (event) {
@@ -166,18 +183,17 @@ export default {
         this.dragging = false
       }
 
-      splitter.unbindEvents(this.onMouseMove, this.onMouseUp)
+      this.unbindEvents()
     },
 
     moveSplitter (event) {
-      const dragPercentage = splitter
-        .getCurrentDragPercentage(event, this.container, this.horizontal)
-
-      const paneBeforeMax = this.paneBefore.max
-      const paneAfterMax = this.paneAfter.max
-
-      // Prevent dragging beyond pane max.
-      const offset = splitter.calculateOffset(paneBeforeMax, paneAfterMax, dragPercentage)
+      const splitterInfo = {
+        container: this.container,
+        paneBeforeMax: this.paneBefore.max,
+        paneAfterMax: this.paneAfter.max,
+        isHorisontal: this.horizontal
+      }
+      const offset = splitter.calculateOffset(event, splitterInfo)
       const dir = this.horizontal ? 'top' : 'left'
       this.$set(this.movableSplitter, dir, offset)
     },

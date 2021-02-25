@@ -1,25 +1,4 @@
 export default {
-  bindEvents (onMouseMove, onMouseUp) {
-    // Passive: false to prevent scrolling while touch dragging.
-    document.addEventListener('mousemove', onMouseMove, { passive: false })
-    document.addEventListener('mouseup', onMouseUp)
-
-    if ('ontouchstart' in window) {
-      document.addEventListener('touchmove', onMouseMove, { passive: false })
-      document.addEventListener('touchend', onMouseUp)
-    }
-  },
-
-  unbindEvents (onMouseMove, onMouseUp) {
-    document.removeEventListener('mousemove', onMouseMove, { passive: false })
-    document.removeEventListener('mouseup', onMouseUp)
-
-    if ('ontouchstart' in window) {
-      document.removeEventListener('touchmove', onMouseMove, { passive: false })
-      document.removeEventListener('touchend', onMouseUp)
-    }
-  },
-
   // Get the cursor position relative to the splitpane container.
   getCurrentMouseDrag (event, container) {
     const rect = container.getBoundingClientRect()
@@ -40,7 +19,10 @@ export default {
     return drag * 100 / containerSize
   },
 
-  calculateOffset (paneBeforeMax, paneAfterMax, dragPercentage) {
+  // Returns the new position in percents.
+  calculateOffset (event, { container, isHorisontal, paneBeforeMax, paneAfterMax }) {
+    const dragPercentage = this.getCurrentDragPercentage(event, container, isHorisontal)
+
     const paneBeforeMaxReached = paneBeforeMax < 100 && (dragPercentage >= paneBeforeMax)
     const paneAfterMaxReached = paneAfterMax < 100 && (dragPercentage <= 100 - paneAfterMax)
 
