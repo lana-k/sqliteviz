@@ -30,7 +30,7 @@
         ]"
       >
         <div
-          v-if="after.max === 100  && after.size > 0"
+          v-if="after.max === 100 && after.size > 0"
           class="toggle-btn"
           @click="togglePane(paneBefore)"
         >
