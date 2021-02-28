@@ -1,24 +1,18 @@
 <template>
   <div class="db-upload-container">
-    <label for="assetsFieldHandle">
+    <div class="drop-area-container">
       <div
         class="drop-area"
         @dragover.prevent="state = 'dragover'"
         @dragleave.prevent="state=''"
         @drop.prevent="drop"
+        @click="browse"
       >
-        <input
-          type="file"
-          id="assetsFieldHandle"
-          @change="loadDb"
-          ref="file"
-          accept=".db,.sqlite,.sqlite3"
-        />
         <div class="text">
           Drop the database file here or click to choose a file from your computer.
         </div>
       </div>
-    </label>
+    </div>
     <div v-if="illustrated" id="img-container">
       <img id="drop-file-top-img" :src="require('@/assets/images/top.svg')" />
       <img
@@ -48,6 +42,8 @@
 </template>
 
 <script>
+import fu from '@/fileUtils'
+
 export default {
   name: 'DbUpload',
   props: {
@@ -75,26 +71,29 @@ export default {
     }
   },
   methods: {
-    loadDb () {
+    loadDb (file) {
       this.state = 'drop'
-      return Promise.all([this.$db.loadDb(this.$refs.file.files[0]), this.animationPromise])
-        .then(([{ dbName, schema }]) => {
-          this.$store.commit('saveSchema', { dbName, schema })
+      return Promise.all([this.$db.loadDb(file), this.animationPromise])
+        .then(([schema]) => {
+          this.$store.commit('saveSchema', schema)
           if (this.$route.path !== '/editor') {
             this.$router.push('/editor')
           }
         })
     },
+    browse () {
+      fu.getFileFromUser('.db,.sqlite,.sqlite3')
+        .then(this.loadDb)
+    },
     drop (event) {
-      this.$refs.file.files = event.dataTransfer.files
-      this.loadDb()
+      this.loadDb(event.dataTransfer.files[0])
     }
   }
 }
 </script>
 
 <style scoped>
-label {
+.drop-area-container {
   display: inline-block;
   border: 1px dashed var(--color-border);
   padding: 8px;
@@ -115,10 +114,6 @@ label {
   align-items: center;
   justify-content: center;
   height: 100%;
-}
-
-input {
-  display: none;
 }
 
 #img-container {
