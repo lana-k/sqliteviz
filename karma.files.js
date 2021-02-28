@@ -13,8 +13,9 @@ const testsContext = require.context('./tests/unit', true, /\.spec.js$/)
 // https://www.npmjs.com/package/require-context#context-api
 testsContext.keys().forEach(testsContext)
 
-// require all src files except main.js for coverage.
+// require all src files except main.js and router/index.js for coverage.
 // you can also change this to match only the subset of files that
 // you want coverage for.
-const srcContext = require.context('./src', true, /^\.\/(?!main(\.js)?$)/)
+// We don't include router/index.js to avoid installing VueRouter globally in tests
+const srcContext = require.context('./src', true, /^\.\/(?!(main|(router(\/)?(index)?))(\.js)?$)/)
 srcContext.keys().forEach(srcContext)
