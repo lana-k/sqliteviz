@@ -16,8 +16,8 @@ describe('splitter.js', () => {
     container.style.left = '20px'
 
     document.body.appendChild(container)
-    
-    const event = new MouseEvent("mousemove", {
+
+    const event = new MouseEvent('mousemove', {
       clientX: 70,
       clientY: 80
     })
@@ -27,7 +27,7 @@ describe('splitter.js', () => {
     expect(mouseDrag.y).to.equal(70)
   })
 
-  it("getCurrentDragPercentage - horisontal", () => {
+  it('getCurrentDragPercentage - horisontal', () => {
     sinon.stub(splitter, 'getCurrentMouseDrag').returns({ x: 50, y: 70 })
 
     const event = {}
@@ -42,7 +42,7 @@ describe('splitter.js', () => {
     expect(dragPercentage).to.equal(50)
   })
 
-  it("getCurrentDragPercentage - vertical", () => {
+  it('getCurrentDragPercentage - vertical', () => {
     sinon.stub(splitter, 'getCurrentMouseDrag').returns({ x: 50, y: 70 })
 
     const event = {}
@@ -57,7 +57,7 @@ describe('splitter.js', () => {
     expect(dragPercentage).to.equal(25)
   })
 
-  it("calculateOffset", () => {
+  it('calculateOffset', () => {
     sinon.stub(splitter, 'getCurrentDragPercentage').returns(25)
 
     const event = {}
@@ -74,7 +74,7 @@ describe('splitter.js', () => {
     expect(offset).to.equal(25)
   })
 
-  it("calculateOffset prevents dragging beyond paneBefore max", () => {
+  it('calculateOffset prevents dragging beyond paneBefore max', () => {
     sinon.stub(splitter, 'getCurrentDragPercentage').returns(75)
 
     const event = {}
@@ -90,7 +90,7 @@ describe('splitter.js', () => {
     expect(offset).to.equal(70)
   })
 
-  it("calculateOffset prevents dragging beyond paneAfter max", () => {
+  it('calculateOffset prevents dragging beyond paneAfter max', () => {
     sinon.stub(splitter, 'getCurrentDragPercentage').returns(10)
 
     const event = {}

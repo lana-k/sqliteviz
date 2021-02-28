@@ -17,7 +17,7 @@ describe('DbUploader.vue', () => {
       saveSchema: sinon.stub()
     }
     const store = new Vuex.Store({ state, mutations })
-    
+
     // mock getting a file from user
     const file = {}
     sinon.stub(fu, 'getFileFromUser').resolves(file)
@@ -72,7 +72,7 @@ describe('DbUploader.vue', () => {
       value: [file],
       writable: false
     })
-    
+
     await wrapper.find('.drop-area').trigger('drop', dropData)
     expect($db.loadDb.calledOnceWith(file)).to.equal(true)
     await $db.loadDb.returnValues[0]

@@ -15,8 +15,7 @@ describe('Splitpanes.vue', () => {
         after: { size: 40, max: 100 }
       }
     })
-    
-    
+
     expect(wrapper.findAll('.splitpanes-pane')).to.have.lengthOf(2)
     expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.width).to.equal('60%')
     expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.width).to.equal('40%')
@@ -35,8 +34,7 @@ describe('Splitpanes.vue', () => {
         horizontal: true
       }
     })
-    
-    
+
     expect(wrapper.findAll('.splitpanes-pane')).to.have.lengthOf(2)
     expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.height).to.equal('60%')
     expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.height).to.equal('40%')
@@ -54,7 +52,7 @@ describe('Splitpanes.vue', () => {
         after: { size: 40, max: 100 }
       }
     })
-    
+
     await wrapper.find('.toggle-btn').trigger('click')
     expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.width).to.equal('0%')
     expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.width).to.equal('100%')
@@ -79,7 +77,7 @@ describe('Splitpanes.vue', () => {
     root.style.height = '500px'
     root.appendChild(place)
     document.body.appendChild(root)
-    
+
     // mount the component
     const wrapper = shallowMount(Splitpanes, {
       attachTo: place,
@@ -92,13 +90,13 @@ describe('Splitpanes.vue', () => {
         after: { size: 40, max: 100 }
       }
     })
-    
+
     await wrapper.find('.splitpanes-splitter').trigger('mousedown')
-    document.dispatchEvent(new MouseEvent("mousemove", {
+    document.dispatchEvent(new MouseEvent('mousemove', {
       clientX: 300,
       clientY: 80
     }))
-    document.dispatchEvent(new MouseEvent("mouseup"))
+    document.dispatchEvent(new MouseEvent('mouseup'))
     await wrapper.vm.$nextTick()
     expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.width).to.equal('50%')
     wrapper.destroy()
@@ -112,7 +110,7 @@ describe('Splitpanes.vue', () => {
     root.style.height = '500px'
     root.appendChild(place)
     document.body.appendChild(root)
-    
+
     // mount the component
     const wrapper = shallowMount(Splitpanes, {
       attachTo: place,
@@ -126,13 +124,13 @@ describe('Splitpanes.vue', () => {
         horizontal: true
       }
     })
-    
+
     await wrapper.find('.splitpanes-splitter').trigger('mousedown')
-    document.dispatchEvent(new MouseEvent("mousemove", {
+    document.dispatchEvent(new MouseEvent('mousemove', {
       clientX: 10,
       clientY: 250
     }))
-    document.dispatchEvent(new MouseEvent("mouseup"))
+    document.dispatchEvent(new MouseEvent('mouseup'))
     await wrapper.vm.$nextTick()
     expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.height).to.equal('50%')
     wrapper.destroy()

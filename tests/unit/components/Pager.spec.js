@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { mount, shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import Pager from '@/components/Pager.vue'
 
 describe('Pager.vue', () => {
@@ -9,11 +9,13 @@ describe('Pager.vue', () => {
   })
 
   it('emits input event with a page', async () => {
-    const wrapper = mount(Pager, { propsData: {
-      pageCount: 5
-    }})
+    const wrapper = mount(Pager, {
+      propsData: {
+        pageCount: 5
+      }
+    })
 
-    // click on 'next page' link 
+    // click on 'next page' link
     await wrapper.find('.paginator-next').trigger('click')
     expect(wrapper.emitted('input')[0]).to.eql([2])
 
@@ -23,9 +25,11 @@ describe('Pager.vue', () => {
   })
 
   it('changes the page when value is changed', async () => {
-    const wrapper = mount(Pager, { propsData: {
-      pageCount: 5
-    }})
+    const wrapper = mount(Pager, {
+      propsData: {
+        pageCount: 5
+      }
+    })
 
     await wrapper.setProps({ value: 5 })
     expect(wrapper.emitted('input')[0]).to.eql([5])
