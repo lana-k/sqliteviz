@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Editor from '../views/Editor'
-import MyQueries from '../views/MyQueries'
-import Home from '../views/Home'
-import MainView from '../views/MainView'
+import Editor from '@/views/Editor'
+import MyQueries from '@/views/MyQueries'
+import Home from '@/views/Home'
+import MainView from '@/views/MainView'
 
 Vue.use(VueRouter)
 

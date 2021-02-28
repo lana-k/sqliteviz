@@ -10,6 +10,10 @@ const localVue = createLocalVue()
 localVue.use(Vuex)
 
 describe('Schema.vue', () => {
+  afterEach(() => {
+    sinon.restore()
+  })
+
   it('Renders DB name on initial', () => {
     // mock store state
     const state = {
@@ -149,13 +153,8 @@ describe('Schema.vue', () => {
       ]
     }
     const $db = {
-      loadDb (file) {
-        return Promise.resolve(newSchema)
-      }
+      loadDb: sinon.stub().resolves(newSchema)
     }
-
-    // spy on $db.loadDb()
-    sinon.spy($db, 'loadDb')
 
     // mount the component
     const wrapper = mount(Schema, { store, localVue, mocks: { $db } })
@@ -170,8 +169,5 @@ describe('Schema.vue', () => {
 
     await $db.loadDb.returnValues[0]
     expect(mutations.saveSchema.calledOnceWith(state, newSchema)).to.equal(true)
-
-    $db.loadDb.restore()
-    fu.getFileFromUser.restore()
   })
 })
