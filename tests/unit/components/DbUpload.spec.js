@@ -28,7 +28,7 @@ describe('DbUploader.vue', () => {
 
     // mock router
     const $router = { push: sinon.stub() }
-    const $route = { puth: '/' }
+    const $route = { path: '/' }
 
     // mount the component
     const wrapper = shallowMount(DbUpload, {
@@ -57,7 +57,7 @@ describe('DbUploader.vue', () => {
 
     // mock router
     const $router = { push: sinon.stub() }
-    const $route = { puth: '/' }
+    const $route = { path: '/' }
 
     // mount the component
     const wrapper = shallowMount(DbUpload, {
@@ -78,5 +78,31 @@ describe('DbUploader.vue', () => {
     await $db.loadDb.returnValues[0]
     expect(mutations.saveSchema.calledOnceWith(state, schema)).to.equal(true)
     expect($router.push.calledOnceWith('/editor')).to.equal(true)
+  })
+
+  it("doesn't redirect if already on /editor", async () => {
+    // mock store state and mutations
+    const state = {}
+    const mutations = {
+      saveSchema: sinon.stub()
+    }
+    const store = new Vuex.Store({ state, mutations })
+
+    // mock db loading
+    const schema = {}
+    const $db = { loadDb: sinon.stub().resolves(schema) }
+
+    // mock router
+    const $router = { push: sinon.stub() }
+    const $route = { path: '/' }
+
+    // mount the component
+    const wrapper = shallowMount(DbUpload, {
+      store,
+      mocks: { $db, $router, $route }
+    })
+
+    await wrapper.find('.drop-area').trigger('click')
+    expect($router.push.called).to.equal(false)
   })
 })
