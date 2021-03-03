@@ -6,6 +6,7 @@
     </div>
     <div>
       <button
+        id="run-btn"
         v-if="currentQuery && $route.path === '/editor'"
         class="primary"
         :disabled="runDisabled"
@@ -14,6 +15,7 @@
         Run
       </button>
       <button
+        id="save-btn"
         v-show="currentQuery && $route.path === '/editor'"
         class="primary"
         :disabled="!isUnsaved"
@@ -21,7 +23,13 @@
       >
         Save
       </button>
-      <button class="primary" @click="createNewQuery">Create</button>
+      <button
+        id="create-btn"
+        class="primary"
+        @click="createNewQuery"
+      >
+        Create
+      </button>
     </div>
 
     <!--Save Query dialog  -->
@@ -103,6 +111,9 @@ export default {
     createNewQuery () {
       this.$store.dispatch('addTab').then(id => {
         this.$store.commit('setCurrentTabId', id)
+        if (this.$route.path !== '/editor') {
+          this.$router.push('/editor')
+        }
       })
     },
     cancelSave () {
@@ -165,6 +176,7 @@ export default {
           if (!this.runDisabled) {
             this.currentQuery.execute()
           }
+          return
         }
 
         // Save query Ctrl+S
@@ -173,13 +185,13 @@ export default {
           if (this.isUnsaved) {
             this.checkQueryBeforeSave()
           }
+          return
         }
-
-        // New (blank) query Ctrl+B
-        if (e.key === 'b' && (e.ctrlKey || e.metaKey)) {
-          e.preventDefault()
-          this.createNewQuery()
-        }
+      }
+      // New (blank) query Ctrl+B
+      if (e.key === 'b' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        this.createNewQuery()
       }
     }
   }
