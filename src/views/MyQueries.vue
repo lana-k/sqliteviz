@@ -2,17 +2,18 @@
   <div>
     <div id="start-guide" v-if="showedQueries.length === 0">
       You don't have saved queries so far.
-      <span class="link" @click="create">Create</span>
+      <span class="link" @click="$root.$emit('createNewQuery')">Create</span>
       the one from scratch or
-      <label for="import-file" class="link">import</label> from a file.
+      <span @click="importQueries" class="link">import</span> from a file.
     </div>
     <div id="my-queries-content" ref="my-queries-content" v-show="showedQueries.length > 0">
       <div id="my-queries-toolbar">
         <div id="toolbar-buttons">
-          <button class="toolbar" @click="importQueries">
+          <button id="toolbar-btns-import" class="toolbar" @click="importQueries">
             Import
           </button>
           <button
+            id="toolbar-btns-export"
             class="toolbar"
             v-show="selectedQueriesCount > 0"
             @click="exportSelectedQueries()"
@@ -20,6 +21,7 @@
             Export
           </button>
           <button
+            id="toolbar-btns-delete"
             class="toolbar"
             v-show="selectedNotPredefinedCount > 0"
             @click="showDeleteDialog(selectedQueriesIds)"
@@ -49,7 +51,6 @@
             <tr
               v-for="(query, index) in showedQueries"
               :key="query.id"
-              :class="{ 'predefined': query.isPredefined }"
               @click="openQuery(index)"
             >
               <td ref="name-td">
@@ -61,6 +62,7 @@
                     />
                     <div class="name">{{ query.name }}</div>
                     <div
+                      v-if="query.isPredefined"
                       class="badge"
                       @mouseover="showTooltip"
                       @mouseout="hideTooltip"
@@ -80,7 +82,10 @@
                     <rename-icon v-if="!query.isPredefined" @click="showRenameDialog(query.id)" />
                     <copy-icon @click="duplicateQuery(index)"/>
                     <export-icon @click="exportToFile([query], `${query.name}.json`)"/>
-                    <delete-icon v-if="!query.isPredefined" @click="showDeleteDialog(query.id)"/>
+                    <delete-icon
+                      v-if="!query.isPredefined"
+                      @click="showDeleteDialog((new Set()).add(query.id))"
+                    />
                   </div>
                 </div>
               </td>
@@ -117,21 +122,8 @@
       Delete {{ deleteGroup ? 'queries' : 'query' }}
       <close-icon @click="$modal.hide('delete')"/>
     </div>
-    <div
-      v-if="
-        deleteGroup || (
-          currentQueryIndex !== null
-          && currentQueryIndex >= 0
-          && currentQueryIndex < queries.length
-        )
-      "
-      class="dialog-body"
-    >
-      Are you sure you want to delete
-      {{ deleteGroup
-        ? `${selectedNotPredefinedCount} ${selectedNotPredefinedCount > 1 ? 'queries' : 'query'}`
-        : `"${queries[currentQueryIndex].name}"`
-      }}?
+    <div class="dialog-body">
+      {{ deleteDialogMsg }}
       <div v-show="selectedQueriesCount > selectedNotPredefinedCount" id="note">
         <img :src="require('@/assets/images/info.svg')">
         Note: Predefined queries you've selected won't be deleted
@@ -174,7 +166,7 @@ export default {
       queries: [],
       filter: null,
       newName: null,
-      currentQueryId: null,
+      processedQueryId: null,
       errorMsg: null,
       selectedQueriesIds: new Set(),
       selectedQueriesCount: 0,
@@ -207,8 +199,25 @@ export default {
     allQueries () {
       return this.predefinedQueries.concat(this.queries)
     },
-    currentQueryIndex () {
-      return this.queries.findIndex(query => query.id === this.currentQueryId)
+    processedQueryIndex () {
+      return this.queries.findIndex(query => query.id === this.processedQueryId)
+    },
+    deleteDialogMsg () {
+      if (!this.deleteGroup && (
+        this.processedQueryIndex === null ||
+          this.processedQueryIndex < 0 ||
+          this.processedQueryIndex > this.queries.length
+      )) {
+        return ''
+      }
+
+      const deleteItem = this.deleteGroup
+        ? `${this.selectedNotPredefinedCount} ${this.selectedNotPredefinedCount > 1
+          ? 'queries'
+          : 'query'}`
+        : `"${this.queries[this.processedQueryIndex].name}"`
+
+      return `Are you sure you want to delete ${deleteItem}?`
     }
   },
   created () {
@@ -260,10 +269,6 @@ export default {
       const freeSpace = this.$refs['my-queries-content'].offsetHeight - 200
       this.maxTableHeight = freeSpace - (freeSpace % 40) + 1
     },
-    create () {
-      this.$root.$emit('createNewQuery')
-      this.$router.push('/editor')
-    },
     openQuery (index) {
       const tab = this.showedQueries[index]
       this.$store.dispatch('addTab', tab).then(id => {
@@ -273,8 +278,8 @@ export default {
     },
     showRenameDialog (id) {
       this.errorMsg = null
-      this.currentQueryId = id
-      this.newName = this.queries[this.currentQueryIndex].name
+      this.processedQueryId = id
+      this.newName = this.queries[this.processedQueryIndex].name
       this.$modal.show('rename')
     },
     renameQuery () {
@@ -282,20 +287,20 @@ export default {
         this.errorMsg = 'Query name can\'t be empty'
         return
       }
-      const currentQuery = this.queries[this.currentQueryIndex]
-      currentQuery.name = this.newName
-      this.$set(this.queries, this.currentQueryIndex, currentQuery)
+      const processedQuery = this.queries[this.processedQueryIndex]
+      processedQuery.name = this.newName
+      this.$set(this.queries, this.processedQueryIndex, processedQuery)
 
       // update queries in local storage
       storedQueries.updateStorage(this.queries)
 
       // update tab, if renamed query is opened
-      const tabIndex = this.findTabIndex(currentQuery.id)
+      const tabIndex = this.findTabIndex(processedQuery.id)
       if (tabIndex >= 0) {
         this.$store.commit('updateTab', {
           index: tabIndex,
           name: this.newName,
-          id: currentQuery.id
+          id: processedQuery.id
         })
       }
       // hide dialog
@@ -310,27 +315,27 @@ export default {
       this.queries.push(newQuery)
       storedQueries.updateStorage(this.queries)
     },
-    showDeleteDialog (id) {
-      this.deleteGroup = typeof id !== 'string'
+    showDeleteDialog (idsSet) {
+      this.deleteGroup = idsSet.size > 1
       if (!this.deleteGroup) {
-        this.currentQueryId = id
+        this.processedQueryId = idsSet.values().next().value
       }
       this.$modal.show('delete')
     },
     deleteQuery () {
       this.$modal.hide('delete')
       if (!this.deleteGroup) {
-        this.queries.splice(this.currentQueryIndex, 1)
+        this.queries.splice(this.processedQueryIndex, 1)
 
         // Close deleted query tab if it was opened
-        const tabIndex = this.findTabIndex(this.currentQueryId)
+        const tabIndex = this.findTabIndex(this.processedQueryId)
         if (tabIndex >= 0) {
           this.$store.commit('deleteTab', tabIndex)
         }
 
         // Clear checkboxes
-        if (this.selectedQueriesIds.has(this.currentQueryId)) {
-          this.selectedQueriesIds.delete(this.currentQueryId)
+        if (this.selectedQueriesIds.has(this.processedQueryId)) {
+          this.selectedQueriesIds.delete(this.processedQueryId)
         }
       } else {
         this.queries = this.selectAll
@@ -363,7 +368,7 @@ export default {
         ? this.allQueries
         : this.allQueries.filter(query => this.selectedQueriesIds.has(query.id))
 
-      this.exportToFile(queryList, 'My sqlitevis queries.json')
+      this.exportToFile(queryList, 'My sqliteviz queries.json')
     },
     importQueries () {
       storedQueries.importQueries()
@@ -525,15 +530,6 @@ button.toolbar {
   margin-right: 16px;
 }
 
-button label {
-  display: block;
-  line-height: 36px;
-}
-
-button label:hover {
-  cursor: pointer;
-}
-
 .badge {
   display: none;
   background-color: var(--color-gray-light-4);
@@ -545,7 +541,7 @@ button label:hover {
   margin-left: 12px;
 }
 
-tbody tr.predefined:hover .badge {
+tbody tr:hover .badge {
   display: block;
 }
 #note {
