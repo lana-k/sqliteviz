@@ -184,4 +184,6 @@ module.exports = function (config) {
       '/js/': '/base/node_modules/sql.js/dist/'
     }
   })
+  // Fix the timezone
+  process.env.TZ = 'Europe/Amsterdam'
 }
