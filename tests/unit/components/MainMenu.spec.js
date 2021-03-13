@@ -46,7 +46,6 @@ describe('MainMenu.vue', () => {
   })
 
   it('Run and Save are not visible if there is no tabs', () => {
-    console.log('Run and Save are not visible')
     const state = {
       currentTab: null,
       tabs: [{}],

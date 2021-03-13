@@ -88,13 +88,17 @@ describe('DbUploader.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
+    // mock getting a file from user
+    const file = {}
+    sinon.stub(fu, 'getFileFromUser').resolves(file)
+
     // mock db loading
     const schema = {}
     const $db = { loadDb: sinon.stub().resolves(schema) }
 
     // mock router
     const $router = { push: sinon.stub() }
-    const $route = { path: '/' }
+    const $route = { path: '/editor' }
 
     // mount the component
     const wrapper = shallowMount(DbUpload, {
@@ -103,6 +107,7 @@ describe('DbUploader.vue', () => {
     })
 
     await wrapper.find('.drop-area').trigger('click')
+    await $db.loadDb.returnValues[0]
     expect($router.push.called).to.equal(false)
   })
 })
