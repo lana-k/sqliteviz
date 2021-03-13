@@ -161,7 +161,7 @@ export default {
     onMouseMove (event) {
       event.preventDefault()
       this.dragging = true
-      this.$set(this.movableSplitter, 'visibility', 'visible')
+      this.movableSplitter.visibility = 'visible'
       this.moveSplitter(event)
     },
 
@@ -195,7 +195,7 @@ export default {
       }
       const offset = splitter.calculateOffset(event, splitterInfo)
       const dir = this.horizontal ? 'top' : 'left'
-      this.$set(this.movableSplitter, dir, offset)
+      this.movableSplitter[dir] = offset
     },
 
     togglePane (pane) {

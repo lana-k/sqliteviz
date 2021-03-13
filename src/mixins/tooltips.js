@@ -8,12 +8,12 @@ export default {
   },
   methods: {
     showTooltip (e) {
-      this.$set(this.tooltipStyle, 'top', e.clientY - 12 + 'px')
-      this.$set(this.tooltipStyle, 'left', e.clientX + 12 + 'px')
-      this.$set(this.tooltipStyle, 'visibility', 'visible')
+      this.tooltipStyle.top = e.clientY - 12 + 'px'
+      this.tooltipStyle.left = e.clientX + 12 + 'px'
+      this.tooltipStyle.visibility = 'visible'
     },
     hideTooltip () {
-      this.$set(this.tooltipStyle, 'visibility', 'hidden')
+      this.tooltipStyle.visibility = 'hidden'
     }
   }
 }
