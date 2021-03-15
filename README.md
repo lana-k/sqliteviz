@@ -8,7 +8,7 @@ Sqliteviz is a single-page application for fully client-side visualisation of SQ
 
 ## Get started
 
-The latest release of sqliteviz is running on [github pages][6]. The simplest way to start is to use sqliteviz there.
+The latest release of sqliteviz is running on [Github pages][6]. The simplest way to start is to use sqliteviz there.
 
 ### Choose a databese file
 
@@ -24,7 +24,7 @@ You can choose a database file right on the welcom page (fig. 1). The supported 
   </sub>
 </p>
 
-This is not a mandatory step. You can skip it and manipulate queries in sqliteviz without a database. Choose a database later when it's time to run a query in the right panel of the Editor (fig. 2).
+This is not a mandatory step. You can skip it and manipulate queries in sqliteviz without a database. Choose a database later in the left panel of the Editor when it's time to run a query (fig. 2).
 
 <p align="center">
    <img class="figure" src="src/assets/images/Screenshot_editor.png" width="650"/>
@@ -36,7 +36,7 @@ This is not a mandatory step. You can skip it and manipulate queries in sqlitevi
   </sub>
 </p>
 
-After chosing a database you can browse tables, columns and their types in the right panel of the Editor(fig. 3).
+After chosing a database you can browse tables, columns and their types in the left panel of the Editor (fig. 3).
 
 <p align="center">
    <img class="figure" src="src/assets/images/Screenshot_editor_with_db.png" width="650"/>
@@ -62,7 +62,7 @@ Result panel has two modes: table view (fig. 3, fig. 4) and chart view (fig. 2).
 
 Press `Run` button in the top toolbar or use `Ctrl+r`(`Cmd+r` for MacOS) keyboard shortcut to execute a query in the current opened tab.
 
-> **_NOTE:_**  Running is not available if a database was not chosen or a query for the current tab is not specified.
+> **Note:**  Running is not available if a database was not chosen or a query for the current tab is not specified.
 
 The query result will be displayed in the result panel in table mode (fig. 4).
 
@@ -84,13 +84,13 @@ After running a query you can switch result panel to the chart mode and create a
 
 Press `Save` button in the top toolbar or use `Ctrl+s`(`Cmd+s` for MacOS) keyboard shortcut to save a query in the current opened tab to local storage of your browser.
 
-After that the query will be in the list on `My queries` page.
+After that the query will be in the list on "My queries" page.
 
-> **_NOTE:_**  Only the text of the query and chart settings will be saved. The result of the query execution won't be saved.
+> **Note:**  Only the text of the query and chart settings will be saved. The result of the query execution won't be saved.
 
 ## Working with saved queries
 
-You can find all queries that you saved in local storage of your browser in `My queries` (fig. 5).
+You can find all queries that you saved in local storage of your browser in "My queries" (fig. 5).
 
 <p align="center">
    <img class="figure" src="src/assets/images/Screenshot_my_queries.png" width="600"/>
@@ -109,9 +109,9 @@ To manipulate one query hover the cursor over the row with the query and choose 
 * <img src="src/assets/images/file-export.svg"/> - export a query to json file
 * <img src="src/assets/images/delete.svg"/> - delete a query
 
-To edit the test of a query or its chart settings click on the respective row. You will be redirected to `Editor` where the chosen query will be opened in a tab.
+To edit the text of a query or its chart settings click on the respective row. You will be redirected to `Editor` where the chosen query will be opened in a tab.
 
-> Note: After opening a query there will be no chart for it even if you specified it and saved. That is so because there is no data to build the chart. Run the query and all saved chart settings will be applied.
+> **Note:** After opening a query there will be no chart for it even if you specified it and saved. That is so because there is no data to build the chart. Run the query and all saved chart settings will be applied.
 
 You can also delete or export to file a group of queries. Select queries with checkboxes and press `Delete`/`Export` button above the grid (fig. 6).
 
@@ -126,7 +126,7 @@ You can also delete or export to file a group of queries. Select queries with ch
    </sub>
 </p>
 
-> **_NOTE:_** Some operations are not available for predefined queries (see below).
+> **Note:** Some operations are not available for predefined queries (see below).
 
 ## Import queries
 
@@ -138,7 +138,7 @@ If you run sqliteviz on your own server you can specify predefined queries. Thes
 
 To create a list of predefined queries choose queries in "My queries" list and export them to `queries.json`. Then place this file on the server in the same directory as `index.html`.
 
-A user can't edit, rename a predefined query or delete it. The rest operations are available.
+A user can't edit, rename or delete a predefined query. The rest operations are available.
 
 ## Motivation
 It's a kind of middleground between [Plotly Falcon][1] and [Redash][2].
