@@ -20,6 +20,7 @@
   --color-bg-light-3: var(--color-gray-light-5);
   --color-bg-dark: var(--color-gray-dark);
   --color-bg-warning: var(--color-yellow);
+  --color-danger: var(--color-red);
   --color-accent: var(--color-blue-medium);
   --color-accent-shade: var(--color-blue-dark);
   --color-border-light: var(--color-gray-light-2);
