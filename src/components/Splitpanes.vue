@@ -26,11 +26,11 @@
       <div
         :class="[
           'toggle-btns',
-          {'both': after.max === 100 && before.max === 100 && after.size > 0 && before.size > 0}
+          {'both': after.max === 100 && before.max === 100 && paneAfter.size > 0 && paneBefore.size > 0}
         ]"
       >
         <div
-          v-if="after.max === 100 && after.size > 0"
+          v-if="after.max === 100 && paneAfter.size > 0"
           class="toggle-btn"
           @click="togglePane(paneBefore)"
         >
@@ -41,7 +41,7 @@
           >
         </div>
         <div
-          v-if="before.max === 100 && before.size > 0"
+          v-if="before.max === 100 && paneBefore.size > 0"
           class="toggle-btn"
           @click="togglePane(paneAfter)"
         >

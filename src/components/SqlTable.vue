@@ -89,9 +89,6 @@ export default {
     },
     onScrollTable () {
       this.$refs['header-container'].scrollLeft = this.$refs['table-container'].scrollLeft
-    },
-    functionName () {
-
     }
   },
   mounted () {
