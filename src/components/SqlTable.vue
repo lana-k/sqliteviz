@@ -40,6 +40,7 @@
     <div class="table-footer">
       <div class="table-footer-count">
         {{ dataSet.values.length}} {{dataSet.values.length === 1 ? 'row' : 'rows'}} retrieved
+        <span v-if="preview">for preview</span>
       </div>
       <pager v-show="pageCount > 1" :page-count="pageCount" v-model="currentPage" />
     </div>
@@ -52,7 +53,7 @@ import Pager from '@/components/Pager'
 export default {
   name: 'SqlTable',
   components: { Pager },
-  props: ['dataSet', 'height'],
+  props: ['dataSet', 'height', 'preview'],
   data () {
     return {
       header: null,
