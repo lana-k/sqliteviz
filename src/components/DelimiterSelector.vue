@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{ 'disabled': disabled }">
     <div class="text-field-label">Delimiter</div>
     <div
       class="delimiter-selector-container"
@@ -14,12 +14,16 @@
           @click.stop
           @keypress="onKeyPress"
           @input.prevent="onInput($event)"
+          :disabled="disabled"
         />
         <div class="name">{{ getSymbolName(value) }}</div>
       </div>
       <div class="controls" @click.stop>
-        <clear-icon @click.native="$emit('input',  '')"/>
-        <drop-down-chevron @click.native="showOptions = !showOptions"/>
+        <clear-icon @click.native="clear" :disabled="disabled"/>
+        <drop-down-chevron
+          :disabled="disabled"
+          @click.native="!disabled && (showOptions = !showOptions)"
+        />
       </div>
     </div>
     <div v-show="showOptions" class="options" :style="{ width: width }">
@@ -42,7 +46,7 @@ import ClearIcon from '@/components/svg/clear'
 
 export default {
   name: 'DelimiterSelector',
-  props: ['label', 'value', 'width'],
+  props: ['label', 'value', 'width', 'disabled'],
   components: { DropDownChevron, ClearIcon },
   data () {
     return {
@@ -67,7 +71,10 @@ export default {
       if (value.length > 1) {
         event.target.value = value[0]
       }
-      this.$emit('input', event.target.value)
+
+      if (value) {
+        this.$emit('input', event.target.value)
+      }
     },
     chooseOption (option) {
       this.$emit('input', option)
@@ -75,6 +82,13 @@ export default {
     },
     onContainerClick (event) {
       this.$refs.delimiterInput.focus()
+    },
+
+    clear () {
+      if (!this.disabled) {
+        this.$refs.delimiterInput.value = ''
+        this.$refs.delimiterInput.focus()
+      }
     }
   }
 }
@@ -84,7 +98,6 @@ export default {
 .delimiter-selector-container {
   background: var(--color-white);
   border: 1px solid var(--color-border);
-  color: var(--color-text-light-2);
   border-radius: var(--border-radius-medium-2);
   height: 36px;
   padding: 0 8px;
@@ -101,6 +114,7 @@ export default {
 }
 
 .value .name {
+  color: var(--color-text-light-2);
   cursor: default;
 }
 
@@ -162,10 +176,24 @@ input:focus {
   outline: none;
 }
 
+input:disabled {
+  background: var(--color-bg-light);
+  color: var(--color-text-light-2);
+  cursor: default;
+}
+
 .text-field-label {
   font-size: 12px;
   color: var(--color-text-base);
   padding-left: 8px;
   margin-bottom: 2px;
+}
+
+.disabled .text-field-label {
+  color: var(--color-text-light-2);
+}
+
+.disabled .delimiter-selector-container {
+  background: var(--color-bg-light);
 }
 </style>
