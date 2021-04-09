@@ -1,6 +1,6 @@
 <template>
   <div id="dbloader-container">
-    <db-upload illustrated />
+    <db-upload type="illustrated" />
     <div id="note">
       Sqliteviz is fully client-side. Your database never leaves your computer.
     </div>

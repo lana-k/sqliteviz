@@ -4,7 +4,6 @@ import router from './router'
 import store from './store'
 import { VuePlugin } from 'vuera'
 import VModal from 'vue-js-modal'
-import db from '@/database'
 
 import '@/assets/styles/variables.css'
 import '@/assets/styles/buttons.css'
@@ -17,7 +16,6 @@ Vue.use(VuePlugin)
 Vue.use(VModal)
 
 Vue.config.productionTip = false
-Vue.prototype.$db = db
 
 new Vue({
   router,

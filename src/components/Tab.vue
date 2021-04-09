@@ -104,21 +104,16 @@ export default {
   },
   methods: {
     // Run a command in the database
-    execute () {
-      // this.$refs.output.textContent = 'Fetching results...' */
+    async execute () {
       this.isGettingResults = true
       this.result = null
       this.error = null
-      return this.$db.execute(this.query + ';')
-        .then(result => {
-          this.result = result
-        })
-        .catch(err => {
-          this.error = err
-        })
-        .finally(() => {
-          this.isGettingResults = false
-        })
+      try {
+        this.result = await this.$store.state.db.execute(this.query + ';')
+      } catch (err) {
+        this.error = err
+      }
+      this.isGettingResults = false
     },
     handleResize () {
       if (this.view === 'chart') {

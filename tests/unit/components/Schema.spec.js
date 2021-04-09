@@ -4,7 +4,6 @@ import { mount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import Schema from '@/components/Schema.vue'
 import TableDescription from '@/components/TableDescription.vue'
-import fu from '@/fileUtils.js'
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
@@ -98,76 +97,5 @@ describe('Schema.vue', () => {
     expect(tables.at(0).vm.name).to.equal('foo')
     expect(tables.at(1).vm.name).to.equal('bar')
     expect(tables.at(2).vm.name).to.equal('foobar')
-  })
-
-  it('Change DB', async () => {
-    // mock store state and mutations
-    const mutations = {
-      saveSchema: sinon.stub()
-    }
-
-    const state = {
-      dbName: 'fooDB',
-      schema: [
-        {
-          name: 'foo',
-          columns: [
-            { name: 'foo_id', type: 'INTEGER' },
-            { name: 'foo_title', type: 'NVARCHAR(24)' }
-          ]
-        },
-        {
-          name: 'foo_prices',
-          columns: [
-            { name: 'foo_id', type: 'INTEGER' },
-            { name: 'foo_price', type: 'INTEGER' }
-          ]
-        }
-      ]
-    }
-
-    const store = new Vuex.Store({ state, mutations })
-
-    // stub getFileFromUser
-    const file = { file: 'hello' }
-    sinon.stub(fu, 'getFileFromUser').resolves(file)
-
-    // mock $db.loadDb()
-    const newSchema = {
-      dbName: 'barDB',
-      schema: [
-        {
-          name: 'bar',
-          columns: [
-            { name: 'bar_id', type: 'INTEGER' },
-            { name: 'bar_title', type: 'NVARCHAR(24)' }
-          ]
-        },
-        {
-          name: 'bar_prices',
-          columns: [
-            { name: 'bar_id', type: 'INTEGER' },
-            { name: 'bar_price', type: 'INTEGER' }
-          ]
-        }
-      ]
-    }
-    const $db = {
-      loadDb: sinon.stub().resolves(newSchema)
-    }
-
-    // mount the component
-    const wrapper = mount(Schema, { store, localVue, mocks: { $db } })
-
-    // trigger the event
-    await wrapper.find('#db-edit').trigger('click')
-
-    expect(fu.getFileFromUser.calledOnceWith('.db,.sqlite,.sqlite3')).to.equal(true)
-
-    await fu.getFileFromUser.returnValues[0]
-    expect($db.loadDb.calledOnceWith(file)).to.equal(true)
-
-    await $db.loadDb.returnValues[0]
-    expect(mutations.saveSchema.calledOnceWith(state, newSchema)).to.equal(true)
   })
 })

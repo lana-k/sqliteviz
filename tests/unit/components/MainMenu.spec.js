@@ -184,7 +184,6 @@ describe('MainMenu.vue', () => {
 
   it('Ctrl R calls currentTab.execute if running is enabled and route.path is "/editor"',
     async () => {
-      console.log('ctrl r')
       const state = {
         currentTab: {
           query: 'SELECT * FROM foo',

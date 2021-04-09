@@ -12,10 +12,17 @@ export const state = {
   currentTab: null,
   currentTabId: null,
   untitledLastIndex: 0,
-  predefinedQueries: []
+  predefinedQueries: [],
+  db: null
 }
 
 export const mutations = {
+  setDb (state, db) {
+    if (state.db) {
+      state.db.shutDown()
+    }
+    state.db = db
+  },
   saveSchema (state, { dbName, schema }) {
     state.dbName = dbName
     state.schema = schema
@@ -73,19 +80,18 @@ export const mutations = {
 
 export const actions = {
   async addTab ({ state }, data) {
-    let tab
+    const tab = data ? JSON.parse(JSON.stringify(data)) : {}
     // If no data then create a new blank one...
-    if (!data) {
-      tab = {
-        id: nanoid(),
-        name: null,
-        tempName: state.untitledLastIndex
-          ? `Untitled ${state.untitledLastIndex}`
-          : 'Untitled',
-        isUnsaved: true
-      }
+    // No data.id means to create new tab, but not blank,
+    // e.g. with 'select * from csv_import' query after csv import
+    if (!data || !data.id) {
+      tab.id = nanoid()
+      tab.name = null
+      tab.tempName = state.untitledLastIndex
+        ? `Untitled ${state.untitledLastIndex}`
+        : 'Untitled'
+      tab.isUnsaved = true
     } else {
-      tab = JSON.parse(JSON.stringify(data))
       tab.isUnsaved = false
     }
 

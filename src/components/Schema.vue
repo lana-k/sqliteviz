@@ -8,9 +8,7 @@
         <tree-chevron :expanded="schemaVisible"/>
         {{ dbName }}
       </div>
-      <div id="db-edit" @click="changeDb">
-        <change-db-icon />
-      </div>
+        <db-upload id="db-edit" type="small" />
     </div>
     <div v-show="schemaVisible" class="schema">
       <table-description
@@ -26,17 +24,16 @@
 <script>
 import TableDescription from '@/components/TableDescription'
 import TextField from '@/components/TextField'
-import ChangeDbIcon from '@/components/svg/changeDb'
 import TreeChevron from '@/components/svg/treeChevron'
-import fu from '@/fileUtils'
+import dbUpload from '@/components/DbUpload'
 
 export default {
   name: 'Schema',
   components: {
     TableDescription,
     TextField,
-    ChangeDbIcon,
-    TreeChevron
+    TreeChevron,
+    dbUpload
   },
   data () {
     return {
@@ -58,17 +55,6 @@ export default {
     },
     dbName () {
       return this.$store.state.dbName
-    }
-  },
-  methods: {
-    changeDb () {
-      fu.getFileFromUser('.db,.sqlite,.sqlite3')
-        .then(file => {
-          return this.$db.loadDb(file)
-        })
-        .then((schema) => {
-          this.$store.commit('saveSchema', schema)
-        })
     }
   }
 }

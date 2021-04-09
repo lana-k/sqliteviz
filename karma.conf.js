@@ -25,13 +25,6 @@ module.exports = function (config) {
         included: false,
         served: true,
         nocache: false
-      },
-      {
-        pattern: 'node_modules/sql.js/dist/worker.sql-wasm.js',
-        watched: false,
-        included: false,
-        served: true,
-        nocache: false
       }
     ],
 
@@ -137,6 +130,10 @@ module.exports = function (config) {
             ]
           },
           {
+            test: /\.worker\.js$/,
+            loader: 'worker-loader'
+          },
+          {
             test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
             loader: 'url-loader'
           },
@@ -181,7 +178,8 @@ module.exports = function (config) {
       }
     },
     proxies: {
-      '/js/': '/base/node_modules/sql.js/dist/'
+      '/_karma_webpack_/sql-wasm.wasm': '/base/node_modules/sql.js/dist/sql-wasm.wasm',
+      '/base/sql-wasm.wasm': '/base/node_modules/sql.js/dist/sql-wasm.wasm'
     }
   })
   // Fix the timezone

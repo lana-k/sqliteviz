@@ -8,7 +8,6 @@ module.exports = {
         // This wasm file will be fetched dynamically when we initialize sql.js
         // It is important that we do not change its name, and that it is in the same folder as the js
         { from: 'node_modules/sql.js/dist/sql-wasm.wasm', to: 'js/' },
-        { from: 'node_modules/sql.js/dist/worker.sql-wasm.js', to: 'js/' },
         { from: 'LICENSE', to: './' }
       ])
     ]
@@ -22,5 +21,14 @@ module.exports = {
       .options({
         limit: 10000
       })
+
+    config.module
+      .rule('worker')
+      .test(/\.worker\.js$/)
+      .use('worker-loader')
+      .loader('worker-loader')
+      .end()
+
+    config.module.rule('js').exclude.add(/\.worker\.js$/)
   }
 }

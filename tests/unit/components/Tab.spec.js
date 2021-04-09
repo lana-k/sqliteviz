@@ -145,18 +145,17 @@ describe('Tab.vue', () => {
   it('Shows .result-in-progress message when executing query', (done) => {
     // mock store state
     const state = {
-      currentTabId: 1
+      currentTabId: 1,
+      db: {
+        execute () { return new Promise(() => {}) }
+      }
     }
 
     const store = new Vuex.Store({ state, mutations })
-    const $db = {
-      execute () { return new Promise(() => {}) }
-    }
     // mount the component
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
-      mocks: { $db },
       propsData: {
         id: 1,
         initName: 'foo',
@@ -178,18 +177,17 @@ describe('Tab.vue', () => {
   it('Shows error when executing query ends with error', async () => {
     // mock store state
     const state = {
-      currentTabId: 1
+      currentTabId: 1,
+      db: {
+        execute () { return Promise.reject(new Error('There is no table foo')) }
+      }
     }
 
     const store = new Vuex.Store({ state, mutations })
-    const $db = {
-      execute () { return Promise.reject(new Error('There is no table foo')) }
-    }
     // mount the component
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
-      mocks: { $db },
       propsData: {
         id: 1,
         initName: 'foo',
@@ -210,7 +208,10 @@ describe('Tab.vue', () => {
   it('Passes result to sql-table component', async () => {
     // mock store state
     const state = {
-      currentTabId: 1
+      currentTabId: 1,
+      db: {
+        execute () { return Promise.resolve(result) }
+      }
     }
 
     const store = new Vuex.Store({ state, mutations })
@@ -221,14 +222,11 @@ describe('Tab.vue', () => {
         [2, 'bar']
       ]
     }
-    const $db = {
-      execute () { return Promise.resolve(result) }
-    }
+
     // mount the component
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
-      mocks: { $db },
       propsData: {
         id: 1,
         initName: 'foo',

@@ -1,59 +1,112 @@
 import sqliteParser from 'sqlite-parser'
-const worker = new Worker('js/worker.sql-wasm.js')
+import fu from '@/fileUtils'
+// We can import workers like so because of worker-loader:
+// https://webpack.js.org/loaders/worker-loader/
+import Worker from '@/db.worker.js'
+
+// Use promise-worker in order to turn worker into the promise based one:
+// https://github.com/nolanlawson/promise-worker
+import PromiseWorker from 'promise-worker'
+
+function getNewDatabase () {
+  const worker = new Worker()
+  return new Database(worker)
+}
 
 export default {
-  loadDb (file) {
-    return new Promise((resolve, reject) => {
-      const f = file
-      const r = new FileReader()
-      r.onload = () => {
-        // on 'action: open' completed
-        worker.onmessage = () => {
-          const getSchemaSql = `
-            SELECT name, sql
-            FROM sqlite_master
-            WHERE type='table' AND name NOT LIKE 'sqlite_%';`
+  getNewDatabase
+}
 
-          this.execute(getSchemaSql)
-            .then(result => {
-              // Parse DDL statements to get column names and types
-              const parsedSchema = []
-              result.values.forEach(item => {
-                parsedSchema.push({
-                  name: item[0],
-                  columns: getColumns(item[1])
-                })
-              })
+let progressCounterIds = 0
+class Database {
+  constructor (worker) {
+    this.worker = worker
+    this.pw = new PromiseWorker(worker)
 
-              // Return db name and schema
-              resolve({
-                dbName: file.name,
-                schema: parsedSchema
-              })
-            })
-        }
-
-        try {
-          worker.postMessage({ action: 'open', buffer: r.result }, [r.result])
-        } catch (exception) {
-          worker.postMessage({ action: 'open', buffer: r.result })
-        }
+    this.importProgresses = {}
+    worker.addEventListener('message', e => {
+      const progress = e.data.progress
+      if (progress !== undefined) {
+        const id = e.data.id
+        this.importProgresses[id].dispatchEvent(new CustomEvent('progress', {
+          detail: progress
+        }))
       }
-      r.readAsArrayBuffer(f)
     })
-  },
-  execute (commands) {
-    return new Promise((resolve, reject) => {
-      worker.onmessage = (event) => {
-        if (event.data.error) {
-          reject(event.data.error)
-        } else {
-          // if it was more than one select - take only the first one
-          resolve(event.data.results[0])
-        }
-      }
-      worker.postMessage({ action: 'exec', sql: commands })
+  }
+
+  shutDown () {
+    this.worker.terminate()
+  }
+
+  createProgressCounter (callback) {
+    const id = progressCounterIds++
+    this.importProgresses[id] = new EventTarget()
+    this.importProgresses[id].addEventListener('progress', callback)
+    return id
+  }
+
+  deleteProgressCounter (id) {
+    delete this.importProgresses[id]
+  }
+
+  async createDb (name, data, progressCounterId) {
+    const result = await this.pw.postMessage({
+      action: 'import',
+      columns: data.columns,
+      values: data.values,
+      progressCounterId
     })
+
+    if (result.error) {
+      throw result.error
+    }
+
+    return await this.getSchema(name)
+  }
+
+  async loadDb (file) {
+    const fileContent = await fu.readAsArrayBuffer(file)
+    const res = await this.pw.postMessage({ action: 'open', buffer: fileContent })
+
+    if (res.error) {
+      throw res.error
+    }
+
+    return this.getSchema(file.name)
+  }
+
+  async getSchema (name) {
+    const getSchemaSql = `
+      SELECT name, sql
+      FROM sqlite_master
+      WHERE type='table' AND name NOT LIKE 'sqlite_%';
+    `
+    const result = await this.execute(getSchemaSql)
+    // Parse DDL statements to get column names and types
+    const parsedSchema = []
+    result.values.forEach(item => {
+      parsedSchema.push({
+        name: item[0],
+        columns: getColumns(item[1])
+      })
+    })
+
+    // Return db name and schema
+    return {
+      dbName: name,
+      schema: parsedSchema
+    }
+  }
+
+  async execute (commands) {
+    const results = await this.pw.postMessage({ action: 'exec', sql: commands })
+
+    if (results.error) {
+      throw results.error
+    }
+    // if it was more than one select - take only the first one
+    return results[0]
   }
 }
 

@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import { shallowMount } from '@vue/test-utils'
 import DbUpload from '@/components/DbUpload.vue'
 import fu from '@/fileUtils'
+import database from '@/database.js'
 
 describe('DbUploader.vue', () => {
   afterEach(() => {
@@ -24,7 +25,10 @@ describe('DbUploader.vue', () => {
 
     // mock db loading
     const schema = {}
-    const $db = { loadDb: sinon.stub().resolves(schema) }
+    const db = {
+      loadDb: sinon.stub().resolves(schema)
+    }
+    database.getNewDatabase = sinon.stub().returns(db)
 
     // mock router
     const $router = { push: sinon.stub() }
@@ -33,12 +37,12 @@ describe('DbUploader.vue', () => {
     // mount the component
     const wrapper = shallowMount(DbUpload, {
       store,
-      mocks: { $db, $router, $route }
+      mocks: { $router, $route }
     })
 
     await wrapper.find('.drop-area').trigger('click')
-    expect($db.loadDb.calledOnceWith(file)).to.equal(true)
-    await $db.loadDb.returnValues[0]
+    expect(db.loadDb.calledOnceWith(file)).to.equal(true)
+    await db.loadDb.returnValues[0]
     expect(mutations.saveSchema.calledOnceWith(state, schema)).to.equal(true)
     expect($router.push.calledOnceWith('/editor')).to.equal(true)
   })
@@ -53,7 +57,10 @@ describe('DbUploader.vue', () => {
 
     // mock db loading
     const schema = {}
-    const $db = { loadDb: sinon.stub().resolves(schema) }
+    const db = {
+      loadDb: sinon.stub().resolves(schema)
+    }
+    database.getNewDatabase = sinon.stub().returns(db)
 
     // mock router
     const $router = { push: sinon.stub() }
@@ -62,7 +69,7 @@ describe('DbUploader.vue', () => {
     // mount the component
     const wrapper = shallowMount(DbUpload, {
       store,
-      mocks: { $db, $router, $route }
+      mocks: { $router, $route }
     })
 
     // mock a file dropped by a user
@@ -74,8 +81,8 @@ describe('DbUploader.vue', () => {
     })
 
     await wrapper.find('.drop-area').trigger('drop', dropData)
-    expect($db.loadDb.calledOnceWith(file)).to.equal(true)
-    await $db.loadDb.returnValues[0]
+    expect(db.loadDb.calledOnceWith(file)).to.equal(true)
+    await db.loadDb.returnValues[0]
     expect(mutations.saveSchema.calledOnceWith(state, schema)).to.equal(true)
     expect($router.push.calledOnceWith('/editor')).to.equal(true)
   })
@@ -94,7 +101,10 @@ describe('DbUploader.vue', () => {
 
     // mock db loading
     const schema = {}
-    const $db = { loadDb: sinon.stub().resolves(schema) }
+    const db = {
+      loadDb: sinon.stub().resolves(schema)
+    }
+    database.getNewDatabase = sinon.stub().returns(db)
 
     // mock router
     const $router = { push: sinon.stub() }
@@ -103,11 +113,11 @@ describe('DbUploader.vue', () => {
     // mount the component
     const wrapper = shallowMount(DbUpload, {
       store,
-      mocks: { $db, $router, $route }
+      mocks: { $router, $route }
     })
 
     await wrapper.find('.drop-area').trigger('click')
-    await $db.loadDb.returnValues[0]
+    await db.loadDb.returnValues[0]
     expect($router.push.called).to.equal(false)
   })
 })
