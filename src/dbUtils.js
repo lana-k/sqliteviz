@@ -11,7 +11,7 @@ export default {
 
   getInsertStmt (columns) {
     const colList = `"${columns.join('", "')}"`
-    const params = columns.map(() => '?').join(' ,')
+    const params = columns.map(() => '?').join(', ')
     return `INSERT INTO csv_import (${colList}) VALUES (${params});`
   },
 
@@ -36,9 +36,9 @@ export default {
         }
         default: type = 'TEXT'
       }
-      result += `"${col}" ${type},`
+      result += `"${col}" ${type}, `
     })
-    result = result.replace(/.$/, ');')
+    result = result.replace(/,\s$/, ');')
     return result
   }
 }

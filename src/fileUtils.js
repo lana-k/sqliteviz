@@ -58,7 +58,7 @@ export default {
     return new Promise((resolve, reject) => {
       fileReader.onerror = () => {
         fileReader.abort()
-        reject(new DOMException('Problem parsing input file.'))
+        reject(new Error('Problem parsing input file.'))
       }
 
       fileReader.onload = () => {
