@@ -7,7 +7,7 @@ const hintsByCode = {
 }
 
 export default {
-  getResut (source) {
+  getResult (source) {
     const result = {}
     if (source.meta.fields) {
       result.columns = source.meta.fields
@@ -20,7 +20,7 @@ export default {
       result.values = source.data
       result.columns = []
       for (let i = 1; i <= source.data[0].length; i++) {
-        result.columns.push(`col ${i}`)
+        result.columns.push(`col${i}`)
       }
     }
 
@@ -44,7 +44,7 @@ export default {
         step: undefined,
         complete: results => {
           const res = {
-            data: this.getResut(results),
+            data: this.getResult(results),
             delimiter: results.meta.delimiter,
             hasErrors: false
           }
