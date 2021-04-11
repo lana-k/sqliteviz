@@ -6,14 +6,26 @@ const {
   deleteTab,
   setCurrentTabId,
   setCurrentTab,
-  updatePredefinedQueries
+  updatePredefinedQueries,
+  setDb
 } = mutations
 
 const { addTab } = actions
 
 describe('mutations', () => {
+  it('setDb', () => {
+    const state = {
+      db: { shutDown: sinon.spy() }
+    }
+
+    const oldDb = state.db
+    const db = {}
+    setDb(state, db)
+    expect(state.db).to.equal(db)
+    expect(oldDb.shutDown.calledOnce).to.equal(true)
+  })
+
   it('saveSchema', () => {
-    // mock state
     const state = {}
 
     const schema = [
@@ -51,7 +63,6 @@ describe('mutations', () => {
       isUnsaved: false
     }
 
-    // mock state
     const state = {
       tabs: [tab]
     }
@@ -84,7 +95,6 @@ describe('mutations', () => {
       isUnsaved: false
     }
 
-    // mock state
     const state = {
       tabs: [tab],
       currentTabId: 1
@@ -116,7 +126,6 @@ describe('mutations', () => {
       name: 'new test'
     }
 
-    // mock state
     const state = {
       tabs: [tab]
     }
@@ -145,7 +154,6 @@ describe('mutations', () => {
       isUnsaved: true
     }
 
-    // mock state
     const state = {
       tabs: [tab]
     }
@@ -177,7 +185,6 @@ describe('mutations', () => {
       isUnsaved: false
     }
 
-    // mock state
     const state = {
       tabs: [tab1, tab2],
       currentTabId: 1
@@ -208,7 +215,6 @@ describe('mutations', () => {
       isUnsaved: false
     }
 
-    // mock state
     const state = {
       tabs: [tab1, tab2],
       currentTabId: 2
@@ -248,7 +254,6 @@ describe('mutations', () => {
       isUnsaved: false
     }
 
-    // mock state
     const state = {
       tabs: [tab1, tab2, tab3],
       currentTabId: 2
@@ -271,7 +276,6 @@ describe('mutations', () => {
       isUnsaved: false
     }
 
-    // mock state
     const state = {
       tabs: [tab1],
       currentTabId: 1
@@ -301,7 +305,6 @@ describe('mutations', () => {
       isUnsaved: false
     }
 
-    // mock state
     const state = {
       tabs: [tab1, tab2],
       currentTabId: 1
@@ -314,7 +317,6 @@ describe('mutations', () => {
   })
 
   it('setCurrentTabId', () => {
-    // mock state
     const state = {
       currentTabId: 1
     }
@@ -324,7 +326,6 @@ describe('mutations', () => {
   })
 
   it('setCurrentTab', () => {
-    // mock state
     const state = {
       currentTab: { id: 1 }
     }
@@ -377,7 +378,6 @@ describe('mutations', () => {
 
 describe('actions', () => {
   it('addTab adds new blank tab', async () => {
-    // mock state
     const state = {
       tabs: [],
       untitledLastIndex: 0
@@ -392,7 +392,6 @@ describe('actions', () => {
   })
 
   it('addTab adds tab from saved queries', async () => {
-    // mock state
     const state = {
       tabs: [],
       untitledLastIndex: 0
@@ -429,7 +428,6 @@ describe('actions', () => {
       isUnsaved: false
     }
 
-    // mock state
     const state = {
       tabs: [tab1, tab2],
       untitledLastIndex: 0
