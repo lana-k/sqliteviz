@@ -5,6 +5,10 @@ import hint, { getHints } from '@/hint'
 import CM from 'codemirror'
 
 describe('hint.js', () => {
+  afterEach(() => {
+    sinon.restore()
+  })
+
   it('Calculates table list for hint', () => {
     // mock store state
     const schema = [
@@ -45,8 +49,6 @@ describe('hint.js', () => {
       foo: ['fooId', 'name'],
       bar: ['barId']
     })
-
-    sinon.restore()
   })
 
   it("Doesn't show hint when in string or space, or ';'", () => {
@@ -67,8 +69,6 @@ describe('hint.js', () => {
     clock.tick(500)
 
     expect(CM.showHint.called).to.equal(false)
-
-    sinon.restore()
   })
 
   it("Doesn't show hint after space", () => {
@@ -89,8 +89,6 @@ describe('hint.js', () => {
     clock.tick(500)
 
     expect(CM.showHint.called).to.equal(false)
-
-    sinon.restore()
   })
 
   it("Doesn't show hint after ';'", () => {
@@ -111,8 +109,6 @@ describe('hint.js', () => {
     clock.tick(500)
 
     expect(CM.showHint.called).to.equal(false)
-
-    sinon.restore()
   })
 
   it('getHints returns [ ] if there is only one option and the token is already completed with this option', () => {
@@ -130,8 +126,6 @@ describe('hint.js', () => {
 
     const hints = getHints(editor, {})
     expect(hints.list).to.eql([])
-
-    sinon.restore()
   })
 
   it('getHints returns hints as is when there are more than one option', () => {
@@ -173,8 +167,6 @@ describe('hint.js', () => {
 
     const hints = getHints(editor, {})
     expect(hints.list).to.eql(list)
-
-    sinon.restore()
   })
 
   it('tables is empty object when schema is null', () => {
@@ -199,7 +191,5 @@ describe('hint.js', () => {
 
     expect(CM.showHint.called).to.equal(true)
     expect(CM.showHint.firstCall.args[2].tables).to.eql({})
-
-    sinon.restore()
   })
 })

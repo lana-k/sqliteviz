@@ -8,6 +8,10 @@ describe('storedQueries.js', () => {
     localStorage.removeItem('myQueries')
   })
 
+  afterEach(() => {
+    sinon.restore()
+  })
+
   it('getStoredQueries returns emplty array when storage is empty', () => {
     const queries = storedQueries.getStoredQueries()
     expect(queries).to.eql([])
@@ -157,7 +161,6 @@ describe('storedQueries.js', () => {
     `
     sinon.stub(fu, 'importFile').returns(Promise.resolve(str))
     const queries = await storedQueries.importQueries()
-    fu.importFile.restore()
 
     expect(queries).to.eql([JSON.parse(str)])
   })
@@ -176,7 +179,6 @@ describe('storedQueries.js', () => {
     const queries = await storedQueries.readPredefinedQueries()
     expect(fu.readFile.calledOnceWith('./queries.json')).to.equal(true)
     expect(queries).to.eql(JSON.parse(str))
-    fu.readFile.restore()
   })
 
   it('save adds new query in the storage', () => {
