@@ -11,8 +11,8 @@ describe('csv.js', () => {
   it('getResult with fields', () => {
     const source = {
       data: [
-        {id: 1, name: 'foo'},
-        {id: 2, name: 'bar'}
+        { id: 1, name: 'foo' },
+        { id: 2, name: 'bar' }
       ],
       meta: {
         fields: ['id', 'name']
@@ -65,11 +65,11 @@ describe('csv.js', () => {
             row: 0
           }
         ],
-        meta:  {
+        meta: {
           delimiter: ',',
-	        linebreak: '\n',
-	        aborted: false,
-	        truncated: true
+          linebreak: '\n',
+          aborted: false,
+          truncated: true
         }
       })
     })
@@ -87,7 +87,6 @@ describe('csv.js', () => {
       hasErrors: true,
       messages: [
         {
-          type: 'Quotes',
           code: 'MissingQuotes',
           message: 'Quote is missed',
           row: 0,
@@ -95,7 +94,6 @@ describe('csv.js', () => {
           hint: 'Edit your CSV so that the field has a closing quote char.'
         },
         {
-          type: 'Delimiter',
           code: 'UndetectableDelimiter',
           message: 'Comma was used as a standart delimiter',
           row: 0,

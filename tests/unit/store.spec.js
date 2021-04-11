@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sinon from 'sinon'
 import { mutations, actions } from '@/store'
 const {
   saveSchema,
