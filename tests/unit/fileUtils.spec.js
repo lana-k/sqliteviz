@@ -93,17 +93,17 @@ describe('fileUtils.js', () => {
     const buffer = await fu.readAsArrayBuffer(blob)
 
     const uint8Array = new Uint8Array(buffer)
-    const text = new TextDecoder().decode(uint8Array)    
+    const text = new TextDecoder().decode(uint8Array)
     expect(text).to.equal('foo')
   })
 
   it('readAsArrayBuffer rejects', async () => {
     const r = new FileReader()
     r.readAsArrayBuffer = () => {
-      r.dispatchEvent(new Event('error'), )
+      r.dispatchEvent(new Event('error'))
     }
     sinon.stub(window, 'FileReader').returns(r)
-  
+
     const blob = new Blob(['foo'])
     await expect(fu.readAsArrayBuffer(blob)).to.be.rejectedWith('Problem parsing input file.')
   })
