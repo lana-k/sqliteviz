@@ -37,11 +37,13 @@ export default {
       if (msg.row !== null && msg.row !== undefined) {
         result += `Error in row ${msg.row}. `
       }
+
       result += msg.message
+      if (!(/(\.|!|\?)$/.test(result))) {
+        result += '.'
+      }
+
       if (msg.hint) {
-        if (!(result[0] in ['.', '!', '?'])) {
-          result += '.'
-        }
         result += ` ${msg.hint}`
       }
       return result
