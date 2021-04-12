@@ -1,13 +1,13 @@
 <template>
-  <svg class="svg-container" height="20" width="20" viewBox="0 0 20 20">
+  <svg :class="['svg-container', animationClass ]" height="20" width="20" viewBox="0 0 20 20">
     <circle
-      :class="['loader-svg', 'bg', {'animate-bg': animationClass === 'progress' }]"
+      class="loader-svg bg"
       cx="10"
       cy="10"
       r="8"
     />
     <circle
-      :class="['loader-svg', animationClass ]"
+      class="loader-svg front"
       :style="{ strokeDasharray: circleProgress }"
       cx="10"
       cy="10"
@@ -47,24 +47,7 @@ export default {
   stroke: var(--color-gray-light-3);
 }
 
-.animate-bg{
-  animation: bg-animation 1.5s cubic-bezier(1,1,1,1) 0s infinite;
-}
-
-@keyframes bg-animation{
-  0% {
-    r: 8;
-  }
-  50% {
-    stroke: var(--color-gray-light-2);
-    r: 9;
-  }
-  100% {
-   r: 8;
-  }
-}
-
-.loading {
+.loading .loader-svg.front {
   stroke-dasharray: 40.24;
   animation: fill-animation-loading 1s cubic-bezier(1,1,1,1) 0s infinite;
 }
@@ -84,8 +67,26 @@ export default {
   }
 }
 
-.progress {
+.progress .loader-svg.front {
   stroke-dashoffset: 12.56;
   transition: stroke-dasharray 0.2s;
 }
+
+.progress .loader-svg.bg {
+  animation: bg-animation 1.5s cubic-bezier(1,1,1,1) 0s infinite;
+}
+
+@keyframes bg-animation{
+  0% {
+    r: 8;
+  }
+  50% {
+    stroke: var(--color-gray-light-2);
+    r: 9;
+  }
+  100% {
+   r: 8;
+  }
+}
+
 </style>
