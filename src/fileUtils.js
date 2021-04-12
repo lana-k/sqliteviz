@@ -36,10 +36,11 @@ export default {
   },
 
   importFile () {
+    const reader = new FileReader()
+
     return this.getFileFromUser('.json')
       .then(file => {
         return new Promise((resolve, reject) => {
-          const reader = new FileReader()
           reader.onload = e => {
             resolve(e.target.result)
           }
