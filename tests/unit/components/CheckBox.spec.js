@@ -36,4 +36,15 @@ describe('CheckBox', () => {
     expect(wrapper.emitted().click).to.have.lengthOf(2)
     expect(wrapper.emitted().click[1]).to.eql([false])
   })
+
+  it('disabled', async () => {
+    const wrapper = shallowMount(CheckBox, {
+      propsData: { disabled: true }
+    })
+    expect(wrapper.find('.checkbox-container').classes()).to.include('disabled')
+    expect(wrapper.find('.checkbox-container').classes()).to.not.include('checked')
+    await wrapper.trigger('click')
+    expect(wrapper.emitted().click).to.equal(undefined)
+    expect(wrapper.find('.checkbox-container').classes()).to.not.include('checked')
+  })
 })
