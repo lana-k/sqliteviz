@@ -45,7 +45,7 @@ describe('csv.js', () => {
   })
 
   it('parse resolves', async () => {
-    Papa.parse = sinon.stub().callsFake((file, config) => {
+    sinon.stub(Papa, 'parse').callsFake((file, config) => {
       config.complete({
         data: [
           [1, 'foo'],
@@ -106,7 +106,7 @@ describe('csv.js', () => {
 
   it('parse rejects', async () => {
     const err = new Error('something went wrong')
-    Papa.parse = sinon.stub().callsFake((file, config) => {
+    sinon.stub(Papa, 'parse').callsFake((file, config) => {
       config.error(err)
     })
     const file = {}

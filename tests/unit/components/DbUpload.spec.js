@@ -28,7 +28,7 @@ describe('DbUploader.vue', () => {
     const db = {
       loadDb: sinon.stub().resolves(schema)
     }
-    database.getNewDatabase = sinon.stub().returns(db)
+    sinon.stub(database, 'getNewDatabase').returns(db)
 
     // mock router
     const $router = { push: sinon.stub() }
@@ -60,7 +60,7 @@ describe('DbUploader.vue', () => {
     const db = {
       loadDb: sinon.stub().resolves(schema)
     }
-    database.getNewDatabase = sinon.stub().returns(db)
+    sinon.stub(database, 'getNewDatabase').returns(db)
 
     // mock router
     const $router = { push: sinon.stub() }
@@ -104,7 +104,7 @@ describe('DbUploader.vue', () => {
     const db = {
       loadDb: sinon.stub().resolves(schema)
     }
-    database.getNewDatabase = sinon.stub().returns(db)
+    sinon.stub(database, 'getNewDatabase').returns(db)
 
     // mock router
     const $router = { push: sinon.stub() }

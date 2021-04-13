@@ -283,8 +283,8 @@ export default {
       }
       let importLoadingIndicator = null
 
-      const updateProgress = e => {
-        this.$set(importMsg, 'progress', e.detail)
+      const updateProgress = progress => {
+        this.$set(importMsg, 'progress', progress)
       }
       this.newDb = database.getNewDatabase()
       const progressCounterId = this.newDb.createProgressCounter(updateProgress)

@@ -42,7 +42,7 @@ class Database {
   createProgressCounter (callback) {
     const id = progressCounterIds++
     this.importProgresses[id] = new EventTarget()
-    this.importProgresses[id].addEventListener('progress', callback)
+    this.importProgresses[id].addEventListener('progress', e => { callback(e.detail) })
     return id
   }
 
