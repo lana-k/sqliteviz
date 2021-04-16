@@ -10,9 +10,9 @@
         <input
           ref="delimiterInput"
           type="text"
+          maxlength="1"
           :value="value"
           @click.stop
-          @keypress="onKeyPress"
           @input.prevent="onInput($event)"
           :disabled="disabled"
         />
@@ -46,7 +46,7 @@ import ClearIcon from '@/components/svg/clear'
 
 export default {
   name: 'DelimiterSelector',
-  props: ['label', 'value', 'width', 'disabled'],
+  props: ['value', 'width', 'disabled'],
   components: { DropDownChevron, ClearIcon },
   data () {
     return {
@@ -61,19 +61,11 @@ export default {
       }
       return ascii[str.charCodeAt(0).toString()].name
     },
-    onKeyPress (event) {
-      if (event.target.value.length >= 1) {
-        event.preventDefault()
-      }
-    },
     onInput (event) {
       const value = event.target.value
-      if (value.length > 1) {
-        event.target.value = value[0]
-      }
 
       if (value) {
-        this.$emit('input', event.target.value)
+        this.$emit('input', value)
       }
     },
     chooseOption (option) {
