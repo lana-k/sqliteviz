@@ -1,98 +1,34 @@
 import registerPromiseWorker from 'promise-worker/register'
-import initSqlJs from 'sql.js/dist/sql-wasm.js'
-import dbUtils from '@/dbUtils'
+import Sql from '@/sql'
 
-const sqlModuleReady = initSqlJs()
-let db = null
+const sqlReady = Sql.build()
 
-function onModuleReady (SQL) {
-  function createDb (data) {
-    if (db != null) db.close()
-    db = new SQL.Database(data)
-    return db
-  }
-
+function processMsg (sql) {
   const data = this
-
   switch (data && data.action) {
     case 'open':
-      const buff = data.buffer
-      createDb(buff && new Uint8Array(buff))
-      return {
-        ready: true
-      }
+      return sql.open(data.buffer)
     case 'exec':
-      if (db === null) {
-        createDb()
-      }
-      if (!data.sql) {
-        throw new Error('exec: Missing query string')
-      }
-      return db.exec(data.sql, data.params)
-    case 'each':
-      if (db === null) {
-        createDb()
-      }
-      const callback = function callback (row) {
-        return {
-          row: row,
-          finished: false
-        }
-      }
-      const done = function done () {
-        return {
-          finished: true
-        }
-      }
-      return db.each(data.sql, data.params, callback, done)
+      return sql.exec(data.sql, data.params)
     case 'import':
-      createDb()
-      const values = data.values
-      const columns = data.columns
-      const chunkSize = 1500
-      db.exec(dbUtils.getCreateStatement(columns, values))
-      const chunks = dbUtils.generateChunks(values, chunkSize)
-      const chunksAmount = Math.ceil(values.length / chunkSize)
-      let count = 0
-      const insertStr = dbUtils.getInsertStmt(columns)
-      const insertStmt = db.prepare(insertStr)
-
-      postMessage({ progress: 0, id: data.progressCounterId })
-      for (const chunk of chunks) {
-        db.exec('BEGIN')
-        for (const row of chunk) {
-          insertStmt.run(row)
-        }
-        db.exec('COMMIT')
-        count++
-        postMessage({ progress: 100 * (count / chunksAmount), id: data.progressCounterId })
-      }
-
-      return {
-        finish: true
-      }
+      return sql.import(data.columns, data.values, data.progressCounterId, postMessage)
     case 'export':
-      return db.export()
+      return sql.export()
     case 'close':
-      if (db) {
-        db.close()
-      }
-      return {
-        finished: true
-      }
+      return sql.close()
     default:
       throw new Error('Invalid action : ' + (data && data.action))
   }
 }
 
-function onError (err) {
+function onError (error) {
   return {
-    error: new Error(err.message)
+    error
   }
 }
 
 registerPromiseWorker(data => {
-  return sqlModuleReady
-    .then(onModuleReady.bind(data))
+  return sqlReady
+    .then(processMsg.bind(data))
     .catch(onError)
 })
