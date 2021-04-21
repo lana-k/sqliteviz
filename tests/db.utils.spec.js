@@ -1,7 +1,7 @@
 import { expect } from 'chai'
-import dbUtils from '@/dbUtils'
+import dbUtils from '@/db.utils'
 
-describe('dbUtils.js', () => {
+describe('db.utils.js', () => {
   it('generateChunks', () => {
     const arr = ['1', '2', '3', '4', '5']
     const size = 2

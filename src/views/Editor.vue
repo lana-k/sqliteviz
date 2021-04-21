@@ -11,7 +11,7 @@
           <div class="warning">
             Database is not loaded. Queries can’t be run without database.
           </div>
-          <db-upload id="db-uploader"/>
+          <db-uploader id="db-uploader"/>
         </div>
       </template>
       <template #right-pane>
@@ -25,7 +25,7 @@
 import Splitpanes from '@/components/Splitpanes'
 import Schema from '@/components/Schema'
 import Tabs from '@/components/Tabs'
-import dbUpload from '@/components/DbUpload'
+import DbUploader from '@/components/DbUploader'
 
 export default {
   name: 'Editor',
@@ -33,7 +33,7 @@ export default {
     Schema,
     Splitpanes,
     Tabs,
-    dbUpload
+    DbUploader
   }
 }
 </script>
@@ -64,7 +64,7 @@ export default {
   box-sizing: border-box;
 }
 
->>> .db-upload-container {
+>>> .db-uploader-container {
   width: 100%;
 }
 

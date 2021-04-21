@@ -1,8 +1,8 @@
 import { expect } from 'chai'
-import fu from '@/fileUtils.js'
+import fu from '@/file.utils'
 import sinon from 'sinon'
 
-describe('fileUtils.js', () => {
+describe('file.utils.js', () => {
   afterEach(() => {
     sinon.restore()
   })

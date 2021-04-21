@@ -1,5 +1,5 @@
 <template>
-  <div class="db-upload-container">
+  <div class="db-uploader-container">
     <change-db-icon v-if="type === 'small'" @click.native="browse"/>
     <div v-if="['regular', 'illustrated'].includes(type)" class="drop-area-container">
       <div
@@ -62,6 +62,7 @@
             width="93px"
             :disabled="disableDialog"
             class="char-input"
+            id="quote-char"
           />
           <text-field
             label="Escape char"
@@ -71,6 +72,7 @@
             width="93px"
             :disabled="disableDialog"
             class="char-input"
+            id="escape-char"
           />
         </div>
         <check-box
@@ -122,7 +124,7 @@
 </template>
 
 <script>
-import fu from '@/fileUtils'
+import fu from '@/file.utils'
 import csv from '@/csv'
 import CloseIcon from '@/components/svg/close'
 import TextField from '@/components/TextField'
@@ -135,7 +137,7 @@ import time from '@/time'
 import database from '@/database'
 
 export default {
-  name: 'DbUpload',
+  name: 'DbUploader',
   props: {
     type: {
       type: String,
@@ -164,7 +166,7 @@ export default {
       delimiter: '',
       quoteChar: '"',
       escapeChar: '"',
-      header: false,
+      header: true,
       previewData: null,
       importCsvMessages: [],
       disableDialog: false,
@@ -237,9 +239,9 @@ export default {
         this.delimiter = parseResult.delimiter
 
         // In parseResult.messages we can get parse errors
-        this.importCsvMessages = parseResult.messages
+        this.importCsvMessages = parseResult.messages || []
 
-        if (parseResult.messages.length === 0) {
+        if (!parseResult.hasErrors) {
           this.importCsvMessages.push({
             message: `Preview parsing is completed in ${time.getPeriod(start, end)}.`,
             type: 'success'
@@ -390,7 +392,7 @@ export default {
 </script>
 
 <style scoped>
-.db-upload-container {
+.db-uploader-container {
   position: relative;
 }
 .drop-area-container {

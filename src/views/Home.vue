@@ -1,6 +1,6 @@
 <template>
   <div id="dbloader-container">
-    <db-upload type="illustrated" />
+    <db-uploader type="illustrated" />
     <div id="note">
       Sqliteviz is fully client-side. Your database never leaves your computer.
     </div>
@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import dbUpload from '@/components/DbUpload'
+import DbUploader from '@/components/DbUploader'
 
 export default {
   name: 'Home',
-  components: { dbUpload }
+  components: { DbUploader }
 }
 </script>
 

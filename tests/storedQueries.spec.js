@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import storedQueries from '@/storedQueries.js'
-import fu from '@/fileUtils'
+import fu from '@/file.utils'
 
 describe('storedQueries.js', () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import fu from '@/fileUtils'
+import fu from '@/file.utils'
 
 export default {
   getStoredQueries () {

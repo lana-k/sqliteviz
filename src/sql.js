@@ -1,5 +1,5 @@
 import initSqlJs from 'sql.js/dist/sql-wasm.js'
-import dbUtils from '@/dbUtils'
+import dbUtils from '@/db.utils'
 
 let SQL = null
 const sqlModuleReady = initSqlJs().then(sqlModule => { SQL = sqlModule })

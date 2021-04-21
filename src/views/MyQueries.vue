@@ -147,7 +147,7 @@ import TextField from '@/components/TextField'
 import CheckBox from '@/components/CheckBox'
 import tooltipMixin from '@/mixins/tooltips'
 import storedQueries from '@/storedQueries'
-import fu from '@/fileUtils'
+import fu from '@/file.utils'
 
 export default {
   name: 'MyQueries',

@@ -8,7 +8,7 @@
         <tree-chevron :expanded="schemaVisible"/>
         {{ dbName }}
       </div>
-        <db-upload id="db-edit" type="small" />
+        <db-uploader id="db-edit" type="small" />
     </div>
     <div v-show="schemaVisible" class="schema">
       <table-description
@@ -25,7 +25,7 @@
 import TableDescription from '@/components/TableDescription'
 import TextField from '@/components/TextField'
 import TreeChevron from '@/components/svg/treeChevron'
-import dbUpload from '@/components/DbUpload'
+import DbUploader from '@/components/DbUploader'
 
 export default {
   name: 'Schema',
@@ -33,7 +33,7 @@ export default {
     TableDescription,
     TextField,
     TreeChevron,
-    dbUpload
+    DbUploader
   },
   data () {
     return {

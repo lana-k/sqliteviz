@@ -1,5 +1,5 @@
 import sqliteParser from 'sqlite-parser'
-import fu from '@/fileUtils'
+import fu from '@/file.utils'
 // We can import workers like so because of worker-loader:
 // https://webpack.js.org/loaders/worker-loader/
 import Worker from '@/db.worker.js'

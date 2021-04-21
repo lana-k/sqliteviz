@@ -27,4 +27,4 @@ jobs:
       run: npm run lint
 
     - name: Run karma tests
-      run: npm run test:unit
+      run: npm run test

@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  name: 'checkBox',
+  name: 'CheckBox',
   props: {
     theme: {
       type: String,

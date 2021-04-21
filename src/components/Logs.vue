@@ -35,7 +35,11 @@ export default {
     serializeMessage (msg) {
       let result = ''
       if (msg.row !== null && msg.row !== undefined) {
-        result += `Error in row ${msg.row}. `
+        if (msg.type === 'error') {
+          result += `Error in row ${msg.row}. `
+        } else {
+          result += `Information about row ${msg.row}. `
+        }
       }
 
       result += msg.message

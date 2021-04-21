@@ -3,9 +3,9 @@ import sinon from 'sinon'
 import { mount, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import MyQueries from '@/views/MyQueries.vue'
-import storedQueries from '@/storedQueries.js'
+import storedQueries from '@/storedQueries'
 import { mutations } from '@/store'
-import fu from '@/fileUtils.js'
+import fu from '@/file.utils'
 
 describe('MyQueries.vue', () => {
   afterEach(() => {
