@@ -227,6 +227,51 @@ describe('MainMenu.vue', () => {
       expect(state.currentTab.execute.calledTwice).to.equal(true)
     })
 
+  it('Ctrl Enter calls currentTab.execute if running is enabled and route.path is "/editor"',
+    async () => {
+      const state = {
+        currentTab: {
+          query: 'SELECT * FROM foo',
+          execute: sinon.stub(),
+          tabIndex: 0
+        },
+        tabs: [{ isUnsaved: true }],
+        schema: []
+      }
+      const store = new Vuex.Store({ state })
+      const $route = { path: '/editor' }
+      const $router = { push: sinon.stub() }
+
+      wrapper = shallowMount(MainMenu, {
+        store,
+        mocks: { $route, $router },
+        stubs: ['router-link']
+      })
+
+      const ctrlEnter = new KeyboardEvent('keydown', { key: 'Enter', ctrlKey: true })
+      const metaEnter = new KeyboardEvent('keydown', { key: 'Enter', metaKey: true })
+      // Running is enabled and route path is editor
+      document.dispatchEvent(ctrlEnter)
+      expect(state.currentTab.execute.calledOnce).to.equal(true)
+      document.dispatchEvent(metaEnter)
+      expect(state.currentTab.execute.calledTwice).to.equal(true)
+
+      // Running is disabled and route path is editor
+      await wrapper.vm.$set(state, 'schema', null)
+      document.dispatchEvent(ctrlEnter)
+      expect(state.currentTab.execute.calledTwice).to.equal(true)
+      document.dispatchEvent(metaEnter)
+      expect(state.currentTab.execute.calledTwice).to.equal(true)
+
+      // Running is enabled and route path is not editor
+      await wrapper.vm.$set(state, 'schema', [])
+      await wrapper.vm.$set($route, 'path', '/my-queries')
+      document.dispatchEvent(ctrlEnter)
+      expect(state.currentTab.execute.calledTwice).to.equal(true)
+      document.dispatchEvent(metaEnter)
+      expect(state.currentTab.execute.calledTwice).to.equal(true)
+    })
+
   it('Ctrl B calls createNewQuery', async () => {
     const state = {
       currentTab: {

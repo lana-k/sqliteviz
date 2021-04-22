@@ -170,8 +170,8 @@ export default {
     },
     _keyListener (e) {
       if (this.$route.path === '/editor') {
-        // Run query Ctrl+R
-        if (e.key === 'r' && (e.ctrlKey || e.metaKey)) {
+        // Run query Ctrl+R or Ctrl+Enter
+        if ((e.key === 'r' || e.key === 'Enter') && (e.ctrlKey || e.metaKey)) {
           e.preventDefault()
           if (!this.runDisabled) {
             this.currentQuery.execute()

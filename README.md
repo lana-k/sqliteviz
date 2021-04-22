@@ -60,7 +60,7 @@ Result panel has two modes: table view (fig. 3, fig. 4) and chart view (fig. 2).
 
 #### Run a query
 
-Press `Run` button in the top toolbar or use `Ctrl+r`(`Cmd+r` for MacOS) keyboard shortcut to execute a query in the current opened tab.
+Press `Run` button in the top toolbar or use `Ctrl+r` or `Ctrl+Enter`(`Cmd+r` or `Cmd+Enter` for MacOS) keyboard shortcut to execute a query in the current opened tab.
 
 > **Note:**  Running is not available if a database was not chosen or a query for the current tab is not specified.
 
