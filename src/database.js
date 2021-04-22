@@ -105,8 +105,8 @@ class Database {
     if (results.error) {
       throw results.error
     }
-    // if it was more than one select - take only the first one
-    return results[0]
+    // if it was more than one select - take only the last one
+    return results[results.length - 1]
   }
 }
 

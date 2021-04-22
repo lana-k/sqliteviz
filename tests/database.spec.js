@@ -80,7 +80,7 @@ describe('database.js', () => {
     await expect(db.loadDb(buffer)).to.be.rejectedWith('foo')
   })
 
-  it('returns a query result', async () => {
+  it('returns the last query result', async () => {
     const SQL = await getSQL
     const tempDb = new SQL.Database()
     tempDb.run(`
@@ -99,18 +99,12 @@ describe('database.js', () => {
     const buffer = new Blob([data])
 
     await db.loadDb(buffer)
-    const result = await db.execute('SELECT * from test')
+    const result = await db.execute('SELECT * from test limit 1; SELECT * from test;')
     expect(result.columns).to.have.lengthOf(3)
-    expect(result.columns[0]).to.equal('id')
-    expect(result.columns[1]).to.equal('name')
-    expect(result.columns[2]).to.equal('faculty')
+    expect(result.columns).to.eql(['id', 'name', 'faculty'])
     expect(result.values).to.have.lengthOf(2)
-    expect(result.values[0][0]).to.equal(1)
-    expect(result.values[0][1]).to.equal('Harry Potter')
-    expect(result.values[0][2]).to.equal('Griffindor')
-    expect(result.values[1][0]).to.equal(2)
-    expect(result.values[1][1]).to.equal('Draco Malfoy')
-    expect(result.values[1][2]).to.equal('Slytherin')
+    expect(result.values[0]).to.eql([1, 'Harry Potter', 'Griffindor'])
+    expect(result.values[1]).to.eql([2, 'Draco Malfoy', 'Slytherin'])
   })
 
   it('returns an error', async () => {
@@ -149,12 +143,9 @@ describe('database.js', () => {
     expect(schema).to.have.lengthOf(1)
     expect(schema[0].name).to.equal('csv_import')
     expect(schema[0].columns).to.have.lengthOf(3)
-    expect(schema[0].columns[0].name).to.equal('id')
-    expect(schema[0].columns[0].type).to.equal('real')
-    expect(schema[0].columns[1].name).to.equal('name')
-    expect(schema[0].columns[1].type).to.equal('text')
-    expect(schema[0].columns[2].name).to.equal('faculty')
-    expect(schema[0].columns[2].type).to.equal('text')
+    expect(schema[0].columns[0]).to.eql({ name: 'id', type: 'real' })
+    expect(schema[0].columns[1]).to.eql({ name: 'name', type: 'text' })
+    expect(schema[0].columns[2]).to.eql({ name: 'faculty', type: 'text' })
 
     const result = await db.execute('SELECT * from csv_import')
     expect(result.columns).to.eql(data.columns)
