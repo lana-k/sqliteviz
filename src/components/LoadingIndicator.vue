@@ -18,7 +18,7 @@
 
 <script>
 export default {
-  name: 'loadingIndicator',
+  name: 'LoadingIndicator',
   props: ['progress'],
   computed: {
     circleProgress () {

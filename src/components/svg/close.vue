@@ -1,7 +1,7 @@
 <template>
   <svg
     @click.stop="$emit('click')"
-    class="icon"
+    :class="['icon', {'disabled': disabled }]"
     :width="size"
     :height="size"
     viewBox="0 0 14 14"
@@ -23,6 +23,11 @@ export default {
       type: Number,
       required: false,
       default: 14
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   }
 }
@@ -31,6 +36,9 @@ export default {
 <style scoped>
 .icon {
   cursor: pointer;
+}
+.disabled {
+  pointer-events: none;
 }
 .icon:hover path {
   fill: var(--color-text-base);

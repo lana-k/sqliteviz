@@ -44,7 +44,7 @@
     <modal name="parse" classes="dialog" height="auto" width="60%" :clickToClose="false">
       <div class="dialog-header">
         Import CSV
-        <close-icon @click="cancelCsvImport"/>
+        <close-icon @click="cancelCsvImport" :disabled="disableDialog"/>
       </div>
       <div class="dialog-body">
         <div class="chars">
@@ -99,6 +99,7 @@
           class="secondary"
           :disabled="disableDialog"
           @click="cancelCsvImport"
+          id="csv-cancel"
         >
           Cancel
         </button>
@@ -107,6 +108,7 @@
           class="primary"
           :disabled="disableDialog"
           @click="loadFromCsv(file)"
+          id="csv-import"
         >
           Import
         </button>
@@ -115,6 +117,7 @@
           class="primary"
           :disabled="disableDialog"
           @click="finish"
+          id="csv-finish"
         >
           Finish
         </button>
@@ -324,9 +327,6 @@ export default {
           start = new Date()
           this.schema = await this.newDb.createDb(file.name, parseResult.data, progressCounterId)
           end = new Date()
-          if (this.schema.error) {
-            throw this.schema.error
-          }
 
           // Inform about import success
           period = time.getPeriod(start, end)
