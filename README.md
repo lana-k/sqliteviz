@@ -24,7 +24,7 @@ You can choose a database or CSV file right on the welcom page (fig. 1). The sup
   </sub>
 </p>
 
-If you choose a CSV file it will be parsed. Then sqliteviz creates a new database with data from CSV in `csv_import` table. You can change parse settings in the dialog which is shown automatically if you choose a CSV file (fig. 2).
+If you choose a CSV file it will be parsed. Then sqliteviz creates a new database with data from the CSV in `csv_import` table. You can change parsing settings in the dialog which is shown automatically if you choose a CSV file (fig. 2).
 
 <p align="center">
    <img class="figure" src="src/assets/images/Screenshot_csv.png" width="650"/>
@@ -44,7 +44,7 @@ Choosing a database or CSV file is not a mandatory step. You can skip it and man
 
 <p align="center">
   <sub>
-    Fig. 3: Editor (neither database nor CSV is not chosen) 
+    Fig. 3: Editor (neither database nor CSV is chosen) 
   </sub>
 </p>
 
@@ -74,7 +74,7 @@ The result panel has two modes: table view (fig. 4, fig. 5) and chart view (fig.
 
 Press `Run` button in the top toolbar or use `Ctrl+r` or `Ctrl+Enter`(`Cmd+r` or `Cmd+Enter` for MacOS) keyboard shortcut to execute a query in the current opened tab.
 
-> **Note:**  Running is not available if neither a database nor CSV was not chosen or a query for the current tab is not specified.
+> **Note:**  Running is not available if neither a database nor CSV was chosen or a query for the current tab is not specified.
 
 The query result will be displayed in the result panel in table mode (fig. 5).
 
