@@ -4,17 +4,21 @@ import DelimiterSelector from '@/components/DelimiterSelector'
 
 describe('DelimiterSelector', async () => {
   it('shows the name of value', async () => {
-    const wrapper = shallowMount(DelimiterSelector, {
+    let wrapper = shallowMount(DelimiterSelector, {
       propsData: { value: ',' }
     })
     expect(wrapper.find('input').element.value).to.equal(',')
     expect(wrapper.find('.name').text()).to.equal('comma')
 
-    await wrapper.setProps({ value: '\t' })
+    wrapper = shallowMount(DelimiterSelector, {
+      propsData: { value: '\t' }
+    })
     expect(wrapper.find('input').element.value).to.equal('\t')
     expect(wrapper.find('.name').text()).to.equal('horizontal tab')
 
-    await wrapper.setProps({ value: '' })
+    wrapper = shallowMount(DelimiterSelector, {
+      propsData: { value: '' }
+    })
     expect(wrapper.find('input').element.value).to.equal('')
     expect(wrapper.find('.name').text()).to.equal('')
   })
@@ -89,5 +93,17 @@ describe('DelimiterSelector', async () => {
 
     await wrapper.findComponent({ name: 'drop-down-chevron' }).trigger('click')
     expect(wrapper.find('.options').isVisible()).to.equal(false)
+  })
+
+  it('has filled class when input is not empty', async () => {
+    const wrapper = shallowMount(DelimiterSelector, {
+      propsData: { value: ',' }
+    })
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('input').classes()).to.include('filled')
+    await wrapper.find('input').setValue('')
+    expect(wrapper.find('input').classes()).to.not.include('filled')
+    await wrapper.find('input').setValue(';')
+    expect(wrapper.find('input').classes()).to.include('filled')
   })
 })

@@ -8,12 +8,12 @@
     >
       <div class="value">
         <input
+          :class="{ 'filled': filled }"
           ref="delimiterInput"
           type="text"
           maxlength="1"
-          :value="value"
+          v-model="inputValue"
           @click.stop
-          @input.prevent="onInput($event)"
           :disabled="disabled"
         />
         <div class="name">{{ getSymbolName(value) }}</div>
@@ -33,7 +33,7 @@
         @click="chooseOption(option)"
         class="option"
       >
-        <span>{{option}}</span><div>{{ getSymbolName(option) }}</div>
+        <pre>{{option}}</pre><div>{{ getSymbolName(option) }}</div>
       </div>
     </div>
   </div>
@@ -51,8 +51,25 @@ export default {
   data () {
     return {
       showOptions: false,
-      options: [',', '\t', '|', ';', '\u001F', '\u001E']
+      options: [',', '\t', ' ', '|', ';', '\u001F', '\u001E'],
+      filled: false,
+      inputValue: ''
     }
+  },
+  watch: {
+    inputValue () {
+      if (this.inputValue) {
+        this.filled = true
+        if (this.inputValue !== this.value) {
+          this.$emit('input', this.inputValue)
+        }
+      } else {
+        this.filled = false
+      }
+    }
+  },
+  created () {
+    this.inputValue = this.value
   },
   methods: {
     getSymbolName (str) {
@@ -61,15 +78,8 @@ export default {
       }
       return ascii[str.charCodeAt(0).toString()].name
     },
-    onInput (event) {
-      const value = event.target.value
-
-      if (value) {
-        this.$emit('input', value)
-      }
-    },
     chooseOption (option) {
-      this.$emit('input', option)
+      this.inputValue = option
       this.showOptions = false
     },
     onContainerClick (event) {
@@ -78,7 +88,7 @@ export default {
 
     clear () {
       if (!this.disabled) {
-        this.$refs.delimiterInput.value = ''
+        this.inputValue = ''
         this.$refs.delimiterInput.focus()
       }
     }
@@ -108,6 +118,7 @@ export default {
 .value .name {
   color: var(--color-text-light-2);
   cursor: default;
+  margin-left: 4px;
 }
 
 .controls {
@@ -130,7 +141,6 @@ export default {
 .option {
   display: flex;
   align-items: center;
-  white-space: pre;
   height: 24px;
   padding: 0 6px;
 }
@@ -141,27 +151,30 @@ export default {
   cursor: pointer;
 }
 
-.option span {
+.option pre {
   background-color: var(--color-bg-warning);
-  line-height: 16px;
-  letter-spacing: 6px;
+  line-height: 20px;
   margin-right: 6px;
+  tab-size: 1;
+  font-family: monospace;
+  width: 16px;
+  text-align: center;
 }
 
 input {
   background: var(--color-white);
   border: none;
   color: var(--color-text-base);
-  height: 34px;
+  height: 20px;
+  font-family: monospace;
   font-size: 12px;
   box-sizing: border-box;
-  width: 20px;
-  letter-spacing: 6px;
-  line-height: 37px;
+  width: 16px;
+  text-align: center;
 }
 
-input::first-line {
-  background-color: var(--color-bg-warning);
+input.filled {
+  background: var(--color-bg-warning);
 }
 
 input:focus {
