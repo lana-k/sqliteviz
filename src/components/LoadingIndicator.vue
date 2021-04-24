@@ -24,7 +24,7 @@ export default {
     circleProgress () {
       const dash = (50.24 * this.progress) / 100
       const space = 50.24 - dash
-      return `${dash}, ${space}`
+      return `${dash}px, ${space}px`
     },
     animationClass () {
       return this.progress === undefined ? 'loading' : 'progress'
@@ -48,22 +48,22 @@ export default {
 }
 
 .loading .loader-svg.front {
-  stroke-dasharray: 40.24;
+  stroke-dasharray: 40.24px;
   animation: fill-animation-loading 1s cubic-bezier(1,1,1,1) 0s infinite;
 }
 
 @keyframes fill-animation-loading {
   0% {
-    stroke-dasharray: 10 40.24;
+    stroke-dasharray: 10px 40.24px;
     stroke-dashoffset: 0;
   }
   50% {
-    stroke-dasharray: 25.12;
-    stroke-dashoffset: 25.12;
+    stroke-dasharray: 25.12px;
+    stroke-dashoffset: 25.12px;
   }
   100% {
-    stroke-dasharray: 10 40.24 ;
-    stroke-dashoffset: 50.24;
+    stroke-dasharray: 10px 40.24px;
+    stroke-dashoffset: 50.24px;
   }
 }
 
