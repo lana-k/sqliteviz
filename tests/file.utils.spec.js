@@ -59,7 +59,7 @@ describe('file.utils.js', () => {
 
   it('importFile', () => {
     const spyInput = document.createElement('input')
-    sinon.spy(spyInput, 'click')
+    sinon.stub(spyInput, 'click')
 
     const blob = new Blob(['foo'])
     Object.defineProperty(spyInput, 'files', {

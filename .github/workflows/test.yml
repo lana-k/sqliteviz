@@ -15,10 +15,11 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 10.x
-    - name: Install chromium
-      run:  
-        sudo DEBIAN_FRONTEND=noninteractive apt-get update && 
-        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y chromium-browser
+    - name: Install browsers
+      run: |
+        export DEBIAN_FRONTEND=noninteractive
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser firefox
 
     - name: Install the project
       run: npm install
