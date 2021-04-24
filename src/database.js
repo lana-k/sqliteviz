@@ -59,7 +59,7 @@ class Database {
     })
 
     if (result.error) {
-      throw result.error
+      throw new Error(result.error)
     }
 
     return await this.getSchema(name)
@@ -70,7 +70,7 @@ class Database {
     const res = await this.pw.postMessage({ action: 'open', buffer: fileContent })
 
     if (res.error) {
-      throw res.error
+      throw new Error(res.error)
     }
 
     return this.getSchema(file.name)
@@ -103,7 +103,7 @@ class Database {
     const results = await this.pw.postMessage({ action: 'exec', sql: commands })
 
     if (results.error) {
-      throw results.error
+      throw new Error(results.error)
     }
     // if it was more than one select - take only the last one
     return results[results.length - 1]

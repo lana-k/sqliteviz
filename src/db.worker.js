@@ -23,7 +23,7 @@ function processMsg (sql) {
 
 function onError (error) {
   return {
-    error
+    error: error.message
   }
 }
 
