@@ -81,7 +81,10 @@
                   <div class="icons-container">
                     <rename-icon v-if="!query.isPredefined" @click="showRenameDialog(query.id)" />
                     <copy-icon @click="duplicateQuery(index)"/>
-                    <export-icon @click="exportToFile([query], `${query.name}.json`)"/>
+                    <export-icon
+                      @click="exportToFile([query], `${query.name}.json`)"
+                      tooltip="Export query to file"
+                    />
                     <delete-icon
                       v-if="!query.isPredefined"
                       @click="showDeleteDialog((new Set()).add(query.id))"
@@ -520,7 +523,7 @@ tbody tr:hover td {
   text-overflow: ellipsis;
 }
 tbody tr:hover .icons-container {
-  display: block;
+  display: flex;
 }
 .dialog input {
   width: 100%;

@@ -2,7 +2,9 @@ import chai from 'chai'
 import sinon from 'sinon'
 import chaiAsPromised from 'chai-as-promised'
 import initSqlJs from 'sql.js'
-import database from '@/database.js'
+import database from '@/database'
+import fu from '@/file.utils'
+
 chai.use(chaiAsPromised)
 const expect = chai.expect
 chai.should()
@@ -32,8 +34,10 @@ describe('database.js', () => {
 
     const data = tempDb.export()
     const buffer = new Blob([data])
+    buffer.name = 'foo.sqlite'
 
-    const { schema } = await db.loadDb(buffer)
+    const { schema, dbName } = await db.loadDb(buffer)
+    expect(dbName).to.equal('foo')
     expect(schema).to.have.lengthOf(1)
     expect(schema[0].name).to.equal('test')
     expect(schema[0].columns[0].name).to.equal('col1')
@@ -58,6 +62,7 @@ describe('database.js', () => {
 
     const data = tempDb.export()
     const buffer = new Blob([data])
+    buffer.name = 'foo.sqlite'
 
     const { schema } = await db.loadDb(buffer)
     expect(schema[0].name).to.equal('test_virtual')
@@ -74,6 +79,7 @@ describe('database.js', () => {
 
     const data = tempDb.export()
     const buffer = new Blob([data])
+    buffer.name = 'foo.sqlite'
 
     sinon.stub(db.pw, 'postMessage').resolves({ error: new Error('foo') })
 
@@ -97,6 +103,7 @@ describe('database.js', () => {
 
     const data = tempDb.export()
     const buffer = new Blob([data])
+    buffer.name = 'foo.sqlite'
 
     await db.loadDb(buffer)
     const result = await db.execute('SELECT * from test limit 1; SELECT * from test;')
@@ -124,6 +131,7 @@ describe('database.js', () => {
 
     const data = tempDb.export()
     const buffer = new Blob([data])
+    buffer.name = 'foo.sqlite'
     await db.loadDb(buffer)
     await expect(db.execute('SELECT * from foo')).to.be.rejectedWith(/^no such table: foo$/)
   })
@@ -203,5 +211,34 @@ describe('database.js', () => {
 
     db.deleteProgressCounter(firstId)
     expect(db.importProgresses[firstId]).to.equal(undefined)
+  })
+  it('exports db', async () => {
+    sinon.stub(fu, 'exportToFile')
+
+    // create db with table foo
+    const stmt = `
+      CREATE TABLE foo(id, name);
+      INSERT INTO foo VALUES (1, 'Harry Potter')
+    `
+    let result = await db.execute(stmt)
+
+    // export db to a file
+    await db.export('fooDb.sqlite')
+    expect(fu.exportToFile.called).to.equal(true)
+
+    // get data from export
+    const data = fu.exportToFile.getCall(0).args[0]
+    const file = new Blob([data])
+    file.name = 'fooDb.sqlite'
+
+    // loadDb from exported data
+    const anotherDb = database.getNewDatabase()
+    await anotherDb.loadDb(file)
+
+    // check that new db works and has the same table and data
+    result = await anotherDb.execute('SELECT * from foo')
+    expect(result.columns).to.eql(['id', 'name'])
+    expect(result.values).to.have.lengthOf(1)
+    expect(result.values[0]).to.eql([1, 'Harry Potter'])
   })
 })

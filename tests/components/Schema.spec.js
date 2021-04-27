@@ -98,4 +98,18 @@ describe('Schema.vue', () => {
     expect(tables.at(1).vm.name).to.equal('bar')
     expect(tables.at(2).vm.name).to.equal('foobar')
   })
+
+  it('exports db', async () => {
+    const state = {
+      dbName: 'fooDB',
+      db: {
+        export: sinon.stub().resolves()
+      }
+    }
+    const store = new Vuex.Store({ state })
+    const wrapper = mount(Schema, { store, localVue })
+
+    await wrapper.findComponent({ name: 'export-icon' }).trigger('click')
+    expect(state.db.export.calledOnceWith('fooDB'))
+  })
 })

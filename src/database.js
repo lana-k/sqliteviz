@@ -73,7 +73,7 @@ class Database {
       throw new Error(res.error)
     }
 
-    return this.getSchema(file.name)
+    return this.getSchema(file.name.replace(/\.[^.]+$/, ''))
   }
 
   async getSchema (name) {
@@ -107,6 +107,15 @@ class Database {
     }
     // if it was more than one select - take only the last one
     return results[results.length - 1]
+  }
+
+  async export (fileName) {
+    const data = await this.pw.postMessage({ action: 'export' })
+
+    if (data.error) {
+      throw new Error(data.error)
+    }
+    fu.exportToFile(data, fileName)
   }
 }
 

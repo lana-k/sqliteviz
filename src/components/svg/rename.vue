@@ -33,7 +33,7 @@ export default {
 
 <style scoped>
 .icon {
-  vertical-align: middle;
+  display: block;
   margin: 0 12px;
 }
 

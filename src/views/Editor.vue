@@ -11,7 +11,7 @@
           <div class="warning">
             Database is not loaded. Queries can’t be run without database.
           </div>
-          <db-uploader id="db-uploader"/>
+          <db-uploader id="db-uploader" width="100%"/>
         </div>
       </template>
       <template #right-pane>
@@ -62,10 +62,6 @@ export default {
   padding: 12px 24px;
   width: 100%;
   box-sizing: border-box;
-}
-
->>> .db-uploader-container {
-  width: 100%;
 }
 
 >>>.drop-area {

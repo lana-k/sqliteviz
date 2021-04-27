@@ -6,7 +6,6 @@
   padding: 0 6px;
   line-height: 19px;;
   position: fixed;
-  z-index: 5;
   height: 19px;
   border-radius: var(--border-radius-medium);
   white-space: nowrap;

@@ -8,7 +8,8 @@
         <tree-chevron :expanded="schemaVisible"/>
         {{ dbName }}
       </div>
-        <db-uploader id="db-edit" type="small" />
+      <db-uploader id="db-edit" type="small" />
+      <export-icon tooltip="Export database" @click="exportToFile"/>
     </div>
     <div v-show="schemaVisible" class="schema">
       <table-description
@@ -26,6 +27,7 @@ import TableDescription from '@/components/TableDescription'
 import TextField from '@/components/TextField'
 import TreeChevron from '@/components/svg/treeChevron'
 import DbUploader from '@/components/DbUploader'
+import ExportIcon from '@/components/svg/export'
 
 export default {
   name: 'Schema',
@@ -33,7 +35,8 @@ export default {
     TableDescription,
     TextField,
     TreeChevron,
-    DbUploader
+    DbUploader,
+    ExportIcon
   },
   data () {
     return {
@@ -55,6 +58,11 @@ export default {
     },
     dbName () {
       return this.$store.state.dbName
+    }
+  },
+  methods: {
+    exportToFile () {
+      this.$store.state.db.export(`${this.dbName}.sqlite`)
     }
   }
 }
@@ -95,6 +103,11 @@ export default {
 
 .db-name {
   cursor: pointer;
+  margin-right: 6px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
 }
 
 .db-name:hover .chevron-icon path,

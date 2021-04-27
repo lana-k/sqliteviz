@@ -131,7 +131,7 @@ describe('DbUploader.vue import CSV', () => {
 
   beforeEach(() => {
     // mock getting a file from user
-    sinon.stub(fu, 'getFileFromUser').resolves({ type: 'text/csv' })
+    sinon.stub(fu, 'getFileFromUser').resolves({ type: 'text/csv', name: 'foo.csv' })
 
     clock = sinon.useFakeTimers()
 
@@ -596,6 +596,7 @@ describe('DbUploader.vue import CSV', () => {
     expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(true)
     expect(wrapper.find('#csv-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#csv-import').isVisible()).to.equal(true)
+    expect(newDb.createDb.getCall(0).args[0]).to.equal('foo') // file name
 
     // After resolving - loading indicator is not shown
     await resolveImport()

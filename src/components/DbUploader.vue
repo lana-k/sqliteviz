@@ -1,5 +1,5 @@
 <template>
-  <div class="db-uploader-container">
+  <div class="db-uploader-container" :style="{ width }">
     <change-db-icon v-if="type === 'small'" @click.native="browse"/>
     <div v-if="['regular', 'illustrated'].includes(type)" class="drop-area-container">
       <div
@@ -158,6 +158,11 @@ export default {
       validator: (value) => {
         return ['regular', 'illustrated', 'small'].includes(value)
       }
+    },
+    width: {
+      type: String,
+      required: false,
+      default: 'unset'
     }
   },
   components: {
@@ -333,8 +338,9 @@ export default {
           }, 1000)
 
           // Create db with csv table and get schema
+          const name = file.name.replace(/\.[^.]+$/, '')
           start = new Date()
-          this.schema = await this.newDb.createDb(file.name, parseResult.data, progressCounterId)
+          this.schema = await this.newDb.createDb(name, parseResult.data, progressCounterId)
           end = new Date()
 
           // Inform about import success
