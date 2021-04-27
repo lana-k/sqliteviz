@@ -139,6 +139,15 @@ import ChangeDbIcon from '@/components/svg/changeDb'
 import time from '@/time'
 import database from '@/database'
 
+const csvMimeTypes = [
+  'text/csv',
+  'text/x-csv',
+  'application/x-csv',
+  'application/csv',
+  'text/x-comma-separated-values',
+  'text/comma-separated-values'
+]
+
 export default {
   name: 'DbUploader',
   props: {
@@ -365,7 +374,7 @@ export default {
 
     async checkFile (file) {
       this.state = 'drop'
-      if (file.type === 'text/csv') {
+      if (csvMimeTypes.includes(file.type)) {
         this.file = file
         this.header = true
         this.quoteChar = '"'

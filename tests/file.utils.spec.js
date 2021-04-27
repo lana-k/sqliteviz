@@ -57,7 +57,7 @@ describe('file.utils.js', () => {
     expect(URL.revokeObjectURL.calledOnceWith(url)).to.equal(true)
   })
 
-  it('importFile', () => {
+  it('importFile', async () => {
     const spyInput = document.createElement('input')
     sinon.stub(spyInput, 'click')
 
@@ -71,14 +71,12 @@ describe('file.utils.js', () => {
 
     setTimeout(() => { spyInput.dispatchEvent(new Event('change')) })
 
-    return fu.importFile()
-      .then((data) => {
-        expect(data).to.equal('foo')
-        expect(document.createElement.calledOnceWith('input')).to.equal(true)
-        expect(spyInput.type).to.equal('file')
-        expect(spyInput.accept).to.equal('.json')
-        expect(spyInput.click.calledOnce).to.equal(true)
-      })
+    const data = await fu.importFile()
+    expect(data).to.equal('foo')
+    expect(document.createElement.calledOnceWith('input')).to.equal(true)
+    expect(spyInput.type).to.equal('file')
+    expect(spyInput.accept).to.equal('.json')
+    expect(spyInput.click.calledOnce).to.equal(true)
   })
 
   it('readFile', () => {
