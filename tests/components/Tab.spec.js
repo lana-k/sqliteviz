@@ -6,6 +6,10 @@ import Vuex from 'vuex'
 import Tab from '@/components/Tab.vue'
 
 describe('Tab.vue', () => {
+  afterEach(() => {
+    sinon.restore()
+  })
+
   it('Renders passed query', () => {
     // mock store state
     const state = {
@@ -142,7 +146,7 @@ describe('Tab.vue', () => {
     expect(state.tabs[0].isUnsaved).to.equal(true)
   })
 
-  it('Shows .result-in-progress message when executing query', (done) => {
+  it('Shows .result-in-progress message when executing query', async () => {
     // mock store state
     const state = {
       currentTabId: 1,
@@ -167,11 +171,9 @@ describe('Tab.vue', () => {
     })
 
     wrapper.vm.execute()
-    wrapper.vm.$nextTick(() => {
-      expect(wrapper.find('.table-view .result-before').isVisible()).to.equal(false)
-      expect(wrapper.find('.table-view .result-in-progress').isVisible()).to.equal(true)
-    })
-    done()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('.table-view .result-before').isVisible()).to.equal(false)
+    expect(wrapper.find('.table-view .result-in-progress').isVisible()).to.equal(true)
   })
 
   it('Shows error when executing query ends with error', async () => {
@@ -179,7 +181,7 @@ describe('Tab.vue', () => {
     const state = {
       currentTabId: 1,
       db: {
-        execute () { return Promise.reject(new Error('There is no table foo')) }
+        execute: sinon.stub().rejects(new Error('There is no table foo'))
       }
     }
 
@@ -206,15 +208,6 @@ describe('Tab.vue', () => {
   })
 
   it('Passes result to sql-table component', async () => {
-    // mock store state
-    const state = {
-      currentTabId: 1,
-      db: {
-        execute () { return Promise.resolve(result) }
-      }
-    }
-
-    const store = new Vuex.Store({ state, mutations })
     const result = {
       columns: ['id', 'name'],
       values: [
@@ -222,6 +215,16 @@ describe('Tab.vue', () => {
         [2, 'bar']
       ]
     }
+    // mock store state
+    const state = {
+      currentTabId: 1,
+      db: {
+        execute: sinon.stub().resolves(result),
+        getSchema: sinon.stub().resolves({ dbName: '', schema: [] })
+      }
+    }
+
+    const store = new Vuex.Store({ state, mutations })
 
     // mount the component
     const wrapper = mount(Tab, {
@@ -242,5 +245,61 @@ describe('Tab.vue', () => {
     expect(wrapper.find('.table-view .result-in-progress').isVisible()).to.equal(false)
     expect(wrapper.find('.table-preview.error').isVisible()).to.equal(false)
     expect(wrapper.findComponent({ name: 'SqlTable' }).vm.dataSet).to.eql(result)
+  })
+
+  it('Updates schema after query execution', async () => {
+    const result = {
+      columns: ['id', 'name'],
+      values: []
+    }
+    const newSchema = {
+      dbName: 'fooDb',
+      schema: [
+        {
+          name: 'foo',
+          columns: [
+            { name: 'id', type: 'INTEGER' },
+            { name: 'title', type: 'NVARCHAR(30)' }
+          ]
+        },
+        {
+          name: 'bar',
+          columns: [
+            { name: 'a', type: 'N/A' },
+            { name: 'b', type: 'N/A' }
+          ]
+        }
+      ]
+    }
+    // mock store state
+    const state = {
+      currentTabId: 1,
+      dbName: 'fooDb',
+      db: {
+        execute: sinon.stub().resolves(result),
+        getSchema: sinon.stub().resolves(newSchema)
+      }
+    }
+
+    sinon.spy(mutations, 'saveSchema')
+    const store = new Vuex.Store({ state, mutations })
+
+    // mount the component
+    const wrapper = mount(Tab, {
+      store,
+      stubs: ['chart'],
+      propsData: {
+        id: 1,
+        initName: 'foo',
+        initQuery: 'SELECT * FROM foo; CREATE TABLE bar(a,b);',
+        initChart: [],
+        tabIndex: 0,
+        isPredefined: false
+      }
+    })
+
+    await wrapper.vm.execute()
+    expect(state.db.getSchema.calledOnceWith('fooDb')).to.equal(true)
+    expect(mutations.saveSchema.calledOnceWith(state, newSchema)).to.equal(true)
   })
 })

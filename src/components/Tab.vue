@@ -108,8 +108,11 @@ export default {
       this.isGettingResults = true
       this.result = null
       this.error = null
+      const state = this.$store.state
       try {
-        this.result = await this.$store.state.db.execute(this.query + ';')
+        this.result = await state.db.execute(this.query + ';')
+        const schema = await state.db.getSchema(state.dbName)
+        this.$store.commit('saveSchema', schema)
       } catch (err) {
         this.error = err
       }
