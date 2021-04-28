@@ -16,7 +16,8 @@ describe('DbUploader.vue', () => {
     // mock store state and mutations
     state = {}
     mutations = {
-      saveSchema: sinon.stub()
+      saveSchema: sinon.stub(),
+      setDb: sinon.stub()
     }
     store = new Vuex.Store({ state, mutations })
   })
@@ -563,7 +564,8 @@ describe('DbUploader.vue import CSV', () => {
     let resolveImport = sinon.stub()
     const newDb = {
       createDb: sinon.stub().resolves(new Promise(resolve => { resolveImport = resolve })),
-      createProgressCounter: sinon.stub().returns(1)
+      createProgressCounter: sinon.stub().returns(1),
+      deleteProgressCounter: sinon.stub()
     }
     sinon.stub(database, 'getNewDatabase').returns(newDb)
 
@@ -812,7 +814,8 @@ describe('DbUploader.vue import CSV', () => {
     const newDb = {
       createDb: sinon.stub().resolves(schema),
       createProgressCounter: sinon.stub().returns(1),
-      deleteProgressCounter: sinon.stub()
+      deleteProgressCounter: sinon.stub(),
+      shutDown: sinon.stub()
     }
     sinon.stub(database, 'getNewDatabase').returns(newDb)
 
@@ -832,6 +835,7 @@ describe('DbUploader.vue import CSV', () => {
     expect(actions.addTab.called).to.equal(false)
     expect(mutations.setCurrentTabId.called).to.equal(false)
     expect($router.push.called).to.equal(false)
+    expect(newDb.shutDown.calledOnce).to.equal(true)
     expect(wrapper.find('[data-modal="parse"]').exists()).to.equal(false)
   })
 })

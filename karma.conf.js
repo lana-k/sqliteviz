@@ -97,7 +97,10 @@ module.exports = function (config) {
     concurrency: 2,
 
     client: {
-      captureConsole: true
+      captureConsole: true,
+      mocha: {
+        timeout: 5000
+      }
     },
     browserConsoleLogOptions: {
       terminal: true,

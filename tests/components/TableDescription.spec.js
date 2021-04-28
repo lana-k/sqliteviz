@@ -19,6 +19,7 @@ describe('TableDescription.vue', () => {
 
   it('Columns are visible and correct when click on table name', async () => {
     const wrapper = shallowMount(TableDescription, {
+      stubs: ['router-link'],
       propsData: {
         name: 'Test table',
         columns: [

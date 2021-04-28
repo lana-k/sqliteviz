@@ -6,6 +6,10 @@ import Vuex from 'vuex'
 import Tabs from '@/components/Tabs.vue'
 
 describe('Tabs.vue', () => {
+  afterEach(() => {
+    sinon.restore()
+  })
+
   it('Renders start guide when there is no opened tabs', () => {
     // mock store state
     const state = {
@@ -14,7 +18,10 @@ describe('Tabs.vue', () => {
     const store = new Vuex.Store({ state })
 
     // mount the component
-    const wrapper = shallowMount(Tabs, { store })
+    const wrapper = shallowMount(Tabs, {
+      store,
+      stubs: ['router-link']
+    })
 
     // check start-guide visibility
     expect(wrapper.find('#start-guide').isVisible()).to.equal(true)
@@ -32,7 +39,10 @@ describe('Tabs.vue', () => {
     const store = new Vuex.Store({ state })
 
     // mount the component
-    const wrapper = shallowMount(Tabs, { store })
+    const wrapper = shallowMount(Tabs, {
+      store,
+      stubs: ['router-link']
+    })
 
     // check start-guide visibility
     expect(wrapper.find('#start-guide').isVisible()).to.equal(false)
@@ -64,7 +74,10 @@ describe('Tabs.vue', () => {
     const store = new Vuex.Store({ state, mutations })
 
     // mount the component
-    const wrapper = shallowMount(Tabs, { store })
+    const wrapper = shallowMount(Tabs, {
+      store,
+      stubs: ['router-link']
+    })
 
     // click on the first tab
     const firstTab = wrapper.findAll('.tab').at(0)
@@ -90,7 +103,10 @@ describe('Tabs.vue', () => {
     const store = new Vuex.Store({ state, mutations })
 
     // mount the component
-    const wrapper = mount(Tabs, { store, stubs: ['router-link'] })
+    const wrapper = mount(Tabs, {
+      store,
+      stubs: ['router-link']
+    })
 
     // click on the close icon of the first tab
     const firstTabCloseIcon = wrapper.findAll('.tab').at(0).find('.close-icon')
@@ -118,7 +134,10 @@ describe('Tabs.vue', () => {
     const store = new Vuex.Store({ state, mutations })
 
     // mount the component
-    const wrapper = mount(Tabs, { store, stubs: ['router-link'] })
+    const wrapper = mount(Tabs, {
+      store,
+      stubs: ['router-link']
+    })
 
     // click on the close icon of the second tab
     const secondTabCloseIcon = wrapper.findAll('.tab').at(1).find('.close-icon')
@@ -156,7 +175,10 @@ describe('Tabs.vue', () => {
     const store = new Vuex.Store({ state, mutations })
 
     // mount the component
-    const wrapper = mount(Tabs, { store, stubs: ['router-link'] })
+    const wrapper = mount(Tabs, {
+      store,
+      stubs: ['router-link']
+    })
 
     // click on the close icon of the second tab
     const secondTabCloseIcon = wrapper.findAll('.tab').at(1).find('.close-icon')
@@ -198,7 +220,10 @@ describe('Tabs.vue', () => {
     const store = new Vuex.Store({ state, mutations })
 
     // mount the component
-    const wrapper = mount(Tabs, { store, stubs: ['router-link'] })
+    const wrapper = mount(Tabs, {
+      store,
+      stubs: ['router-link']
+    })
 
     // click on the close icon of the second tab
     const secondTabCloseIcon = wrapper.findAll('.tab').at(1).find('.close-icon')
@@ -243,7 +268,10 @@ describe('Tabs.vue', () => {
     const store = new Vuex.Store({ state, mutations })
 
     // mount the component
-    const wrapper = shallowMount(Tabs, { store })
+    const wrapper = shallowMount(Tabs, { 
+      store,
+      stubs: ['router-link'] 
+    })
 
     const event = new Event('beforeunload')
     sinon.spy(event, 'preventDefault')
@@ -264,7 +292,10 @@ describe('Tabs.vue', () => {
     const store = new Vuex.Store({ state, mutations })
 
     // mount the component
-    const wrapper = shallowMount(Tabs, { store })
+    const wrapper = shallowMount(Tabs, {
+      store,
+      stubs: ['router-link']
+    })
 
     const event = new Event('beforeunload')
     sinon.spy(event, 'preventDefault')
