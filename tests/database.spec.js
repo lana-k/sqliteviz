@@ -212,8 +212,9 @@ describe('database.js', () => {
     db.deleteProgressCounter(firstId)
     expect(db.importProgresses[firstId]).to.equal(undefined)
   })
+
   it('exports db', async () => {
-    sinon.stub(fu, 'exportToFile')
+    sinon.stub(fu, 'exportToFile').resolves()
 
     // create db with table foo
     const stmt = `
