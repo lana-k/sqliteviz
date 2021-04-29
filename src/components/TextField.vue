@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :class="['text-field-label', { error: errorMsg }, {'disabled': disabled}]">
+    <div v-if="label" :class="['text-field-label', { error: errorMsg }, {'disabled': disabled}]">
       {{ label }}
       <hint-icon class="hint" v-if="hint" :hint="hint" :max-width="maxHintWidth || '149px'"/>
     </div>
@@ -11,7 +11,7 @@
       :style="{ width: width }"
       :value="value"
       :disabled="disabled"
-      @input="$emit('input',  $event.target.value)"
+      @input="$emit('input', $event.target.value)"
     />
     <div v-show="errorMsg" class="text-field-error">{{ errorMsg }}</div>
   </div>
