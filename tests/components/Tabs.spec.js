@@ -268,9 +268,9 @@ describe('Tabs.vue', () => {
     const store = new Vuex.Store({ state, mutations })
 
     // mount the component
-    const wrapper = shallowMount(Tabs, { 
+    const wrapper = shallowMount(Tabs, {
       store,
-      stubs: ['router-link'] 
+      stubs: ['router-link']
     })
 
     const event = new Event('beforeunload')

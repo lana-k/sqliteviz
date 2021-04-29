@@ -1,4 +1,5 @@
 const CopyPlugin = require('copy-webpack-plugin')
+const WorkboxPlugin = require('workbox-webpack-plugin')
 
 module.exports = {
   publicPath: '',
@@ -9,7 +10,12 @@ module.exports = {
         // It is important that we do not change its name, and that it is in the same folder as the js
         { from: 'node_modules/sql.js/dist/sql-wasm.wasm', to: 'js/' },
         { from: 'LICENSE', to: './' }
-      ])
+      ]),
+      new WorkboxPlugin.GenerateSW({
+        clientsClaim: true,
+        skipWaiting: false,
+        maximumFileSizeToCacheInBytes: 40000000
+      })
     ]
   },
   chainWebpack: config => {

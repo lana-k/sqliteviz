@@ -12,6 +12,8 @@ import '@/assets/styles/dialogs.css'
 import '@/assets/styles/tooltips.css'
 import '@/assets/styles/messages.css'
 
+import '../registerServiceWorker'
+
 Vue.use(VuePlugin)
 Vue.use(VModal)
 
