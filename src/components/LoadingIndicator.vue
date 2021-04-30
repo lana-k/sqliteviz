@@ -1,5 +1,5 @@
 <template>
-  <svg :class="['svg-container', animationClass ]" height="20" width="20" viewBox="0 0 20 20">
+  <svg :class="animationClass" height="20" width="20" viewBox="0 0 20 20">
     <circle
       class="loader-svg bg"
       cx="10"

@@ -8,7 +8,7 @@
     <link rel="manifest" href="<%= BASE_URL %>manifest.webmanifest">
     <title><%= htmlWebpackPlugin.options.title %></title>
     <style>
-      #loading-wrapper {
+      #sqliteviz-loading-wrapper {
         position: fixed;
         width: 100%;
         height: 100%;
@@ -17,7 +17,7 @@
         background-color: white;
       }
     
-      #loading-text {
+      #sqliteviz-loading-text {
         display: block;
         position: absolute;
         top: 50%;
@@ -28,7 +28,7 @@
         font-size: 20px;
       }
       
-      .svg-container {
+      #sqliteviz-loading-wrapper svg {
         display: block;
         position: absolute;
         left: 50%;
@@ -36,7 +36,7 @@
         transform: translate(-50%, -50%);
       }
 
-      .loader-svg {
+      #sqliteviz-loading-wrapper circle {
         position: absolute;
         left: 0; right: 0; top: 0; bottom: 0;
         fill: none;
@@ -45,16 +45,16 @@
         stroke: #119DFF;
       }
 
-      .loader-svg.bg {
+      #sqliteviz-loading-wrapper circle.bg {
         stroke: #C8D4E3;
       }
 
-      .loader-svg.front {
+      #sqliteviz-loading-wrapper circle.front {
         stroke-dasharray: 402px;
-        animation: loading 2s linear 0s infinite;
+        animation: sqliteviz-loading 2s linear 0s infinite;
       }
 
-      @keyframes loading {
+      @keyframes sqliteviz-loading {
         0% {
           stroke-dasharray: 100px 402px;
           stroke-dashoffset: 0;
@@ -75,17 +75,17 @@
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app">
-      <div id="loading-wrapper">
-        <div id="loading-text">LOADING</div>
-        <svg class="svg-container" height="170" width="170" viewBox="0 0 170 170">
+      <div id="sqliteviz-loading-wrapper">
+        <div id="sqliteviz-loading-text">LOADING</div>
+        <svg height="170" width="170" viewBox="0 0 170 170">
           <circle
-            class="loader-svg bg"
+            class="bg"
             cx="85"
             cy="85"
             r="80"
           />
           <circle
-            class="loader-svg front"
+            class="front"
             cx="85"
             cy="85"
             r="80"

@@ -4,20 +4,18 @@
 
 # sqliteviz
 
-Sqliteviz is a single-page PWA for fully client-side visualisation of SQLite databases or CSV files.
+Sqliteviz is a single-page offline-first PWA for fully client-side visualisation of SQLite databases or CSV files.
 
-This application allows to:
-- run SQL queries in SQLite database and create all kinds of charts based on result set
-- import CSV file into SQLite database and visualize imported data
-- save queries and chart settings
+With sqliteviz you can:
+- run SQL queries against a SQLite database and create [Plotly][11] charts based on the result sets
+- import a CSV file into a SQLite database and visualize imported data
+- manage queries and chart settings and run them against different databases
 - import/export queries and chart settings to/from a JSON file
-- manipulate saved queries (rename, duplicate, delete)
-- set predefined queries available for all users of sqliteviz on your server (read more about predefind queries on [Wiki][10])
-- export modified SQLite database
-- use it offline
+- export a modified SQLite database
+- use it offline from your OS application menu like any other desktop app
 
-## Get started
-The latest release of sqliteviz is running on [Github pages][6]. The simplest way to start is to use sqliteviz there.
+## Quickstart
+The latest release of sqliteviz is deployed on GitHub Pages at [lana-k.github.io/sqliteviz][6].
 
 ## Wiki
 For user documentation, check out sqliteviz [Wiki][7].
@@ -33,8 +31,9 @@ It is built on top of [react-chart-editor][3], [sql.js][4] and [Vue-Codemirror][
 [3]: https://github.com/plotly/react-chart-editor
 [4]: https://github.com/sql-js/sql.js
 [5]: https://github.com/vuejs/vue
-[6]: https://lana-k.github.io/sqliteviz
+[6]: https://lana-k.github.io/sqliteviz/
 [7]: https://github.com/lana-k/sqliteviz/wiki
 [8]: https://github.com/surmon-china/vue-codemirror#readme
 [9]: https://www.papaparse.com/
 [10]: https://github.com/lana-k/sqliteviz/wiki/Predefined-queries
+[11]: https://github.com/plotly/plotly.js
