@@ -13,7 +13,7 @@ function invokeServiceWorkerUpdateFlow (registration) {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
-    const registration = await navigator.serviceWorker.register('/service-worker.js')
+    const registration = await navigator.serviceWorker.register('service-worker.js')
     // ensure the case when the updatefound event was missed is also handled
     // by re-invoking the prompt when there's a waiting Service Worker
     if (registration.waiting) {
