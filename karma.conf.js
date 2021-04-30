@@ -99,7 +99,7 @@ module.exports = function (config) {
     client: {
       captureConsole: true,
       mocha: {
-        timeout: 5000
+        timeout: 7000
       }
     },
     browserConsoleLogOptions: {
