@@ -1,8 +1,11 @@
+let refresh = false
+
 function invokeServiceWorkerUpdateFlow (registration) {
   const agree = confirm('New version of the app is available. Refresh now?')
   if (agree) {
     if (registration.waiting) {
       // let waiting Service Worker know it should became active
+      refresh = true
       registration.waiting.postMessage({ type: 'SKIP_WAITING' })
     }
   }
@@ -23,19 +26,18 @@ if ('serviceWorker' in navigator) {
       if (newRegestration) {
         // wait until the new Service worker is actually installed (ready to take over)
         newRegestration.addEventListener('statechange', () => {
-          if (registration.waiting) {
+          if (registration.waiting && navigator.serviceWorker.controller) {
             invokeServiceWorkerUpdateFlow(registration)
           }
         })
       }
     })
 
-    let refreshing = false
     // detect controller change and refresh the page
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!refreshing) {
+      if (refresh) {
         window.location.reload()
-        refreshing = true
+        refresh = false
       }
     })
   })

@@ -12,6 +12,7 @@ module.exports = {
         { from: 'LICENSE', to: './' }
       ]),
       new WorkboxPlugin.GenerateSW({
+        exclude: [/\.map$/, 'LICENSE', 'queries.json'],
         clientsClaim: true,
         skipWaiting: false,
         maximumFileSizeToCacheInBytes: 40000000
