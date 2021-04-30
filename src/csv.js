@@ -10,7 +10,7 @@ export default {
   getResult (source) {
     const result = {}
     if (source.meta.fields) {
-      result.columns = source.meta.fields
+      result.columns = source.meta.fields.map(col => col.trim())
       result.values = source.data.map(row => {
         const resultRow = []
         result.columns.forEach(col => { resultRow.push(row[col]) })

@@ -15,7 +15,7 @@ describe('csv.js', () => {
         { id: 2, name: 'bar' }
       ],
       meta: {
-        fields: ['id', 'name']
+        fields: ['id', 'name ']
       }
     }
     expect(csv.getResult(source)).to.eql({
