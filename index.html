@@ -1,1 +1,60 @@
-<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><link rel=icon href=favicon.png><title>sqliteviz</title><link href=css/app.344efa07.css rel=preload as=style><link href=css/chunk-vendors.38703705.css rel=preload as=style><link href=js/app.b7b295c5.js rel=preload as=script><link href=js/chunk-vendors.076ea943.js rel=preload as=script><link href=css/chunk-vendors.38703705.css rel=stylesheet><link href=css/app.344efa07.css rel=stylesheet></head><body><noscript><strong>We're sorry but sqliteviz doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id=app></div><script src=js/chunk-vendors.076ea943.js></script><script src=js/app.b7b295c5.js></script></body></html>
+<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><link rel=icon href=favicon.png><link rel=manifest href=manifest.webmanifest><title>sqliteviz</title><style>#loading-wrapper {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background-color: white;
+      }
+    
+      #loading-text {
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #506784;
+        font-family: sans-serif;
+        font-size: 20px;
+      }
+      
+      .svg-container {
+        display: block;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .loader-svg {
+        position: absolute;
+        left: 0; right: 0; top: 0; bottom: 0;
+        fill: none;
+        stroke-width: 5px;
+        stroke-linecap: round;
+        stroke: #119DFF;
+      }
+
+      .loader-svg.bg {
+        stroke: #C8D4E3;
+      }
+
+      .loader-svg.front {
+        stroke-dasharray: 402px;
+        animation: loading 2s linear 0s infinite;
+      }
+
+      @keyframes loading {
+        0% {
+          stroke-dasharray: 100px 402px;
+          stroke-dashoffset: 0;
+        }
+        50% {
+          stroke-dasharray: 251px;
+          stroke-dashoffset: -251px;
+        }
+        100% {
+          stroke-dasharray: 100px 402px;
+          stroke-dashoffset: -502px;
+        }
+      }</style><link href=js/chunk-60ca3258.d05ccfc9.js rel=prefetch><link href=css/app.4ade5f3f.css rel=preload as=style><link href=css/chunk-vendors.bee6f52f.css rel=preload as=style><link href=js/app.ddb7d9aa.js rel=preload as=script><link href=js/chunk-vendors.fe2238bd.js rel=preload as=script><link href=css/chunk-vendors.bee6f52f.css rel=stylesheet><link href=css/app.4ade5f3f.css rel=stylesheet></head><body><noscript><strong>We're sorry but sqliteviz doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id=app><div id=loading-wrapper><div id=loading-text>LOADING</div><svg class=svg-container height=170 width=170 viewBox="0 0 170 170"><circle class="loader-svg bg" cx=85 cy=85 r=80 /><circle class="loader-svg front" cx=85 cy=85 r=80 /></svg></div></div><script src=js/chunk-vendors.fe2238bd.js></script><script src=js/app.ddb7d9aa.js></script></body></html>

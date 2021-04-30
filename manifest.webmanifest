@@ -1,0 +1,20 @@
+{
+  "background_color": "white",
+  "description": "Sqliteviz is a single-page application for fully client-side visualisation of SQLite databases or CSV.",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "Logo192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "Logo512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "name": "sqliteviz",
+  "short_name": "sqliteviz",
+  "start_url": "index.html"
+}
