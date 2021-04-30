@@ -4,11 +4,11 @@
 
 # sqliteviz
 
-Sqliteviz is a single-page PWA for fully client-side visualisation of SQLite databases or CSV.
+Sqliteviz is a single-page PWA for fully client-side visualisation of SQLite databases or CSV files.
 
-This tool allows:
+This application allows:
 - run SQL queries in sqlite database and create all kinds of charts based on result set
-- import CSV into sqlite database and visualize imported data
+- import CSV file into sqlite database and visualize imported data
 - save queries and chart settings
 - export queries and chart settings to JSON file
 - import queries and chart settings from JSON file
