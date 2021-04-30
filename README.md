@@ -10,11 +10,10 @@ This application allows to:
 - run SQL queries in SQLite database and create all kinds of charts based on result set
 - import CSV file into SQLite database and visualize imported data
 - save queries and chart settings
-- export queries and chart settings to JSON file
-- import queries and chart settings from JSON file
+- import/export queries and chart settings to/from a JSON file
 - manipulate saved queries (rename, duplicate, delete)
 - set predefined queries available for all users of sqliteviz on your server (read more about predefind queries on [Wiki][10])
-- export modified database
+- export modified SQLite database
 - use it offline
 
 ## Get started
