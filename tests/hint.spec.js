@@ -49,6 +49,39 @@ describe('hint.js', () => {
       foo: ['fooId', 'name'],
       bar: ['barId']
     })
+    expect(CM.showHint.firstCall.args[2].defaultTable).to.equal(null)
+  })
+
+  it('Add default table if there is only one table in schema', () => {
+    // mock store state
+    const schema = [
+      {
+        name: 'foo',
+        columns: [
+          { name: 'fooId', type: 'INTEGER' },
+          { name: 'name', type: 'NVARCHAR(20)' }
+        ]
+      }
+    ]
+    sinon.stub(state, 'schema').value(schema)
+
+    // mock showHint and editor
+    sinon.stub(CM, 'showHint')
+    const editor = {
+      getTokenAt () {
+        return {
+          string: 'SELECT',
+          type: 'keyword'
+        }
+      },
+      getCursor: sinon.stub()
+    }
+
+    const clock = sinon.useFakeTimers()
+    hint.show(editor)
+    clock.tick(500)
+
+    expect(CM.showHint.firstCall.args[2].defaultTable).to.equal('foo')
   })
 
   it("Doesn't show hint when in string or space, or ';'", () => {

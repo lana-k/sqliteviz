@@ -25,6 +25,10 @@ const hintOptions = {
     }
     return tables
   },
+  get defaultTable () {
+    const schema = store.state.schema
+    return schema.length === 1 ? schema[0].name : null
+  },
   completeSingle: false,
   completeOnSingleClick: true,
   alignWithWord: false
