@@ -233,6 +233,7 @@ export default {
         this.$modal.hide('parse')
         const tabId = await this.$store.dispatch('addTab', { query: 'select * from csv_import' })
         this.$store.commit('setCurrentTabId', tabId)
+        this.importCsvCompleted = false
       }
       if (this.$route.path !== '/editor') {
         this.$router.push('/editor')

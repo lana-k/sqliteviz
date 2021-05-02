@@ -838,4 +838,49 @@ describe('DbUploader.vue import CSV', () => {
     expect(newDb.shutDown.calledOnce).to.equal(true)
     expect(wrapper.find('[data-modal="parse"]').exists()).to.equal(false)
   })
+
+  it("doesn't open new tab when load db after importing CSV", async () => {
+    fu.getFileFromUser.onCall(0).resolves({ type: 'text/csv', name: 'foo.csv' })
+    fu.getFileFromUser.onCall(1).resolves({ type: 'application/x-sqlite3', name: 'bar.sqlite3' })
+    sinon.stub(csv, 'parse').resolves({
+      delimiter: '|',
+      data: {
+        columns: ['col1', 'col2'],
+        values: [
+          [1, 'foo']
+        ]
+      },
+      hasErrors: false,
+      messages: []
+    })
+
+    const schema = {}
+    const newDb = {
+      createDb: sinon.stub().resolves(schema),
+      createProgressCounter: sinon.stub().returns(1),
+      deleteProgressCounter: sinon.stub(),
+      loadDb: sinon.stub().resolves()
+    }
+    sinon.stub(database, 'getNewDatabase').returns(newDb)
+
+    await wrapper.find('.drop-area').trigger('click')
+    await csv.parse.returnValues[0]
+    await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
+
+    await wrapper.find('#csv-import').trigger('click')
+    await csv.parse.returnValues[1]
+    await wrapper.vm.$nextTick()
+
+    await wrapper.find('#csv-finish').trigger('click')
+
+    expect(actions.addTab.calledOnce).to.equal(true)
+    await actions.addTab.returnValues[0]
+    expect(mutations.setCurrentTabId.calledOnceWith(state, newTabId)).to.equal(true)
+
+    await wrapper.find('.drop-area').trigger('click')
+    await newDb.loadDb.returnValues[0]
+    expect(actions.addTab.calledOnce).to.equal(true)
+    expect(mutations.setCurrentTabId.calledOnce).to.equal(true)
+ })
 })
