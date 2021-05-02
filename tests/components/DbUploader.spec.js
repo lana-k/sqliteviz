@@ -882,5 +882,5 @@ describe('DbUploader.vue import CSV', () => {
     await newDb.loadDb.returnValues[0]
     expect(actions.addTab.calledOnce).to.equal(true)
     expect(mutations.setCurrentTabId.calledOnce).to.equal(true)
- })
+  })
 })
