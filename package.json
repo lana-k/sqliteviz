@@ -15,7 +15,7 @@
     "debounce": "^1.2.0",
     "nanoid": "^3.1.12",
     "papaparse": "^5.3.0",
-    "plotly.js": "^1.57.1",
+    "plotly.js": "^1.58.4",
     "promise-worker": "^2.0.1",
     "react": "^16.13.1",
     "react-chart-editor": "^0.42.0",
