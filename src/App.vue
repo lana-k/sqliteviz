@@ -60,4 +60,7 @@ button,
 body {
   margin: 0;
 }
+.CodeMirror-hints {
+  z-index: 999 !important;
+}
 </style>

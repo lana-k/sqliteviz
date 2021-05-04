@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import showHint from './hint'
+import showHint, { showHintOnDemand } from './hint'
 import { debounce } from 'debounce'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
@@ -29,7 +29,8 @@ export default {
         lineNumbers: true,
         line: true,
         autofocus: true,
-        autoRefresh: true
+        autoRefresh: true,
+        extraKeys: { 'Ctrl-Space': showHintOnDemand }
       }
     }
   },

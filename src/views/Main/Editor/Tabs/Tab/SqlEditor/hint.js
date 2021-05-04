@@ -33,6 +33,10 @@ const hintOptions = {
   alignWithWord: false
 }
 
+export function showHintOnDemand (editor) {
+  CM.showHint(editor, getHints, hintOptions)
+}
+
 export default function showHint (editor) {
   // Don't show autocomplete after a space or semicolon or in string literals
   const token = editor.getTokenAt(editor.getCursor())
@@ -41,5 +45,6 @@ export default function showHint (editor) {
   if (tokenType === 'string' || !ch || ch === ' ' || ch === ';') {
     return
   }
+
   CM.showHint(editor, getHints, hintOptions)
 }
