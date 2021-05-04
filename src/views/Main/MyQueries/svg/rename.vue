@@ -12,12 +12,12 @@
       @mouseout="hideTooltip"
     >
       <path
-        d="M10.5 1.5H4.5C3.675 1.5 3 2.175 3 3V15C3 15.825 3.675 16.5 4.5 16.5H13.5C14.325 16.5 15 15.825 15 15V6L10.5 1.5ZM13.5 15H4.5V3H9.75V6.75H13.5V15ZM12 8.25V13.575L10.425 12L8.325 14.1L6.225 12L8.325 9.9L6.675 8.25H12Z"
+        d="M10.545 6.75L11.25 7.455L4.44 14.25H3.75V13.56L10.545 6.75ZM13.245 2.25C13.0575 2.25 12.8625 2.325 12.72 2.4675L11.3475 3.84L14.16 6.6525L15.5325 5.28C15.825 4.9875 15.825 4.5 15.5325 4.2225L13.7775 2.4675C13.6275 2.3175 13.44 2.25 13.245 2.25ZM10.545 4.6425L2.25 12.9375V15.75H5.0625L13.3575 7.455L10.545 4.6425Z"
         fill="#A2B1C6"
       />
     </svg>
     <span class="icon-tooltip" :style="tooltipStyle">
-      {{ tooltip }}
+      Rename query
     </span>
   </span>
 </template>
@@ -26,9 +26,8 @@
 import tooltipMixin from '@/tooltipMixin'
 
 export default {
-  name: 'ExportIcon',
-  mixins: [tooltipMixin],
-  props: ['tooltip']
+  name: 'RenameIcon',
+  mixins: [tooltipMixin]
 }
 </script>
 
@@ -36,7 +35,6 @@ export default {
 .icon {
   display: block;
   margin: 0 12px;
-  cursor: pointer;
 }
 
 .icon:hover path {

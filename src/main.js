@@ -1,7 +1,7 @@
 import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
+import App from '@/App.vue'
+import router from '@/router'
+import store from '@/store'
 import { VuePlugin } from 'vuera'
 import VModal from 'vue-js-modal'
 
@@ -13,7 +13,7 @@ import '@/assets/styles/tooltips.css'
 import '@/assets/styles/messages.css'
 
 if (!['localhost', '127.0.0.1'].includes(location.hostname)) {
-  import('../registerServiceWorker') // eslint-disable-line no-unused-expressions
+  import('./registerServiceWorker') // eslint-disable-line no-unused-expressions
 }
 
 Vue.use(VuePlugin)

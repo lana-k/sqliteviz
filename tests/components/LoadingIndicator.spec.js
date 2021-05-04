@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { shallowMount } from '@vue/test-utils'
-import LoadingIndicator from '@/components/LoadingIndicator.vue'
+import LoadingIndicator from '@/components/LoadingIndicator'
 
 describe('LoadingIndicator.vue', () => {
   it('Calculates animation class', async () => {

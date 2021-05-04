@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import tooltipMixin from '@/mixins/tooltips'
+import tooltipMixin from '@/tooltipMixin'
 
 export default {
   name: 'HintIcon',
