@@ -4,8 +4,8 @@
     <div id="note">
       Sqliteviz is fully client-side. Your database never leaves your computer.
     </div>
-    <button id ="skip" class="secondary" @click="$router.push('/editor')">
-      Skip database loading
+    <button id="skip" class="secondary" @click="$router.push('/editor')">
+      Create empty database
     </button>
   </div>
 </template>

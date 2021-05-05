@@ -146,7 +146,7 @@ describe('database.js', () => {
     }
     const progressHandler = sinon.spy()
     const progressCounterId = db.createProgressCounter(progressHandler)
-    const { dbName, schema } = await db.createDb('foo', data, progressCounterId)
+    const { dbName, schema } = await db.importDb('foo', data, progressCounterId)
     expect(dbName).to.equal('foo')
     expect(schema).to.have.lengthOf(1)
     expect(schema[0].name).to.equal('csv_import')
@@ -164,7 +164,7 @@ describe('database.js', () => {
     expect(progressHandler.secondCall.calledWith(100)).to.equal(true)
   })
 
-  it('createDb throws errors', async () => {
+  it('importDb throws errors', async () => {
     const data = {
       columns: ['id', 'name'],
       values: [
@@ -174,7 +174,7 @@ describe('database.js', () => {
     }
     const progressHandler = sinon.stub()
     const progressCounterId = db.createProgressCounter(progressHandler)
-    await expect(db.createDb('foo', data, progressCounterId))
+    await expect(db.importDb('foo', data, progressCounterId))
       .to.be.rejectedWith('column index out of range')
   })
 

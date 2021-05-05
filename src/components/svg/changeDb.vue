@@ -16,7 +16,7 @@
     />
   </svg>
   <span class="icon-tooltip" :style="tooltipStyle">
-    Change database
+    Load another database or CSV
   </span>
 </div>
 </template>

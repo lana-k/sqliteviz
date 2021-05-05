@@ -11,6 +11,7 @@ describe('DbUploader.vue', () => {
   let state = {}
   let mutations = {}
   let store = {}
+  let place
 
   beforeEach(() => {
     // mock store state and mutations
@@ -20,10 +21,14 @@ describe('DbUploader.vue', () => {
       setDb: sinon.stub()
     }
     store = new Vuex.Store({ state, mutations })
+
+    place = document.createElement('div')
+    document.body.appendChild(place)
   })
 
   afterEach(() => {
     sinon.restore()
+    place.remove()
   })
 
   it('loads db on click and redirects to /editor', async () => {
@@ -44,15 +49,22 @@ describe('DbUploader.vue', () => {
 
     // mount the component
     const wrapper = shallowMount(DbUploader, {
+      attachTo: place,
       store,
-      mocks: { $router, $route }
+      mocks: { $router, $route },
+      propsData: {
+        type: 'illustrated'
+      }
     })
 
     await wrapper.find('.drop-area').trigger('click')
     expect(db.loadDb.calledOnceWith(file)).to.equal(true)
     await db.loadDb.returnValues[0]
+    await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
     expect(mutations.saveSchema.calledOnceWith(state, schema)).to.equal(true)
     expect($router.push.calledOnceWith('/editor')).to.equal(true)
+    wrapper.destroy()
   })
 
   it('loads db on drop and redirects to /editor', async () => {
@@ -69,8 +81,12 @@ describe('DbUploader.vue', () => {
 
     // mount the component
     const wrapper = shallowMount(DbUploader, {
+      attachTo: place,
       store,
-      mocks: { $router, $route }
+      mocks: { $router, $route },
+      propsData: {
+        type: 'illustrated'
+      }
     })
 
     // mock a file dropped by a user
@@ -84,8 +100,11 @@ describe('DbUploader.vue', () => {
     await wrapper.find('.drop-area').trigger('drop', dropData)
     expect(db.loadDb.calledOnceWith(file)).to.equal(true)
     await db.loadDb.returnValues[0]
+    await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
     expect(mutations.saveSchema.calledOnceWith(state, schema)).to.equal(true)
     expect($router.push.calledOnceWith('/editor')).to.equal(true)
+    wrapper.destroy()
   })
 
   it("doesn't redirect if already on /editor", async () => {
@@ -106,13 +125,20 @@ describe('DbUploader.vue', () => {
 
     // mount the component
     const wrapper = shallowMount(DbUploader, {
+      attachTo: place,
       store,
-      mocks: { $router, $route }
+      mocks: { $router, $route },
+      propsData: {
+        type: 'illustrated'
+      }
     })
 
     await wrapper.find('.drop-area').trigger('click')
     await db.loadDb.returnValues[0]
+    await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
     expect($router.push.called).to.equal(false)
+    wrapper.destroy()
   })
 })
 
@@ -122,6 +148,7 @@ describe('DbUploader.vue import CSV', () => {
   let actions = {}
   const newTabId = 1
   let store = {}
+  let place
 
   // mock router
   const $router = { }
@@ -150,15 +177,24 @@ describe('DbUploader.vue import CSV', () => {
 
     $router.push = sinon.stub()
 
+    place = document.createElement('div')
+    document.body.appendChild(place)
+
     // mount the component
     wrapper = mount(DbUploader, {
+      attachTo: place,
       store,
-      mocks: { $router, $route }
+      mocks: { $router, $route },
+      propsData: {
+        type: 'illustrated'
+      }
     })
   })
 
   afterEach(() => {
     sinon.restore()
+    wrapper.destroy()
+    place.remove()
   })
 
   it('shows parse dialog if gets csv file', async () => {
@@ -183,6 +219,7 @@ describe('DbUploader.vue import CSV', () => {
     await wrapper.find('.drop-area').trigger('click')
     await csv.parse.returnValues[0]
     await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
     expect(wrapper.find('[data-modal="parse"]').exists()).to.equal(true)
     expect(wrapper.findComponent({ name: 'delimiter-selector' }).vm.value).to.equal('|')
@@ -218,6 +255,7 @@ describe('DbUploader.vue import CSV', () => {
     await wrapper.find('.drop-area').trigger('click')
     await csv.parse.returnValues[0]
     await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
 
     parse.onCall(1).resolves({
@@ -328,6 +366,7 @@ describe('DbUploader.vue import CSV', () => {
     await csv.parse.returnValues[0]
     await wrapper.vm.animationPromise
     await wrapper.vm.$nextTick()
+    await wrapper.vm.$nextTick()
 
     let resolveParsing
     parse.onCall(1).returns(new Promise(resolve => {
@@ -395,6 +434,7 @@ describe('DbUploader.vue import CSV', () => {
     await csv.parse.returnValues[0]
     await wrapper.vm.animationPromise
     await wrapper.vm.$nextTick()
+    await wrapper.vm.$nextTick()
 
     await wrapper.find('#csv-import').trigger('click')
     await csv.parse.returnValues[1]
@@ -451,6 +491,7 @@ describe('DbUploader.vue import CSV', () => {
     await wrapper.find('.drop-area').trigger('click')
     await csv.parse.returnValues[0]
     await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
 
     await wrapper.find('#csv-import').trigger('click')
@@ -511,6 +552,7 @@ describe('DbUploader.vue import CSV', () => {
     await csv.parse.returnValues[0]
     await wrapper.vm.animationPromise
     await wrapper.vm.$nextTick()
+    await wrapper.vm.$nextTick()
 
     await wrapper.find('#csv-import').trigger('click')
     await csv.parse.returnValues[1]
@@ -563,7 +605,7 @@ describe('DbUploader.vue import CSV', () => {
 
     let resolveImport = sinon.stub()
     const newDb = {
-      createDb: sinon.stub().resolves(new Promise(resolve => { resolveImport = resolve })),
+      importDb: sinon.stub().resolves(new Promise(resolve => { resolveImport = resolve })),
       createProgressCounter: sinon.stub().returns(1),
       deleteProgressCounter: sinon.stub()
     }
@@ -572,6 +614,7 @@ describe('DbUploader.vue import CSV', () => {
     await wrapper.find('.drop-area').trigger('click')
     await csv.parse.returnValues[0]
     await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
 
     await wrapper.find('#csv-import').trigger('click')
@@ -598,11 +641,11 @@ describe('DbUploader.vue import CSV', () => {
     expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(true)
     expect(wrapper.find('#csv-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#csv-import').isVisible()).to.equal(true)
-    expect(newDb.createDb.getCall(0).args[0]).to.equal('foo') // file name
+    expect(newDb.importDb.getCall(0).args[0]).to.equal('foo') // file name
 
     // After resolving - loading indicator is not shown
     await resolveImport()
-    await newDb.createDb.returnValues[0]
+    await newDb.importDb.returnValues[0]
     expect(
       wrapper.findComponent({ name: 'logs' }).findComponent({ name: 'LoadingIndicator' }).exists()
     ).to.equal(false)
@@ -621,7 +664,7 @@ describe('DbUploader.vue import CSV', () => {
       hasErrors: false,
       messages: []
     })
-
+    // we need to separate calles because messages will mutate
     parse.onCall(1).resolves({
       delimiter: '|',
       data: {
@@ -637,7 +680,7 @@ describe('DbUploader.vue import CSV', () => {
 
     const schema = {}
     const newDb = {
-      createDb: sinon.stub().resolves(schema),
+      importDb: sinon.stub().resolves(schema),
       createProgressCounter: sinon.stub().returns(1),
       deleteProgressCounter: sinon.stub()
     }
@@ -646,6 +689,7 @@ describe('DbUploader.vue import CSV', () => {
     await wrapper.find('.drop-area').trigger('click')
     await csv.parse.returnValues[0]
     await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
 
     await wrapper.find('#csv-import').trigger('click')
@@ -681,7 +725,7 @@ describe('DbUploader.vue import CSV', () => {
       hasErrors: false,
       messages: []
     })
-
+    // we need to separate calles because messages will mutate
     parse.onCall(1).resolves({
       delimiter: '|',
       data: {
@@ -696,7 +740,7 @@ describe('DbUploader.vue import CSV', () => {
     })
 
     const newDb = {
-      createDb: sinon.stub().rejects(new Error('fail')),
+      importDb: sinon.stub().rejects(new Error('fail')),
       createProgressCounter: sinon.stub().returns(1),
       deleteProgressCounter: sinon.stub()
     }
@@ -705,6 +749,7 @@ describe('DbUploader.vue import CSV', () => {
     await wrapper.find('.drop-area').trigger('click')
     await csv.parse.returnValues[0]
     await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
 
     await wrapper.find('#csv-import').trigger('click')
@@ -729,8 +774,7 @@ describe('DbUploader.vue import CSV', () => {
   })
 
   it('import final', async () => {
-    const parse = sinon.stub(csv, 'parse')
-    parse.onCall(0).resolves({
+    sinon.stub(csv, 'parse').resolves({
       delimiter: '|',
       data: {
         columns: ['col1', 'col2'],
@@ -742,22 +786,9 @@ describe('DbUploader.vue import CSV', () => {
       messages: []
     })
 
-    parse.onCall(1).resolves({
-      delimiter: '|',
-      data: {
-        columns: ['col1', 'col2'],
-        values: [
-          [1, 'foo'],
-          [2, 'bar']
-        ]
-      },
-      hasErrors: false,
-      messages: []
-    })
-
     const schema = {}
     const newDb = {
-      createDb: sinon.stub().resolves(schema),
+      importDb: sinon.stub().resolves(schema),
       createProgressCounter: sinon.stub().returns(1),
       deleteProgressCounter: sinon.stub()
     }
@@ -766,6 +797,7 @@ describe('DbUploader.vue import CSV', () => {
     await wrapper.find('.drop-area').trigger('click')
     await csv.parse.returnValues[0]
     await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
 
     await wrapper.find('#csv-import').trigger('click')
@@ -784,8 +816,7 @@ describe('DbUploader.vue import CSV', () => {
   })
 
   it('import cancel', async () => {
-    const parse = sinon.stub(csv, 'parse')
-    parse.onCall(0).resolves({
+    sinon.stub(csv, 'parse').resolves({
       delimiter: '|',
       data: {
         columns: ['col1', 'col2'],
@@ -797,22 +828,9 @@ describe('DbUploader.vue import CSV', () => {
       messages: []
     })
 
-    parse.onCall(1).resolves({
-      delimiter: '|',
-      data: {
-        columns: ['col1', 'col2'],
-        values: [
-          [1, 'foo'],
-          [2, 'bar']
-        ]
-      },
-      hasErrors: false,
-      messages: []
-    })
-
     const schema = {}
     const newDb = {
-      createDb: sinon.stub().resolves(schema),
+      importDb: sinon.stub().resolves(schema),
       createProgressCounter: sinon.stub().returns(1),
       deleteProgressCounter: sinon.stub(),
       shutDown: sinon.stub()
@@ -822,6 +840,7 @@ describe('DbUploader.vue import CSV', () => {
     await wrapper.find('.drop-area').trigger('click')
     await csv.parse.returnValues[0]
     await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
 
     await wrapper.find('#csv-import').trigger('click')
@@ -856,7 +875,7 @@ describe('DbUploader.vue import CSV', () => {
 
     const schema = {}
     const newDb = {
-      createDb: sinon.stub().resolves(schema),
+      importDb: sinon.stub().resolves(schema),
       createProgressCounter: sinon.stub().returns(1),
       deleteProgressCounter: sinon.stub(),
       loadDb: sinon.stub().resolves()
@@ -866,6 +885,7 @@ describe('DbUploader.vue import CSV', () => {
     await wrapper.find('.drop-area').trigger('click')
     await csv.parse.returnValues[0]
     await wrapper.vm.animationPromise
+    await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
 
     await wrapper.find('#csv-import').trigger('click')

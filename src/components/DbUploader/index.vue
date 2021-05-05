@@ -1,7 +1,7 @@
 <template>
   <div class="db-uploader-container" :style="{ width }">
     <change-db-icon v-if="type === 'small'" @click.native="browse"/>
-    <div v-if="['regular', 'illustrated'].includes(type)" class="drop-area-container">
+    <div v-if="type === 'illustrated'" class="drop-area-container">
       <div
         class="drop-area"
         @dragover.prevent="state = 'dragover'"
@@ -154,9 +154,9 @@ export default {
     type: {
       type: String,
       required: false,
-      default: 'regular',
+      default: 'small',
       validator: (value) => {
-        return ['regular', 'illustrated', 'small'].includes(value)
+        return ['illustrated', 'small'].includes(value)
       }
     },
     width: {
@@ -227,11 +227,20 @@ export default {
     },
 
     async finish () {
+      console.log('finish')
       this.$store.commit('setDb', this.newDb)
       this.$store.commit('saveSchema', this.schema)
+      console.log('after saveSchema')
       if (this.importCsvCompleted) {
         this.$modal.hide('parse')
-        const tabId = await this.$store.dispatch('addTab', { query: 'select * from csv_import' })
+        const stmt = [
+          '/*',
+          ' * Your CSV file has been imported into csv_import table.',
+          ' * You can run this SQL query to make all CSV records available for charting.',
+          ' */',
+          'SELECT * FROM csv_import'
+        ].join('\n')
+        const tabId = await this.$store.dispatch('addTab', { query: stmt })
         this.$store.commit('setCurrentTabId', tabId)
         this.importCsvCompleted = false
       }
@@ -341,7 +350,7 @@ export default {
           // Create db with csv table and get schema
           const name = file.name.replace(/\.[^.]+$/, '')
           start = new Date()
-          this.schema = await this.newDb.createDb(name, parseResult.data, progressCounterId)
+          this.schema = await this.newDb.importDb(name, parseResult.data, progressCounterId)
           end = new Date()
 
           // Inform about import success
@@ -389,6 +398,7 @@ export default {
         this.delimiter = ''
         return Promise.all([this.previewCSV(), this.animationPromise])
           .then(() => {
+            console.log('show')
             this.$modal.show('parse')
           })
       } else {
@@ -432,6 +442,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100%;
+  cursor: pointer;
 }
 
 #img-container {

@@ -5,7 +5,7 @@
     </div>
     <div id="db">
       <div @click="schemaVisible = !schemaVisible" class="db-name">
-        <tree-chevron :expanded="schemaVisible"/>
+        <tree-chevron v-show="schema.length > 0" :expanded="schemaVisible"/>
         {{ dbName }}
       </div>
       <db-uploader id="db-edit" type="small" />

@@ -6,13 +6,7 @@
       :after="{ size: 80, max: 100 }"
     >
       <template #left-pane>
-        <schema v-if="$store.state.schema"/>
-        <div v-else id="empty-schema-container">
-          <div class="warning">
-            Database is not loaded. Queries can’t be run without database.
-          </div>
-          <db-uploader id="db-uploader" width="100%"/>
-        </div>
+        <schema/>
       </template>
       <template #right-pane>
         <tabs />
@@ -25,15 +19,43 @@
 import Splitpanes from '@/components/Splitpanes'
 import Schema from './Schema'
 import Tabs from './Tabs'
-import DbUploader from '@/components/DbUploader'
+import database from '@/lib/database'
+import store from '@/store'
 
 export default {
   name: 'Editor',
   components: {
     Schema,
     Splitpanes,
-    Tabs,
-    DbUploader
+    Tabs
+  },
+  async beforeRouteEnter (to, from, next) {
+    if (!store.state.schema) {
+      const newDb = database.getNewDatabase()
+      const newSchema = await newDb.loadDb()
+      store.commit('setDb', newDb)
+      store.commit('saveSchema', newSchema)
+      const stmt = [
+        '/*',
+        ' * Your database is empty. In order to start building charts',
+        ' * you should create a table and insert data into it.',
+        ' */',
+        'CREATE TABLE house',
+        '(',
+        '  name TEXT,',
+        '  points INTEGER',
+        ');',
+        'INSERT INTO house VALUES',
+        "('Gryffindor', 100),",
+        "('Hufflepuff', 90),",
+        "('Ravenclaw', 95),",
+        "('Slytherin', 80);"
+      ].join('\n')
+
+      const tabId = await store.dispatch('addTab', { query: stmt })
+      store.commit('setCurrentTabId', tabId)
+    }
+    next()
   }
 }
 </script>
@@ -42,33 +64,5 @@ export default {
 .schema-tabs-splitter {
   height: 100%;
   background-color: var(--color-white);
-}
-#empty-schema-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 200px;
-  height: 100%;
-}
-
-#db-uploader {
-  flex-grow: 1;
-  padding: 24px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.warning {
-  padding: 12px 24px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
->>>.drop-area {
-  padding: 0 15px;
-}
-
->>>.drop-area .text {
-  max-width: 200px;
 }
 </style>

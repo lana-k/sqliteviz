@@ -50,7 +50,7 @@ class Database {
     delete this.importProgresses[id]
   }
 
-  async createDb (name, data, progressCounterId) {
+  async importDb (name, data, progressCounterId) {
     const result = await this.pw.postMessage({
       action: 'import',
       columns: data.columns,
@@ -66,14 +66,15 @@ class Database {
   }
 
   async loadDb (file) {
-    const fileContent = await fu.readAsArrayBuffer(file)
+    const fileContent = file ? await fu.readAsArrayBuffer(file) : null
     const res = await this.pw.postMessage({ action: 'open', buffer: fileContent })
 
     if (res.error) {
       throw new Error(res.error)
     }
 
-    return this.getSchema(file.name.replace(/\.[^.]+$/, ''))
+    const dbName = file ? file.name.replace(/\.[^.]+$/, '') : 'database'
+    return this.getSchema(dbName)
   }
 
   async getSchema (name) {
@@ -85,12 +86,14 @@ class Database {
     const result = await this.execute(getSchemaSql)
     // Parse DDL statements to get column names and types
     const parsedSchema = []
-    result.values.forEach(item => {
-      parsedSchema.push({
-        name: item[0],
-        columns: getColumns(item[1])
+    if (result && result.values) {
+      result.values.forEach(item => {
+        parsedSchema.push({
+          name: item[0],
+          columns: getColumns(item[1])
+        })
       })
-    })
+    }
 
     // Return db name and schema
     return {
