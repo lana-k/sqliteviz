@@ -227,10 +227,8 @@ export default {
     },
 
     async finish () {
-      console.log('finish')
       this.$store.commit('setDb', this.newDb)
       this.$store.commit('saveSchema', this.schema)
-      console.log('after saveSchema')
       if (this.importCsvCompleted) {
         this.$modal.hide('parse')
         const stmt = [
@@ -398,7 +396,6 @@ export default {
         this.delimiter = ''
         return Promise.all([this.previewCSV(), this.animationPromise])
           .then(() => {
-            console.log('show')
             this.$modal.show('parse')
           })
       } else {
