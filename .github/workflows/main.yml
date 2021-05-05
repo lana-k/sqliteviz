@@ -32,10 +32,11 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Deploy 🚀
-      uses: JamesIves/github-pages-deploy-action@3.6.2
+      uses: JamesIves/github-pages-deploy-action@4.1.1
       with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: build # The branch the action should deploy to.
-        FOLDER: dist/ # The folder the action should deploy.
-        CLEAN: false # Automatically remove deleted files from the deploy branch
-        nojekyll: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: build # The branch the action should deploy to.
+        folder: dist/ # The folder the action should deploy.
+        clean: true # Automatically remove deleted files from the deploy branch
+        clean-exclude: .nojekyll
+
