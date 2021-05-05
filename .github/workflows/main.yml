@@ -38,3 +38,4 @@ jobs:
         BRANCH: build # The branch the action should deploy to.
         FOLDER: dist/ # The folder the action should deploy.
         CLEAN: false # Automatically remove deleted files from the deploy branch
+        nojekyll: true
