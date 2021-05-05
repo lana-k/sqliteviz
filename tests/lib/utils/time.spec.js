@@ -6,18 +6,18 @@ describe('time.js', () => {
     // 1.01.2021 13:00:00 000
     let start = new Date(2021, 0, 1, 13, 0, 0, 0)
 
-    // 3.01.2021 22:15:20 500
-    let end = new Date(2021, 0, 3, 22, 15, 20, 500)
+    // 1.01.2021 13:01:00 500
+    let end = new Date(2021, 0, 1, 13, 1, 0, 500)
 
-    expect(time.getPeriod(start, end)).to.equal('2 d 9 h 15 m 20 s 500 ms')
+    expect(time.getPeriod(start, end)).to.equal('60.500s')
 
     // 1.01.2021 13:00:00 000
     start = new Date(2021, 0, 1, 13, 0, 0, 0)
 
-    // 1.01.2021 22:00:20 000
-    end = new Date(2021, 0, 1, 22, 0, 20, 0)
+    // 1.01.2021 13:00:20 500
+    end = new Date(2021, 0, 1, 13, 0, 20, 500)
 
-    expect(time.getPeriod(start, end)).to.equal('9 h 20 s')
+    expect(time.getPeriod(start, end)).to.equal('20.500s')
 
     // 1.01.2021 13:00:00 000
     start = new Date(2021, 0, 1, 13, 0, 0, 0)
@@ -25,6 +25,6 @@ describe('time.js', () => {
     // 1.01.2021 13:00:00 45
     end = new Date(2021, 0, 1, 13, 0, 0, 45)
 
-    expect(time.getPeriod(start, end)).to.equal('45 ms')
+    expect(time.getPeriod(start, end)).to.equal('0.045s')
   })
 })
