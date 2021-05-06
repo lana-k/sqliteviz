@@ -1,4 +1,3 @@
-
 <p align="center">
    <img src="src/assets/images/Logo.svg"/>
 </p>
@@ -15,7 +14,7 @@ With sqliteviz you can:
 - export a modified SQLite database
 - use it offline from your OS application menu like any other desktop app
 
-https://user-images.githubusercontent.com/24638357/117349420-a5d87880-aeab-11eb-8bc7-0b34b841ae8c.mp4
+https://user-images.githubusercontent.com/24638357/117355518-fa332680-aeb2-11eb-8a69-fbcea4f7aeb0.mp4
 
 ## Quickstart
 The latest release of sqliteviz is deployed on GitHub Pages at [lana-k.github.io/sqliteviz][6].
