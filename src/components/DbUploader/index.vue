@@ -26,7 +26,8 @@
         ref="fileImg"
         :class="{
           'swing': state === 'dragover',
-          'fly': state === 'drop'
+          'fly': state === 'dropping',
+          'hidden': state === 'dropped'
         }"
         :src="require('@/assets/images/file.png')"
       />
@@ -196,6 +197,7 @@ export default {
       this.animationPromise = new Promise((resolve) => {
         this.$refs.fileImg.addEventListener('animationend', event => {
           if (event.animationName.startsWith('fly')) {
+            this.state = 'dropped'
             resolve()
           }
         })
@@ -387,7 +389,7 @@ export default {
     },
 
     async checkFile (file) {
-      this.state = 'drop'
+      this.state = 'dropping'
       if (csvMimeTypes.includes(file.type)) {
         this.file = file
         this.header = true
@@ -519,6 +521,11 @@ export default {
     left: 225px;
   }
 }
+
+#file-img.hidden {
+  display: none;
+}
+
 /* Parse CSV dialog */
 .chars {
   display: flex;
