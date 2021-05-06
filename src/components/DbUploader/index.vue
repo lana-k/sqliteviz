@@ -511,12 +511,13 @@ export default {
 #file-img.fly {
   animation: fly ease-in-out 1s 1 normal;
   transform-origin: center center;
-  top: 183px;
-  left: 225px;
-  transition: top 1s ease-in-out, left 1s ease-in-out;
 }
 @keyframes fly {
-  100% { transform: rotate(360deg) scale(0.5); }
+  100% {
+    transform: rotate(360deg) scale(0.5);
+    top: 183px;
+    left: 225px;
+  }
 }
 /* Parse CSV dialog */
 .chars {
