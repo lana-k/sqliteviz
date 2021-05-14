@@ -1,17 +1,18 @@
 <template>
-  <svg :class="animationClass" height="20" width="20" viewBox="0 0 20 20">
+  <svg :class="animationClass" :height="size" :width="size" :viewBox="`0 0 ${size} ${size}`">
     <circle
       class="loader-svg bg"
-      cx="10"
-      cy="10"
-      r="8"
+      :style="{ strokeWidth }"
+      :cx="size / 2"
+      :cy="size / 2"
+      :r="radius"
     />
     <circle
       class="loader-svg front"
-      :style="{ strokeDasharray: circleProgress }"
-      cx="10"
-      cy="10"
-      r="8"
+      :style="{ strokeDasharray: circleProgress, strokeDashoffset: offset, strokeWidth }"
+      :cx="size / 2"
+      :cy="size / 2"
+      :r="radius"
     />
   </svg>
 </template>
@@ -19,15 +20,35 @@
 <script>
 export default {
   name: 'LoadingIndicator',
-  props: ['progress'],
+  props: {
+    progress: {
+      type: Number,
+      required: false
+    },
+    size: {
+      type: Number,
+      required: false,
+      default: 20
+    }
+  },
   computed: {
     circleProgress () {
-      const dash = (50.24 * this.progress) / 100
-      const space = 50.24 - dash
+      const circle = this.radius * 3.14 * 2
+      const dash = this.progress ? (circle * this.progress) / 100 : circle * 1 / 3
+      const space = circle - dash
       return `${dash}px, ${space}px`
     },
     animationClass () {
       return this.progress === undefined ? 'loading' : 'progress'
+    },
+    radius () {
+      return this.size / 2 - this.strokeWidth
+    },
+    offset () {
+      return this.radius * 3.14 / 2
+    },
+    strokeWidth () {
+      return this.size / 10
     }
   }
 }
@@ -38,7 +59,6 @@ export default {
   position: absolute;
   left: 0; right: 0; top: 0; bottom: 0;
   fill: none;
-  stroke-width: 2px;
   stroke-linecap: round;
   stroke: var(--color-accent);
 }
@@ -48,27 +68,30 @@ export default {
 }
 
 .loading .loader-svg.front {
-  stroke-dasharray: 40.24px;
+  will-change: transform;
   animation: fill-animation-loading 1s cubic-bezier(1,1,1,1) 0s infinite;
+  transform-origin: center;
 }
 
+/*
+  We can't change anything in loading animation except transform, opacity and filter. Because in
+  our case the Main Thread can be busy and animation will be frozen (e. g. getting a result set
+  from the web-worker after query execution).
+  But transform, opacity and filter trigger changes only in the Composite Layer stage in rendering
+  waterfall. Hence they can be processed only with Compositor Thread while the Main Thread
+  processes something else.
+  https://www.viget.com/articles/animation-performance-101-browser-under-the-hood/
+*/
 @keyframes fill-animation-loading {
   0% {
-    stroke-dasharray: 10px 40.24px;
-    stroke-dashoffset: 0;
-  }
-  50% {
-    stroke-dasharray: 25.12px;
-    stroke-dashoffset: 25.12px;
+    transform: rotate(0deg);
   }
   100% {
-    stroke-dasharray: 10px 40.24px;
-    stroke-dashoffset: 50.24px;
+    transform: rotate(360deg);
   }
 }
 
 .progress .loader-svg.front {
-  stroke-dashoffset: 12.56;
   transition: stroke-dasharray 0.2s;
 }
 
