@@ -64,6 +64,7 @@ export default {
   border: 1px solid var(--color-border-light);
   box-sizing: border-box;
   overflow-y: scroll;
+  color: var(--color-text-base);
 }
 .msg {
   padding: 16px 7px;

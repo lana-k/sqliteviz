@@ -21,7 +21,8 @@
             >
               Run your query and get results here
             </div>
-            <div v-show="isGettingResults" class="table-preview result-in-progress">
+            <div v-if="isGettingResults" class="table-preview result-in-progress">
+              <loading-indicator :size="30"/>
               Fetching results...
             </div>
             <div
@@ -30,10 +31,8 @@
             >
               No rows retrieved according to your query
             </div>
-            <div v-show="error" class="table-preview error">
-              {{ error }}
-            </div>
-            <sql-table v-if="result" :data-set="result" :height="tableViewHeight" />
+            <logs v-if="error" :messages="[error]"/>
+            <sql-table v-if="result" :data-set="result" :time="time" :height="tableViewHeight" />
           </div>
           <chart
             :visible="view === 'chart'"
@@ -51,9 +50,12 @@
 <script>
 import SqlTable from '@/components/SqlTable'
 import Splitpanes from '@/components/Splitpanes'
+import LoadingIndicator from '@/components/LoadingIndicator'
 import SqlEditor from './SqlEditor'
 import ViewSwitcher from './ViewSwitcher'
 import Chart from './Chart'
+import Logs from '@/components/Logs'
+import time from '@/lib/utils/time'
 
 export default {
   name: 'Tab',
@@ -63,7 +65,9 @@ export default {
     SqlTable,
     Splitpanes,
     ViewSwitcher,
-    Chart
+    Chart,
+    LoadingIndicator,
+    Logs
   },
   data () {
     return {
@@ -73,7 +77,8 @@ export default {
       tableViewHeight: 0,
       isGettingResults: false,
       error: null,
-      resizeObserver: null
+      resizeObserver: null,
+      time: 0
     }
   },
   computed: {
@@ -110,11 +115,16 @@ export default {
       this.error = null
       const state = this.$store.state
       try {
+        const start = new Date()
         this.result = await state.db.execute(this.query + ';')
+        this.time = time.getPeriod(start, new Date())
         const schema = await state.db.getSchema(state.dbName)
         this.$store.commit('saveSchema', schema)
       } catch (err) {
-        this.error = err
+        this.error = {
+          type: 'error',
+          message: err
+        }
       }
       this.isGettingResults = false
     },
@@ -183,11 +193,32 @@ export default {
   font-size: 13px;
 }
 
-.table-preview.error {
-  color: var(--color-text-error);
+.result-in-progress {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  will-change: opacity;
+  /*
+    We need to show loader in 1 sec after starting query execution. We can't do that with
+    setTimeout because the main thread can be busy by getting a result set from the web worker.
+    But we can use CSS animation for opacity. Opacity triggers changes only in the Composite Layer
+    stage in rendering waterfall. Hence it can be processed only with Compositor Thread while
+    the Main Thread processes a result set.
+    https://www.viget.com/articles/animation-performance-101-browser-under-the-hood/
+  */
+  animation: show-loader 1s linear 0s 1;
 }
 
-.table-preview.error::first-letter {
-  text-transform: capitalize;
+@keyframes show-loader {
+  0% {
+    opacity: 0;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>

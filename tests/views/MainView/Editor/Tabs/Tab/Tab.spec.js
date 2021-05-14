@@ -202,9 +202,9 @@ describe('Tab.vue', () => {
 
     await wrapper.vm.execute()
     expect(wrapper.find('.table-view .result-before').isVisible()).to.equal(false)
-    expect(wrapper.find('.table-view .result-in-progress').isVisible()).to.equal(false)
-    expect(wrapper.find('.table-preview.error').isVisible()).to.equal(true)
-    expect(wrapper.find('.table-preview.error').text()).to.include('There is no table foo')
+    expect(wrapper.find('.table-view .result-in-progress').exists()).to.equal(false)
+    expect(wrapper.findComponent({name: 'logs'}).isVisible()).to.equal(true)
+    expect(wrapper.findComponent({name: 'logs'}).text()).to.include('There is no table foo')
   })
 
   it('Passes result to sql-table component', async () => {
@@ -242,8 +242,8 @@ describe('Tab.vue', () => {
 
     await wrapper.vm.execute()
     expect(wrapper.find('.table-view .result-before').isVisible()).to.equal(false)
-    expect(wrapper.find('.table-view .result-in-progress').isVisible()).to.equal(false)
-    expect(wrapper.find('.table-preview.error').isVisible()).to.equal(false)
+    expect(wrapper.find('.table-view .result-in-progress').exists()).to.equal(false)
+    expect(wrapper.findComponent({name: 'logs'}).exists()).to.equal(false)
     expect(wrapper.findComponent({ name: 'SqlTable' }).vm.dataSet).to.eql(result)
   })
 
