@@ -127,10 +127,10 @@ function getAst (sql) {
   // It throws an error if tokenizer has an arguments:
   // https://github.com/codeschool/sqlite-parser/issues/59
   const fixedSql = sql
-    .replace(/(?<=tokenize=.+)"tokenchars=.+"/, '')
-    .replace(/(?<=tokenize=.+)"remove_diacritics=.+"/, '')
-    .replace(/(?<=tokenize=.+)"separators=.+"/, '')
-    .replace(/tokenize=.+(?=(,|\)))/, 'tokenize=unicode61')
+    .replace(/(tokenize=[^,]+)"tokenchars=.+?"/, '$1')
+    .replace(/(tokenize=[^,]+)"remove_diacritics=.+?"/, '$1')
+    .replace(/(tokenize=[^,]+)"separators=.+?"/, '$1')
+    .replace(/tokenize=.+?(,|\))/, 'tokenize=unicode61$1')
 
   return sqliteParser(fixedSql)
 }
