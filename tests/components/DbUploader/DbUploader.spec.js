@@ -33,7 +33,7 @@ describe('DbUploader.vue', () => {
 
   it('loads db on click and redirects to /editor', async () => {
     // mock getting a file from user
-    const file = {}
+    const file = { name: 'test.db' }
     sinon.stub(fu, 'getFileFromUser').resolves(file)
 
     // mock db loading
@@ -90,7 +90,7 @@ describe('DbUploader.vue', () => {
     })
 
     // mock a file dropped by a user
-    const file = {}
+    const file = { name: 'test.db' }
     const dropData = { dataTransfer: new DataTransfer() }
     Object.defineProperty(dropData.dataTransfer, 'files', {
       value: [file],
@@ -109,7 +109,7 @@ describe('DbUploader.vue', () => {
 
   it("doesn't redirect if already on /editor", async () => {
     // mock getting a file from user
-    const file = {}
+    const file = { name: 'test.db' }
     sinon.stub(fu, 'getFileFromUser').resolves(file)
 
     // mock db loading

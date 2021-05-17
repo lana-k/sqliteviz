@@ -1,4 +1,11 @@
 export default {
+  isDatabase (file) {
+    const dbTypes = ['application/vnd.sqlite3', 'application/x-sqlite3']
+    return file.type
+      ? dbTypes.includes(file.type)
+      : /\.(db|sqlite(3)?)+$/.test(file.name)
+  },
+
   exportToFile (str, fileName, type = 'octet/stream') {
     // Create downloader
     const downloader = document.createElement('a')

@@ -105,4 +105,27 @@ describe('fileIo.js', () => {
     const blob = new Blob(['foo'])
     await expect(fu.readAsArrayBuffer(blob)).to.be.rejectedWith('Problem parsing input file.')
   })
+
+  it('isDatabase', () => {
+    let file = { type: 'application/vnd.sqlite3' }
+    expect(fu.isDatabase(file)).to.equal(true)
+
+    file = { type: 'application/x-sqlite3' }
+    expect(fu.isDatabase(file)).to.equal(true)
+    
+    file = { type: '', name: 'test.db' }
+    expect(fu.isDatabase(file)).to.equal(true)
+
+    file = { type: '', name: 'test.sqlite' }
+    expect(fu.isDatabase(file)).to.equal(true)
+
+    file = { type: '', name: 'test.sqlite3' }
+    expect(fu.isDatabase(file)).to.equal(true)
+
+    file = { type: '', name: 'test.csv' }
+    expect(fu.isDatabase(file)).to.equal(false)
+
+    file = { type: 'text', name: 'test.db' }
+    expect(fu.isDatabase(file)).to.equal(false)
+  })
 })

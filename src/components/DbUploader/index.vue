@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import fu from '@/lib/utils/fileIo'
+import fIo from '@/lib/utils/fileIo'
 import csv from './csv'
 import CloseIcon from '@/components/svg/close'
 import TextField from '@/components/TextField'
@@ -139,15 +139,6 @@ import Logs from '@/components/Logs'
 import ChangeDbIcon from '@/components/svg/changeDb'
 import time from '@/lib/utils/time'
 import database from '@/lib/database'
-
-const csvMimeTypes = [
-  'text/csv',
-  'text/x-csv',
-  'application/x-csv',
-  'application/csv',
-  'text/x-comma-separated-values',
-  'text/comma-separated-values'
-]
 
 export default {
   name: 'DbUploader',
@@ -390,7 +381,9 @@ export default {
 
     async checkFile (file) {
       this.state = 'dropping'
-      if (csvMimeTypes.includes(file.type)) {
+      if (fIo.isDatabase(file)) {
+        this.loadDb(file)
+      } else {
         this.file = file
         this.header = true
         this.quoteChar = '"'
@@ -400,12 +393,10 @@ export default {
           .then(() => {
             this.$modal.show('parse')
           })
-      } else {
-        this.loadDb(file)
       }
     },
     browse () {
-      fu.getFileFromUser('.db,.sqlite,.sqlite3,.csv')
+      fIo.getFileFromUser('.db,.sqlite,.sqlite3,.csv')
         .then(this.checkFile)
     },
 
