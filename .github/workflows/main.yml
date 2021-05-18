@@ -25,11 +25,19 @@ jobs:
         cd dist
         zip -9 -r  dist.zip . -x "js/*.map"
 
+    - name: Create Release Notes
+      run: |
+        npm install github-release-notes@0.16.0 -g
+        gren changelog --generate  --config="/.github/workflows/config.grenrc.js"
+      env:
+        GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
         artifacts: "dist/dist.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
+        bodyFile: "CHANGELOG.md"
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@4.1.1
