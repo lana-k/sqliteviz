@@ -7,11 +7,11 @@ module.exports = {
   milestoneMatch: 'v{{tag_name}}',
   template: {
     issue: '- {{name}} [{{text}}]({{url}})',
-    changelogTitle: "## Release notes\n\n",
+    changelogTitle: "",
     release: "{{body}}",
   },
   groupBy: {
-    'Enhancements:': ["enhancement", "internal"],
-    'Bug fixes:': ["bug"]
+    'Enhancements': ["enhancement", "internal"],
+    'Bug fixes': ["bug"]
   }
 }
