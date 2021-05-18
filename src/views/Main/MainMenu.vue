@@ -3,6 +3,7 @@
     <div>
       <router-link to="/editor">Editor</router-link>
       <router-link to="/my-queries">My queries</router-link>
+      <a href="https://github.com/lana-k/sqliteviz/wiki" target="_blank">Help</a>
     </div>
     <div>
       <button
