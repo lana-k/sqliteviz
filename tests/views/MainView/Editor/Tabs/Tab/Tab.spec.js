@@ -115,6 +115,7 @@ describe('Tab.vue', () => {
     })
 
     state.currentTabId = 1
+    await wrapper.vm.$nextTick()
     expect(mutations.setCurrentTab.calledOnceWith(state, wrapper.vm)).to.equal(true)
   })
 

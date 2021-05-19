@@ -1,6 +1,6 @@
 <template>
   <div class="codemirror-container">
-    <codemirror v-model="query" :options="cmOptions" @changes="onChange" />
+    <codemirror ref="cm" v-model="query" :options="cmOptions" @changes="onChange" />
   </div>
 </template>
 
@@ -28,7 +28,6 @@ export default {
         theme: 'neo',
         lineNumbers: true,
         line: true,
-        autofocus: true,
         autoRefresh: true,
         extraKeys: { 'Ctrl-Space': showHintOnDemand }
       }
@@ -40,7 +39,10 @@ export default {
     }
   },
   methods: {
-    onChange: debounce(showHint, 400)
+    onChange: debounce(showHint, 400),
+    focus () {
+      this.$refs.cm.codemirror.focus()
+    }
   }
 }
 </script>

@@ -112,7 +112,7 @@ describe('fileIo.js', () => {
 
     file = { type: 'application/x-sqlite3' }
     expect(fu.isDatabase(file)).to.equal(true)
-    
+
     file = { type: '', name: 'test.db' }
     expect(fu.isDatabase(file)).to.equal(true)
 

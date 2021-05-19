@@ -8,7 +8,7 @@
     >
       <template #left-pane>
         <div class="query-editor">
-          <sql-editor v-model="query" />
+          <sql-editor ref="sqlEditor" v-model="query" />
         </div>
       </template>
       <template #right-pane>
@@ -86,9 +86,6 @@ export default {
       return this.id === this.$store.state.currentTabId
     }
   },
-  created () {
-    this.$store.commit('setCurrentTab', this)
-  },
   mounted () {
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.bottomPane)
@@ -98,9 +95,14 @@ export default {
     this.resizeObserver.unobserve(this.$refs.bottomPane)
   },
   watch: {
-    isActive () {
-      if (this.isActive) {
-        this.$store.commit('setCurrentTab', this)
+    isActive: {
+      immediate: true,
+      async handler () {
+        if (this.isActive) {
+          this.$store.commit('setCurrentTab', this)
+          await this.$nextTick()
+          this.$refs.sqlEditor.focus()
+        }
       }
     },
     query () {
