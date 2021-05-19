@@ -378,7 +378,7 @@ describe('MainMenu.vue', () => {
       wrapper = mount(MainMenu, {
         store,
         mocks: { $route },
-        stubs: ['router-link']
+        stubs: ['router-link', 'app-diagnostic-info']
       })
 
       await wrapper.find('#save-btn').trigger('click')
@@ -429,7 +429,7 @@ describe('MainMenu.vue', () => {
     wrapper = mount(MainMenu, {
       store,
       mocks: { $route },
-      stubs: ['router-link']
+      stubs: ['router-link', 'app-diagnostic-info']
     })
 
     await wrapper.find('#save-btn').trigger('click')
@@ -474,7 +474,7 @@ describe('MainMenu.vue', () => {
     wrapper = mount(MainMenu, {
       store,
       mocks: { $route },
-      stubs: ['router-link']
+      stubs: ['router-link', 'app-diagnostic-info']
     })
 
     await wrapper.find('#save-btn').trigger('click')
@@ -546,7 +546,7 @@ describe('MainMenu.vue', () => {
     wrapper = mount(MainMenu, {
       store,
       mocks: { $route },
-      stubs: ['router-link']
+      stubs: ['router-link', 'app-diagnostic-info']
     })
 
     await wrapper.find('#save-btn').trigger('click')
@@ -625,7 +625,7 @@ describe('MainMenu.vue', () => {
     wrapper = mount(MainMenu, {
       store,
       mocks: { $route },
-      stubs: ['router-link']
+      stubs: ['router-link', 'app-diagnostic-info']
     })
 
     await wrapper.find('#save-btn').trigger('click')
