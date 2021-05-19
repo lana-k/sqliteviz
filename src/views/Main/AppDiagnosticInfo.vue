@@ -1,6 +1,10 @@
 <template>
   <div id="app-info-container">
-    <img id="app-info-icon" :src="require('@/assets/images/info.svg')" @click="$modal.show('app-info')"/>
+    <img
+      id="app-info-icon"
+      :src="require('@/assets/images/info.svg')"
+      @click="$modal.show('app-info')"
+    />
     <modal name="app-info" classes="dialog" height="auto" width="400px">
       <div class="dialog-header">
         App info
@@ -10,8 +14,10 @@
         <div v-for="(item, index) in info" :key="index" class="info-item">
           {{item.name}}
           <div class="divider"/>
-          <div v-for="(opt, index) in item.info" :key="index" class="options">
-            {{opt}}
+          <div class="options">
+            <div v-for="(opt, index) in item.info" :key="index">
+              {{opt}}
+            </div>
           </div>
         </div>
       </div>
@@ -71,6 +77,8 @@ export default {
   font-family: monospace;
   font-size: 13px;
   margin-left: 8px;
+  overflow: scroll;
+  max-height: 170px;
 }
 .info-item {
   margin-bottom: 32px;

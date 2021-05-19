@@ -42,7 +42,14 @@
     <div id="error" class="error"></div>
 
     <!--Parse csv dialog  -->
-    <modal name="parse" classes="dialog" height="auto" width="60%" :clickToClose="false">
+    <modal
+      name="parse"
+      classes="dialog"
+      scrollable
+      hight="auto"
+      width="60%"
+      :clickToClose="false"
+    >
       <div class="dialog-header">
         Import CSV
         <close-icon @click="cancelCsvImport" :disabled="disableDialog"/>
