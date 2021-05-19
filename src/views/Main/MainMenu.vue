@@ -5,7 +5,7 @@
       <router-link to="/my-queries">My queries</router-link>
       <a href="https://github.com/lana-k/sqliteviz/wiki" target="_blank">Help</a>
     </div>
-    <div>
+    <div id="nav-buttons">
       <button
         id="run-btn"
         v-if="currentQuery && $route.path === '/editor'"
@@ -31,6 +31,7 @@
       >
         Create
       </button>
+      <app-diagnostic-info />
     </div>
 
     <!--Save Query dialog  -->
@@ -64,12 +65,14 @@
 import TextField from '@/components/TextField'
 import CloseIcon from '@/components/svg/close'
 import storedQueries from '@/lib/storedQueries'
+import AppDiagnosticInfo from './AppDiagnosticInfo'
 
 export default {
   name: 'MainMenu',
   components: {
     TextField,
-    CloseIcon
+    CloseIcon,
+    AppDiagnosticInfo
   },
   data () {
     return {
@@ -213,7 +216,7 @@ nav {
   top: 0;
   left: 0;
   width: 100vw;
-  padding: 0 52px;
+  padding: 0 16px 0 52px;
   z-index: 999;
 }
 a {
@@ -237,5 +240,9 @@ button {
 }
 #save-note img {
   margin: -3px 6px 0 0;
+}
+
+#nav-buttons {
+  display: flex;
 }
 </style>
