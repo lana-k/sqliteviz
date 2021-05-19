@@ -46,7 +46,7 @@
       name="parse"
       classes="dialog"
       scrollable
-      hight="auto"
+      height="auto"
       width="60%"
       :clickToClose="false"
     >
