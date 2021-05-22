@@ -87,4 +87,7 @@ input.error {
   margin-top: 2px;
   position: absolute;
 }
+.text-field-error:first-letter {
+  text-transform: uppercase;
+}
 </style>
