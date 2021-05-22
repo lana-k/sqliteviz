@@ -77,7 +77,7 @@ export default {
   font-family: monospace;
   font-size: 13px;
   margin-left: 8px;
-  overflow: scroll;
+  overflow: auto;
   max-height: 170px;
 }
 .info-item {
