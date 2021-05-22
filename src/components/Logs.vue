@@ -63,15 +63,16 @@ export default {
   border-radius: 5px;
   border: 1px solid var(--color-border-light);
   box-sizing: border-box;
-  overflow-y: scroll;
+  overflow-y: auto;
   color: var(--color-text-base);
 }
 .msg {
-  padding: 16px 7px;
+  padding: 12px 7px;
   border-bottom: 1px solid var(--color-border-light);
   display: flex;
   align-items: flex-start;
   font-family: monospace;
+  font-size: 13px;
 }
 
 .msg:last-child {
