@@ -1,4 +1,4 @@
-import sqliteParser from 'sqlite-parser'
+import stms from './_statements'
 import fu from '@/lib/utils/fileIo'
 // We can import workers like so because of worker-loader:
 // https://webpack.js.org/loaders/worker-loader/
@@ -20,6 +20,8 @@ export default {
 let progressCounterIds = 0
 class Database {
   constructor (worker) {
+    this.dbName = null
+    this.schema = null
     this.worker = worker
     this.pw = new PromiseWorker(worker)
 
@@ -50,19 +52,20 @@ class Database {
     delete this.importProgresses[id]
   }
 
-  async importDb (name, data, progressCounterId) {
+  async addTableFromCsv (tabName, data, progressCounterId) {
     const result = await this.pw.postMessage({
       action: 'import',
       columns: data.columns,
       values: data.values,
-      progressCounterId
+      progressCounterId,
+      tabName
     })
 
     if (result.error) {
       throw new Error(result.error)
     }
-
-    return await this.getSchema(name)
+    this.dbName = this.dbName || 'database'
+    this.refreshSchema()
   }
 
   async loadDb (file) {
@@ -73,11 +76,11 @@ class Database {
       throw new Error(res.error)
     }
 
-    const dbName = file ? file.name.replace(/\.[^.]+$/, '') : 'database'
-    return this.getSchema(dbName)
+    this.dbName = file ? fu.getFileName(file) : 'database'
+    this.refreshSchema()
   }
 
-  async getSchema (name) {
+  async refreshSchema () {
     const getSchemaSql = `
       SELECT name, sql
       FROM sqlite_master
@@ -90,19 +93,17 @@ class Database {
       result.values.forEach(item => {
         parsedSchema.push({
           name: item[0],
-          columns: getColumns(item[1])
+          columns: stms.getColumns(item[1])
         })
       })
     }
 
-    // Return db name and schema
-    return {
-      dbName: name,
-      schema: parsedSchema
-    }
+    // Refresh schema
+    this.schema = parsedSchema
   }
 
   async execute (commands) {
+    await this.pw.postMessage({ action: 'reopen' })
     const results = await this.pw.postMessage({ action: 'exec', sql: commands })
 
     if (results.error) {
@@ -120,48 +121,27 @@ class Database {
     }
     fu.exportToFile(data, fileName)
   }
-}
 
-function getAst (sql) {
-  // There is a bug is sqlite-parser
-  // It throws an error if tokenizer has an arguments:
-  // https://github.com/codeschool/sqlite-parser/issues/59
-  const fixedSql = sql
-    .replace(/(tokenize=[^,]+)"tokenchars=.+?"/, '$1')
-    .replace(/(tokenize=[^,]+)"remove_diacritics=.+?"/, '$1')
-    .replace(/(tokenize=[^,]+)"separators=.+?"/, '$1')
-    .replace(/tokenize=.+?(,|\))/, 'tokenize=unicode61$1')
-
-  return sqliteParser(fixedSql)
-}
-
-/*
- * Return an array of columns with name and type. E.g.:
- * [
- *   { name: 'id',    type: 'INTEGER' },
- *   { name: 'title', type: 'NVARCHAR(30)' },
- * ]
-*/
-function getColumns (sql) {
-  const columns = []
-  const ast = getAst(sql)
-
-  const columnDefinition = ast.statement[0].format === 'table'
-    ? ast.statement[0].definition
-    : ast.statement[0].result.args.expression // virtual table
-
-  columnDefinition.forEach(item => {
-    if (item.variant === 'column' && ['identifier', 'definition'].includes(item.type)) {
-      let type = item.datatype ? item.datatype.variant : 'N/A'
-      if (item.datatype && item.datatype.args) {
-        type = type + '(' + item.datatype.args.expression[0].value
-        if (item.datatype.args.expression.length === 2) {
-          type = type + ', ' + item.datatype.args.expression[1].value
-        }
-        type = type + ')'
-      }
-      columns.push({ name: item.name, type: type })
+  async validateTableName (name) {
+    if (name.startsWith('sqlite_')) {
+      throw new Error("Table name can't start with sqlite_")
     }
-  })
-  return columns
+
+    if (/[^\w]/.test(name)) {
+      throw new Error('Table name can contain only letters, digits and underscores')
+    }
+
+    if (/^(\d)/.test(name)) {
+      throw new Error("Table name can't start with a digit")
+    }
+
+    await this.execute(`BEGIN; CREATE TABLE "${name}"(id); ROLLBACK;`)
+  }
+
+  sanitizeTableName (tabName) {
+    return tabName
+      .replace(/[^\w]/g, '_') // replace everything that is not letter, digit or _  with _
+      .replace(/^(\d)/, '_$1') // add _ at beginning if starts with digit
+      .replace(/_{2,}/g, '_') // replace multiple _ with one _
+  }
 }

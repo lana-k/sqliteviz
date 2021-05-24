@@ -27,58 +27,39 @@ describe('database.js', () => {
     const tempDb = new SQL.Database()
     tempDb.run(`CREATE TABLE test (
       col1,
-      col2 integer,
-      col3 decimal(5,2),
-      col4 varchar(30)
+      col2 integer
     )`)
 
     const data = tempDb.export()
     const buffer = new Blob([data])
     buffer.name = 'foo.sqlite'
 
-    const { schema, dbName } = await db.loadDb(buffer)
-    expect(dbName).to.equal('foo')
+    sinon.spy(db, 'refreshSchema')
+
+    await db.loadDb(buffer)
+    await db.refreshSchema.returnValues[0]
+    const schema = db.schema
+    expect(db.dbName).to.equal('foo')
     expect(schema).to.have.lengthOf(1)
     expect(schema[0].name).to.equal('test')
+
     expect(schema[0].columns[0].name).to.equal('col1')
     expect(schema[0].columns[0].type).to.equal('N/A')
+
     expect(schema[0].columns[1].name).to.equal('col2')
     expect(schema[0].columns[1].type).to.equal('integer')
-    expect(schema[0].columns[2].name).to.equal('col3')
-    expect(schema[0].columns[2].type).to.equal('decimal(5, 2)')
-    expect(schema[0].columns[3].name).to.equal('col4')
-    expect(schema[0].columns[3].type).to.equal('varchar(30)')
   })
 
-  it('creates schema with virtual table', async () => {
-    const SQL = await getSQL
-    const tempDb = new SQL.Database()
-    tempDb.run(`
-      CREATE VIRTUAL TABLE test_virtual USING fts4(
-        col1, col2,
-        notindexed=col1, notindexed=col2,
-        tokenize=unicode61 "tokenchars=.+#")
-    `)
+  it('creates empty db with name database', async () => {
+    sinon.spy(db, 'refreshSchema')
 
-    const data = tempDb.export()
-    const buffer = new Blob([data])
-    buffer.name = 'foo.sqlite'
-
-    const { schema } = await db.loadDb(buffer)
-    expect(schema[0].name).to.equal('test_virtual')
-    expect(schema[0].columns[0].name).to.equal('col1')
-    expect(schema[0].columns[0].type).to.equal('N/A')
-    expect(schema[0].columns[1].name).to.equal('col2')
-    expect(schema[0].columns[1].type).to.equal('N/A')
+    await db.loadDb()
+    await db.refreshSchema.returnValues[0]
+    expect(db.dbName).to.equal('database')
   })
 
   it('loadDb throws errors', async () => {
-    const SQL = await getSQL
-    const tempDb = new SQL.Database()
-    tempDb.run('CREATE TABLE test (col1, col2)')
-
-    const data = tempDb.export()
-    const buffer = new Blob([data])
+    const buffer = new Blob([])
     buffer.name = 'foo.sqlite'
 
     sinon.stub(db.pw, 'postMessage').resolves({ error: new Error('foo') })
@@ -136,7 +117,7 @@ describe('database.js', () => {
     await expect(db.execute('SELECT * from foo')).to.be.rejectedWith(/^no such table: foo$/)
   })
 
-  it('creates db', async () => {
+  it('adds table from csv', async () => {
     const data = {
       columns: ['id', 'name', 'faculty'],
       values: [
@@ -146,16 +127,19 @@ describe('database.js', () => {
     }
     const progressHandler = sinon.spy()
     const progressCounterId = db.createProgressCounter(progressHandler)
-    const { dbName, schema } = await db.importDb('foo', data, progressCounterId)
-    expect(dbName).to.equal('foo')
-    expect(schema).to.have.lengthOf(1)
-    expect(schema[0].name).to.equal('csv_import')
-    expect(schema[0].columns).to.have.lengthOf(3)
-    expect(schema[0].columns[0]).to.eql({ name: 'id', type: 'real' })
-    expect(schema[0].columns[1]).to.eql({ name: 'name', type: 'text' })
-    expect(schema[0].columns[2]).to.eql({ name: 'faculty', type: 'text' })
+    sinon.spy(db, 'refreshSchema')
 
-    const result = await db.execute('SELECT * from csv_import')
+    await db.addTableFromCsv('foo', data, progressCounterId)
+    await db.refreshSchema.returnValues[0]
+    expect(db.dbName).to.equal('database')
+    expect(db.schema).to.have.lengthOf(1)
+    expect(db.schema[0].name).to.equal('foo')
+    expect(db.schema[0].columns).to.have.lengthOf(3)
+    expect(db.schema[0].columns[0]).to.eql({ name: 'id', type: 'real' })
+    expect(db.schema[0].columns[1]).to.eql({ name: 'name', type: 'text' })
+    expect(db.schema[0].columns[2]).to.eql({ name: 'faculty', type: 'text' })
+
+    const result = await db.execute('SELECT * from foo')
     expect(result.columns).to.eql(data.columns)
     expect(result.values).to.eql(data.values)
 
@@ -164,7 +148,7 @@ describe('database.js', () => {
     expect(progressHandler.secondCall.calledWith(100)).to.equal(true)
   })
 
-  it('importDb throws errors', async () => {
+  it('addTableFromCsv throws errors', async () => {
     const data = {
       columns: ['id', 'name'],
       values: [
@@ -174,7 +158,7 @@ describe('database.js', () => {
     }
     const progressHandler = sinon.stub()
     const progressCounterId = db.createProgressCounter(progressHandler)
-    await expect(db.importDb('foo', data, progressCounterId))
+    await expect(db.addTableFromCsv('foo', data, progressCounterId))
       .to.be.rejectedWith('column index out of range')
   })
 
@@ -241,5 +225,24 @@ describe('database.js', () => {
     expect(result.columns).to.eql(['id', 'name'])
     expect(result.values).to.have.lengthOf(1)
     expect(result.values[0]).to.eql([1, 'Harry Potter'])
+  })
+
+  it('sanitizeTableName', () => {
+    let name = 'foo[]bar'
+    expect(db.sanitizeTableName(name)).to.equal('foo_bar')
+
+    name = '1 foo(01.05.2020)'
+    expect(db.sanitizeTableName(name)).to.equal('_1_foo_01_05_2020_')
+  })
+
+  it('validateTableName', async () => {
+    await db.execute('CREATE TABLE foo(id)')
+    await expect(db.validateTableName('foo')).to.be.rejectedWith('table "foo" already exists')
+    await expect(db.validateTableName('1foo'))
+      .to.be.rejectedWith("Table name can't start with a digit")
+    await expect(db.validateTableName('foo(05.08.2020)'))
+      .to.be.rejectedWith('Table name can contain only letters, digits and underscores')
+    await expect(db.validateTableName('sqlite_foo'))
+      .to.be.rejectedWith("Table name can't start with sqlite_")
   })
 })

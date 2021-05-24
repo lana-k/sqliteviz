@@ -39,13 +39,15 @@ export default class Sql {
     return this.db.exec(sql, params)
   }
 
-  import (columns, values, progressCounterId, progressCallback, chunkSize = 1500) {
-    this.createDb()
-    this.db.exec(dbUtils.getCreateStatement(columns, values))
+  import (tabName, columns, values, progressCounterId, progressCallback, chunkSize = 1500) {
+    if (this.db === null) {
+      this.createDb()
+    }
+    this.db.exec(dbUtils.getCreateStatement(tabName, columns, values))
     const chunks = dbUtils.generateChunks(values, chunkSize)
     const chunksAmount = Math.ceil(values.length / chunkSize)
     let count = 0
-    const insertStr = dbUtils.getInsertStmt(columns)
+    const insertStr = dbUtils.getInsertStmt(tabName, columns)
     const insertStmt = this.db.prepare(insertStr)
 
     progressCallback({ progress: 0, id: progressCounterId })

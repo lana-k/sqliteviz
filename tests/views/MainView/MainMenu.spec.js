@@ -20,7 +20,7 @@ describe('MainMenu.vue', () => {
     const state = {
       currentTab: { query: '', execute: sinon.stub() },
       tabs: [{}],
-      schema: []
+      db: {}
     }
     const store = new Vuex.Store({ state })
     const $route = { path: '/editor' }
@@ -49,7 +49,7 @@ describe('MainMenu.vue', () => {
     const state = {
       currentTab: null,
       tabs: [{}],
-      schema: []
+      db: {}
     }
     const store = new Vuex.Store({ state })
     const $route = { path: '/editor' }
@@ -65,11 +65,11 @@ describe('MainMenu.vue', () => {
     expect(wrapper.find('#create-btn').isVisible()).to.equal(true)
   })
 
-  it('Run is disabled if there is no schema or no query', async () => {
+  it('Run is disabled if there is no db or no query', async () => {
     const state = {
       currentTab: { query: 'SELECT * FROM foo', execute: sinon.stub() },
       tabs: [{}],
-      schema: null
+      db: null
     }
     const store = new Vuex.Store({ state })
     const $route = { path: '/editor' }
@@ -82,7 +82,7 @@ describe('MainMenu.vue', () => {
     const vm = wrapper.vm
     expect(wrapper.find('#run-btn').element.disabled).to.equal(true)
 
-    await vm.$set(state, 'schema', [])
+    await vm.$set(state, 'db', {})
     expect(wrapper.find('#run-btn').element.disabled).to.equal(false)
 
     await vm.$set(state.currentTab, 'query', '')
@@ -97,7 +97,7 @@ describe('MainMenu.vue', () => {
         tabIndex: 0
       },
       tabs: [{ isUnsaved: true }],
-      schema: null
+      db: {}
     }
     const store = new Vuex.Store({ state })
     const $route = { path: '/editor' }
@@ -122,7 +122,7 @@ describe('MainMenu.vue', () => {
         tabIndex: 0
       },
       tabs: [{ isUnsaved: true }],
-      schema: null
+      db: {}
     }
     const newQueryId = 1
     const actions = {
@@ -156,7 +156,7 @@ describe('MainMenu.vue', () => {
         tabIndex: 0
       },
       tabs: [{ isUnsaved: true }],
-      schema: null
+      db: {}
     }
     const newQueryId = 1
     const actions = {
@@ -191,7 +191,7 @@ describe('MainMenu.vue', () => {
           tabIndex: 0
         },
         tabs: [{ isUnsaved: true }],
-        schema: []
+        db: {}
       }
       const store = new Vuex.Store({ state })
       const $route = { path: '/editor' }
@@ -212,14 +212,14 @@ describe('MainMenu.vue', () => {
       expect(state.currentTab.execute.calledTwice).to.equal(true)
 
       // Running is disabled and route path is editor
-      await wrapper.vm.$set(state, 'schema', null)
+      await wrapper.vm.$set(state, 'db', null)
       document.dispatchEvent(ctrlR)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
       document.dispatchEvent(metaR)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
 
       // Running is enabled and route path is not editor
-      await wrapper.vm.$set(state, 'schema', [])
+      await wrapper.vm.$set(state, 'db', {})
       await wrapper.vm.$set($route, 'path', '/my-queries')
       document.dispatchEvent(ctrlR)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
@@ -236,7 +236,7 @@ describe('MainMenu.vue', () => {
           tabIndex: 0
         },
         tabs: [{ isUnsaved: true }],
-        schema: []
+        db: {}
       }
       const store = new Vuex.Store({ state })
       const $route = { path: '/editor' }
@@ -257,14 +257,14 @@ describe('MainMenu.vue', () => {
       expect(state.currentTab.execute.calledTwice).to.equal(true)
 
       // Running is disabled and route path is editor
-      await wrapper.vm.$set(state, 'schema', null)
+      await wrapper.vm.$set(state, 'db', null)
       document.dispatchEvent(ctrlEnter)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
       document.dispatchEvent(metaEnter)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
 
       // Running is enabled and route path is not editor
-      await wrapper.vm.$set(state, 'schema', [])
+      await wrapper.vm.$set(state, 'db', {})
       await wrapper.vm.$set($route, 'path', '/my-queries')
       document.dispatchEvent(ctrlEnter)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
@@ -280,7 +280,7 @@ describe('MainMenu.vue', () => {
         tabIndex: 0
       },
       tabs: [{ isUnsaved: true }],
-      schema: []
+      db: {}
     }
     const store = new Vuex.Store({ state })
     const $route = { path: '/editor' }
@@ -315,7 +315,7 @@ describe('MainMenu.vue', () => {
           tabIndex: 0
         },
         tabs: [{ isUnsaved: true }],
-        schema: []
+        db: {}
       }
       const store = new Vuex.Store({ state })
       const $route = { path: '/editor' }
@@ -360,7 +360,7 @@ describe('MainMenu.vue', () => {
           tabIndex: 0
         },
         tabs: [{ id: 1, name: 'foo', isUnsaved: true }],
-        schema: []
+        db: {}
       }
       const mutations = {
         updateTab: sinon.stub()
@@ -411,7 +411,7 @@ describe('MainMenu.vue', () => {
         tabIndex: 0
       },
       tabs: [{ id: 1, name: null, tempName: 'Untitled', isUnsaved: true }],
-      schema: []
+      db: {}
     }
     const mutations = {
       updateTab: sinon.stub()
@@ -456,7 +456,7 @@ describe('MainMenu.vue', () => {
         tabIndex: 0
       },
       tabs: [{ id: 1, name: null, tempName: 'Untitled', isUnsaved: true }],
-      schema: []
+      db: {}
     }
     const mutations = {
       updateTab: sinon.stub()
@@ -528,7 +528,7 @@ describe('MainMenu.vue', () => {
         view: 'chart'
       },
       tabs: [{ id: 1, name: 'foo', isUnsaved: true, isPredefined: true }],
-      schema: []
+      db: {}
     }
     const mutations = {
       updateTab: sinon.stub()
@@ -607,7 +607,7 @@ describe('MainMenu.vue', () => {
         tabIndex: 0
       },
       tabs: [{ id: 1, name: null, tempName: 'Untitled', isUnsaved: true }],
-      schema: []
+      db: {}
     }
     const mutations = {
       updateTab: sinon.stub()

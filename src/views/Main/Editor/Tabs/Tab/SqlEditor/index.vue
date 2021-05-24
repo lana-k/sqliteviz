@@ -6,7 +6,7 @@
 
 <script>
 import showHint, { showHintOnDemand } from './hint'
-import { debounce } from 'debounce'
+import time from '@/lib/utils/time'
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/sql/sql.js'
@@ -39,7 +39,7 @@ export default {
     }
   },
   methods: {
-    onChange: debounce(showHint, 400),
+    onChange: time.debounce(showHint, 400),
     focus () {
       this.$refs.cm.codemirror.focus()
     }

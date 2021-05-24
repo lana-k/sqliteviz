@@ -1,5 +1,5 @@
 .rounded-bg {
-  padding: 40px 5px 5px;
+  padding: 35px 5px 5px;
   background-color: white;
   border-radius: 5px;
   position: relative;
@@ -36,7 +36,7 @@
 }
 table {
   min-width: 100%;
-  margin-top: -40px;
+  margin-top: -35px;
   border-collapse: collapse;
 }
 thead th, .fixed-header {
@@ -56,7 +56,7 @@ tbody td {
   border-right: 1px solid var(--color-border-light);
 }
 td, th, .fixed-header {
-  padding: 12px 24px;
+  padding: 8px 24px;
   white-space: nowrap;
 }
 

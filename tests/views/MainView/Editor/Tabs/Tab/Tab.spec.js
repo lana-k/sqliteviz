@@ -182,7 +182,8 @@ describe('Tab.vue', () => {
     const state = {
       currentTabId: 1,
       db: {
-        execute: sinon.stub().rejects(new Error('There is no table foo'))
+        execute: sinon.stub().rejects(new Error('There is no table foo')),
+        refreshSchema: sinon.stub().resolves()
       }
     }
 
@@ -221,7 +222,7 @@ describe('Tab.vue', () => {
       currentTabId: 1,
       db: {
         execute: sinon.stub().resolves(result),
-        getSchema: sinon.stub().resolves({ dbName: '', schema: [] })
+        refreshSchema: sinon.stub().resolves()
       }
     }
 
@@ -253,36 +254,17 @@ describe('Tab.vue', () => {
       columns: ['id', 'name'],
       values: []
     }
-    const newSchema = {
-      dbName: 'fooDb',
-      schema: [
-        {
-          name: 'foo',
-          columns: [
-            { name: 'id', type: 'INTEGER' },
-            { name: 'title', type: 'NVARCHAR(30)' }
-          ]
-        },
-        {
-          name: 'bar',
-          columns: [
-            { name: 'a', type: 'N/A' },
-            { name: 'b', type: 'N/A' }
-          ]
-        }
-      ]
-    }
+
     // mock store state
     const state = {
       currentTabId: 1,
       dbName: 'fooDb',
       db: {
         execute: sinon.stub().resolves(result),
-        getSchema: sinon.stub().resolves(newSchema)
+        refreshSchema: sinon.stub().resolves()
       }
     }
 
-    sinon.spy(mutations, 'saveSchema')
     const store = new Vuex.Store({ state, mutations })
 
     // mount the component
@@ -300,7 +282,6 @@ describe('Tab.vue', () => {
     })
 
     await wrapper.vm.execute()
-    expect(state.db.getSchema.calledOnceWith('fooDb')).to.equal(true)
-    expect(mutations.saveSchema.calledOnceWith(state, newSchema)).to.equal(true)
+    expect(state.db.refreshSchema.calledOnce).to.equal(true)
   })
 })

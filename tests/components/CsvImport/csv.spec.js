@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import csv from '@/components/DbUploader/csv'
+import csv from '@/components/CsvImport/csv'
 import Papa from 'papaparse'
 
 describe('csv.js', () => {

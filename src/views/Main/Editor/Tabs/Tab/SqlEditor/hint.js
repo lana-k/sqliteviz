@@ -17,15 +17,15 @@ export function getHints (cm, options) {
 const hintOptions = {
   get tables () {
     const tables = {}
-    if (store.state.schema) {
-      store.state.schema.forEach(table => {
+    if (store.state.db.schema) {
+      store.state.db.schema.forEach(table => {
         tables[table.name] = table.columns.map(column => column.name)
       })
     }
     return tables
   },
   get defaultTable () {
-    const schema = store.state.schema
+    const schema = store.state.db.schema
     return schema && schema.length === 1 ? schema[0].name : null
   },
   completeSingle: false,

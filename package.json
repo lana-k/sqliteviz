@@ -12,7 +12,6 @@
   "dependencies": {
     "codemirror": "^5.57.0",
     "core-js": "^3.6.5",
-    "debounce": "^1.2.0",
     "nanoid": "^3.1.12",
     "papaparse": "^5.3.0",
     "plotly.js": "^1.58.4",

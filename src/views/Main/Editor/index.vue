@@ -30,11 +30,10 @@ export default {
     Tabs
   },
   async beforeRouteEnter (to, from, next) {
-    if (!store.state.schema) {
+    if (!store.state.db) {
       const newDb = database.getNewDatabase()
-      const newSchema = await newDb.loadDb()
+      await newDb.loadDb()
       store.commit('setDb', newDb)
-      store.commit('saveSchema', newSchema)
       const stmt = [
         '/*',
         ' * Your database is empty. In order to start building charts',

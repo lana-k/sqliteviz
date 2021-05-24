@@ -8,10 +8,18 @@ function processMsg (sql) {
   switch (data && data.action) {
     case 'open':
       return sql.open(data.buffer)
+    case 'reopen':
+      return sql.open(sql.export())
     case 'exec':
       return sql.exec(data.sql, data.params)
     case 'import':
-      return sql.import(data.columns, data.values, data.progressCounterId, postMessage)
+      return sql.import(
+        data.tabName,
+        data.columns,
+        data.values,
+        data.progressCounterId,
+        postMessage
+      )
     case 'export':
       return sql.export()
     case 'close':

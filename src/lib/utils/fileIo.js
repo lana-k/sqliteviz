@@ -6,6 +6,10 @@ export default {
       : /\.(db|sqlite(3)?)+$/.test(file.name)
   },
 
+  getFileName (file) {
+    return file.name.replace(/\.[^.]+$/, '')
+  },
+
   exportToFile (str, fileName, type = 'octet/stream') {
     // Create downloader
     const downloader = document.createElement('a')

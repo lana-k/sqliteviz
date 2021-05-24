@@ -7,10 +7,6 @@ export default {
     }
     state.db = db
   },
-  saveSchema (state, { dbName, schema }) {
-    state.dbName = dbName
-    state.schema = schema
-  },
 
   updateTab (state, { index, name, id, query, chart, isUnsaved }) {
     const tab = state.tabs[index]

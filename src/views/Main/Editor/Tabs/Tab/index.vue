@@ -120,14 +120,13 @@ export default {
         const start = new Date()
         this.result = await state.db.execute(this.query + ';')
         this.time = time.getPeriod(start, new Date())
-        const schema = await state.db.getSchema(state.dbName)
-        this.$store.commit('saveSchema', schema)
       } catch (err) {
         this.error = {
           type: 'error',
           message: err
         }
       }
+      state.db.refreshSchema()
       this.isGettingResults = false
     },
     handleResize () {
@@ -143,12 +142,12 @@ export default {
     calculateTableHeight () {
       const bottomPane = this.$refs.bottomPane
       // 88 - view swittcher height
-      // 42 - table footer width
-      // 30 - desirable space after the table
+      // 34 - table footer width
+      // 12 - desirable space after the table
       // 5 - padding-bottom of rounded table container
-      // 40 - height of table header
-      const freeSpace = bottomPane.offsetHeight - 88 - 42 - 30 - 5 - 40
-      this.tableViewHeight = freeSpace - (freeSpace % 40)
+      // 35 - height of table header
+      const freeSpace = bottomPane.offsetHeight - 88 - 34 - 12 - 5 - 35
+      this.tableViewHeight = freeSpace - (freeSpace % 35)
     }
   }
 }

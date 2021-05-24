@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import fu from '@/lib/utils/fileIo'
+import fIo from '@/lib/utils/fileIo'
 import sinon from 'sinon'
 
 describe('fileIo.js', () => {
@@ -15,7 +15,7 @@ describe('fileIo.js', () => {
     sinon.spy(URL, 'revokeObjectURL')
     sinon.spy(window, 'Blob')
 
-    fu.exportToFile('foo', 'foo.txt')
+    fIo.exportToFile('foo', 'foo.txt')
 
     expect(document.createElement.calledOnceWith('a')).to.equal(true)
 
@@ -40,7 +40,7 @@ describe('fileIo.js', () => {
     sinon.spy(URL, 'revokeObjectURL')
     sinon.spy(window, 'Blob')
 
-    fu.exportToFile('foo', 'foo.html', 'text/html')
+    fIo.exportToFile('foo', 'foo.html', 'text/html')
 
     expect(document.createElement.calledOnceWith('a')).to.equal(true)
 
@@ -71,7 +71,7 @@ describe('fileIo.js', () => {
 
     setTimeout(() => { spyInput.dispatchEvent(new Event('change')) })
 
-    const data = await fu.importFile()
+    const data = await fIo.importFile()
     expect(data).to.equal('foo')
     expect(document.createElement.calledOnceWith('input')).to.equal(true)
     expect(spyInput.type).to.equal('file')
@@ -82,13 +82,13 @@ describe('fileIo.js', () => {
   it('readFile', () => {
     sinon.spy(window, 'fetch')
 
-    fu.readFile('./foo.bar')
+    fIo.readFile('./foo.bar')
     expect(window.fetch.calledOnceWith('./foo.bar')).to.equal(true)
   })
 
   it('readAsArrayBuffer resolves', async () => {
     const blob = new Blob(['foo'])
-    const buffer = await fu.readAsArrayBuffer(blob)
+    const buffer = await fIo.readAsArrayBuffer(blob)
 
     const uint8Array = new Uint8Array(buffer)
     const text = new TextDecoder().decode(uint8Array)
@@ -103,29 +103,34 @@ describe('fileIo.js', () => {
     sinon.stub(window, 'FileReader').returns(r)
 
     const blob = new Blob(['foo'])
-    await expect(fu.readAsArrayBuffer(blob)).to.be.rejectedWith('Problem parsing input file.')
+    await expect(fIo.readAsArrayBuffer(blob)).to.be.rejectedWith('Problem parsing input file.')
   })
 
   it('isDatabase', () => {
     let file = { type: 'application/vnd.sqlite3' }
-    expect(fu.isDatabase(file)).to.equal(true)
+    expect(fIo.isDatabase(file)).to.equal(true)
 
     file = { type: 'application/x-sqlite3' }
-    expect(fu.isDatabase(file)).to.equal(true)
+    expect(fIo.isDatabase(file)).to.equal(true)
 
     file = { type: '', name: 'test.db' }
-    expect(fu.isDatabase(file)).to.equal(true)
+    expect(fIo.isDatabase(file)).to.equal(true)
 
     file = { type: '', name: 'test.sqlite' }
-    expect(fu.isDatabase(file)).to.equal(true)
+    expect(fIo.isDatabase(file)).to.equal(true)
 
     file = { type: '', name: 'test.sqlite3' }
-    expect(fu.isDatabase(file)).to.equal(true)
+    expect(fIo.isDatabase(file)).to.equal(true)
 
     file = { type: '', name: 'test.csv' }
-    expect(fu.isDatabase(file)).to.equal(false)
+    expect(fIo.isDatabase(file)).to.equal(false)
 
     file = { type: 'text', name: 'test.db' }
-    expect(fu.isDatabase(file)).to.equal(false)
+    expect(fIo.isDatabase(file)).to.equal(false)
+  })
+
+  it('getFileName', () => {
+    expect(fIo.getFileName({ name: 'foo.csv' })).to.equal('foo')
+    expect(fIo.getFileName({ name: 'foo.bar.db' })).to.equal('foo.bar')
   })
 })

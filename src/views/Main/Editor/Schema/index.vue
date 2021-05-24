@@ -10,6 +10,7 @@
       </div>
       <db-uploader id="db-edit" type="small" />
       <export-icon tooltip="Export database" @click="exportToFile"/>
+      <add-table-icon @click="addCsv"/>
     </div>
     <div v-show="schemaVisible" class="schema">
       <table-description
@@ -19,15 +20,26 @@
         :columns="table.columns"
       />
     </div>
+
+    <!--Parse csv dialog  -->
+    <csv-import
+      ref="addCsv"
+      :file="file"
+      :db="$store.state.db"
+      dialog-name="addCsv"
+    />
   </div>
 </template>
 
 <script>
+import fIo from '@/lib/utils/fileIo'
 import TableDescription from './TableDescription'
 import TextField from '@/components/TextField'
 import TreeChevron from '@/components/svg/treeChevron'
 import DbUploader from '@/components/DbUploader'
 import ExportIcon from '@/components/svg/export'
+import AddTableIcon from '@/components/svg/addTable'
+import CsvImport from '@/components/CsvImport'
 
 export default {
   name: 'Schema',
@@ -36,33 +48,44 @@ export default {
     TextField,
     TreeChevron,
     DbUploader,
-    ExportIcon
+    ExportIcon,
+    AddTableIcon,
+    CsvImport
   },
   data () {
     return {
       schemaVisible: true,
-      filter: null
+      filter: null,
+      file: null
     }
   },
   computed: {
     schema () {
-      if (!this.$store.state.schema) {
+      if (!this.$store.state.db.schema) {
         return []
       }
 
       return !this.filter
-        ? this.$store.state.schema
-        : this.$store.state.schema.filter(
+        ? this.$store.state.db.schema
+        : this.$store.state.db.schema.filter(
           table => table.name.toUpperCase().indexOf(this.filter.toUpperCase()) !== -1
         )
     },
     dbName () {
-      return this.$store.state.dbName
+      return this.$store.state.db.dbName
     }
   },
   methods: {
     exportToFile () {
       this.$store.state.db.export(`${this.dbName}.sqlite`)
+    },
+    async addCsv () {
+      this.file = await fIo.getFileFromUser('.csv')
+      await this.$nextTick()
+      const csvImport = this.$refs.addCsv
+      csvImport.reset()
+      await csvImport.previewCsv()
+      csvImport.open()
     }
   }
 }

@@ -2,7 +2,6 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import mutations from '@/store/mutations'
 const {
-  saveSchema,
   updateTab,
   deleteTab,
   setCurrentTabId,
@@ -22,25 +21,6 @@ describe('mutations', () => {
     setDb(state, db)
     expect(state.db).to.equal(db)
     expect(oldDb.shutDown.calledOnce).to.equal(true)
-  })
-
-  it('saveSchema', () => {
-    const state = {}
-
-    const schema = [
-      {
-        name: 'table1',
-        columns: [
-          { name: 'id', type: 'INTEGER' }
-        ]
-      }
-    ]
-    saveSchema(state, {
-      dbName: 'test',
-      schema
-    })
-    expect(state.dbName).to.equal('test')
-    expect(state.schema).to.eql(schema)
   })
 
   it('updateTab (save)', () => {

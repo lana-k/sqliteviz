@@ -100,7 +100,7 @@ export default {
       }
     },
     runDisabled () {
-      return this.currentQuery && (!this.$store.state.schema || !this.currentQuery.query)
+      return this.currentQuery && (!this.$store.state.db || !this.currentQuery.query)
     }
   },
   created () {

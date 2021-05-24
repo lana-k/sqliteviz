@@ -11,22 +11,24 @@ describe('hint.js', () => {
 
   it('Calculates table list for hint', () => {
     // mock store state
-    const schema = [
-      {
-        name: 'foo',
-        columns: [
-          { name: 'fooId', type: 'INTEGER' },
-          { name: 'name', type: 'NVARCHAR(20)' }
-        ]
-      },
-      {
-        name: 'bar',
-        columns: [
-          { name: 'barId', type: 'INTEGER' }
-        ]
-      }
-    ]
-    sinon.stub(state, 'schema').value(schema)
+    const db = {
+      schema: [
+        {
+          name: 'foo',
+          columns: [
+            { name: 'fooId', type: 'INTEGER' },
+            { name: 'name', type: 'NVARCHAR(20)' }
+          ]
+        },
+        {
+          name: 'bar',
+          columns: [
+            { name: 'barId', type: 'INTEGER' }
+          ]
+        }
+      ]
+    }
+    sinon.stub(state, 'db').value(db)
 
     // mock showHint and editor
     sinon.stub(CM, 'showHint')
@@ -52,16 +54,18 @@ describe('hint.js', () => {
 
   it('Add default table if there is only one table in schema', () => {
     // mock store state
-    const schema = [
-      {
-        name: 'foo',
-        columns: [
-          { name: 'fooId', type: 'INTEGER' },
-          { name: 'name', type: 'NVARCHAR(20)' }
-        ]
-      }
-    ]
-    sinon.stub(state, 'schema').value(schema)
+    const db = {
+      schema: [
+        {
+          name: 'foo',
+          columns: [
+            { name: 'fooId', type: 'INTEGER' },
+            { name: 'name', type: 'NVARCHAR(20)' }
+          ]
+        }
+      ]
+    }
+    sinon.stub(state, 'db').value(db)
 
     // mock showHint and editor
     sinon.stub(CM, 'showHint')
@@ -190,7 +194,7 @@ describe('hint.js', () => {
 
   it('tables is empty object when schema is null', () => {
     // mock store state
-    sinon.stub(state, 'schema').value(null)
+    sinon.stub(state, 'db').value({ schema: null })
 
     // mock showHint and editor
     sinon.stub(CM, 'showHint')

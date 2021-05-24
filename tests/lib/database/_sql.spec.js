@@ -74,8 +74,8 @@ describe('_sql.js', () => {
     const progressCallback = sinon.stub()
     const progressCounterId = 1
     const sql = await Sql.build()
-    sql.import(data.columns, data.values, progressCounterId, progressCallback, 2)
-    const result = sql.exec('SELECT * from csv_import')
+    sql.import('foo', data.columns, data.values, progressCounterId, progressCallback, 2)
+    const result = sql.exec('SELECT * from foo')
     expect(result).to.have.lengthOf(1)
     expect(result[0].columns).to.eql(['id', 'name'])
     expect(result[0].values).to.have.lengthOf(4)
@@ -135,7 +135,7 @@ describe('_sql.js', () => {
     expect(sql.db.db).to.equal(null)
   })
 
-  it('overwrites', async () => {
+  it('adds', async () => {
     const sql = await Sql.build()
     sql.exec(`
       CREATE TABLE test (
@@ -160,12 +160,11 @@ describe('_sql.js', () => {
         [4, 'Ron Weasley']
       ]
     }
-    // rewrite the database by import
-    sql.import(data.columns, data.values, 1, sinon.stub(), 2)
-    result = sql.exec('SELECT * from csv_import')
+    // import adds table
+    sql.import('foo', data.columns, data.values, 1, sinon.stub(), 2)
+    result = sql.exec('SELECT * from foo')
     expect(result[0].values).to.have.lengthOf(4)
-
-    // test table oesn't exists anymore: the db was overwritten
-    expect(() => { sql.exec('SELECT * from test') }).to.throw('no such table: test')
+    result = sql.exec('SELECT * from test')
+    expect(result[0].values).to.have.lengthOf(2)
   })
 })
