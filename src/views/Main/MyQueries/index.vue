@@ -448,6 +448,7 @@ export default {
 }
 
 .rounded-bg {
+  padding-top: 40px;
   margin: 0 auto;
   max-width: 1500px;
   width: 100%;
