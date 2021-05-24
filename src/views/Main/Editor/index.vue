@@ -19,8 +19,6 @@
 import Splitpanes from '@/components/Splitpanes'
 import Schema from './Schema'
 import Tabs from './Tabs'
-import database from '@/lib/database'
-import store from '@/store'
 
 export default {
   name: 'Editor',
@@ -29,11 +27,9 @@ export default {
     Splitpanes,
     Tabs
   },
-  async beforeRouteEnter (to, from, next) {
-    if (!store.state.db) {
-      const newDb = database.getNewDatabase()
-      await newDb.loadDb()
-      store.commit('setDb', newDb)
+  async beforeCreate () {
+    const schema = this.$store.state.db.schema
+    if (!schema || schema.length === 0) {
       const stmt = [
         '/*',
         ' * Your database is empty. In order to start building charts',
@@ -51,10 +47,9 @@ export default {
         "('Slytherin', 80);"
       ].join('\n')
 
-      const tabId = await store.dispatch('addTab', { query: stmt })
-      store.commit('setCurrentTabId', tabId)
+      const tabId = await this.$store.dispatch('addTab', { query: stmt })
+      this.$store.commit('setCurrentTabId', tabId)
     }
-    next()
   }
 }
 </script>
