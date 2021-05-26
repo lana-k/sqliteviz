@@ -6,6 +6,8 @@ const hintsByCode = {
   TooManyFields: 'Edit your CSV or try another delimiter.'
 }
 
+let parsedData = {}
+
 export default {
   getResult (source) {
     const result = {}
@@ -44,11 +46,11 @@ export default {
         step: undefined,
         complete: results => {
           const res = {
-            data: this.getResult(results),
+            data: this.getResult(parsedData),
             delimiter: results.meta.delimiter,
             hasErrors: false
           }
-          res.messages = results.errors.map(msg => {
+          res.messages = parsedData.errors.map(msg => {
             msg.type = msg.code === 'UndetectableDelimiter' ? 'info' : 'error'
             if (msg.type === 'error') res.hasErrors = true
             msg.hint = hintsByCode[msg.code]
@@ -63,8 +65,15 @@ export default {
         downloadRequestHeaders: undefined,
         downloadRequestBody: undefined,
         skipEmptyLines: 'greedy',
-        chunk: undefined,
-        chunkSize: undefined,
+        chunk: results => {
+          if (Object.keys(parsedData).length === 0 && parsedData.constructor === Object) {
+            parsedData = results
+          } else {
+            parsedData.data = [...parsedData.data, ...results.data]
+            parsedData.errors = [...parsedData.errors, ...results.errors]
+          }
+        },
+        chunkSize: 1024 * 1024 * 10,        
         fastMode: undefined,
         beforeFirstChunk: undefined,
         withCredentials: undefined,
