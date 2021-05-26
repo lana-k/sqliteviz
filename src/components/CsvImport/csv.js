@@ -73,7 +73,7 @@ export default {
             parsedData.errors = [...parsedData.errors, ...results.errors]
           }
         },
-        chunkSize: 1024 * 1024 * 10,        
+        chunkSize: 1024 * 1024 * 10,
         fastMode: undefined,
         beforeFirstChunk: undefined,
         withCredentials: undefined,
