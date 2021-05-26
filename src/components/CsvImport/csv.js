@@ -44,10 +44,19 @@ export default {
         worker: true,
         comments: false,
         step: undefined,
+        chunk: results => {
+          if (Object.keys(parsedData).length === 0 && parsedData.constructor === Object) {
+            parsedData = results
+          } else {
+            parsedData.data = [...parsedData.data, ...results.data]
+            parsedData.errors = [...parsedData.errors, ...results.errors]
+          }
+        },
+        chunkSize: 1024 * 1024 * 10,
         complete: results => {
           const res = {
             data: this.getResult(parsedData),
-            delimiter: results.meta.delimiter,
+            delimiter: parsedData.meta.delimiter,
             hasErrors: false
           }
           res.messages = parsedData.errors.map(msg => {
@@ -65,15 +74,6 @@ export default {
         downloadRequestHeaders: undefined,
         downloadRequestBody: undefined,
         skipEmptyLines: 'greedy',
-        chunk: results => {
-          if (Object.keys(parsedData).length === 0 && parsedData.constructor === Object) {
-            parsedData = results
-          } else {
-            parsedData.data = [...parsedData.data, ...results.data]
-            parsedData.errors = [...parsedData.errors, ...results.errors]
-          }
-        },
-        chunkSize: 1024 * 1024 * 10,
         fastMode: undefined,
         beforeFirstChunk: undefined,
         withCredentials: undefined,
