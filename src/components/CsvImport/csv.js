@@ -28,7 +28,7 @@ export default {
   },
 
   parse (file, config = {}) {
-    let parsedData = {}
+    let parsedData = null
     return new Promise((resolve, reject) => {
       const defaultConfig = {
         delimiter: '', // auto-detect
@@ -44,7 +44,7 @@ export default {
         comments: false,
         step: undefined,
         chunk: results => {
-          if (Object.keys(parsedData).length === 0 && parsedData.constructor === Object) {
+          if (parsedData === null) {
             parsedData = results
           } else {
             parsedData.data = parsedData.data.concat(results.data)
