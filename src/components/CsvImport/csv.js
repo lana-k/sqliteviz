@@ -6,8 +6,6 @@ const hintsByCode = {
   TooManyFields: 'Edit your CSV or try another delimiter.'
 }
 
-let parsedData = {}
-
 export default {
   getResult (source) {
     const result = {}
@@ -30,6 +28,7 @@ export default {
   },
 
   parse (file, config = {}) {
+    let parsedData = {}
     return new Promise((resolve, reject) => {
       const defaultConfig = {
         delimiter: '', // auto-detect
@@ -48,12 +47,12 @@ export default {
           if (Object.keys(parsedData).length === 0 && parsedData.constructor === Object) {
             parsedData = results
           } else {
-            parsedData.data = [...parsedData.data, ...results.data]
-            parsedData.errors = [...parsedData.errors, ...results.errors]
+            parsedData.data = parsedData.data.concat(results.data)
+            parsedData.errors = parsedData.errors.concat(results.errors)
           }
         },
-        chunkSize: 1024 * 1024 * 10,
-        complete: results => {
+        chunkSize: 1024 * 716,
+        complete: () => {
           const res = {
             data: this.getResult(parsedData),
             delimiter: parsedData.meta.delimiter,
