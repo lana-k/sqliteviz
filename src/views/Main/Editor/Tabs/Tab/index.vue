@@ -14,6 +14,7 @@
       <template #right-pane>
         <div id="bottomPane" ref="bottomPane">
           <view-switcher :view.sync="view" />
+          <pivot :sql-result="result"/>
           <div v-show="view === 'table'" class="table-view">
             <div
               v-show="result === null && !isGettingResults && !error"
@@ -48,6 +49,7 @@
 </template>
 
 <script>
+import Pivot from '@/components/Pivot'
 import SqlTable from '@/components/SqlTable'
 import Splitpanes from '@/components/Splitpanes'
 import LoadingIndicator from '@/components/LoadingIndicator'
@@ -61,6 +63,7 @@ export default {
   name: 'Tab',
   props: ['id', 'initName', 'initQuery', 'initChart', 'tabIndex', 'isPredefined'],
   components: {
+    Pivot,
     SqlEditor,
     SqlTable,
     Splitpanes,
