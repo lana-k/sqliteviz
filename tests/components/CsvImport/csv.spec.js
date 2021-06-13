@@ -46,7 +46,7 @@ describe('csv.js', () => {
 
   it('parse resolves', async () => {
     sinon.stub(Papa, 'parse').callsFake((file, config) => {
-      config.complete({
+      config.chunk({
         data: [
           [1, 'foo'],
           [2, 'bar']
@@ -72,6 +72,7 @@ describe('csv.js', () => {
           truncated: true
         }
       })
+      config.complete()
     })
     const file = {}
     const result = await csv.parse(file)
@@ -111,5 +112,97 @@ describe('csv.js', () => {
     })
     const file = {}
     await expect(csv.parse(file)).to.be.rejectedWith(err)
+  })
+
+  it('concat chunks', async () => {
+    sinon.stub(Papa, 'parse').callsFake((file, config) => {
+      config.chunk({
+        data: [
+          [1, 'foo'],
+          [2, 'bar']
+        ],
+        errors: [
+          {
+            type: 'Quotes',
+            code: 'MissingQuotes',
+            message: 'Quote is missed',
+            row: 0
+          },
+          {
+            type: 'Delimiter',
+            code: 'UndetectableDelimiter',
+            message: 'Comma was used as a standart delimiter',
+            row: 0
+          }
+        ],
+        meta: {
+          delimiter: ',',
+          linebreak: '\n',
+          aborted: false,
+          truncated: true
+        }
+      })
+
+      config.chunk({
+        data: [
+          [3, 'baz'],
+          [4, 'boo']
+        ],
+        errors: [
+          {
+            type: 'Delimiter',
+            code: 'UndetectableDelimiter',
+            message: 'Comma was used as a standart delimiter',
+            row: 2
+          }
+        ],
+        meta: {
+          delimiter: ',',
+          linebreak: '\n',
+          aborted: false,
+          truncated: true
+        }
+      })
+      config.complete()
+    })
+    const file = {}
+    const result = await csv.parse(file)
+
+    expect(result).to.eql({
+      data: {
+        columns: ['col1', 'col2'],
+        values: [
+          [1, 'foo'],
+          [2, 'bar'],
+          [3, 'baz'],
+          [4, 'boo']
+        ]
+      },
+      delimiter: ',',
+      hasErrors: true,
+      messages: [
+        {
+          code: 'MissingQuotes',
+          message: 'Quote is missed',
+          row: 0,
+          type: 'error',
+          hint: 'Edit your CSV so that the field has a closing quote char.'
+        },
+        {
+          code: 'UndetectableDelimiter',
+          message: 'Comma was used as a standart delimiter',
+          row: 0,
+          type: 'info',
+          hint: undefined
+        },
+        {
+          code: 'UndetectableDelimiter',
+          message: 'Comma was used as a standart delimiter',
+          row: 2,
+          type: 'info',
+          hint: undefined
+        }
+      ]
+    })
   })
 })
