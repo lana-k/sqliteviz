@@ -1,6 +1,6 @@
 {
   "name": "sqliteviz",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
@@ -13,7 +13,7 @@
     "codemirror": "^5.57.0",
     "core-js": "^3.6.5",
     "nanoid": "^3.1.12",
-    "papaparse": "^5.3.0",
+    "papaparse": "^5.3.1",
     "plotly.js": "^1.58.4",
     "promise-worker": "^2.0.1",
     "react": "^16.13.1",
