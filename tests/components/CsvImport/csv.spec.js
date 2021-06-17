@@ -11,8 +11,8 @@ describe('csv.js', () => {
   it('getResult with fields', () => {
     const source = {
       data: [
-        { id: 1, name: 'foo' },
-        { id: 2, name: 'bar' }
+        { id: 1, 'name ': 'foo' },
+        { id: 2, 'name ': 'bar' }
       ],
       meta: {
         fields: ['id', 'name ']
