@@ -13,7 +13,7 @@ export default {
       result.columns = source.meta.fields.map(col => col.trim())
       result.values = source.data.map(row => {
         const resultRow = []
-        result.columns.forEach(col => { resultRow.push(row[col]) })
+        source.meta.fields.forEach(col => { resultRow.push(row[col]) })
         return resultRow
       })
     } else {
