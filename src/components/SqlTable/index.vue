@@ -19,7 +19,7 @@
         @scroll="onScrollTable"
         :style="{maxHeight: `${height}px`}"
       >
-      <table ref="table">
+      <table ref="table" class="sqliteviz-table">
         <thead>
           <tr>
             <th v-for="(th,index) in dataSet.columns" :key="index" ref="th">

@@ -34,12 +34,12 @@
   width: 100%;
   overflow: auto;
 }
-table {
+table.sqliteviz-table {
   min-width: 100%;
   margin-top: -35px;
   border-collapse: collapse;
 }
-thead th, .fixed-header {
+.sqliteviz-table thead th, .fixed-header {
   font-size: 14px;
   font-weight: 600;
   box-sizing: border-box;
@@ -47,7 +47,7 @@ thead th, .fixed-header {
   color: var(--color-text-light);
   border-right: 1px solid var(--color-border-light);
 }
-tbody td {
+.sqliteviz-table tbody td {
   font-size: 13px;
   background-color:white;
   color: var(--color-text-base);
@@ -55,18 +55,20 @@ tbody td {
   border-bottom: 1px solid var(--color-border-light);
   border-right: 1px solid var(--color-border-light);
 }
-td, th, .fixed-header {
+.sqliteviz-table td,
+.sqliteviz-table th,
+.fixed-header {
   padding: 8px 24px;
   white-space: nowrap;
 }
 
-tbody tr td:last-child,
-thead tr th:last-child,
+.sqliteviz-table tbody tr td:last-child,
+.sqliteviz-table thead tr th:last-child,
 .header-container div .fixed-header:last-child {
   border-right: none;
 }
 
-td > div.cell-data {
+.sqliteviz-table td > div.cell-data {
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;

@@ -46,7 +46,7 @@
         </div>
       </div>
       <div class="table-container" :style="{ 'max-height': `${maxTableHeight}px` }">
-        <table ref="table">
+        <table ref="table" class="sqliteviz-table">
           <tbody>
             <tr
               v-for="(query, index) in showedQueries"
