@@ -465,47 +465,47 @@ export default {
   margin-left: 24px;
 }
 
-table {
+table.sqliteviz-table {
   margin-top: 0;
 }
 
-tbody tr td {
+.sqliteviz-table tbody tr td {
   min-width: 0;
   height: 40px;
 }
 
-tbody tr td:first-child {
+.sqliteviz-table tbody tr td:first-child {
   width: 70%;
   max-width: 0;
   padding: 0 12px;
 }
-tbody tr td:last-child {
+.sqliteviz-table tbody tr td:last-child {
   width: 30%;
   max-width: 0;
   padding: 0 24px;
 }
 
-tbody .cell-data {
+.sqliteviz-table tbody .cell-data {
   display: flex;
   align-items: center;
   max-width: 100%;
   width: 100%;
 }
-tbody .cell-data div.name {
+.sqliteviz-table tbody .cell-data div.name {
   overflow: hidden;
   text-overflow: ellipsis;
   margin-left: 24px;
 }
 
-tbody tr:hover td {
+.sqliteviz-table tbody tr:hover td {
   cursor: pointer;
 }
 
-tbody tr:hover td {
+.sqliteviz-table tbody tr:hover td {
   color: var(--color-text-active);
 }
 
-.second-column {
+.sqliteviz-table .second-column {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -523,7 +523,7 @@ tbody tr:hover td {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-tbody tr:hover .icons-container {
+.sqliteviz-table tbody tr:hover .icons-container {
   display: flex;
 }
 .dialog input {
@@ -545,7 +545,7 @@ button.toolbar {
   margin-left: 12px;
 }
 
-tbody tr:hover .badge {
+.sqliteviz-table tbody tr:hover .badge {
   display: block;
 }
 #note {
