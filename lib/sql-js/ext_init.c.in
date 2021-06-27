@@ -1,0 +1,8 @@
+int ext_init(const char* dummy)
+{
+    int nErr = 0;
+
+    nErr += sqlite3_auto_extension((void*)sqlite3_pivotvtab_init);
+
+    return nErr ? SQLITE_ERROR : SQLITE_OK;
+}
