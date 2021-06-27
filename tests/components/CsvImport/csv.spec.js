@@ -19,11 +19,8 @@ describe('csv.js', () => {
       }
     }
     expect(csv.getResult(source)).to.eql({
-      columns: ['id', 'name'],
-      values: [
-        [1, 'foo'],
-        [2, 'bar']
-      ]
+      id: [1, 2],
+      name: ['foo', 'bar']
     })
   })
 
@@ -36,11 +33,8 @@ describe('csv.js', () => {
       meta: {}
     }
     expect(csv.getResult(source)).to.eql({
-      columns: ['col1', 'col2'],
-      values: [
-        [1, 'foo'],
-        [2, 'bar']
-      ]
+      col1: [1, 2],
+      col2: ['foo', 'bar']
     })
   })
 
@@ -77,13 +71,11 @@ describe('csv.js', () => {
     const result = await csv.parse(file)
     expect(result).to.eql({
       data: {
-        columns: ['col1', 'col2'],
-        values: [
-          [1, 'foo'],
-          [2, 'bar']
-        ]
+        col1: [1, 2],
+        col2: ['foo', 'bar']
       },
       delimiter: ',',
+      rowCount: 2,
       hasErrors: true,
       messages: [
         {

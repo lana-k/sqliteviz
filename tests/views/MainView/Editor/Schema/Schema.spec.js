@@ -129,10 +129,8 @@ describe('Schema.vue', () => {
     sinon.stub(csv, 'parse').resolves({
       delimiter: '|',
       data: {
-        columns: ['col1', 'col2'],
-        values: [
-          [1, 'foo']
-        ]
+        col1: [1],
+        col2: ['foo']
       },
       hasErrors: false,
       messages: []
@@ -171,8 +169,8 @@ describe('Schema.vue', () => {
 
     const res = await wrapper.vm.$store.state.db.execute('select * from test')
     expect(res).to.eql({
-      columns: ['col1', 'col2'],
-      values: [[1, 'foo']]
+      col1: [1],
+      col2: ['foo']
     })
   })
 })

@@ -1,6 +1,6 @@
 <template>
 <div v-show="visible" class="chart-container">
-  <div class="warning chart-warning" v-show="!sqlResult && visible">
+  <div class="warning chart-warning" v-show="!dataSources && visible">
     There is no data to build a chart. Run your sql query and make sure the result is not empty.
   </div>
   <PlotlyEditor
@@ -12,13 +12,13 @@
     :dataSourceOptions="dataSourceOptions"
     :plotly="plotly"
     @onUpdate="update"
-    @onRender="go"
+    @onRender="onRender"
     :useResizeHandler="true"
     :debug="true"
     :advancedTraceTypeSelector="true"
     class="chart"
     ref="plotlyEditor"
-    :style="{ height: !sqlResult ? 'calc(100% - 40px)' : '100%' }"
+    :style="{ height: !dataSources ? 'calc(100% - 40px)' : '100%' }"
   />
 </div>
 </template>
@@ -33,7 +33,7 @@ import dereference from 'react-chart-editor/lib/lib/dereference'
 
 export default {
   name: 'Chart',
-  props: ['sqlResult', 'initChart', 'visible'],
+  props: ['dataSources', 'initChart', 'visible'],
   components: {
     PlotlyEditor
   },
@@ -48,9 +48,6 @@ export default {
     }
   },
   computed: {
-    dataSources () {
-      return chartHelper.getDataSourcesFromSqlResult(this.sqlResult)
-    },
     dataSourceOptions () {
       return chartHelper.getOptionsFromDataSources(this.dataSources)
     }
@@ -63,7 +60,7 @@ export default {
     }
   },
   methods: {
-    go (data, layout, frames) {
+    onRender (data, layout, frames) {
       // TODO: check changes and enable Save button if needed
     },
     update (data, layout, frames) {

@@ -47,22 +47,22 @@ describe('Chart.vue', () => {
 
   it('calls dereference when sqlResult is changed', async () => {
     sinon.stub(dereference, 'default')
-    const sqlResult = {
-      columns: ['id', 'name'],
-      values: [[1, 'foo']]
+    const dataSources = {
+      id: [1],
+      name: ['foo']
     }
 
     // mount the component
     const wrapper = shallowMount(Chart, {
-      propsData: { sqlResult: sqlResult }
+      propsData: { dataSources }
     })
 
-    const newSqlResult = {
-      columns: ['id', 'name'],
-      values: [[2, 'bar']]
+    const newDataSources = {
+      id: [2],
+      name: ['bar']
     }
 
-    await wrapper.setProps({ sqlResult: newSqlResult })
+    await wrapper.setProps({ dataSources: newDataSources })
     expect(dereference.default.called).to.equal(true)
   })
 })

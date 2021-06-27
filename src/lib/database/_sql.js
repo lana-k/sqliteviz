@@ -4,6 +4,17 @@ import dbUtils from './_statements'
 let SQL = null
 const sqlModuleReady = initSqlJs().then(sqlModule => { SQL = sqlModule })
 
+function _getDataSourcesFromSqlResult (sqlResult) {
+  if (!sqlResult) {
+    return {}
+  }
+  const dataSorces = {}
+  sqlResult.columns.forEach((column, index) => {
+    dataSorces[column] = sqlResult.values.map(row => row[index])
+  })
+  return dataSorces
+}
+
 export default class Sql {
   constructor () {
     this.db = null
@@ -36,16 +47,19 @@ export default class Sql {
     if (!sql) {
       throw new Error('exec: Missing query string')
     }
-    return this.db.exec(sql, params)
+    const sqlResults = this.db.exec(sql, params)
+    return sqlResults.map(result => _getDataSourcesFromSqlResult(result))
   }
 
-  import (tabName, columns, values, progressCounterId, progressCallback, chunkSize = 1500) {
+  import (tabName, data, progressCounterId, progressCallback, chunkSize = 1500) {
     if (this.db === null) {
       this.createDb()
     }
-    this.db.exec(dbUtils.getCreateStatement(tabName, columns, values))
-    const chunks = dbUtils.generateChunks(values, chunkSize)
-    const chunksAmount = Math.ceil(values.length / chunkSize)
+    const columns = Object.keys(data)
+    const rowCount = data[columns[0]].length
+    this.db.exec(dbUtils.getCreateStatement(tabName, data))
+    const chunks = dbUtils.generateChunks(data, chunkSize)
+    const chunksAmount = Math.ceil(rowCount / chunkSize)
     let count = 0
     const insertStr = dbUtils.getInsertStmt(tabName, columns)
     const insertStmt = this.db.prepare(insertStr)

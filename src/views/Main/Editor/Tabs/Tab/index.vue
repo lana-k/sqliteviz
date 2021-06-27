@@ -37,7 +37,7 @@
           </div>
           <chart
             :visible="view === 'chart'"
-            :sql-result="result"
+            :data-sources="result"
             :init-chart="initChart"
             ref="chart"
             @update="$store.commit('updateTab', { index: tabIndex, isUnsaved: true })"

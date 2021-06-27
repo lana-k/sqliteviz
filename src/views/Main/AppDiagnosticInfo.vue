@@ -47,13 +47,13 @@ export default {
     let result = await state.db.execute('select sqlite_version()')
     this.info.push({
       name: 'SQLite version',
-      info: result.values[0]
+      info: result['sqlite_version()']
     })
 
     result = await state.db.execute('PRAGMA compile_options')
     this.info.push({
       name: 'SQLite compile options',
-      info: result.values.map(row => row[0])
+      info: result.compile_options
     })
   }
 }

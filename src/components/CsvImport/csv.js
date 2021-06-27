@@ -10,20 +10,14 @@ export default {
   getResult (source) {
     const result = {}
     if (source.meta.fields) {
-      result.columns = source.meta.fields.map(col => col.trim())
-      result.values = source.data.map(row => {
-        const resultRow = []
-        source.meta.fields.forEach(col => { resultRow.push(row[col]) })
-        return resultRow
+      source.meta.fields.forEach(col => {
+        result[col.trim()] = source.data.map(row => row[col])
       })
     } else {
-      result.values = source.data
-      result.columns = []
-      for (let i = 1; i <= source.data[0].length; i++) {
-        result.columns.push(`col${i}`)
+      for (let i = 0; i <= source.data[0].length - 1; i++) {
+        result[`col${i + 1}`] = source.data.map(row => row[i])
       }
     }
-
     return result
   },
 
@@ -46,7 +40,8 @@ export default {
           const res = {
             data: this.getResult(results),
             delimiter: results.meta.delimiter,
-            hasErrors: false
+            hasErrors: false,
+            rowCount: results.data.length
           }
           res.messages = results.errors.map(msg => {
             msg.type = msg.code === 'UndetectableDelimiter' ? 'info' : 'error'

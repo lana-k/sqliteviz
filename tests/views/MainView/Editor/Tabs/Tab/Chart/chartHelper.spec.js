@@ -8,22 +8,6 @@ describe('chartHelper.js', () => {
     sinon.restore()
   })
 
-  it('getDataSourcesFromSqlResult', () => {
-    const sqlResult = {
-      columns: ['id', 'name'],
-      values: [
-        [1, 'foo'],
-        [2, 'bar']
-      ]
-    }
-
-    const ds = chartHelper.getDataSourcesFromSqlResult(sqlResult)
-    expect(ds).to.eql({
-      id: [1, 2],
-      name: ['foo', 'bar']
-    })
-  })
-
   it('getOptionsFromDataSources', () => {
     const dataSources = {
       id: [1, 2],

@@ -1,13 +1,17 @@
 import sqliteParser from 'sqlite-parser'
 
 export default {
-  * generateChunks (arr, size) {
-    const count = Math.ceil(arr.length / size)
+  * generateChunks (data, size) {
+    const matrix = Object.keys(data).map(col => data[col])
+    const [row] = matrix
+    const transposedMatrix = row.map((value, column) => matrix.map(row => row[column]))
+
+    const count = Math.ceil(transposedMatrix.length / size)
 
     for (let i = 0; i <= count - 1; i++) {
       const start = size * i
       const end = start + size
-      yield arr.slice(start, end)
+      yield transposedMatrix.slice(start, end)
     }
   },
 
@@ -17,11 +21,11 @@ export default {
     return `INSERT INTO "${tabName}" (${colList}) VALUES (${params});`
   },
 
-  getCreateStatement (tabName, columns, values) {
+  getCreateStatement (tabName, data) {
     let result = `CREATE table "${tabName}"(`
-    columns.forEach((col, index) => {
-    // Get the first row of values to determine types
-      const value = values[0][index]
+    for (const col in data) {
+      // Get the first row of values to determine types
+      const value = data[col][0]
       let type = ''
       switch (typeof value) {
         case 'number': {
@@ -39,7 +43,8 @@ export default {
         default: type = 'TEXT'
       }
       result += `"${col}" ${type}, `
-    })
+    }
+
     result = result.replace(/,\s$/, ');')
     return result
   },

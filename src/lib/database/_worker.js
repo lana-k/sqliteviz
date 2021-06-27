@@ -15,8 +15,7 @@ function processMsg (sql) {
     case 'import':
       return sql.import(
         data.tabName,
-        data.columns,
-        data.values,
+        data.data,
         data.progressCounterId,
         postMessage
       )
