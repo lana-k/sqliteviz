@@ -132,7 +132,7 @@ import 'pivottable'
 import 'pivottable/dist/export_renderers.js'
 import 'pivottable/dist/plotly_renderers.js'
 import Multiselect from 'vue-multiselect'
-import PivotSortBtn from '@/components/PivotSortBtn'
+import PivotSortBtn from './PivotSortBtn'
 
 const zeroValAggregators = [
   'Count',

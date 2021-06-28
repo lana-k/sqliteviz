@@ -1,5 +1,6 @@
 <template>
 <div>
+  <pivot-ui :key-names="columns" v-model="pivotOptions"/>
   <div ref="output"/>
   <div id="id"/>
 
@@ -20,10 +21,11 @@ import 'pivottable'
 import 'pivottable/dist/export_renderers.js'
 import 'pivottable/dist/plotly_renderers.js'
 import 'pivottable/dist/pivot.css'
-import Chart from '@/views/Main/Editor/Tabs/Tab/Chart'
+import PivotUi from './PivotUi'
+/* import Chart from '@/views/Main/Editor/Tabs/Tab/Chart'
 import Vue from 'vue'
-const ChartClass = Vue.extend(Chart)
-
+const ChartClass = Vue.extend(Chart) */
+/*
 function myRenderer (data, options) {
   console.log(data)
   console.log(options)
@@ -54,16 +56,23 @@ const renderers = $.extend(
   $.pivotUtilities.export_renderers,
   $.pivotUtilities.plotly_renderers,
   { myRenderer: myRenderer }
-)
-
-const options = {
-  renderers
-}
+) */
 
 export default {
   name: 'pivot',
   props: ['sqlResult'],
+  components: {
+    PivotUi
+  },
+  data () {
+    return {
+      pivotOptions: {}
+    }
+  },
   computed: {
+    columns () {
+      return Object.keys(this.sqlResult || {})
+    },
     source () {
       return !this.sqlResult ? [] : [
         this.sqlResult.columns,
@@ -74,6 +83,9 @@ export default {
   watch: {
     sqlResult () {
       this.show()
+    },
+    pivotOptions () {
+      this.show()
     }
   },
   mounted () {
@@ -81,9 +93,18 @@ export default {
   },
   methods: {
     show () {
-      $(this.$refs.output).pivotUI(
-        this.source,
-        options
+      $(this.$refs.output).pivot(
+        function (callback) {
+          const rowCount = this.sqlResult[this.columns[0]].length
+          for (let i = 1; i <= rowCount; i++) {
+            const row = {}
+            this.columns.forEach(col => {
+              row[col] = this.sqlResult[col][i - 1]
+            })
+            callback(row)
+          }
+        }.bind(this),
+        this.pivotOptions
       )
     }
   }
