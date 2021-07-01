@@ -42,23 +42,33 @@ def build(src: Path, dst: Path):
 
     logging.info('Building LLVM bitcode for sqlite3.c')
     subprocess.check_call([
-        'emcc', *cflags, '-c', src / 'sqlite3.c', '-o', 'out/sqlite3.bc'
+        'emcc',
+        *cflags,
+        '-c', src / 'sqlite3.c',
+        '-o', out / 'sqlite3.bc',
     ])
     logging.info('Building LLVM bitcode for extension-functions.c')
     subprocess.check_call([
-        'emcc', *cflags, '-c', src / 'extension-functions.c', '-o', 'out/extension-functions.bc'
+        'emcc',
+        *cflags,
+        '-c', src / 'extension-functions.c',
+        '-o', out / 'extension-functions.bc',
     ])
 
     logging.info('Building WASM from bitcode')
     subprocess.check_call([
-        'emcc', *emflags, 'out/sqlite3.bc', 'out/extension-functions.bc', '-o', 'out/sql-wasm.js'
+        'emcc',
+        *emflags,
+        out / 'sqlite3.bc',
+        out / 'extension-functions.bc',
+        '-o', out / 'sql-wasm.js',
     ])
 
     logging.info('Post-processing build and copying to dist')
-    Path('out/sql-wasm.wasm').rename(dst / 'sql-wasm.wasm')
+    (out / 'sql-wasm.wasm').rename(dst / 'sql-wasm.wasm')
     with (dst / 'sql-wasm.js').open('w') as f:
         f.write((src / 'sqljs' / 'shell-pre.js').read_text())
-        f.write(Path('out/sql-wasm.js').read_text())
+        f.write((out / 'sql-wasm.js').read_text())
         f.write((src / 'sqljs' / 'shell-post.js').read_text())
 
 
