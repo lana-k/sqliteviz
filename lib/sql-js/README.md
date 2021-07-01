@@ -17,11 +17,10 @@ SQLite [amalgamation][2] extensions included:
 SQLite [miscellaneous extensions][3] included:
 
 1. `generate_series` table-valued [series function][6] ([series.c][7])
-2. `transitive_closure` virtual table for [Querying Tree Structures in
-   SQLite][13] ([closure.c][8])
+2. `transitive_closure` virtual table for
+   [Querying Tree Structures in SQLite][11] ([closure.c][8])
 3. `uuid`, `uuid_str` and `uuid_blob` RFC-4122 UUID functions ([uuid.c][9])
 4. `regexp` function ([regexp.c][10])
-5. `eval` function which runs SQL statements recursively ([eval.c][11])
 
 SQLite 3rd party extensions included:
 
@@ -70,6 +69,5 @@ described in [this message from SQLite Forum][12]:
 [8]:  https://sqlite.org/src/file/ext/misc/closure.c
 [9]:  https://sqlite.org/src/file/ext/misc/uuid.c
 [10]: https://sqlite.org/src/file/ext/misc/regexp.c
-[11]: https://sqlite.org/src/file/ext/misc/eval.c
+[11]: https://charlesleifer.com/blog/querying-tree-structures-in-sqlite-using-python-and-the-transitive-closure-extension/
 [12]: https://sqlite.org/forum/forumpost/6ad7d4f4bebe5e06?raw
-[13]: https://charlesleifer.com/blog/querying-tree-structures-in-sqlite-using-python-and-the-transitive-closure-extension/
