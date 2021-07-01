@@ -13,7 +13,14 @@ export default {
       result.columns = source.meta.fields.map(col => col.trim())
       result.values = source.data.map(row => {
         const resultRow = []
-        source.meta.fields.forEach(col => { resultRow.push(row[col]) })
+        source.meta.fields.forEach(col => {
+          let value = row[col]
+          if (value instanceof Date) {
+            value = value.toISOString()
+          }
+          resultRow.push(value)
+        })
+
         return resultRow
       })
     } else {
