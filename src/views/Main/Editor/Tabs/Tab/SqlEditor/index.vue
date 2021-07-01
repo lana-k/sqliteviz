@@ -1,6 +1,7 @@
 <template>
   <div class="codemirror-container">
     <codemirror ref="cm" v-model="query" :options="cmOptions" @changes="onChange" />
+    <side-tool-bar @switch="$emit('switch')"/>
   </div>
 </template>
 
@@ -13,11 +14,12 @@ import 'codemirror/mode/sql/sql.js'
 import 'codemirror/theme/neo.css'
 import 'codemirror/addon/hint/show-hint.css'
 import 'codemirror/addon/display/autorefresh.js'
+import SideToolBar from '../SideToolBar'
 
 export default {
   name: 'SqlEditor',
-  props: ['value'],
-  components: { codemirror },
+  props: ['value', 'switchTo'],
+  components: { codemirror, SideToolBar },
   data () {
     return {
       query: this.value,
