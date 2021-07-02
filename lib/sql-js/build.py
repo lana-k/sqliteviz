@@ -14,6 +14,8 @@ cflags = (
     '-DSQLITE_THREADSAFE=0',
     '-DSQLITE_ENABLE_NORMALIZE',
     '-DSQLITE_EXTRA_INIT=extra_init',
+    '-DSQLITE_DEFAULT_MEMSTATUS=0',
+    '-DSQLITE_USE_ALLOCA',
 )
 emflags = (
     # Base
