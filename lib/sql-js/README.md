@@ -20,7 +20,7 @@ SQLite [miscellaneous extensions][3] included:
 2. `transitive_closure` virtual table for
    [Querying Tree Structures in SQLite][11] ([closure.c][8])
 3. `uuid`, `uuid_str` and `uuid_blob` RFC-4122 UUID functions ([uuid.c][9])
-4. `regexp` function ([regexp.c][10])
+4. `regexp` (hence `REGEXP` operator) and `regexpi` functions ([regexp.c][10])
 
 SQLite 3rd party extensions included:
 
