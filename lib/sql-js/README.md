@@ -61,7 +61,7 @@ described in [this message from SQLite Forum][12]:
 
 [1]:  https://github.com/sql-js/sql.js
 [2]:  https://sqlite.org/amalgamation.html
-[3]:  https://www.sqlite.org/src/dir?ci=trunk&name=ext/misc
+[3]:  https://sqlite.org/src/dir?ci=trunk&name=ext/misc
 [4]:  https://sqlite.org/fts5.html
 [5]:  https://github.com/jakethaw/pivot_vtab
 [6]:  https://sqlite.org/series.html
