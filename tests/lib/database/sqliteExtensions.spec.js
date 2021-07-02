@@ -167,10 +167,11 @@ describe('SQLite extensions', function() {
   it('supports regexp', async function() {
     const actual = await db.execute(`
       SELECT
-        regexp('=\\s?\\d+', 'const foo = 123; const bar = "bar"'),
+        regexp('=\\s?\\d+',  'const foo = 123; const bar = "bar"'),
+        regexpi('=\\s?\\d+', 'const foo = 123; const bar = "bar"'),
         'const foo = 123; const bar = "bar"' REGEXP '=\\s?\\d+'
     `)
-    expect(actual.values).to.eql([[1, 1]])
+    expect(actual.values).to.eql([[1, 1, 1]])
   })
 
   it('supports pivot virtual table', async function() {
