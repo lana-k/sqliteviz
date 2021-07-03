@@ -1,12 +1,13 @@
 <template>
   <div class="sql-editor-panel">
-    <codemirror
-      class="codemirror-container"
-      ref="cm"
-      v-model="query"
-      :options="cmOptions"
-      @changes="onChange"
-    />
+    <div class="codemirror-container">
+      <codemirror
+        ref="cm"
+        v-model="query"
+        :options="cmOptions"
+        @changes="onChange"
+      />
+    </div>
     <side-tool-bar panel="sqlEditor" @switchTo="$emit('switchTo', $event)">
       <icon-button :disabled="runDisabled" @click="$emit('run')">
         <run-icon :disabled="runDisabled"/>
@@ -78,12 +79,12 @@ export default {
   height: 100%;
   max-height: 100%;
   box-sizing: border-box;
-  min-height: 190px;
+  overflow: hidden;
 }
 
 .codemirror-container {
   flex-grow: 1;
-  min-height: 0;
+  overflow: auto;
 }
 
 >>> .vue-codemirror {

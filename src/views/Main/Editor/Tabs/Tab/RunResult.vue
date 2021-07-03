@@ -46,6 +46,7 @@ export default {
 .run-result-panel {
   display: flex;
   height: 100%;
+  overflow: hidden;
 }
 
 .run-result-panel-content {

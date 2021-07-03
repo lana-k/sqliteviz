@@ -13,10 +13,16 @@
       <pivot v-if="mode === 'pivot'" :sql-result="dataSource"/>
     </div>
     <side-tool-bar panel="dataView" @switchTo="$emit('switchTo', $event)">
-      <icon-button @click="mode = 'chart'">
+      <icon-button
+       :active="mode === 'chart'"
+       @click="mode = 'chart'"
+      >
         <chart-icon />
       </icon-button>
-      <icon-button @click="mode = 'pivot'">
+      <icon-button
+        :active="mode === 'pivot'"
+        @click="mode = 'pivot'"
+      >
         <pivot-icon />
       </icon-button>
     </side-tool-bar>
@@ -57,11 +63,14 @@ export default {
   display: flex;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 .data-view-panel-content {
   position: relative;
   flex-grow: 1;
-  width: calc(100% - 27px);
+  width: calc(100% - 39px);
+  height: 100%;
+  overflow: auto;
 }
 </style>
