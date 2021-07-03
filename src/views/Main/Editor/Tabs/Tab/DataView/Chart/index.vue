@@ -18,7 +18,7 @@
       :advancedTraceTypeSelector="true"
       class="chart"
       ref="plotlyEditor"
-      :style="{ height: !dataSources ? 'calc(100% - 41px)' : '100%' }"
+      :style="{ height: !dataSources ? 'calc(100% - 40px)' : '100%' }"
     />
 </div>
 </template>
@@ -97,10 +97,11 @@ export default {
 .chart-warning {
   height: 40px;
   line-height: 40px;
+  border-bottom: 1px solid var(--color-border);
+  box-sizing: border-box;
 }
 
 .chart {
-  border-top: 1px solid var(--color-border);
   min-height: 242px;
 }
 
