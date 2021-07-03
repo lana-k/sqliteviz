@@ -7,15 +7,6 @@
     </div>
     <div id="nav-buttons">
       <button
-        id="run-btn"
-        v-if="currentQuery && $route.path === '/editor'"
-        class="primary"
-        :disabled="runDisabled"
-        @click="currentQuery.execute"
-      >
-        Run
-      </button>
-      <button
         id="save-btn"
         v-show="currentQuery && $route.path === '/editor'"
         class="primary"
