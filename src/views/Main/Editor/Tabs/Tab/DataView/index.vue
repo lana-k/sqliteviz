@@ -10,7 +10,7 @@
         @update="$emit('update')"
       />
 
-      <pivot v-if="mode === 'pivot'" :sql-result="dataSource"/>
+      <pivot v-if="mode === 'pivot'" :data-sources="dataSource" />
     </div>
     <side-tool-bar panel="dataView" @switchTo="$emit('switchTo', $event)">
       <icon-button

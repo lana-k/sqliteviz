@@ -1,5 +1,8 @@
 <template>
 <div>
+  <div class="warning pivot-warning" v-show="!dataSources">
+    There is no data to build a pivot. Run your sql query and make sure the result is not empty.
+  </div>
   <pivot-ui :key-names="columns" v-model="pivotOptions"/>
   <div ref="output"/>
   <div id="id"/>
@@ -60,7 +63,7 @@ const renderers = $.extend(
 
 export default {
   name: 'pivot',
-  props: ['sqlResult'],
+  props: ['dataSources'],
   components: {
     PivotUi
   },
@@ -71,17 +74,11 @@ export default {
   },
   computed: {
     columns () {
-      return Object.keys(this.sqlResult || {})
-    },
-    source () {
-      return !this.sqlResult ? [] : [
-        this.sqlResult.columns,
-        ...this.sqlResult.values
-      ]
+      return Object.keys(this.dataSources || {})
     }
   },
   watch: {
-    sqlResult () {
+    dataSources () {
       this.show()
     },
     pivotOptions () {
@@ -93,13 +90,17 @@ export default {
   },
   methods: {
     show () {
+      if (!this.dataSources) {
+        return
+      }
+
       $(this.$refs.output).pivot(
         function (callback) {
-          const rowCount = this.sqlResult[this.columns[0]].length
+          const rowCount = this.dataSources[this.columns[0]].length
           for (let i = 1; i <= rowCount; i++) {
             const row = {}
             this.columns.forEach(col => {
-              row[col] = this.sqlResult[col][i - 1]
+              row[col] = this.dataSources[col][i - 1]
             })
             callback(row)
           }
@@ -110,3 +111,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.pivot-warning {
+  height: 40px;
+  line-height: 40px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+</style>
