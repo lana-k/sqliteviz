@@ -3,7 +3,7 @@ import database from '@/lib/database'
 
 const expect = chai.expect
 
-describe('SQLite extensions', function() {
+describe('SQLite extensions', function () {
   let db
 
   beforeEach(() => {
@@ -14,7 +14,7 @@ describe('SQLite extensions', function() {
     db.shutDown()
   })
 
-  it('supports contrib trigonometric functions', async function() {
+  it('supports contrib trigonometric functions', async function () {
     const actual = await db.execute(`
       SELECT
         abs(3.1415926 - pi())       < 0.000001,
@@ -39,7 +39,7 @@ describe('SQLite extensions', function() {
     expect(actual.values).to.eql([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])
   })
 
-  it('supports contrib math functions', async function() {
+  it('supports contrib math functions', async function () {
     const actual = await db.execute(`
       SELECT
         exp(0),
@@ -54,7 +54,7 @@ describe('SQLite extensions', function() {
     expect(actual.values).to.eql([[1, 1, 4, 8, 0, 16, 1, -1]])
   })
 
-  it('supports contrib string functions', async function() {
+  it('supports contrib string functions', async function () {
     const actual = await db.execute(`
       SELECT
         replicate('ab', 4),
@@ -74,7 +74,7 @@ describe('SQLite extensions', function() {
     ])
   })
 
-  it('supports contrib aggregate functions', async function() {
+  it('supports contrib aggregate functions', async function () {
     const actual = await db.execute(`
       WITH RECURSIVE series(x) AS (
           SELECT 1
@@ -100,7 +100,7 @@ describe('SQLite extensions', function() {
     expect(actual.values).to.eql([[1, 1, 1, 6, 3, 9]])
   })
 
-  it('supports generate_series', async function() {
+  it('supports generate_series', async function () {
     const actual = await db.execute(`
       SELECT value
       FROM generate_series(5, 20, 5)
@@ -108,7 +108,7 @@ describe('SQLite extensions', function() {
     expect(actual.values).to.eql([[5], [10], [15], [20]])
   })
 
-  it('supports transitive_closure', async function() {
+  it('supports transitive_closure', async function () {
     const actual = await db.execute(`
       CREATE TABLE node(
       node_id   INTEGER NOT NULL PRIMARY KEY,
@@ -151,11 +151,11 @@ describe('SQLite extensions', function() {
       ['database.spec.js'],
       ['sqliteExtensions.spec.js'],
       ['fileIo.spec.js'],
-      ['time.spec.js'],
+      ['time.spec.js']
     ])
   })
 
-  it('supports UUID functions', async function() {
+  it('supports UUID functions', async function () {
     const actual = await db.execute(`
       SELECT
         length(uuid()),
@@ -164,7 +164,7 @@ describe('SQLite extensions', function() {
     expect(actual.values).to.eql([[36, '26a8349c-8a7f-4cbe-b519-bf792c3d7ac6']])
   })
 
-  it('supports regexp', async function() {
+  it('supports regexp', async function () {
     const actual = await db.execute(`
       SELECT
         regexp('=\\s?\\d+',  'const foo = 123; const bar = "bar"'),
@@ -174,7 +174,7 @@ describe('SQLite extensions', function() {
     expect(actual.values).to.eql([[1, 1, 1]])
   })
 
-  it('supports pivot virtual table', async function() {
+  it('supports pivot virtual table', async function () {
     const actual = await db.execute(`
       CREATE TABLE point(x REAL, y REAL, z REAL);
       INSERT INTO point VALUES
@@ -204,13 +204,13 @@ describe('SQLite extensions', function() {
     `)
     expect(actual.columns).to.eql(['x', 'y', '5.0', '10.0', '15.0'])
     expect(actual.values).to.eql([
-      [5,  3, 3.2, 4,   4.8],
+      [5, 3, 3.2, 4, 4.8],
       [10, 6, 4.3, 3.8, 4],
-      [15, 9, 5.4, 3.6, 3.5],
+      [15, 9, 5.4, 3.6, 3.5]
     ])
   })
 
-  it('supports FTS5', async function() {
+  it('supports FTS5', async function () {
     const actual = await db.execute(`
       CREATE VIRTUAL TABLE email USING fts5(sender, title, body, tokenize = 'porter ascii');
 
@@ -235,5 +235,4 @@ describe('SQLite extensions', function() {
     `)
     expect(actual.values).to.eql([['bar@localhost']])
   })
-
 })
