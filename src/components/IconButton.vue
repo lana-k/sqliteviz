@@ -1,13 +1,24 @@
 <template>
-  <div :class="['icon-btn', { active }, { disabled }]" @click="$emit('click')">
+  <div
+    :class="['icon-btn', { active }, { disabled }]"
+    @click="$emit('click')"
+    @mouseover="showTooltip"
+    @mouseout="hideTooltip"
+  >
     <slot/>
+    <span v-if="tooltip" class="icon-tooltip" :style="tooltipStyle">
+      {{ tooltip }}
+    </span>
   </div>
 </template>
 
 <script>
+import tooltipMixin from '@/tooltipMixin'
+
 export default {
   name: 'SideBarButton',
-  props: ['active', 'disabled']
+  props: ['active', 'disabled', 'tooltip', 'tooltipPosition'],
+  mixins: [tooltipMixin]
 }
 </script>
 
