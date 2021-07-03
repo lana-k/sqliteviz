@@ -1,25 +1,25 @@
 <template>
-<div v-show="visible" class="chart-container">
-  <div class="warning chart-warning" v-show="!dataSources && visible">
-    There is no data to build a chart. Run your sql query and make sure the result is not empty.
-  </div>
-  <PlotlyEditor
-    :data="state.data"
-    :layout="state.layout"
-    :frames="state.frames"
-    :config="{ editable: true, displaylogo: false }"
-    :dataSources="dataSources"
-    :dataSourceOptions="dataSourceOptions"
-    :plotly="plotly"
-    @onUpdate="update"
-    @onRender="onRender"
-    :useResizeHandler="true"
-    :debug="true"
-    :advancedTraceTypeSelector="true"
-    class="chart"
-    ref="plotlyEditor"
-    :style="{ height: !dataSources ? 'calc(100% - 40px)' : '100%' }"
-  />
+  <div v-show="visible" class="chart-container" ref="chartContainer">
+    <div class="warning chart-warning" v-show="!dataSources && visible">
+      There is no data to build a chart. Run your sql query and make sure the result is not empty.
+    </div>
+    <PlotlyEditor
+      :data="state.data"
+      :layout="state.layout"
+      :frames="state.frames"
+      :config="{ editable: true, displaylogo: false }"
+      :dataSources="dataSources"
+      :dataSourceOptions="dataSourceOptions"
+      :plotly="plotly"
+      @onUpdate="update"
+      @onRender="onRender"
+      :useResizeHandler="true"
+      :debug="true"
+      :advancedTraceTypeSelector="true"
+      class="chart"
+      ref="plotlyEditor"
+      :style="{ height: !dataSources ? 'calc(100% - 41px)' : '100%' }"
+    />
 </div>
 </template>
 
@@ -33,7 +33,7 @@ import dereference from 'react-chart-editor/lib/lib/dereference'
 
 export default {
   name: 'Chart',
-  props: ['dataSources', 'initChart', 'visible'],
+  props: ['dataSources', 'initChart'],
   components: {
     PlotlyEditor
   },
@@ -44,13 +44,22 @@ export default {
         data: [],
         layout: {},
         frames: []
-      }
+      },
+      visible: true,
+      resizeObserver: null
     }
   },
   computed: {
     dataSourceOptions () {
       return chartHelper.getOptionsFromDataSources(this.dataSources)
     }
+  },
+  mounted () {
+    this.resizeObserver = new ResizeObserver(this.handleResize)
+    this.resizeObserver.observe(this.$refs.chartContainer)
+  },
+  beforeDestroy () {
+    this.resizeObserver.unobserve(this.$refs.chartContainer)
   },
   watch: {
     dataSources () {
@@ -60,6 +69,12 @@ export default {
     }
   },
   methods: {
+    handleResize () {
+      this.visible = false
+      this.$nextTick(() => {
+        this.visible = true
+      })
+    },
     onRender (data, layout, frames) {
       // TODO: check changes and enable Save button if needed
     },
@@ -76,7 +91,7 @@ export default {
 
 <style scoped>
 .chart-container {
-  height: calc(100% - 89px);
+  height: 100%;
 }
 
 .chart-warning {
