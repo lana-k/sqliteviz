@@ -16,38 +16,32 @@
 
     <div :id="'hidden-'+ tabIndex" class="hidden-part" />
 
-    <teleport :to="`#${layout.editor}-${tabIndex}`">
-      <div class="query-editor">
-        <sql-editor
-          ref="sqlEditor"
-          v-model="query"
-          :switch-to="hiddenPart"
-          @switch="onSwitchView('editor')"
-        />
-      </div>
+    <teleport :to="`#${layout.sqlEditor}-${tabIndex}`">
+      <sql-editor
+        ref="sqlEditor"
+        v-model="query"
+        @switchTo="onSwitchView('sqlEditor', $event)"
+        @run="execute"
+      />
     </teleport>
 
     <teleport :to="`#${layout.table}-${tabIndex}`">
-      <view-switcher :view.sync="view" />
-      <div v-show="view === 'table'" class="table-view">
-        <run-result
-          :result="result"
-          :is-getting-results="isGettingResults"
-          :error="error"
-          :time="time"
-          :height="tableViewHeight"
-          :switch-to="hiddenPart"
-          @switch="onSwitchView('table')"
-        />
-      </div>
+      <run-result
+        :result="result"
+        :is-getting-results="isGettingResults"
+        :error="error"
+        :time="time"
+        :height="tableViewHeight"
+        @switchTo="onSwitchView('table', $event)"
+      />
     </teleport>
 
     <teleport :to="`#${layout.dataView}-${tabIndex}`">
       <data-view
         :data-source="result"
         :options="initChart"
-        :switch-to="hiddenPart"
-        @switch="onSwitchView('dataView')"
+        initMode="chart"
+        @switchTo="onSwitchView('dataView', $event)"
         @update="onDataViewUpdate"
       />
     </teleport>
@@ -57,7 +51,6 @@
 <script>
 import Splitpanes from '@/components/Splitpanes'
 import SqlEditor from './SqlEditor'
-import ViewSwitcher from './ViewSwitcher'
 import DataView from './DataView'
 import RunResult from './RunResult'
 import time from '@/lib/utils/time'
@@ -71,21 +64,19 @@ export default {
     DataView,
     RunResult,
     Splitpanes,
-    ViewSwitcher,
     Teleport
   },
   data () {
     return {
       query: this.initQuery,
       result: null,
-      view: 'table',
       tableViewHeight: 0,
       isGettingResults: false,
       error: null,
       resizeObserver: null,
       time: 0,
       layout: {
-        editor: 'above',
+        sqlEditor: 'above',
         table: 'bottom',
         dataView: 'hidden'
       }
@@ -94,9 +85,6 @@ export default {
   computed: {
     isActive () {
       return this.id === this.$store.state.currentTabId
-    },
-    hiddenPart () {
-      return Object.keys(this.layout).find(key => this.layout[key] === 'hidden')
     }
   },
   mounted () {
@@ -123,9 +111,10 @@ export default {
     }
   },
   methods: {
-    onSwitchView (switchedView) {
-      this.layout[this.hiddenPart] = this.layout[switchedView]
-      this.layout[switchedView] = 'hidden'
+    onSwitchView (from, to) {
+      const fromPosition = this.layout[from]
+      this.layout[from] = this.layout[to]
+      this.layout[to] = fromPosition
     },
     onDataViewUpdate () {
       this.$store.commit('updateTab', { index: this.tabIndex, isUnsaved: true })
@@ -149,23 +138,15 @@ export default {
       this.isGettingResults = false
     },
     handleResize () {
-      if (this.view === 'chart') {
-        // hack react-chart editor: hidden and show in order to make the graph resize
-        this.view = 'not chart'
-        this.$nextTick(() => {
-          this.view = 'chart'
-        })
-      }
       this.calculateTableHeight()
     },
     calculateTableHeight () {
       const bottomPane = this.$refs.bottomPane
-      // 88 - view swittcher height
-      // 34 - table footer width
+      // 34 - table footer hight
       // 12 - desirable space after the table
       // 5 - padding-bottom of rounded table container
       // 35 - height of table header
-      const freeSpace = bottomPane.offsetHeight - 88 - 34 - 12 - 5 - 35
+      const freeSpace = bottomPane.offsetHeight - 34 - 12 - 5 - 35 - 64
       this.tableViewHeight = freeSpace - (freeSpace % 35)
     }
   }
@@ -196,20 +177,5 @@ export default {
 .query-results-splitter {
   height: calc(100vh - 104px);
   background-color: var(--color-bg-light);
-}
-
-.query-editor {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  max-height: 100%;
-  box-sizing: border-box;
-  min-height: 190px;
-}
-
-.table-view {
-  margin: 0 52px;
-  height: calc(100% - 88px);
-  position: relative;
 }
 </style>
