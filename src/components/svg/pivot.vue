@@ -1,40 +1,20 @@
 <template>
   <svg
-    :class="['pivot-icon', {'disabled': disabled}]"
     width="18"
     height="18"
     viewBox="0 0 18 18"
     fill="none"
   >
-    <path d="M15.7661 6.59674V12.8467C15.7661 14.5134 14.9328 15.3467 13.2661 15.3467H7.01611M15.7661 6.59674L17.0161 8.68007H14.5161L15.7661 6.59674ZM7.01611 15.3467L9.09945 14.0967V16.5967L7.01611 15.3467Z" stroke="#A2B1C6" stroke-width="1.5" stroke-linecap="round"/>
-    <rect x="6.41943" width="12" height="4" fill="#A2B1C6"/>
-    <rect x="0.419434" y="6" width="4" height="12" fill="#A2B1C6"/>
-    <rect x="0.419434" width="4" height="4" fill="#A2B1C6"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M15.7661 5.13901L18.3407 9.43008H16.5161V12.8467C16.5161 13.7957 16.2783 14.6451 15.6714 15.2521C15.0645 15.859 14.215 16.0967 13.2661 16.0967H9.84942V17.9214L5.55835 15.3467L9.84942 12.7721V14.5967H13.2661C13.9838 14.5967 14.3844 14.4178 14.6108 14.1914C14.8372 13.965 15.0161 13.5645 15.0161 12.8467V9.43008H13.1914L15.7661 5.13901Z" fill="#A2B1C6"/>
+    <path d="M6.41943 0H18.4194V4H6.41943V0Z" fill="#A2B1C6"/>
+    <path d="M0.419434 6H4.41943V18H0.419434V6Z" fill="#A2B1C6"/>
+    <path d="M0.419434 0H4.41943V4H0.419434V0Z" fill="#A2B1C6"/>
   </svg>
 </template>
 
 <script>
 
 export default {
-  name: 'PivotIcon',
-  props: ['disabled']
+  name: 'PivotIcon'
 }
 </script>
-
-<style scoped>
-.pivot-icon {
-  cursor: pointer;
-}
-
-.pivot-icon:hover path {
-  fill: var(-1-color-danger);
-}
-
-.disabled.pivot-icon {
-  cursor: default;
-}
-
-.disabled.pivot-icon:hover path {
-  fill: #C8D4E3;
-}
-</style>

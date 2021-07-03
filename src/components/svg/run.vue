@@ -1,6 +1,5 @@
 <template>
   <svg
-    :class="['run-icon', {'disabled': disabled}]"
     width="12"
     height="13"
     viewBox="0 0 12 13"
@@ -13,25 +12,6 @@
 <script>
 
 export default {
-  name: 'RunIcon',
-  props: ['disabled']
+  name: 'RunIcon'
 }
 </script>
-
-<style scoped>
-.run-icon {
-  cursor: pointer;
-}
-
-.run-icon:hover path {
-  fill: var(--color-danger);
-}
-
-.disabled.run-icon {
-  cursor: default;
-}
-
-.disabled.run-icon:hover path {
-  fill: #C8D4E3;
-}
-</style>

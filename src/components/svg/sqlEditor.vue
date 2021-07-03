@@ -1,6 +1,5 @@
 <template>
   <svg
-    :class="['sql-editor-icon', {'disabled': disabled}]"
     width="18"
     height="19"
     viewBox="0 0 18 19"
@@ -21,25 +20,6 @@
 <script>
 
 export default {
-  name: 'SqlEditorIcon',
-  props: ['disabled']
+  name: 'SqlEditorIcon'
 }
 </script>
-
-<style scoped>
-.sql-editor-icon {
-  cursor: pointer;
-}
-
-.sql-editor-icon:hover path {
-  fill: var(--color-danger);
-}
-
-.disabled.sql-editor-icon {
-  cursor: default;
-}
-
-.disabled.sql-editor-icon:hover path {
-  fill: #C8D4E3;
-}
-</style>
