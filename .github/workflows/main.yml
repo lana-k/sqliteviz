@@ -15,6 +15,10 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 10.x
+
+    - name: Update npm
+      run: npm install -g npm@7
+
     - name: npm install and build
       run: |
         npm install

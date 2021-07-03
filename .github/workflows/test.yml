@@ -24,6 +24,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y chromium-browser firefox
 
+    - name: Update npm
+      run: npm install -g npm@7
+
     - name: Install the project
       run: npm install
 
