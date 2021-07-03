@@ -1,24 +1,26 @@
 <template>
-  <div>
-    <div
-      v-show="result === null && !isGettingResults && !error"
-      class="table-preview result-before"
-    >
-      Run your query and get results here
+  <div class="run-result-panel">
+    <div class="run-result-panel-content">
+      <div
+        v-show="result === null && !isGettingResults && !error"
+        class="table-preview result-before"
+      >
+        Run your query and get results here
+      </div>
+      <div v-if="isGettingResults" class="table-preview result-in-progress">
+        <loading-indicator :size="30"/>
+        Fetching results...
+      </div>
+      <div
+        v-show="result === undefined && !isGettingResults && !error"
+        class="table-preview result-empty"
+      >
+        No rows retrieved according to your query
+      </div>
+      <logs v-if="error" :messages="[error]"/>
+      <sql-table v-if="result" :data-set="result" :time="time" :height="height" />
     </div>
-    <div v-if="isGettingResults" class="table-preview result-in-progress">
-      <loading-indicator :size="30"/>
-      Fetching results...
-    </div>
-    <div
-      v-show="result === undefined && !isGettingResults && !error"
-      class="table-preview result-empty"
-    >
-      No rows retrieved according to your query
-    </div>
-    <logs v-if="error" :messages="[error]"/>
-    <sql-table v-if="result" :data-set="result" :time="time" :height="height" />
-    <side-tool-bar @switch="$emit('switch')" :switch-to="switchTo"/>
+    <side-tool-bar @switchTo="$emit('switchTo', $event)" panel="table"/>
   </div>
 </template>
 
@@ -30,7 +32,7 @@ import SideToolBar from './SideToolBar'
 
 export default {
   name: 'RunResult',
-  props: ['result', 'isGettingResults', 'error', 'time', 'height', 'switchTo'],
+  props: ['result', 'isGettingResults', 'error', 'time', 'height'],
   components: {
     SqlTable,
     LoadingIndicator,
@@ -41,6 +43,19 @@ export default {
 </script>
 
 <style scoped>
+.run-result-panel {
+  display: flex;
+  height: 100%;
+}
+
+.run-result-panel-content {
+  position: relative;
+  flex-grow: 1;
+  padding: 32px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
 .table-preview {
   position: absolute;
   top: 40%;
