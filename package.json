@@ -1,6 +1,6 @@
 {
   "name": "sqliteviz",
-  "version": "0.13.2",
+  "version": "0.14.0",
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
@@ -19,6 +19,7 @@
     "react": "^16.13.1",
     "react-chart-editor": "^0.45.0",
     "react-dom": "^16.13.1",
+    "sql.js": "file:./lib/sql-js",
     "sqlite-parser": "^1.0.1",
     "vue": "^2.6.11",
     "vue-codemirror": "^4.0.6",
@@ -26,8 +27,7 @@
     "vue-router": "^3.2.0",
     "vuejs-paginate": "^2.1.0",
     "vuera": "^0.2.7",
-    "vuex": "^3.4.0",
-    "sql.js": "file:./lib/sql-js"
+    "vuex": "^3.4.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.4.0",
