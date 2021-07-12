@@ -31,7 +31,7 @@ jobs:
       run: npm install
 
     - name: Run lint
-      run: npm run lint
+      run: npm run lint -- --no-fix
 
     - name: Run karma tests
       run: npm run test

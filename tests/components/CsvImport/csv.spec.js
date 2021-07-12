@@ -11,16 +11,17 @@ describe('csv.js', () => {
   it('getResult with fields', () => {
     const source = {
       data: [
-        { id: 1, 'name ': 'foo' },
-        { id: 2, 'name ': 'bar' }
+        { id: 1, 'name ': 'foo', date: new Date('2021-06-30T14:10:24.717Z') },
+        { id: 2, 'name ': 'bar', date: new Date('2021-07-30T14:10:15.717Z') }
       ],
       meta: {
-        fields: ['id', 'name ']
+        fields: ['id', 'name ', 'date']
       }
     }
     expect(csv.getResult(source)).to.eql({
       id: [1, 2],
-      name: ['foo', 'bar']
+      name: ['foo', 'bar'],
+      date: ['2021-06-30T14:10:24.717Z', '2021-07-30T14:10:15.717Z']
     })
   })
 
