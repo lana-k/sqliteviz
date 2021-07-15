@@ -24,8 +24,8 @@ export default {
         return resultRow
       })
     } else {
-      result.values = source.data.map(row => row.map(value => 
-        value instanceof Date ? value.toISOString(): value
+      result.values = source.data.map(row => row.map(value =>
+        value instanceof Date ? value.toISOString() : value
       ))
       result.columns = []
       for (let i = 1; i <= source.data[0].length; i++) {
