@@ -42,7 +42,6 @@ export default {
     return {
       query: this.value,
       cmOptions: {
-        // codemirror options
         tabSize: 4,
         mode: 'text/x-mysql',
         theme: 'neo',

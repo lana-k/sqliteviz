@@ -19,7 +19,7 @@ import PivotUi from './PivotUi'
 
 export default {
   name: 'pivot',
-  props: ['dataSources'],
+  props: ['dataSources', 'initOptions'],
   components: {
     PivotUi
   },
@@ -64,6 +64,10 @@ export default {
         this.pivotOptions
       )
     }
+  },
+  getOptionsForSave () {
+    // TODO get real options for save
+    return { pivotOptions: true }
   }
 }
 </script>
@@ -73,10 +77,13 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-white);
 }
 
 .pivot-output {
-  flex-grow: 1;
+  /* flex-grow: 1; */
+  width: 100%;
+  overflow: auto;
 }
 
 .pivot-warning {
@@ -84,5 +91,8 @@ export default {
   line-height: 40px;
   box-sizing: border-box;
   margin-bottom: 20px;
+}
+>>> .pvtTable {
+  min-width: 100%;
 }
 </style>

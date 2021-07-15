@@ -1,16 +1,13 @@
 <template>
   <div class="data-view-panel">
     <div class="data-view-panel-content">
-      <chart
-        v-if="mode === 'chart'"
-        :visible="mode === 'chart'"
+      <component
+        :is="mode"
+        :init-options="options"
         :data-sources="dataSource"
-        :init-chart="options"
-        ref="chart"
+        ref="viewComponent"
         @update="$emit('update')"
       />
-
-      <pivot v-if="mode === 'pivot'" :data-sources="dataSource" />
     </div>
     <side-tool-bar panel="dataView" @switchTo="$emit('switchTo', $event)">
       <icon-button
@@ -54,6 +51,9 @@ export default {
     }
   },
   methods: {
+    getOptionsForSave () {
+      return this.$refs.viewComponent.getOptionsForSave()
+    }
   }
 }
 </script>

@@ -11,7 +11,7 @@ export function getOptionsFromDataSources (dataSources) {
   }))
 }
 
-export function getChartStateForSave (state, dataSources) {
+export function getOptionsForSave (state, dataSources) {
   // we don't need to save the data, only settings
   // so we modify state.data using dereference
   const stateCopy = JSON.parse(JSON.stringify(state))
@@ -25,5 +25,5 @@ export function getChartStateForSave (state, dataSources) {
 
 export default {
   getOptionsFromDataSources,
-  getChartStateForSave
+  getOptionsForSave
 }

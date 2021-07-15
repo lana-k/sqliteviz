@@ -3,7 +3,7 @@ import sinon from 'sinon'
 import { mount, shallowMount, createWrapper } from '@vue/test-utils'
 import Vuex from 'vuex'
 import MainMenu from '@/views/Main/MainMenu'
-import storedQueries from '@/lib/storedQueries'
+import storedInquiries from '@/lib/storedInquiries'
 
 let wrapper = null
 
@@ -16,7 +16,7 @@ describe('MainMenu.vue', () => {
     wrapper.destroy()
   })
 
-  it('Run and Save are visible only on /editor page', async () => {
+  it('Create and Save are visible only on /editor page', async () => {
     const state = {
       currentTab: { query: '', execute: sinon.stub() },
       tabs: [{}],
@@ -30,22 +30,19 @@ describe('MainMenu.vue', () => {
       mocks: { $route },
       stubs: ['router-link']
     })
-    expect(wrapper.find('#run-btn').exists()).to.equal(true)
-    expect(wrapper.find('#run-btn').isVisible()).to.equal(true)
     expect(wrapper.find('#save-btn').exists()).to.equal(true)
     expect(wrapper.find('#save-btn').isVisible()).to.equal(true)
     expect(wrapper.find('#create-btn').exists()).to.equal(true)
     expect(wrapper.find('#create-btn').isVisible()).to.equal(true)
 
-    await wrapper.vm.$set(wrapper.vm.$route, 'path', '/my-queries')
-    expect(wrapper.find('#run-btn').exists()).to.equal(false)
+    await wrapper.vm.$set(wrapper.vm.$route, 'path', '/my-inquiries')
     expect(wrapper.find('#save-btn').exists()).to.equal(true)
     expect(wrapper.find('#save-btn').isVisible()).to.equal(false)
     expect(wrapper.find('#create-btn').exists()).to.equal(true)
     expect(wrapper.find('#create-btn').isVisible()).to.equal(true)
   })
 
-  it('Run and Save are not visible if there is no tabs', () => {
+  it('Save is not visible if there is no tabs', () => {
     const state = {
       currentTab: null,
       tabs: [{}],
@@ -58,35 +55,10 @@ describe('MainMenu.vue', () => {
       mocks: { $route },
       stubs: ['router-link']
     })
-    expect(wrapper.find('#run-btn').exists()).to.equal(false)
     expect(wrapper.find('#save-btn').exists()).to.equal(true)
     expect(wrapper.find('#save-btn').isVisible()).to.equal(false)
     expect(wrapper.find('#create-btn').exists()).to.equal(true)
     expect(wrapper.find('#create-btn').isVisible()).to.equal(true)
-  })
-
-  it('Run is disabled if there is no db or no query', async () => {
-    const state = {
-      currentTab: { query: 'SELECT * FROM foo', execute: sinon.stub() },
-      tabs: [{}],
-      db: null
-    }
-    const store = new Vuex.Store({ state })
-    const $route = { path: '/editor' }
-
-    wrapper = shallowMount(MainMenu, {
-      store,
-      mocks: { $route },
-      stubs: ['router-link']
-    })
-    const vm = wrapper.vm
-    expect(wrapper.find('#run-btn').element.disabled).to.equal(true)
-
-    await vm.$set(state, 'db', {})
-    expect(wrapper.find('#run-btn').element.disabled).to.equal(false)
-
-    await vm.$set(state.currentTab, 'query', '')
-    expect(wrapper.find('#run-btn').element.disabled).to.equal(true)
   })
 
   it('Save is disabled if current tab.isUnsaved is false', async () => {
@@ -124,9 +96,9 @@ describe('MainMenu.vue', () => {
       tabs: [{ isUnsaved: true }],
       db: {}
     }
-    const newQueryId = 1
+    const newInquiryId = 1
     const actions = {
-      addTab: sinon.stub().resolves(newQueryId)
+      addTab: sinon.stub().resolves(newInquiryId)
     }
     const mutations = {
       setCurrentTabId: sinon.stub()
@@ -144,7 +116,7 @@ describe('MainMenu.vue', () => {
     await wrapper.find('#create-btn').trigger('click')
     expect(actions.addTab.calledOnce).to.equal(true)
     await actions.addTab.returnValues[0]
-    expect(mutations.setCurrentTabId.calledOnceWith(state, newQueryId)).to.equal(true)
+    expect(mutations.setCurrentTabId.calledOnceWith(state, newInquiryId)).to.equal(true)
     expect($router.push.calledOnce).to.equal(false)
   })
 
@@ -158,15 +130,15 @@ describe('MainMenu.vue', () => {
       tabs: [{ isUnsaved: true }],
       db: {}
     }
-    const newQueryId = 1
+    const newInquiryId = 1
     const actions = {
-      addTab: sinon.stub().resolves(newQueryId)
+      addTab: sinon.stub().resolves(newInquiryId)
     }
     const mutations = {
       setCurrentTabId: sinon.stub()
     }
     const store = new Vuex.Store({ state, mutations, actions })
-    const $route = { path: '/my-queries' }
+    const $route = { path: '/my-inquiries' }
     const $router = { push: sinon.stub() }
 
     wrapper = shallowMount(MainMenu, {
@@ -178,7 +150,7 @@ describe('MainMenu.vue', () => {
     await wrapper.find('#create-btn').trigger('click')
     expect(actions.addTab.calledOnce).to.equal(true)
     await actions.addTab.returnValues[0]
-    expect(mutations.setCurrentTabId.calledOnceWith(state, newQueryId)).to.equal(true)
+    expect(mutations.setCurrentTabId.calledOnceWith(state, newInquiryId)).to.equal(true)
     expect($router.push.calledOnce).to.equal(true)
   })
 
@@ -220,7 +192,7 @@ describe('MainMenu.vue', () => {
 
       // Running is enabled and route path is not editor
       await wrapper.vm.$set(state, 'db', {})
-      await wrapper.vm.$set($route, 'path', '/my-queries')
+      await wrapper.vm.$set($route, 'path', '/my-inquiries')
       document.dispatchEvent(ctrlR)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
       document.dispatchEvent(metaR)
@@ -265,14 +237,14 @@ describe('MainMenu.vue', () => {
 
       // Running is enabled and route path is not editor
       await wrapper.vm.$set(state, 'db', {})
-      await wrapper.vm.$set($route, 'path', '/my-queries')
+      await wrapper.vm.$set($route, 'path', '/my-inquiries')
       document.dispatchEvent(ctrlEnter)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
       document.dispatchEvent(metaEnter)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
     })
 
-  it('Ctrl B calls createNewQuery', async () => {
+  it('Ctrl B calls createNewInquiry', async () => {
     const state = {
       currentTab: {
         query: 'SELECT * FROM foo',
@@ -290,23 +262,23 @@ describe('MainMenu.vue', () => {
       mocks: { $route },
       stubs: ['router-link']
     })
-    sinon.stub(wrapper.vm, 'createNewQuery')
+    sinon.stub(wrapper.vm, 'createNewInquiry')
 
     const ctrlB = new KeyboardEvent('keydown', { key: 'b', ctrlKey: true })
     const metaB = new KeyboardEvent('keydown', { key: 'b', metaKey: true })
     document.dispatchEvent(ctrlB)
-    expect(wrapper.vm.createNewQuery.calledOnce).to.equal(true)
+    expect(wrapper.vm.createNewInquiry.calledOnce).to.equal(true)
     document.dispatchEvent(metaB)
-    expect(wrapper.vm.createNewQuery.calledTwice).to.equal(true)
+    expect(wrapper.vm.createNewInquiry.calledTwice).to.equal(true)
 
-    await wrapper.vm.$set($route, 'path', '/my-queries')
+    await wrapper.vm.$set($route, 'path', '/my-inquiries')
     document.dispatchEvent(ctrlB)
-    expect(wrapper.vm.createNewQuery.calledThrice).to.equal(true)
+    expect(wrapper.vm.createNewInquiry.calledThrice).to.equal(true)
     document.dispatchEvent(metaB)
-    expect(wrapper.vm.createNewQuery.callCount).to.equal(4)
+    expect(wrapper.vm.createNewInquiry.callCount).to.equal(4)
   })
 
-  it('Ctrl S calls checkQueryBeforeSave if the tab is unsaved and route path is /editor',
+  it('Ctrl S calls checkInquiryBeforeSave if the tab is unsaved and route path is /editor',
     async () => {
       const state = {
         currentTab: {
@@ -325,33 +297,33 @@ describe('MainMenu.vue', () => {
         mocks: { $route },
         stubs: ['router-link']
       })
-      sinon.stub(wrapper.vm, 'checkQueryBeforeSave')
+      sinon.stub(wrapper.vm, 'checkInquiryBeforeSave')
 
       const ctrlS = new KeyboardEvent('keydown', { key: 's', ctrlKey: true })
       const metaS = new KeyboardEvent('keydown', { key: 's', metaKey: true })
       // tab is unsaved and route is /editor
       document.dispatchEvent(ctrlS)
-      expect(wrapper.vm.checkQueryBeforeSave.calledOnce).to.equal(true)
+      expect(wrapper.vm.checkInquiryBeforeSave.calledOnce).to.equal(true)
       document.dispatchEvent(metaS)
-      expect(wrapper.vm.checkQueryBeforeSave.calledTwice).to.equal(true)
+      expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
 
       // tab is saved and route is /editor
       await wrapper.vm.$set(state.tabs[0], 'isUnsaved', false)
       document.dispatchEvent(ctrlS)
-      expect(wrapper.vm.checkQueryBeforeSave.calledTwice).to.equal(true)
+      expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
       document.dispatchEvent(metaS)
-      expect(wrapper.vm.checkQueryBeforeSave.calledTwice).to.equal(true)
+      expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
 
       // tab is unsaved and route is not /editor
-      await wrapper.vm.$set($route, 'path', '/my-queries')
+      await wrapper.vm.$set($route, 'path', '/my-inquiries')
       await wrapper.vm.$set(state.tabs[0], 'isUnsaved', true)
       document.dispatchEvent(ctrlS)
-      expect(wrapper.vm.checkQueryBeforeSave.calledTwice).to.equal(true)
+      expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
       document.dispatchEvent(metaS)
-      expect(wrapper.vm.checkQueryBeforeSave.calledTwice).to.equal(true)
+      expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
     })
 
-  it('Saves the query when no need the new name',
+  it('Saves the inquiry when no need the new name',
     async () => {
       const state = {
         currentTab: {
@@ -367,12 +339,13 @@ describe('MainMenu.vue', () => {
       }
       const store = new Vuex.Store({ state, mutations })
       const $route = { path: '/editor' }
-      sinon.stub(storedQueries, 'isTabNeedName').returns(false)
-      sinon.stub(storedQueries, 'save').returns({
+      sinon.stub(storedInquiries, 'isTabNeedName').returns(false)
+      sinon.stub(storedInquiries, 'save').returns({
         name: 'foo',
         id: 1,
         query: 'SELECT * FROM foo',
-        chart: []
+        viewType: 'chart',
+        viewOptions: []
       })
 
       wrapper = mount(MainMenu, {
@@ -386,8 +359,8 @@ describe('MainMenu.vue', () => {
       // check that the dialog is closed
       expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
 
-      // check that the query was saved via storedQueries.save (newName='')
-      expect(storedQueries.save.calledOnceWith(state.currentTab, '')).to.equal(true)
+      // check that the inquiry was saved via storedInquiries.save (newName='')
+      expect(storedInquiries.save.calledOnceWith(state.currentTab, '')).to.equal(true)
 
       // check that the tab was updated
       expect(mutations.updateTab.calledOnceWith(state, sinon.match({
@@ -395,12 +368,13 @@ describe('MainMenu.vue', () => {
         name: 'foo',
         id: 1,
         query: 'SELECT * FROM foo',
-        chart: [],
+        viewType: 'chart',
+        viewOptions: [],
         isUnsaved: false
       }))).to.equal(true)
 
-      // check that 'querySaved' event was triggered on $root
-      expect(createWrapper(wrapper.vm.$root).emitted('querySaved')).to.have.lengthOf(1)
+      // check that 'inquirySaved' event was triggered on $root
+      expect(createWrapper(wrapper.vm.$root).emitted('inquirySaved')).to.have.lengthOf(1)
     })
 
   it('Shows en error when the new name is needed but not specifyied', async () => {
@@ -418,12 +392,13 @@ describe('MainMenu.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
     const $route = { path: '/editor' }
-    sinon.stub(storedQueries, 'isTabNeedName').returns(true)
-    sinon.stub(storedQueries, 'save').returns({
+    sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
+    sinon.stub(storedInquiries, 'save').returns({
       name: 'foo',
       id: 1,
       query: 'SELECT * FROM foo',
-      chart: []
+      viewType: 'chart',
+      viewOptions: []
     })
 
     wrapper = mount(MainMenu, {
@@ -444,11 +419,11 @@ describe('MainMenu.vue', () => {
       .trigger('click')
 
     // check that we have an error message and dialog is still open
-    expect(wrapper.find('.text-field-error').text()).to.equal('Query name can\'t be empty')
+    expect(wrapper.find('.text-field-error').text()).to.equal('Inquiry name can\'t be empty')
     expect(wrapper.find('[data-modal="save"]').exists()).to.equal(true)
   })
 
-  it('Saves the query with a new name', async () => {
+  it('Saves the inquiry with a new name', async () => {
     const state = {
       currentTab: {
         query: 'SELECT * FROM foo',
@@ -463,12 +438,13 @@ describe('MainMenu.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
     const $route = { path: '/editor' }
-    sinon.stub(storedQueries, 'isTabNeedName').returns(true)
-    sinon.stub(storedQueries, 'save').returns({
+    sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
+    sinon.stub(storedInquiries, 'save').returns({
       name: 'foo',
       id: 1,
       query: 'SELECT * FROM foo',
-      chart: []
+      viewType: 'chart',
+      viewOptions: []
     })
 
     wrapper = mount(MainMenu, {
@@ -494,8 +470,8 @@ describe('MainMenu.vue', () => {
     // check that the dialog is closed
     expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
 
-    // check that the query was saved via storedQueries.save (newName='foo')
-    expect(storedQueries.save.calledOnceWith(state.currentTab, 'foo')).to.equal(true)
+    // check that the inquiry was saved via storedInquiries.save (newName='foo')
+    expect(storedInquiries.save.calledOnceWith(state.currentTab, 'foo')).to.equal(true)
 
     // check that the tab was updated
     expect(mutations.updateTab.calledOnceWith(state, sinon.match({
@@ -503,15 +479,16 @@ describe('MainMenu.vue', () => {
       name: 'foo',
       id: 1,
       query: 'SELECT * FROM foo',
-      chart: [],
+      viewType: 'chart',
+      viewOptions: [],
       isUnsaved: false
     }))).to.equal(true)
 
-    // check that 'querySaved' event was triggered on $root
-    expect(createWrapper(wrapper.vm.$root).emitted('querySaved')).to.have.lengthOf(1)
+    // check that 'inquirySaved' event was triggered on $root
+    expect(createWrapper(wrapper.vm.$root).emitted('inquirySaved')).to.have.lengthOf(1)
   })
 
-  it('Saves a predefined query with a new name', async () => {
+  it('Saves a predefined inquiry with a new name', async () => {
     const state = {
       currentTab: {
         query: 'SELECT * FROM foo',
@@ -525,7 +502,8 @@ describe('MainMenu.vue', () => {
             [2, 'Drako Malfoy']
           ]
         },
-        view: 'chart'
+        viewType: 'chart',
+        viewOptions: [],
       },
       tabs: [{ id: 1, name: 'foo', isUnsaved: true, isPredefined: true }],
       db: {}
@@ -535,12 +513,13 @@ describe('MainMenu.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
     const $route = { path: '/editor' }
-    sinon.stub(storedQueries, 'isTabNeedName').returns(true)
-    sinon.stub(storedQueries, 'save').returns({
+    sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
+    sinon.stub(storedInquiries, 'save').returns({
       name: 'bar',
       id: 2,
       query: 'SELECT * FROM foo',
-      chart: []
+      viewType: 'chart',
+      viewOptions: []
     })
 
     wrapper = mount(MainMenu, {
@@ -569,8 +548,8 @@ describe('MainMenu.vue', () => {
     // check that the dialog is closed
     expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
 
-    // check that the query was saved via storedQueries.save (newName='bar')
-    expect(storedQueries.save.calledOnceWith(state.currentTab, 'bar')).to.equal(true)
+    // check that the inquiry was saved via storedInquiries.save (newName='bar')
+    expect(storedInquiries.save.calledOnceWith(state.currentTab, 'bar')).to.equal(true)
 
     // check that the tab was updated
     expect(mutations.updateTab.calledOnceWith(state, sinon.match({
@@ -578,18 +557,19 @@ describe('MainMenu.vue', () => {
       name: 'bar',
       id: 2,
       query: 'SELECT * FROM foo',
-      chart: [],
+      viewType: 'chart',
+      viewOptions: [],
       isUnsaved: false
     }))).to.equal(true)
 
-    // check that 'querySaved' event was triggered on $root
-    expect(createWrapper(wrapper.vm.$root).emitted('querySaved')).to.have.lengthOf(1)
+    // check that 'inquirySaved' event was triggered on $root
+    expect(createWrapper(wrapper.vm.$root).emitted('inquirySaved')).to.have.lengthOf(1)
 
-    // We saved predefined query, so the tab will be created again
+    // We saved predefined inquiry, so the tab will be created again
     // (because of new id) and it will be without sql result and has default view - table.
     // That's why we need to restore data and view.
     // Check that result and view are preserved in the currentTab:
-    expect(state.currentTab.view).to.equal('chart')
+    expect(state.currentTab.viewType).to.equal('chart')
     expect(state.currentTab.result).to.eql({
       columns: ['id', 'name'],
       values: [
@@ -614,8 +594,8 @@ describe('MainMenu.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
     const $route = { path: '/editor' }
-    sinon.stub(storedQueries, 'isTabNeedName').returns(true)
-    sinon.stub(storedQueries, 'save').returns({
+    sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
+    sinon.stub(storedInquiries, 'save').returns({
       name: 'bar',
       id: 2,
       query: 'SELECT * FROM foo',
@@ -642,13 +622,13 @@ describe('MainMenu.vue', () => {
     // check that the dialog is closed
     expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
 
-    // check that the query was not saved via storedQueries.save
-    expect(storedQueries.save.called).to.equal(false)
+    // check that the inquiry was not saved via storedInquiries.save
+    expect(storedInquiries.save.called).to.equal(false)
 
     // check that the tab was not updated
     expect(mutations.updateTab.called).to.equal(false)
 
-    // check that 'querySaved' event is not listened on $root
-    expect(wrapper.vm.$root.$listeners).to.not.have.property('querySaved')
+    // check that 'inquirySaved' event is not listened on $root
+    expect(wrapper.vm.$root.$listeners).to.not.have.property('inquirySaved')
   })
 })

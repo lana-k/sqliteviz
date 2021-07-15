@@ -18,7 +18,7 @@ describe('actions', () => {
     expect(state.untitledLastIndex).to.equal(1)
   })
 
-  it('addTab adds tab from saved queries', async () => {
+  it('addTab adds tab from saved inquiries', async () => {
     const state = {
       tabs: [],
       untitledLastIndex: 0
@@ -28,7 +28,8 @@ describe('actions', () => {
       name: 'test',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
     await addTab({ state }, tab)
@@ -36,13 +37,14 @@ describe('actions', () => {
     expect(state.untitledLastIndex).to.equal(0)
   })
 
-  it("addTab doesn't add anything when the query is already opened", async () => {
+  it("addTab doesn't add anything when the inquiry is already opened", async () => {
     const tab1 = {
       id: 1,
       name: 'test',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 
@@ -51,7 +53,8 @@ describe('actions', () => {
       name: 'bar',
       tempName: null,
       query: 'SELECT * from bar',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 

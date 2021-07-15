@@ -36,7 +36,27 @@ describe('SQLite extensions', function () {
         abs(pi() - radians(180))    < 0.000001,
         abs(pi() / 2 - atan2(1, 0)) < 0.000001
     `)
-    expect(actual.values).to.eql([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])
+
+    expect(actual).to.eql({
+      'abs(3.1415926 - pi())       < 0.000001': [1],
+      'abs(1 - cos(2 * pi()))      < 0.000001': [1],
+      'abs(0 - sin(pi()))          < 0.000001': [1],
+      'abs(0 - tan(0))             < 0.000001': [1],
+      'abs(0 - cot(pi() / 2))      < 0.000001': [1],
+      'abs(1 - acos(cos(1)))       < 0.000001': [1],
+      'abs(1 - asin(sin(1)))       < 0.000001': [1],
+      'abs(1 - atan(tan(1)))       < 0.000001': [1],
+      'abs(1 - cosh(0))            < 0.000001': [1],
+      'abs(0 - sinh(0))            < 0.000001': [1],
+      'abs(tanh(1) + tanh(-1))     < 0.000001': [1],
+      'abs(coth(1) + coth(-1))     < 0.000001': [1],
+      'abs(1 - acosh(cosh(1)))     < 0.000001': [1],
+      'abs(1 - asinh(sinh(1)))     < 0.000001': [1],
+      'abs(1 - atanh(tanh(1)))     < 0.000001': [1],
+      'abs(180 - degrees(pi()))    < 0.000001': [1],
+      'abs(pi() - radians(180))    < 0.000001': [1],
+      'abs(pi() / 2 - atan2(1, 0)) < 0.000001': [1]
+    })
   })
 
   it('supports contrib math functions', async function () {
@@ -51,7 +71,17 @@ describe('SQLite extensions', function () {
         ceil(-1.95) + ceil(1.95),
         floor(-1.95) + floor(1.95)
     `)
-    expect(actual.values).to.eql([[1, 1, 4, 8, 0, 16, 1, -1]])
+    expect(actual).to.eql({
+      'exp(0)': [1],
+      'log(exp(1))': [1],
+      'log10(10000)': [4],
+      'power(2, 3)': [8],
+      'sign(-10) + sign(20)': [0],
+      'sqrt(square(16))': [16],
+      'ceil(-1.95) + ceil(1.95)': [1],
+      'floor(-1.95) + floor(1.95)': [-1]
+      
+    })
   })
 
   it('supports contrib string functions', async function () {
@@ -69,9 +99,19 @@ describe('SQLite extensions', function () {
         padc('foo', 5),
         strfilter('abcba', 'bc')
     `)
-    expect(actual.values).to.eql([
-      ['abababab', 7, 0, 'fo', 'ar', 'raboof', 'Foobar', '  foo', 'foo  ', ' foo ', 'bcb']
-    ])
+    expect(actual).to.eql({
+      "replicate('ab', 4)": ['abababab'],
+      "charindex('ab', 'foobarabbarfoo')": [7],
+      "charindex('ab', 'foobarabbarfoo', 8)": [0],
+      "leftstr('foobar', 2)": ['fo'],
+      "rightstr('foobar', 2)": ['ar'],
+      "reverse('foobar')": ['raboof'],
+      "proper('fooBar')": ['Foobar'],
+      "padl('foo', 5)": ['  foo'],
+      "padr('foo', 5)": ['foo  '],
+      "padc('foo', 5)": [' foo '],
+      "strfilter('abcba', 'bc')": ['bcb']
+    })
   })
 
   it('supports contrib aggregate functions', async function () {
@@ -97,7 +137,14 @@ describe('SQLite extensions', function () {
         VALUES (1)
       )
     `)
-    expect(actual.values).to.eql([[1, 1, 1, 6, 3, 9]])
+    expect(actual).to.eql({
+      'abs( 3.77406806 - stdev(x))    < 0.000001': [1],
+      'abs(14.24358974 - variance(x)) < 0.000001': [1],
+      'mode(x)': [1],
+      'median(x)': [6],
+      'lower_quartile(x)': [3],
+      'upper_quartile(x)': [9]
+    })
   })
 
   it('supports generate_series', async function () {
@@ -105,7 +152,9 @@ describe('SQLite extensions', function () {
       SELECT value
       FROM generate_series(5, 20, 5)
     `)
-    expect(actual.values).to.eql([[5], [10], [15], [20]])
+    expect(actual).to.eql({
+      value: [5, 10, 15, 20]
+    })
   })
 
   it('supports transitive_closure', async function () {
@@ -145,33 +194,42 @@ describe('SQLite extensions', function () {
         WHERE nc.root = 2 AND nc.depth = 2
       );
     `)
-    expect(actual.values).to.eql([
-      ['_sql.spec.js'],
-      ['_statements.spec.js'],
-      ['database.spec.js'],
-      ['sqliteExtensions.spec.js'],
-      ['fileIo.spec.js'],
-      ['time.spec.js']
-    ])
+    expect(actual).to.eql({
+      name: [
+        '_sql.spec.js',
+        '_statements.spec.js',
+        'database.spec.js',
+        'sqliteExtensions.spec.js',
+        'fileIo.spec.js',
+        'time.spec.js'
+      ]
+    })
   })
 
   it('supports UUID functions', async function () {
     const actual = await db.execute(`
       SELECT
-        length(uuid()),
-        uuid_str(uuid_blob('26a8349c8a7f4cbeb519bf792c3d7ac6'))
+        length(uuid()) as length,
+        uuid_str(uuid_blob('26a8349c8a7f4cbeb519bf792c3d7ac6')) as uid
     `)
-    expect(actual.values).to.eql([[36, '26a8349c-8a7f-4cbe-b519-bf792c3d7ac6']])
+    expect(actual).to.eql({
+      length: [36],
+      uid: ['26a8349c-8a7f-4cbe-b519-bf792c3d7ac6']
+    })
   })
 
   it('supports regexp', async function () {
     const actual = await db.execute(`
       SELECT
-        regexp('=\\s?\\d+',  'const foo = 123; const bar = "bar"'),
-        regexpi('=\\s?\\d+', 'const foo = 123; const bar = "bar"'),
-        'const foo = 123; const bar = "bar"' REGEXP '=\\s?\\d+'
+        regexp('=\\s?\\d+',  'const foo = 123; const bar = "bar"') as one,
+        regexpi('=\\s?\\d+', 'const foo = 123; const bar = "bar"') as two,
+        'const foo = 123; const bar = "bar"' REGEXP '=\\s?\\d+' as three
     `)
-    expect(actual.values).to.eql([[1, 1, 1]])
+    expect(actual).to.eql({
+      one: [1],
+      two: [1],
+      three: [1]
+    })
   })
 
   it('supports pivot virtual table', async function () {
@@ -202,12 +260,14 @@ describe('SQLite extensions', function () {
       ALTER TABLE surface DROP COLUMN rownum;
       SELECT * FROM surface;
     `)
-    expect(actual.columns).to.eql(['x', 'y', '5.0', '10.0', '15.0'])
-    expect(actual.values).to.eql([
-      [5, 3, 3.2, 4, 4.8],
-      [10, 6, 4.3, 3.8, 4],
-      [15, 9, 5.4, 3.6, 3.5]
-    ])
+console.log(actual)
+    expect(actual).to.eql({
+      'x': [5, 10, 15],
+      'y': [3, 6, 9],
+      '5.0': [3.2, 4.3, 5.4],
+      '10.0': [4, 3.8, 3.6],
+      '15.0': [4.8, 4, 3.5]
+    })
   })
 
   it('supports FTS5', async function () {
@@ -233,6 +293,8 @@ describe('SQLite extensions', function () {
       WHERE body MATCH '"full-text" NOT document'
       ORDER BY rank;
     `)
-    expect(actual.values).to.eql([['bar@localhost']])
+    expect(actual).to.eql({
+      sender: ['bar@localhost']
+    })
   })
 })

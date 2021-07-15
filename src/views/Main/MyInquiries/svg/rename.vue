@@ -12,12 +12,12 @@
       @mouseout="hideTooltip"
     >
       <path
-        d="M6.75 2.25V3H3V4.5H3.75V14.25C3.75 14.6478 3.90804 15.0294 4.18934 15.3107C4.47064 15.592 4.85218 15.75 5.25 15.75H12.75C13.1478 15.75 13.5294 15.592 13.8107 15.3107C14.092 15.0294 14.25 14.6478 14.25 14.25V4.5H15V3H11.25V2.25H6.75ZM5.25 4.5H12.75V14.25H5.25V4.5ZM6.75 6V12.75H8.25V6H6.75ZM9.75 6V12.75H11.25V6H9.75Z"
+        d="M10.545 6.75L11.25 7.455L4.44 14.25H3.75V13.56L10.545 6.75ZM13.245 2.25C13.0575 2.25 12.8625 2.325 12.72 2.4675L11.3475 3.84L14.16 6.6525L15.5325 5.28C15.825 4.9875 15.825 4.5 15.5325 4.2225L13.7775 2.4675C13.6275 2.3175 13.44 2.25 13.245 2.25ZM10.545 4.6425L2.25 12.9375V15.75H5.0625L13.3575 7.455L10.545 4.6425Z"
         fill="#A2B1C6"
       />
     </svg>
     <span class="icon-tooltip" :style="tooltipStyle">
-      Delete query
+      Rename inquiry
     </span>
   </span>
 </template>
@@ -26,7 +26,7 @@
 import tooltipMixin from '@/tooltipMixin'
 
 export default {
-  name: 'DeleteIcon',
+  name: 'RenameIcon',
   mixins: [tooltipMixin]
 }
 </script>

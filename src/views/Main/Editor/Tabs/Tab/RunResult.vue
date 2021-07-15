@@ -54,6 +54,7 @@ export default {
   flex-grow: 1;
   padding: 32px;
   height: 100%;
+  width: 0;
   box-sizing: border-box;
 }
 

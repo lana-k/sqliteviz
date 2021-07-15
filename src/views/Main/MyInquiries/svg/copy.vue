@@ -17,7 +17,7 @@
       />
     </svg>
     <span class="icon-tooltip" :style="tooltipStyle">
-      Duplicate query
+      Duplicate inquiry
     </span>
   </span>
 </template>

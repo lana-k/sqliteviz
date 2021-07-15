@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Editor from '@/views/Main/Editor'
-import MyQueries from '@/views/Main/MyQueries'
+import MyInquiries from '@/views/Main/MyInquiries'
 import Welcome from '@/views/Welcome'
 import Main from '@/views/Main'
 import store from '@/store'
@@ -26,9 +26,9 @@ const routes = [
         component: Editor
       },
       {
-        path: '/my-queries',
-        name: 'MyQueries',
-        component: MyQueries
+        path: '/my-inquiries',
+        name: 'MyInquiries',
+        component: MyInquiries
       }
     ]
   }

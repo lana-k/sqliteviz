@@ -1,7 +1,7 @@
 <template>
   <div v-show="visible" class="chart-container" ref="chartContainer">
     <div class="warning chart-warning" v-show="!dataSources && visible">
-      There is no data to build a chart. Run your sql query and make sure the result is not empty.
+      There is no data to build a chart. Run your SQL query and make sure the result is not empty.
     </div>
     <PlotlyEditor
       :data="state.data"
@@ -33,14 +33,14 @@ import dereference from 'react-chart-editor/lib/lib/dereference'
 
 export default {
   name: 'Chart',
-  props: ['dataSources', 'initChart'],
+  props: ['dataSources', 'initOptions'],
   components: {
     PlotlyEditor
   },
   data () {
     return {
       plotly: plotly,
-      state: this.initChart || {
+      state: this.initOptions || {
         data: [],
         layout: {},
         frames: []
@@ -82,8 +82,8 @@ export default {
       this.state = { data, layout, frames }
       this.$emit('update')
     },
-    getChartStateForSave () {
-      return chartHelper.getChartStateForSave(this.state, this.dataSources)
+    getOptionsForSave () {
+      return chartHelper.getOptionsForSave(this.state, this.dataSources)
     }
   }
 }

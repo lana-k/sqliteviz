@@ -5,7 +5,7 @@ export default {
     const tab = data ? JSON.parse(JSON.stringify(data)) : {}
     // If no data then create a new blank one...
     // No data.id means to create new tab, but not blank,
-    // e.g. with 'select * from csv_import' query after csv import
+    // e.g. with 'select * from csv_import' inquiry after csv import
     if (!data || !data.id) {
       tab.id = nanoid()
       tab.name = null

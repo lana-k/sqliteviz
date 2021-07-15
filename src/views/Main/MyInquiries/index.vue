@@ -1,22 +1,22 @@
 <template>
   <div>
-    <div id="start-guide" v-if="showedQueries.length === 0">
-      You don't have saved queries so far.
-      <span class="link" @click="$root.$emit('createNewQuery')">Create</span>
+    <div id="start-guide" v-if="showedInquiries.length === 0">
+      You don't have saved inquiries so far.
+      <span class="link" @click="$root.$emit('createNewInquiry')">Create</span>
       the one from scratch or
-      <span @click="importQueries" class="link">import</span> from a file.
+      <span @click="importInquiries" class="link">import</span> from a file.
     </div>
-    <div id="my-queries-content" ref="my-queries-content" v-show="showedQueries.length > 0">
-      <div id="my-queries-toolbar">
+    <div id="my-inquiries-content" ref="my-inquiries-content" v-show="showedInquiries.length > 0">
+      <div id="my-inquiries-toolbar">
         <div id="toolbar-buttons">
-          <button id="toolbar-btns-import" class="toolbar" @click="importQueries">
+          <button id="toolbar-btns-import" class="toolbar" @click="importInquiries">
             Import
           </button>
           <button
             id="toolbar-btns-export"
             class="toolbar"
-            v-show="selectedQueriesCount > 0"
-            @click="exportSelectedQueries()"
+            v-show="selectedInquiriesCount > 0"
+            @click="exportSelectedInquiries()"
           >
             Export
           </button>
@@ -24,13 +24,13 @@
             id="toolbar-btns-delete"
             class="toolbar"
             v-show="selectedNotPredefinedCount > 0"
-            @click="showDeleteDialog(selectedQueriesIds)"
+            @click="showDeleteDialog(selectedInquiriesIds)"
           >
             Delete
           </button>
         </div>
         <div id="toolbar-search">
-          <text-field placeholder="Search query by name" width="300px" v-model="filter"/>
+          <text-field placeholder="Search inquiry by name" width="300px" v-model="filter"/>
         </div>
       </div>
       <div class="rounded-bg">
@@ -49,45 +49,45 @@
         <table ref="table" class="sqliteviz-table">
           <tbody>
             <tr
-              v-for="(query, index) in showedQueries"
-              :key="query.id"
-              @click="openQuery(index)"
+              v-for="(inquiry, index) in showedInquiries"
+              :key="inquiry.id"
+              @click="openInquiry(index)"
             >
               <td ref="name-td">
                  <div class="cell-data">
                     <check-box
                       ref="rowCheckBox"
-                      :init="selectAll || selectedQueriesIds.has(query.id)"
-                      @click="toggleRow($event, query.id)"
+                      :init="selectAll || selectedInquiriesIds.has(inquiry.id)"
+                      @click="toggleRow($event, inquiry.id)"
                     />
-                    <div class="name">{{ query.name }}</div>
+                    <div class="name">{{ inquiry.name }}</div>
                     <div
-                      v-if="query.isPredefined"
+                      v-if="inquiry.isPredefined"
                       class="badge"
                       @mouseover="showTooltip"
                       @mouseout="hideTooltip"
                     >
                       Predefined
                       <span class="icon-tooltip" :style="tooltipStyle">
-                        Predefined queries come from the server.
-                        These queries can’t be deleted or renamed.
+                        Predefined inquiries come from the server.
+                        These inquiries can’t be deleted or renamed.
                       </span>
                     </div>
                  </div>
               </td>
               <td>
                 <div class="second-column">
-                  <div class="date-container">{{ query.createdAt | date }}</div>
+                  <div class="date-container">{{ inquiry.createdAt | date }}</div>
                   <div class="icons-container">
-                    <rename-icon v-if="!query.isPredefined" @click="showRenameDialog(query.id)" />
-                    <copy-icon @click="duplicateQuery(index)"/>
+                    <rename-icon v-if="!inquiry.isPredefined" @click="showRenameDialog(inquiry.id)" />
+                    <copy-icon @click="duplicateInquiry(index)"/>
                     <export-icon
-                      @click="exportToFile([query], `${query.name}.json`)"
-                      tooltip="Export query to file"
+                      @click="exportToFile([inquiry], `${inquiry.name}.json`)"
+                      tooltip="Export inquiry to file"
                     />
                     <delete-icon
-                      v-if="!query.isPredefined"
-                      @click="showDeleteDialog((new Set()).add(query.id))"
+                      v-if="!inquiry.isPredefined"
+                      @click="showDeleteDialog((new Set()).add(inquiry.id))"
                     />
                   </div>
                 </div>
@@ -99,15 +99,15 @@
     </div>
   </div>
 
-  <!--Rename Query dialog  -->
+  <!--Rename Inquiry dialog  -->
   <modal name="rename" classes="dialog" height="auto">
     <div class="dialog-header">
-      Rename query
+      Rename inquiry
       <close-icon @click="$modal.hide('rename')"/>
     </div>
     <div class="dialog-body">
       <text-field
-        label="New query name"
+        label="New inquiry name"
         :error-msg="errorMsg"
         v-model="newName"
         width="100%"
@@ -115,26 +115,26 @@
     </div>
     <div class="dialog-buttons-container">
       <button class="secondary" @click="$modal.hide('rename')">Cancel</button>
-      <button class="primary" @click="renameQuery">Rename</button>
+      <button class="primary" @click="renameInquiry">Rename</button>
     </div>
   </modal>
 
-  <!--Delete Query dialog  -->
+  <!--Delete Inquiry dialog  -->
   <modal name="delete" classes="dialog" height="auto">
     <div class="dialog-header">
-      Delete {{ deleteGroup ? 'queries' : 'query' }}
+      Delete {{ deleteGroup ? 'inquiries' : 'inquiry' }}
       <close-icon @click="$modal.hide('delete')"/>
     </div>
     <div class="dialog-body">
       {{ deleteDialogMsg }}
-      <div v-show="selectedQueriesCount > selectedNotPredefinedCount" id="note">
+      <div v-show="selectedInquiriesCount > selectedNotPredefinedCount" id="note">
         <img :src="require('@/assets/images/info.svg')">
-        Note: Predefined queries you've selected won't be deleted
+        Note: Predefined inquiries you've selected won't be deleted
       </div>
     </div>
     <div class="dialog-buttons-container">
       <button class="secondary" @click="$modal.hide('delete')">Cancel</button>
-      <button class="primary" @click="deleteQuery">Delete</button>
+      <button class="primary" @click="deleteInquiry">Delete</button>
     </div>
   </modal>
 </div>
@@ -149,11 +149,11 @@ import CloseIcon from '@/components/svg/close'
 import TextField from '@/components/TextField'
 import CheckBox from '@/components/CheckBox'
 import tooltipMixin from '@/tooltipMixin'
-import storedQueries from '@/lib/storedQueries'
+import storedInquiries from '@/lib/storedInquiries'
 import fu from '@/lib/utils/fileIo'
 
 export default {
-  name: 'MyQueries',
+  name: 'MyInquiries',
   components: {
     RenameIcon,
     CopyIcon,
@@ -166,13 +166,13 @@ export default {
   mixins: [tooltipMixin],
   data () {
     return {
-      queries: [],
+      inquiries: [],
       filter: null,
       newName: null,
-      processedQueryId: null,
+      processedInquiryId: null,
       errorMsg: null,
-      selectedQueriesIds: new Set(),
-      selectedQueriesCount: 0,
+      selectedInquiriesIds: new Set(),
+      selectedInquiriesCount: 0,
       selectedNotPredefinedCount: 0,
       selectAll: false,
       deleteGroup: false,
@@ -181,61 +181,61 @@ export default {
     }
   },
   computed: {
-    predefinedQueries () {
-      return this.$store.state.predefinedQueries.map(query => {
-        query.isPredefined = true
-        return query
+    predefinedInquiries () {
+      return this.$store.state.predefinedInquiries.map(inquiry => {
+        inquiry.isPredefined = true
+        return inquiry
       })
     },
-    predefinedQueriesIds () {
-      return new Set(this.predefinedQueries.map(query => query.id))
+    predefinedInquiriesIds () {
+      return new Set(this.predefinedInquiries.map(inquiry => inquiry.id))
     },
-    showedQueries () {
-      let showedQueries = this.allQueries
+    showedInquiries () {
+      let showedInquiries = this.allInquiries
       if (this.filter) {
-        showedQueries = showedQueries.filter(
-          query => query.name.toUpperCase().indexOf(this.filter.toUpperCase()) >= 0
+        showedInquiries = showedInquiries.filter(
+          inquiry => inquiry.name.toUpperCase().indexOf(this.filter.toUpperCase()) >= 0
         )
       }
-      return showedQueries
+      return showedInquiries
     },
-    allQueries () {
-      return this.predefinedQueries.concat(this.queries)
+    allInquiries () {
+      return this.predefinedInquiries.concat(this.inquiries)
     },
-    processedQueryIndex () {
-      return this.queries.findIndex(query => query.id === this.processedQueryId)
+    processedInquiryIndex () {
+      return this.inquiries.findIndex(inquiry => inquiry.id === this.processedInquiryId)
     },
     deleteDialogMsg () {
       if (!this.deleteGroup && (
-        this.processedQueryIndex === null ||
-          this.processedQueryIndex < 0 ||
-          this.processedQueryIndex > this.queries.length
+        this.processedInquiryIndex === null ||
+          this.processedInquiryIndex < 0 ||
+          this.processedInquiryIndex > this.inquiries.length
       )) {
         return ''
       }
 
       const deleteItem = this.deleteGroup
         ? `${this.selectedNotPredefinedCount} ${this.selectedNotPredefinedCount > 1
-          ? 'queries'
-          : 'query'}`
-        : `"${this.queries[this.processedQueryIndex].name}"`
+          ? 'inquiries'
+          : 'inquiry'}`
+        : `"${this.inquiries[this.processedInquiryIndex].name}"`
 
       return `Are you sure you want to delete ${deleteItem}?`
     }
   },
   created () {
-    storedQueries.readPredefinedQueries()
-      .then(queries => {
-        this.$store.commit('updatePredefinedQueries', queries)
+    storedInquiries.readPredefinedInquiries()
+      .then(inquiries => {
+        this.$store.commit('updatePredefinedInquiries', inquiries)
       })
       .catch(console.error)
       .finally(() => {
-        this.queries = storedQueries.getStoredQueries()
+        this.inquiries = storedInquiries.getStoredInquiries()
       })
   },
   mounted () {
     this.resizeObserver = new ResizeObserver(this.calcMaxTableHeight)
-    this.resizeObserver.observe(this.$refs['my-queries-content'])
+    this.resizeObserver.observe(this.$refs['my-inquiries-content'])
 
     this.tableResizeObserver = new ResizeObserver(this.calcNameWidth)
     this.tableResizeObserver.observe(this.$refs.table)
@@ -243,7 +243,7 @@ export default {
     this.calcMaxTableHeight()
   },
   beforeDestroy () {
-    this.resizeObserver.unobserve(this.$refs['my-queries-content'])
+    this.resizeObserver.unobserve(this.$refs['my-quiries-content'])
     this.tableResizeObserver.unobserve(this.$refs.table)
   },
   filters: {
@@ -269,11 +269,11 @@ export default {
       this.$refs['name-th'].style = `width: ${nameWidth}px`
     },
     calcMaxTableHeight () {
-      const freeSpace = this.$refs['my-queries-content'].offsetHeight - 200
+      const freeSpace = this.$refs['my-inquiries-content'].offsetHeight - 200
       this.maxTableHeight = freeSpace - (freeSpace % 40) + 1
     },
-    openQuery (index) {
-      const tab = this.showedQueries[index]
+    openInquiry (index) {
+      const tab = this.showedInquiries[index]
       this.$store.dispatch('addTab', tab).then(id => {
         this.$store.commit('setCurrentTabId', id)
         this.$router.push('/editor')
@@ -281,141 +281,141 @@ export default {
     },
     showRenameDialog (id) {
       this.errorMsg = null
-      this.processedQueryId = id
-      this.newName = this.queries[this.processedQueryIndex].name
+      this.processedInquiryId = id
+      this.newName = this.inquiries[this.processedInquiryIndex].name
       this.$modal.show('rename')
     },
-    renameQuery () {
+    renameInquiry () {
       if (!this.newName) {
-        this.errorMsg = 'Query name can\'t be empty'
+        this.errorMsg = "Inquiry name can't be empty"
         return
       }
-      const processedQuery = this.queries[this.processedQueryIndex]
-      processedQuery.name = this.newName
-      this.$set(this.queries, this.processedQueryIndex, processedQuery)
+      const processedInquiry = this.inquiries[this.processedInquiryIndex]
+      processedInquiry.name = this.newName
+      this.$set(this.inquiries, this.processedInquiryIndex, processedInquiry)
 
-      // update queries in local storage
-      storedQueries.updateStorage(this.queries)
+      // update inquiries in local storage
+      storedInquiries.updateStorage(this.inquiries)
 
-      // update tab, if renamed query is opened
-      const tabIndex = this.findTabIndex(processedQuery.id)
+      // update tab, if renamed inquiry is opened
+      const tabIndex = this.findTabIndex(processedInquiry.id)
       if (tabIndex >= 0) {
         this.$store.commit('updateTab', {
           index: tabIndex,
           name: this.newName,
-          id: processedQuery.id
+          id: processedInquiry.id
         })
       }
       // hide dialog
       this.$modal.hide('rename')
     },
-    duplicateQuery (index) {
-      const newQuery = storedQueries.duplicateQuery(this.showedQueries[index])
+    duplicateInquiry (index) {
+      const newInquiry = storedInquiries.duplicateInquiry(this.showedInquiries[index])
       if (this.selectAll) {
-        this.selectedQueriesIds.add(newQuery.id)
-        this.selectedQueriesCount = this.selectedQueriesIds.size
+        this.selectedInquiriesIds.add(newInquiry.id)
+        this.selectedInquiriesCount = this.selectedInquiriesIds.size
       }
-      this.queries.push(newQuery)
-      storedQueries.updateStorage(this.queries)
+      this.inquiries.push(newInquiry)
+      storedInquiries.updateStorage(this.inquiries)
     },
     showDeleteDialog (idsSet) {
       this.deleteGroup = idsSet.size > 1
       if (!this.deleteGroup) {
-        this.processedQueryId = idsSet.values().next().value
+        this.processedInquiryId = idsSet.values().next().value
       }
       this.$modal.show('delete')
     },
-    deleteQuery () {
+    deleteInquiry () {
       this.$modal.hide('delete')
       if (!this.deleteGroup) {
-        this.queries.splice(this.processedQueryIndex, 1)
+        this.inquiries.splice(this.processedInquiryIndex, 1)
 
-        // Close deleted query tab if it was opened
-        const tabIndex = this.findTabIndex(this.processedQueryId)
+        // Close deleted inquiry tab if it was opened
+        const tabIndex = this.findTabIndex(this.processedInquiryId)
         if (tabIndex >= 0) {
           this.$store.commit('deleteTab', tabIndex)
         }
 
         // Clear checkboxes
-        if (this.selectedQueriesIds.has(this.processedQueryId)) {
-          this.selectedQueriesIds.delete(this.processedQueryId)
+        if (this.selectedInquiriesIds.has(this.processedInquiryId)) {
+          this.selectedInquiriesIds.delete(this.processedInquiryId)
         }
       } else {
-        this.queries = this.selectAll
+        this.inquiries = this.selectAll
           ? []
-          : this.queries.filter(query => !this.selectedQueriesIds.has(query.id))
+          : this.inquiries.filter(inquiry => !this.selectedInquiriesIds.has(inquiry.id))
 
-        // Close deleted queries if it was opened
+        // Close deleted inquiries if it was opened
         const tabs = this.$store.state.tabs
         for (let i = tabs.length - 1; i >= 0; i--) {
-          if (this.selectedQueriesIds.has(tabs[i].id)) {
+          if (this.selectedInquiriesIds.has(tabs[i].id)) {
             this.$store.commit('deleteTab', i)
           }
         }
 
         // Clear checkboxes
-        this.selectedQueriesIds.clear()
+        this.selectedInquiriesIds.clear()
       }
-      this.selectedQueriesCount = this.selectedQueriesIds.size
-      storedQueries.updateStorage(this.queries)
+      this.selectedInquiriesCount = this.selectedInquiriesIds.size
+      storedInquiries.updateStorage(this.inquiries)
     },
     findTabIndex (id) {
       return this.$store.state.tabs.findIndex(tab => tab.id === id)
     },
-    exportToFile (queryList, fileName) {
-      const jsonStr = storedQueries.serialiseQueries(queryList)
+    exportToFile (inquiryList, fileName) {
+      const jsonStr = storedInquiries.serialiseInquiries(inquiryList)
       fu.exportToFile(jsonStr, fileName)
     },
-    exportSelectedQueries () {
-      const queryList = this.selectAll
-        ? this.allQueries
-        : this.allQueries.filter(query => this.selectedQueriesIds.has(query.id))
+    exportSelectedInquiries () {
+      const inquiryList = this.selectAll
+        ? this.allInquiries
+        : this.allInquiries.filter(inquiry => this.selectedInquiriesIds.has(inquiry.id))
 
-      this.exportToFile(queryList, 'My sqliteviz queries.json')
+      this.exportToFile(inquiryList, 'My sqliteviz inquiries.json')
     },
-    importQueries () {
-      storedQueries.importQueries()
-        .then(importedQueries => {
+    importInquiries () {
+      storedInquiries.importInquiries()
+        .then(importedInquiries => {
           if (this.selectAll) {
-            importedQueries.forEach(query => {
-              this.selectedQueriesIds.add(query.id)
+            importedInquiries.forEach(inquiry => {
+              this.selectedInquiriesIds.add(inquiry.id)
             })
-            this.selectedQueriesCount = this.selectedQueriesIds.size
+            this.selectedInquiriesCount = this.selectedInquiriesIds.size
           }
 
-          this.queries = this.queries.concat(importedQueries)
-          storedQueries.updateStorage(this.queries)
+          this.inquiries = this.inquiries.concat(importedInquiries)
+          storedInquiries.updateStorage(this.inquiries)
         })
     },
     toggleSelectAll (checked) {
       this.selectAll = checked
       this.$refs.rowCheckBox.forEach(item => { item.checked = checked })
 
-      this.selectedQueriesIds = checked
-        ? new Set(this.allQueries.map(query => query.id))
+      this.selectedInquiriesIds = checked
+        ? new Set(this.allInquiries.map(inquiry => inquiry.id))
         : new Set()
 
-      this.selectedQueriesCount = this.selectedQueriesIds.size
-      this.selectedNotPredefinedCount = checked ? this.queries.length : 0
+      this.selectedInquiriesCount = this.selectedInquiriesIds.size
+      this.selectedNotPredefinedCount = checked ? this.inquiries.length : 0
     },
     toggleRow (checked, id) {
-      const isPredefined = this.predefinedQueriesIds.has(id)
+      const isPredefined = this.predefinedInquiriesIds.has(id)
       if (checked) {
-        this.selectedQueriesIds.add(id)
+        this.selectedInquiriesIds.add(id)
         if (!isPredefined) {
           this.selectedNotPredefinedCount += 1
         }
       } else {
-        if (this.selectedQueriesIds.size === this.allQueries.length) {
+        if (this.selectedInquiriesIds.size === this.allInquiries.length) {
           this.$refs.mainCheckBox.checked = false
           this.selectAll = false
         }
-        this.selectedQueriesIds.delete(id)
+        this.selectedInquiriesIds.delete(id)
         if (!isPredefined) {
           this.selectedNotPredefinedCount -= 1
         }
       }
-      this.selectedQueriesCount = this.selectedQueriesIds.size
+      this.selectedInquiriesCount = this.selectedInquiriesIds.size
     }
   }
 }
@@ -432,13 +432,13 @@ export default {
   text-align: center;
 }
 
-#my-queries-content {
+#my-inquiries-content {
   padding: 52px;
   height: 100%;
   box-sizing: border-box;
 }
 
-#my-queries-toolbar {
+#my-inquiries-toolbar {
   display: flex;
   justify-content: space-between;
   margin-bottom: 18px;

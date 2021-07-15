@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import * as chartHelper from '@/views/Main/Editor/Tabs/Tab/Chart/chartHelper'
+import * as chartHelper from '@/views/Main/Editor/Tabs/Tab/DataView/Chart/chartHelper'
 import * as dereference from 'react-chart-editor/lib/lib/dereference'
 
 describe('chartHelper.js', () => {
@@ -21,7 +21,7 @@ describe('chartHelper.js', () => {
     ])
   })
 
-  it('getChartStateForSave', () => {
+  it('getOptionsForSave', () => {
     const state = {
       data: {
         foo: {},
@@ -37,7 +37,7 @@ describe('chartHelper.js', () => {
     sinon.stub(dereference, 'default')
     sinon.spy(JSON, 'parse')
 
-    const ds = chartHelper.getChartStateForSave(state, dataSources)
+    const ds = chartHelper.getOptionsForSave(state, dataSources)
 
     expect(dereference.default.calledOnce).to.equal(true)
 

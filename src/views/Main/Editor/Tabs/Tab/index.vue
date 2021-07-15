@@ -39,8 +39,9 @@
     <teleport :to="`#${layout.dataView}-${tabIndex}`">
       <data-view
         :data-source="result"
-        :options="initChart"
+        :options="initViewOptions"
         initMode="chart"
+        ref="dataView"
         @switchTo="onSwitchView('dataView', $event)"
         @update="onDataViewUpdate"
       />
@@ -58,7 +59,7 @@ import Teleport from 'vue2-teleport'
 
 export default {
   name: 'Tab',
-  props: ['id', 'initName', 'initQuery', 'initChart', 'tabIndex', 'isPredefined'],
+  props: ['id', 'initName', 'initQuery', 'initViewOptions', 'tabIndex', 'isPredefined', 'initViewType'],
   components: {
     SqlEditor,
     DataView,

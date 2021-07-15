@@ -199,9 +199,9 @@ describe('Tabs.vue', () => {
     expect(firstTab.find('.star').isVisible()).to.equal(false)
     expect(firstTab.classes()).to.include('tab-selected')
 
-    // check that 'saveQuery' event was not emited
+    // check that 'saveInquiry' event was not emited
     const rootWrapper = createWrapper(wrapper.vm.$root)
-    expect(rootWrapper.emitted('saveQuery')).to.equal(undefined)
+    expect(rootWrapper.emitted('saveInquiry')).to.equal(undefined)
 
     // check that the dialog is closed
     expect(wrapper.find('[data-modal="close-warn"]').exists()).to.equal(false)
@@ -237,8 +237,8 @@ describe('Tabs.vue', () => {
     // click 'Save and close' in the dialog
     await closeBtn.trigger('click')
 
-    // pretend like saving is completed - trigger 'querySaved' on $root
-    await wrapper.vm.$root.$emit('querySaved')
+    // pretend like saving is completed - trigger 'inquirySaved' on $root
+    await wrapper.vm.$root.$emit('inquirySaved')
 
     // check that tab is closed
     expect(wrapper.findAllComponents({ name: 'Tab' })).to.have.lengthOf(1)
@@ -247,15 +247,15 @@ describe('Tabs.vue', () => {
     expect(firstTab.find('.star').isVisible()).to.equal(false)
     expect(firstTab.classes()).to.include('tab-selected')
 
-    // check that 'saveQuery' event was emited
+    // check that 'saveInquiry' event was emited
     const rootWrapper = createWrapper(wrapper.vm.$root)
-    expect(rootWrapper.emitted('saveQuery')).to.have.lengthOf(1)
+    expect(rootWrapper.emitted('saveInquiry')).to.have.lengthOf(1)
 
     // check that the dialog is closed
     expect(wrapper.find('[data-modal="close-warn"]').exists()).to.equal(false)
   })
 
-  it('Prevents closing a tab of a browser if there is unsaved query', () => {
+  it('Prevents closing a tab of a browser if there is unsaved inquiry', () => {
     // mock store state
     const state = {
       tabs: [
@@ -280,7 +280,7 @@ describe('Tabs.vue', () => {
     expect(event.preventDefault.calledOnce).to.equal(true)
   })
 
-  it("Doesn't prevent closing a tab of a browser if there is unsaved query", () => {
+  it("Doesn't prevent closing a tab of a browser if there is unsaved inquiry", () => {
     // mock store state
     const state = {
       tabs: [

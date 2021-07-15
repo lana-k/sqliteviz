@@ -11,11 +11,23 @@ export default {
     const result = {}
     if (source.meta.fields) {
       source.meta.fields.forEach(col => {
-        result[col.trim()] = source.data.map(row => row[col])
+        result[col.trim()] = source.data.map(row => {
+          let value = row[col]
+          if (value instanceof Date) {
+            value = value.toISOString()
+          }
+          return value
+        })
       })
     } else {
       for (let i = 0; i <= source.data[0].length - 1; i++) {
-        result[`col${i + 1}`] = source.data.map(row => row[i])
+        result[`col${i + 1}`] = source.data.map(row => {
+          let value = row[i]
+          if (value instanceof Date) {
+            value = value.toISOString()
+          }
+          return value
+        })
       }
     }
     return result

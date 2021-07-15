@@ -6,7 +6,7 @@ const {
   deleteTab,
   setCurrentTabId,
   setCurrentTab,
-  updatePredefinedQueries,
+  updatePredefinedInquiries,
   setDb
 } = mutations
 
@@ -29,7 +29,8 @@ describe('mutations', () => {
       name: 'test',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: true,
       isPredefined: false
     }
@@ -60,7 +61,8 @@ describe('mutations', () => {
       name: 'test',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: true,
       isPredefined: true
     }
@@ -70,7 +72,8 @@ describe('mutations', () => {
       id: 2,
       name: 'new test',
       query: 'SELECT * from bar',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 
@@ -95,7 +98,8 @@ describe('mutations', () => {
       name: 'test',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: true
     }
 
@@ -123,7 +127,8 @@ describe('mutations', () => {
       name: 'test',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false,
       isPredefined: true
     }
@@ -151,7 +156,8 @@ describe('mutations', () => {
       name: 'foo',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 
@@ -160,7 +166,8 @@ describe('mutations', () => {
       name: 'bar',
       tempName: null,
       query: 'SELECT * from bar',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 
@@ -181,7 +188,8 @@ describe('mutations', () => {
       name: 'foo',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 
@@ -190,7 +198,8 @@ describe('mutations', () => {
       name: 'bar',
       tempName: null,
       query: 'SELECT * from bar',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 
@@ -211,7 +220,8 @@ describe('mutations', () => {
       name: 'foo',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 
@@ -220,7 +230,8 @@ describe('mutations', () => {
       name: 'bar',
       tempName: null,
       query: 'SELECT * from bar',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 
@@ -229,7 +240,8 @@ describe('mutations', () => {
       name: 'foobar',
       tempName: null,
       query: 'SELECT * from foobar',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 
@@ -251,7 +263,8 @@ describe('mutations', () => {
       name: 'foo',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 
@@ -271,7 +284,8 @@ describe('mutations', () => {
       name: 'foo',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 
@@ -280,7 +294,8 @@ describe('mutations', () => {
       name: 'bar',
       tempName: null,
       query: 'SELECT * from bar',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       isUnsaved: false
     }
 
@@ -313,44 +328,47 @@ describe('mutations', () => {
     expect(state.currentTab).to.eql({ id: 2 })
   })
 
-  it('updatePredefinedQueries (single)', () => {
-    const query = {
+  it('updatePredefinedInquiries (single)', () => {
+    const inquiry = {
       id: 1,
       name: 'foo',
       query: 'SELECT * FROM foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       createdAt: '2020-11-07T20:57:04.492Z'
     }
 
     const state = {
-      predefinedQueries: []
+      predefinedInquiries: []
     }
 
-    updatePredefinedQueries(state, query)
-    expect(state.predefinedQueries).to.eql([query])
+    updatePredefinedInquiries(state, inquiry)
+    expect(state.predefinedInquiries).to.eql([inquiry])
   })
 
-  it('updatePredefinedQueries (array)', () => {
-    const queries = [{
+  it('updatePredefinedInquiries (array)', () => {
+    const inquiries = [{
       id: 1,
       name: 'foo',
       query: 'SELECT * FROM foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       createdAt: '2020-11-07T20:57:04.492Z'
     },
     {
       id: 2,
       name: 'bar',
       query: 'SELECT * FROM bar',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       createdAt: '2020-11-07T20:57:04.492Z'
     }]
 
     const state = {
-      predefinedQueries: []
+      predefinedInquiries: []
     }
 
-    updatePredefinedQueries(state, queries)
-    expect(state.predefinedQueries).to.eql(queries)
+    updatePredefinedInquiries(state, inquiries)
+    expect(state.predefinedInquiries).to.eql(inquiries)
   })
 })

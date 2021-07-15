@@ -23,14 +23,15 @@
       :id="tab.id"
       :init-name="tab.name"
       :init-query="tab.query"
-      :init-chart="tab.chart"
+      :init-options="tab.viewOptions"
+      :view-type="tab.viewType"
       :is-predefined="tab.isPredefined"
       :tab-index="index"
     />
     <div v-show="tabs.length === 0" id="start-guide">
-      <span class="link" @click="$root.$emit('createNewQuery')">Create</span>
-      a new query from scratch or open the one from
-      <router-link class="link" to="/my-queries">My queries</router-link>
+      <span class="link" @click="$root.$emit('createNewInquiry')">Create</span>
+      a new inquiry from scratch or open the one from
+      <router-link class="link" to="/my-inquiries">My inquiries</router-link>
     </div>
 
     <!--Close tab warning dialog  -->
@@ -110,14 +111,14 @@ export default {
       this.$store.commit('deleteTab', index)
     },
     saveAndClose (index) {
-      this.$root.$on('querySaved', () => {
+      this.$root.$on('inquirySaved', () => {
         this.closeTab(index)
-        this.$root.$off('querySaved')
+        this.$root.$off('inquirySaved')
       })
       this.selectTab(this.tabs[index].id)
       this.$modal.hide('close-warn')
       this.$nextTick(() => {
-        this.$root.$emit('saveQuery')
+        this.$root.$emit('saveInquiry')
       })
     }
   }

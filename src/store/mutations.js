@@ -8,7 +8,7 @@ export default {
     state.db = db
   },
 
-  updateTab (state, { index, name, id, query, chart, isUnsaved }) {
+  updateTab (state, { index, name, id, query, viewType, viewOptoions, isUnsaved }) {
     const tab = state.tabs[index]
     const oldId = tab.id
 
@@ -19,10 +19,11 @@ export default {
     if (id) { tab.id = id }
     if (name) { tab.name = name }
     if (query) { tab.query = query }
-    if (chart) { tab.chart = chart }
+    if (viewType) { tab.viewType = viewType }
+    if (viewOptoions) { tab.viewOptoions = viewOptoions }
     if (isUnsaved !== undefined) { tab.isUnsaved = isUnsaved }
     if (!isUnsaved) {
-      // Saved query is not predefined
+      // Saved inquiry is not predefined
       delete tab.isPredefined
     }
 
@@ -49,11 +50,7 @@ export default {
   setCurrentTab (state, tab) {
     state.currentTab = tab
   },
-  updatePredefinedQueries (state, queries) {
-    if (Array.isArray(queries)) {
-      state.predefinedQueries = queries
-    } else {
-      state.predefinedQueries = [queries]
-    }
+  updatePredefinedInquiries (state, inquiries) {
+    state.predefinedInquiries = Array.isArray(inquiries) ? inquiries : [inquiries]
   }
 }

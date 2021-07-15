@@ -5,9 +5,17 @@ import mutations from '@/store/mutations'
 import Vuex from 'vuex'
 import Tab from '@/views/Main/Editor/Tabs/Tab'
 
+let place
+
 describe('Tab.vue', () => {
+  beforeEach(() => {
+    place = document.createElement('div')
+    document.body.appendChild(place)
+  })
+
   afterEach(() => {
     sinon.restore()
+    place.remove()
   })
 
   it('Renders passed query', () => {
@@ -19,21 +27,24 @@ describe('Tab.vue', () => {
 
     // mount the component
     const wrapper = mount(Tab, {
+      attachTo: place,
       store,
       stubs: ['chart'],
       propsData: {
         id: 1,
         initName: 'foo',
         initQuery: 'SELECT * FROM foo',
-        initChart: [],
+        initViewType: 'chart',
+        initViewOptions: [],
         tabIndex: 0,
         isPredefined: false
       }
     })
+
     expect(wrapper.find('.tab-content-container').isVisible()).to.equal(true)
-    expect(wrapper.find('.table-view').isVisible()).to.equal(true)
-    expect(wrapper.find('.table-view .result-before').isVisible()).to.equal(true)
-    expect(wrapper.find('.query-editor').text()).to.equal('SELECT * FROM foo')
+    expect(wrapper.find('.bottomPane .run-result-panel').exists()).to.equal(true)
+    expect(wrapper.find('.run-result-panel .result-before').isVisible()).to.equal(true)
+    expect(wrapper.find('.above .sql-editor-panel').text()).to.equal('SELECT * FROM foo')
   })
 
   it("Doesn't render tab when it's not active", () => {
@@ -52,29 +63,6 @@ describe('Tab.vue', () => {
       }
     })
     expect(wrapper.find('.tab-content-container').isVisible()).to.equal(false)
-  })
-
-  it("Shows chart when view equals 'chart'", async () => {
-    // mock store state
-    const state = {
-      currentTabId: 1
-    }
-
-    const store = new Vuex.Store({ state, mutations })
-
-    // mount the component
-    const wrapper = mount(Tab, {
-      store,
-      stubs: ['chart'],
-      propsData: {
-        id: 1
-      }
-    })
-
-    expect(wrapper.findComponent({ ref: 'chart' }).vm.visible).to.equal(false)
-    await wrapper.setData({ view: 'chart' })
-    expect(wrapper.find('.table-view').isVisible()).to.equal(false)
-    expect(wrapper.findComponent({ ref: 'chart' }).vm.visible).to.equal(true)
   })
 
   it('Is not visible when not active', async () => {
@@ -138,7 +126,8 @@ describe('Tab.vue', () => {
         id: 1,
         initName: 'foo',
         initQuery: 'SELECT * FROM foo',
-        initChart: [],
+        initViewOptions: [],
+        initViewType: 'chart',
         tabIndex: 0,
         isPredefined: false
       }
@@ -165,7 +154,8 @@ describe('Tab.vue', () => {
         id: 1,
         initName: 'foo',
         initQuery: 'SELECT * FROM foo',
-        initChart: [],
+        initViewOptions: [],
+        initViewType: 'chart',
         tabIndex: 0,
         isPredefined: false
       }
@@ -173,8 +163,7 @@ describe('Tab.vue', () => {
 
     wrapper.vm.execute()
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('.table-view .result-before').isVisible()).to.equal(false)
-    expect(wrapper.find('.table-view .result-in-progress').isVisible()).to.equal(true)
+    expect(wrapper.find('.result-in-progress').isVisible()).to.equal(true)
   })
 
   it('Shows error when executing query ends with error', async () => {
@@ -196,26 +185,24 @@ describe('Tab.vue', () => {
         id: 1,
         initName: 'foo',
         initQuery: 'SELECT * FROM foo',
-        initChart: [],
+        initViewOptions: [],
+        initViewType: 'chart',
         tabIndex: 0,
         isPredefined: false
       }
     })
 
     await wrapper.vm.execute()
-    expect(wrapper.find('.table-view .result-before').isVisible()).to.equal(false)
-    expect(wrapper.find('.table-view .result-in-progress').exists()).to.equal(false)
+    expect(wrapper.find('.result-before').isVisible()).to.equal(false)
+    expect(wrapper.find('.result-in-progress').exists()).to.equal(false)
     expect(wrapper.findComponent({ name: 'logs' }).isVisible()).to.equal(true)
     expect(wrapper.findComponent({ name: 'logs' }).text()).to.include('There is no table foo')
   })
 
   it('Passes result to sql-table component', async () => {
     const result = {
-      columns: ['id', 'name'],
-      values: [
-        [1, 'foo'],
-        [2, 'bar']
-      ]
+      id: [1, 2],
+      name: ['foo', 'bar']
     }
     // mock store state
     const state = {
@@ -236,23 +223,24 @@ describe('Tab.vue', () => {
         id: 1,
         initName: 'foo',
         initQuery: 'SELECT * FROM foo',
-        initChart: [],
+        initViewOptions: [],
+        initViewType: 'chart',
         tabIndex: 0,
         isPredefined: false
       }
     })
 
     await wrapper.vm.execute()
-    expect(wrapper.find('.table-view .result-before').isVisible()).to.equal(false)
-    expect(wrapper.find('.table-view .result-in-progress').exists()).to.equal(false)
+    expect(wrapper.find('.result-before').isVisible()).to.equal(false)
+    expect(wrapper.find('.result-in-progress').exists()).to.equal(false)
     expect(wrapper.findComponent({ name: 'logs' }).exists()).to.equal(false)
     expect(wrapper.findComponent({ name: 'SqlTable' }).vm.dataSet).to.eql(result)
   })
 
   it('Updates schema after query execution', async () => {
     const result = {
-      columns: ['id', 'name'],
-      values: []
+      id: [],
+      name: []
     }
 
     // mock store state
@@ -275,7 +263,8 @@ describe('Tab.vue', () => {
         id: 1,
         initName: 'foo',
         initQuery: 'SELECT * FROM foo; CREATE TABLE bar(a,b);',
-        initChart: [],
+        initViewOptions: [],
+        initViewType: 'chart',
         tabIndex: 0,
         isPredefined: false
       }
