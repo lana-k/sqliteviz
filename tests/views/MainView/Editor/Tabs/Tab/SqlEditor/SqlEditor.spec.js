@@ -25,10 +25,10 @@ describe('SqlEditor.vue', () => {
 
     const wrapper = mount(SqlEditor, { store })
     await wrapper.findComponent({ name: 'codemirror' }).vm.$emit('input', 'SELECT * FROM foo')
-    const runButton = wrapper.findComponent({name: 'RunIcon'}).vm.$parent
+    const runButton = wrapper.findComponent({ name: 'RunIcon' }).vm.$parent
 
     expect(runButton.disabled).to.equal(true)
-    
+
     await wrapper.vm.$set(store.state, 'db', {})
     expect(runButton.disabled).to.equal(false)
 

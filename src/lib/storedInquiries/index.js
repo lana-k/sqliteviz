@@ -79,14 +79,14 @@ export default {
   },
 
   deserialiseInquiries (str) {
-    let inquiries = JSON.parse(str)
+    const inquiries = JSON.parse(str)
     let inquiryList = []
     if (!inquiries.version) {
       // Turn data into array if they are not
       if (!Array.isArray(inquiries)) {
         inquiryList = [inquiries]
       }
-      
+
       inquiryList = migrate(1, inquiryList)
     } else {
       inquiryList = inquiries.inquiries

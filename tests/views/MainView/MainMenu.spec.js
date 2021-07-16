@@ -503,7 +503,7 @@ describe('MainMenu.vue', () => {
           ]
         },
         viewType: 'chart',
-        viewOptions: [],
+        viewOptions: []
       },
       tabs: [{ id: 1, name: 'foo', isUnsaved: true, isPredefined: true }],
       db: {}

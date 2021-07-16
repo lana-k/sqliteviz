@@ -80,7 +80,7 @@ describe('SQLite extensions', function () {
       'sqrt(square(16))': [16],
       'ceil(-1.95) + ceil(1.95)': [1],
       'floor(-1.95) + floor(1.95)': [-1]
-      
+
     })
   })
 
@@ -260,10 +260,10 @@ describe('SQLite extensions', function () {
       ALTER TABLE surface DROP COLUMN rownum;
       SELECT * FROM surface;
     `)
-console.log(actual)
+    console.log(actual)
     expect(actual).to.eql({
-      'x': [5, 10, 15],
-      'y': [3, 6, 9],
+      x: [5, 10, 15],
+      y: [3, 6, 9],
       '5.0': [3.2, 4.3, 5.4],
       '10.0': [4, 3.8, 3.6],
       '15.0': [4.8, 4, 3.5]

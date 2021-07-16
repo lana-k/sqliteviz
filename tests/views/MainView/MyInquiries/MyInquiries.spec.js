@@ -29,7 +29,7 @@ describe('MyInquiries.vue', () => {
 
   it('Renders the list on saved or predefined inquiries', async () => {
     sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([
-      { 
+      {
         id: 0,
         name: 'hello_world',
         query: '',
@@ -39,18 +39,18 @@ describe('MyInquiries.vue', () => {
       }
     ])
     sinon.stub(storedInquiries, 'getStoredInquiries').returns([
-      { 
+      {
         id: 1,
         name: 'foo',
-        query: '', 
+        query: '',
         viewType: 'chart',
         viewOptions: [],
         createdAt: '2020-11-03T19:57:56.299Z'
       },
-      { 
+      {
         id: 2,
         name: 'bar',
-        query: '', 
+        query: '',
         viewType: 'chart',
         viewOptions: [],
         createdAt: '2020-12-04T18:53:56.299Z'
