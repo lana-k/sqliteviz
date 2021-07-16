@@ -79,10 +79,17 @@ export default {
   },
 
   deserialiseInquiries (str) {
-    let inquiryList = JSON.parse(str)
-    // Turn data into array if they are not
-    if (!Array.isArray(inquiryList)) {
-      inquiryList = [inquiryList]
+    let inquiries = JSON.parse(str)
+    let inquiryList = []
+    if (!inquiries.version) {
+      // Turn data into array if they are not
+      if (!Array.isArray(inquiries)) {
+        inquiryList = [inquiries]
+      }
+      
+      inquiryList = migrate(1, inquiryList)
+    } else {
+      inquiryList = inquiries.inquiries
     }
 
     // Generate new ids if they are the same as existing inquiries
@@ -98,8 +105,8 @@ export default {
 
   importInquiries () {
     return fu.importFile()
-      .then(data => {
-        return this.deserialiseInquiries(data)
+      .then(str => {
+        return this.deserialiseInquiries(str)
       })
   },
 

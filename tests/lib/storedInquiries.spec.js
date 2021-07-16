@@ -126,36 +126,38 @@ describe('storedInquiries.js', () => {
 
   it('deserialiseInquiries generates new id to avoid duplication', () => {
     storedInquiries.updateStorage([{ id: 1 }])
-    const str = `[
-      {
-        "id": 1,
-        "name": "foo",
-        "query": "select * from foo",
-        "viewType": "chart",
-        "viewOptions": [],
-        "createdAt": "2020-11-03T14:17:49.524Z" 
-      },
-      {
-        "id": 2,
-        "name": "bar",
-        "query": "select * from bar",
-        "viewType": "chart",
-        "viewOptions": [],
-        "createdAt": "2020-11-04T14:17:49.524Z" 
-      }
-    ]`
+    const str = `{
+      "version": 2,
+      "inquiries": [
+        {
+          "id": 1,
+          "name": "foo",
+          "query": "select * from foo",
+          "viewType": "chart",
+          "viewOptions": [],
+          "createdAt": "2020-11-03T14:17:49.524Z" 
+        },
+        {
+          "id": 2,
+          "name": "bar",
+          "query": "select * from bar",
+          "viewType": "chart",
+          "viewOptions": [],
+          "createdAt": "2020-11-04T14:17:49.524Z" 
+        }
+      ]
+    }`
 
     const inquiries = storedInquiries.deserialiseInquiries(str)
     const parsedStr = JSON.parse(str)
-    expect(inquiries[1]).to.eql(parsedStr[1])
-    expect(inquiries[0].id).to.not.equal(parsedStr[0].id)
-    expect(inquiries[0]).to.have.property('id')
-    expect(inquiries[0].id).to.not.equal(parsedStr[0].id)
-    expect(inquiries[0].name).to.equal(parsedStr[0].name)
-    expect(inquiries[0].query).to.equal(parsedStr[0].query)
-    expect(inquiries[0].viewType).to.equal(parsedStr[0].viewType)
-    expect(inquiries[0].viewOptions).to.eql(parsedStr[0].viewOptions)
-    expect(inquiries[0].createdAt).to.equal(parsedStr[0].createdAt)
+    expect(inquiries[1]).to.eql(parsedStr.inquiries[1])
+    expect(inquiries[0].id).to.not.equal(parsedStr.inquiries[0].id)
+    expect(inquiries[0].id).to.not.equal(parsedStr.inquiries[0].id)
+    expect(inquiries[0].name).to.equal(parsedStr.inquiries[0].name)
+    expect(inquiries[0].query).to.equal(parsedStr.inquiries[0].query)
+    expect(inquiries[0].viewType).to.equal(parsedStr.inquiries[0].viewType)
+    expect(inquiries[0].viewOptions).to.eql(parsedStr.inquiries[0].viewOptions)
+    expect(inquiries[0].createdAt).to.equal(parsedStr.inquiries[0].createdAt)
   })
 
   it('importInquiries', async () => {
