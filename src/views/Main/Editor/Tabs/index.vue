@@ -23,8 +23,8 @@
       :id="tab.id"
       :init-name="tab.name"
       :init-query="tab.query"
-      :init-options="tab.viewOptions"
-      :view-type="tab.viewType"
+      :init-view-options="tab.viewOptions"
+      :init-view-type="tab.viewType"
       :is-predefined="tab.isPredefined"
       :tab-index="index"
     />

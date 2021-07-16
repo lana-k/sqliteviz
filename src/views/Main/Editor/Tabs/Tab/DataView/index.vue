@@ -3,7 +3,7 @@
     <div class="data-view-panel-content">
       <component
         :is="mode"
-        :init-options="options"
+        :init-options="initOptions"
         :data-sources="dataSource"
         ref="viewComponent"
         @update="$emit('update')"
@@ -36,7 +36,7 @@ import PivotIcon from '@/components/svg/pivot'
 
 export default {
   name: 'DataView',
-  props: ['dataSource', 'options', 'initMode'],
+  props: ['dataSource', 'initOptions', 'initMode'],
   components: {
     Chart,
     Pivot,

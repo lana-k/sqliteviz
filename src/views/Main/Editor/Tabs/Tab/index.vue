@@ -39,8 +39,8 @@
     <teleport :to="`#${layout.dataView}-${tabIndex}`">
       <data-view
         :data-source="result"
-        :options="initViewOptions"
-        initMode="chart"
+        :init-options="initViewOptions"
+        :init-mode="initViewType"
         ref="dataView"
         @switchTo="onSwitchView('dataView', $event)"
         @update="onDataViewUpdate"

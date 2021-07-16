@@ -133,94 +133,30 @@
 
 <script>
 import $ from 'jquery'
-import 'pivottable'
-import 'pivottable/dist/export_renderers.js'
-import 'pivottable/dist/plotly_renderers.js'
 import Multiselect from 'vue-multiselect'
 import PivotSortBtn from './PivotSortBtn'
-import Chart from '@/views/Main/Editor/Tabs/Tab/DataView/Chart'
-import Vue from 'vue'
-const ChartClass = Vue.extend(Chart)
-
-const zeroValAggregators = [
-  'Count',
-  'Count as Fraction of Total',
-  'Count as Fraction of Rows',
-  'Count as Fraction of Columns'
-]
-const twoValAggregators = [
-  'Sum over Sum',
-  '80% Upper Bound',
-  '80% Lower Bound'
-]
-
-/*
-  <!--<chart
-    :sql-result="result"
-    :init-options="initOptions"
-    @update="$store.commit('updateTab', { index: tabIndex, isUnsaved: true })"
-  />-->
-*/
-function customChartRenderer (data, options) {
-  const rowKeys = data.getRowKeys()
-  const colKeys = data.getColKeys()
-
-  let dataSources = {
-    'Column keys': colKeys.map(colKey => colKey.join('-')),
-    'Row keys': rowKeys.map(rowKey => rowKey.join('-'))
-  }
-
-  const dataSourcesByRows = {}
-  const dataSourcesByCols = {}
-
-  colKeys.forEach(colKey => {
-    const sourceColKey = data.colAttrs.join('-') + ':' + colKey.join('-')
-    dataSourcesByCols[sourceColKey] = []
-    rowKeys.forEach(rowKey => {
-      const value = data.getAggregator(rowKey, colKey).value()
-      dataSourcesByCols[sourceColKey].push(value)
-      const sourceRowKey = data.rowAttrs.join('-') + ':' + rowKey.join('-')
-      if (!dataSourcesByRows[sourceRowKey]) {
-        dataSourcesByRows[sourceRowKey] = []
-      }
-      dataSourcesByRows[sourceRowKey].push(value)
-    })
-  })
-  dataSources = Object.assign(dataSources, dataSourcesByCols, dataSourcesByRows)
-
-  const chartInstance = new ChartClass({
-    propsData: { dataSources }
-  })
-  chartInstance.$mount()
-
-  return $(chartInstance.$el)
-}
-
-$.extend(
-  $.pivotUtilities.renderers,
-  $.pivotUtilities.export_renderers,
-  $.pivotUtilities.plotly_renderers,
-  { 'Custom chart': customChartRenderer }
-)
+import { renderers, aggregators, zeroValAggregators, twoValAggregators } from './pivotHelper'
 
 export default {
   name: 'pivot',
-  props: ['keyNames'],
+  props: ['keyNames', 'value'],
   components: {
     Multiselect,
     PivotSortBtn
   },
   data () {
+    const aggregatorName = (this.value && this.value.aggregatorName) || 'Count'
+    const rendererName = (this.value && this.value.rendererName) || 'Table'
     return {
       collapsed: false,
-      renderer: { name: 'Table', fun: $.pivotUtilities.renderers.Table },
-      aggregator: { name: 'Count', fun: $.pivotUtilities.aggregators.Count },
-      rows: [],
-      cols: [],
-      val1: '',
-      val2: '',
-      colOrder: 'key_a_to_z',
-      rowOrder: 'key_a_to_z'
+      renderer: { name: rendererName, fun: $.pivotUtilities.renderers[rendererName] },
+      aggregator: { name: aggregatorName, fun: $.pivotUtilities.aggregators[aggregatorName] },
+      rows: this.value.rows || [],
+      cols: this.value.cols || [],
+      val1: (this.value.vals && this.value.vals[0]) || '',
+      val2: (this.value.vals && this.value.vals[1]) || '',
+      colOrder: this.value.colOrder || 'key_a_to_z',
+      rowOrder: this.value.rowOrder || 'key_a_to_z'
     }
   },
   computed: {
@@ -236,20 +172,10 @@ export default {
       return 1
     },
     renderers () {
-      return Object.keys($.pivotUtilities.renderers).map(key => {
-        return {
-          name: key,
-          fun: $.pivotUtilities.renderers[key]
-        }
-      })
+      return renderers
     },
     aggregators () {
-      return Object.keys($.pivotUtilities.aggregators).map(key => {
-        return {
-          name: key,
-          fun: $.pivotUtilities.aggregators[key]
-        }
-      })
+      return aggregators
     },
     rowsToSelect () {
       return this.keyNames.filter(key => !this.cols.includes(key))
@@ -298,7 +224,9 @@ export default {
         rowOrder: this.rowOrder,
         aggregator: this.aggregator.fun(vals),
         aggregatorName: this.aggregator.name,
-        renderer: this.renderer.fun
+        renderer: this.renderer.fun,
+        rendererName: this.renderer.name,
+        vals
       })
     }
   }

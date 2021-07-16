@@ -10,10 +10,7 @@
 
 <script>
 import $ from 'jquery'
-import 'jquery-ui/ui/widgets/sortable'
 import 'pivottable'
-import 'pivottable/dist/export_renderers.js'
-import 'pivottable/dist/plotly_renderers.js'
 import 'pivottable/dist/pivot.css'
 import PivotUi from './PivotUi'
 
@@ -25,7 +22,17 @@ export default {
   },
   data () {
     return {
-      pivotOptions: {}
+      pivotOptions: !this.initOptions ? {} : {
+        rows: this.initOptions.rows,
+        cols: this.initOptions.cols,
+        colOrder: this.initOptions.colOrder,
+        rowOrder: this.initOptions.rowOrder,
+        aggregator: $.pivotUtilities.aggregators[this.initOptions.aggregatorName](this.initOptions.vals),
+        aggregatorName: this.initOptions.aggregatorName,
+        renderer: $.pivotUtilities.renderers[this.initOptions.rendererName],
+        rendererName: this.initOptions.rendererName,
+        vals: this.initOptions.vals
+      }
     }
   },
   computed: {
@@ -38,6 +45,7 @@ export default {
       this.show()
     },
     pivotOptions () {
+      this.$emit('update')
       this.show()
     }
   },
@@ -63,11 +71,10 @@ export default {
         }.bind(this),
         this.pivotOptions
       )
+    },
+    getOptionsForSave () {
+      return this.pivotOptions
     }
-  },
-  getOptionsForSave () {
-    // TODO get real options for save
-    return { pivotOptions: true }
   }
 }
 </script>
