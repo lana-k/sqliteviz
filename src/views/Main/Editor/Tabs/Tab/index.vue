@@ -31,7 +31,6 @@
         :is-getting-results="isGettingResults"
         :error="error"
         :time="time"
-        :height="tableViewHeight"
         @switchTo="onSwitchView('table', $event)"
       />
     </teleport>
@@ -71,10 +70,8 @@ export default {
     return {
       query: this.initQuery,
       result: null,
-      tableViewHeight: 0,
       isGettingResults: false,
       error: null,
-      resizeObserver: null,
       time: 0,
       layout: {
         sqlEditor: 'above',
@@ -87,14 +84,6 @@ export default {
     isActive () {
       return this.id === this.$store.state.currentTabId
     }
-  },
-  mounted () {
-    this.resizeObserver = new ResizeObserver(this.handleResize)
-    this.resizeObserver.observe(this.$refs.bottomPane)
-    this.calculateTableHeight()
-  },
-  beforeDestroy () {
-    this.resizeObserver.unobserve(this.$refs.bottomPane)
   },
   watch: {
     isActive: {
@@ -137,18 +126,6 @@ export default {
       }
       state.db.refreshSchema()
       this.isGettingResults = false
-    },
-    handleResize () {
-      this.calculateTableHeight()
-    },
-    calculateTableHeight () {
-      const bottomPane = this.$refs.bottomPane
-      // 34 - table footer hight
-      // 12 - desirable space after the table
-      // 5 - padding-bottom of rounded table container
-      // 35 - height of table header
-      const freeSpace = bottomPane.offsetHeight - 34 - 12 - 5 - 35 - 64
-      this.tableViewHeight = freeSpace - (freeSpace % 35)
     }
   }
 }

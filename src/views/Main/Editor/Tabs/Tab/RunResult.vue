@@ -1,5 +1,5 @@
 <template>
-  <div class="run-result-panel">
+  <div class="run-result-panel" ref="runResultPanel">
     <div class="run-result-panel-content">
       <div
         v-show="result === null && !isGettingResults && !error"
@@ -18,7 +18,7 @@
         No rows retrieved according to your query
       </div>
       <logs v-if="error" :messages="[error]"/>
-      <sql-table v-if="result" :data-set="result" :time="time" :height="height" />
+      <sql-table v-if="result" :data-set="result" :time="time" :height="tableHeight" />
     </div>
     <side-tool-bar @switchTo="$emit('switchTo', $event)" panel="table"/>
   </div>
@@ -32,12 +32,40 @@ import SideToolBar from './SideToolBar'
 
 export default {
   name: 'RunResult',
-  props: ['result', 'isGettingResults', 'error', 'time', 'height'],
+  props: ['result', 'isGettingResults', 'error', 'time'],
+  data () {
+    return {
+      resizeObserver: null,
+      tableHeight: 0
+    }
+  },
   components: {
     SqlTable,
     LoadingIndicator,
     Logs,
     SideToolBar
+  },
+  mounted () {
+    this.resizeObserver = new ResizeObserver(this.handleResize)
+    this.resizeObserver.observe(this.$refs.runResultPanel)
+    this.calculateTableHeight()
+  },
+  beforeDestroy () {
+    this.resizeObserver.unobserve(this.$refs.runResultPanel)
+  },
+  methods: {
+    handleResize () {
+      this.calculateTableHeight()
+    },
+    calculateTableHeight () {
+      const runResultPanel = this.$refs.runResultPanel
+      // 34 - table footer hight
+      // 5 - padding-bottom of rounded table container
+      // 35 - height of table header
+      // 64 = 32 * 2 - double area padding
+      const freeSpace = runResultPanel.offsetHeight - 34 - 5 - 35 - 64
+      this.tableHeight = freeSpace - (freeSpace % 35)
+    }
   }
 }
 </script>
