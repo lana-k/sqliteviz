@@ -103,7 +103,7 @@ export default {
 }
 
 .pivot-output {
-  /* flex-grow: 1; */
+  flex-grow: 1;
   width: 100%;
   overflow: auto;
 }
