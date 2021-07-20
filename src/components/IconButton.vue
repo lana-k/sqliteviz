@@ -44,8 +44,14 @@ export default {
   fill: var(--color-accent);
 }
 
+.disabled.icon-btn >>> path,
+.disabled.icon-btn >>> circle {
+  fill: var(--color-border);
+}
+
 .disabled.icon-btn {
   cursor: default;
+  pointer-events: none;
 }
 
 .disabled.icon-btn:hover >>> path {

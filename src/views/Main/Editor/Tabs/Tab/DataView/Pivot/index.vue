@@ -1,7 +1,7 @@
 <template>
 <div class="pivot-container">
   <div class="warning pivot-warning" v-show="!dataSources">
-    There is no data to build a pivot. Run your sql query and make sure the result is not empty.
+    There is no data to build a pivot. Run your SQL query and make sure the result is not empty.
   </div>
   <pivot-ui :key-names="columns" v-model="pivotOptions" @update="$emit('update')"/>
   <div ref="pivotOutput" class="pivot-output"/>
@@ -112,7 +112,6 @@ export default {
   height: 40px;
   line-height: 40px;
   box-sizing: border-box;
-  margin-bottom: 20px;
 }
 >>> .pvtTable {
   min-width: 100%;

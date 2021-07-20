@@ -126,3 +126,11 @@
 .sqliteviz-select .multiselect__option  .no-results {
   color: var(--color-text-light-2);
 }
+
+.sqliteviz-select.multiselect--disabled {
+  opacity: unset;
+}
+
+.sqliteviz-select.multiselect--disabled .multiselect__select {
+  background: unset;
+}
