@@ -160,7 +160,7 @@ export default {
   flex-shrink: 1;
 }
 
-#tabs-header div:hover {
+#tabs-header .tab:hover {
   cursor: pointer;
 }
 
@@ -169,9 +169,21 @@ export default {
   font-weight: 600;
   border-bottom: none;
   background-color: var(--color-white);
+  position: relative;
 }
-#tabs-header .tab-selected:hover {
-    cursor: default;
+
+#tabs-header .tab-selected:after {
+  content: '';
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-accent);
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+#tabs-header .tab.tab-selected:hover {
+  cursor: default;
 }
 
 .close-icon {
