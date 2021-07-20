@@ -12,6 +12,7 @@ export default {
       tab.tempName = state.untitledLastIndex
         ? `Untitled ${state.untitledLastIndex}`
         : 'Untitled'
+      tab.viewType = 'chart'
       tab.isUnsaved = true
     } else {
       tab.isUnsaved = false

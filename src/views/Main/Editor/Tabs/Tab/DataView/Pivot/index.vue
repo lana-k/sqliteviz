@@ -3,7 +3,7 @@
   <div class="warning pivot-warning" v-show="!dataSources">
     There is no data to build a pivot. Run your sql query and make sure the result is not empty.
   </div>
-  <pivot-ui :key-names="columns" v-model="pivotOptions"/>
+  <pivot-ui :key-names="columns" v-model="pivotOptions" @update="$emit('update')"/>
   <div ref="pivotOutput" class="pivot-output"/>
 </div>
 </template>
@@ -13,6 +13,9 @@ import $ from 'jquery'
 import 'pivottable'
 import 'pivottable/dist/pivot.css'
 import PivotUi from './PivotUi'
+import Chart from '@/views/Main/Editor/Tabs/Tab/DataView/Chart'
+import Vue from 'vue'
+const ChartClass = Vue.extend(Chart)
 
 export default {
   name: 'pivot',
@@ -27,11 +30,16 @@ export default {
         cols: this.initOptions.cols,
         colOrder: this.initOptions.colOrder,
         rowOrder: this.initOptions.rowOrder,
-        aggregator: $.pivotUtilities.aggregators[this.initOptions.aggregatorName](this.initOptions.vals),
         aggregatorName: this.initOptions.aggregatorName,
-        renderer: $.pivotUtilities.renderers[this.initOptions.rendererName],
+        aggregator: $.pivotUtilities.aggregators[this.initOptions.aggregatorName](this.initOptions.vals),
+        vals: this.initOptions.vals,
         rendererName: this.initOptions.rendererName,
-        vals: this.initOptions.vals
+        renderer: $.pivotUtilities.renderers[this.initOptions.rendererName],
+        rendererOptions: !this.initOptions.rendererOptions ? {} : {
+          customChartComponent:  new ChartClass({
+            propsData: { initOptions: this.initOptions.rendererOptions.customChartOptions }
+          })
+        }
       }
     }
   },
@@ -45,7 +53,6 @@ export default {
       this.show()
     },
     pivotOptions () {
-      this.$emit('update')
       this.show()
     }
   },
@@ -73,7 +80,15 @@ export default {
       )
     },
     getOptionsForSave () {
-      return this.pivotOptions
+      const options = {...this.pivotOptions}
+      if (options.rendererOptions) {
+        const chartComponent = this.pivotOptions.rendererOptions.customChartComponent
+        options.rendererOptions = {
+          customChartOptions: chartComponent.getOptionsForSave()
+        }
+      }
+      
+      return options
     }
   }
 }

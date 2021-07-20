@@ -136,6 +136,9 @@ import $ from 'jquery'
 import Multiselect from 'vue-multiselect'
 import PivotSortBtn from './PivotSortBtn'
 import { renderers, aggregators, zeroValAggregators, twoValAggregators } from './pivotHelper'
+import Chart from '@/views/Main/Editor/Tabs/Tab/DataView/Chart'
+import Vue from 'vue'
+const ChartClass = Vue.extend(Chart)
 
 export default {
   name: 'pivot',
@@ -156,7 +159,10 @@ export default {
       val1: (this.value.vals && this.value.vals[0]) || '',
       val2: (this.value.vals && this.value.vals[1]) || '',
       colOrder: this.value.colOrder || 'key_a_to_z',
-      rowOrder: this.value.rowOrder || 'key_a_to_z'
+      rowOrder: this.value.rowOrder || 'key_a_to_z',
+      customChartComponent:
+        (this.value.rendererOptions && this.value.rendererOptions.customChartComponent)
+        || new ChartClass()
     }
   },
   computed: {
@@ -210,13 +216,16 @@ export default {
       this.returnValue()
     }
   },
+  created () {
+    this.customChartComponent.$on('update', () => {this.$emit('update')})
+  },
   methods: {
     returnValue () {
       const vals = []
       for (let i = 1; i <= this.valCount; i++) {
         vals.push(this[`val${i}`])
       }
-
+      this.$emit('update')
       this.$emit('input', {
         rows: this.rows,
         cols: this.cols,
@@ -226,6 +235,9 @@ export default {
         aggregatorName: this.aggregator.name,
         renderer: this.renderer.fun,
         rendererName: this.renderer.name,
+        rendererOptions: this.renderer.name !== 'Custom chart' ? undefined : {
+          customChartComponent: this.customChartComponent
+        },
         vals
       })
     }

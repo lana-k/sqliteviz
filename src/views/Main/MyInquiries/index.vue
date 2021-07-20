@@ -243,7 +243,7 @@ export default {
     this.calcMaxTableHeight()
   },
   beforeDestroy () {
-    this.resizeObserver.unobserve(this.$refs['my-quiries-content'])
+    this.resizeObserver.unobserve(this.$refs['my-inquiries-content'])
     this.tableResizeObserver.unobserve(this.$refs.table)
   },
   filters: {

@@ -53,12 +53,10 @@ function customChartRenderer (data, options) {
   })
   dataSources = Object.assign(dataSources, dataSourcesByCols, dataSourcesByRows)
 
-  const chartInstance = new ChartClass({
-    propsData: { dataSources }
-  })
-  chartInstance.$mount()
-
-  return $(chartInstance.$el)
+  options.customChartComponent.dataSources = dataSources
+  options.customChartComponent.$mount()
+  
+  return $(options.customChartComponent.$el)
 }
 
 $.extend(
