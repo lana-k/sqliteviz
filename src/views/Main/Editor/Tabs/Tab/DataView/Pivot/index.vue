@@ -36,7 +36,7 @@ export default {
         rendererName: this.initOptions.rendererName,
         renderer: $.pivotUtilities.renderers[this.initOptions.rendererName],
         rendererOptions: !this.initOptions.rendererOptions ? {} : {
-          customChartComponent:  new ChartClass({
+          customChartComponent: new ChartClass({
             propsData: { initOptions: this.initOptions.rendererOptions.customChartOptions }
           })
         }
@@ -80,14 +80,14 @@ export default {
       )
     },
     getOptionsForSave () {
-      const options = {...this.pivotOptions}
+      const options = { ...this.pivotOptions }
       if (options.rendererOptions) {
         const chartComponent = this.pivotOptions.rendererOptions.customChartComponent
         options.rendererOptions = {
           customChartOptions: chartComponent.getOptionsForSave()
         }
       }
-      
+
       return options
     }
   }
@@ -115,5 +115,33 @@ export default {
 }
 >>> .pvtTable {
   min-width: 100%;
+}
+
+>>> table.pvtTable tbody tr td,
+>>> table.pvtTable thead tr th,
+>>> table.pvtTable tbody tr th {
+  border-color: var(--color-border-light);
+}
+>>> table.pvtTable thead tr th,
+>>> table.pvtTable tbody tr th {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-light);
+}
+
+>>> table.pvtTable tbody tr td {
+  color: var(--color-text-base);
+}
+
+.pivot-output >>> textarea {
+  color: var(--color-text-base);
+  min-width: 100%;
+  height: 100% !important;
+  display: block;
+  box-sizing: border-box;
+  border-width: 0;
+}
+
+.pivot-output >>> textarea:focus-visible {
+  outline: none;
 }
 </style>

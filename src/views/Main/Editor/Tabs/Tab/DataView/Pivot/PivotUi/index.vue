@@ -165,8 +165,8 @@ export default {
       colOrder: this.value.colOrder || 'key_a_to_z',
       rowOrder: this.value.rowOrder || 'key_a_to_z',
       customChartComponent:
-        (this.value.rendererOptions && this.value.rendererOptions.customChartComponent)
-        || new ChartClass()
+        (this.value.rendererOptions && this.value.rendererOptions.customChartComponent) ||
+        new ChartClass()
     }
   },
   computed: {
@@ -221,7 +221,7 @@ export default {
     }
   },
   created () {
-    this.customChartComponent.$on('update', () => {this.$emit('update')})
+    this.customChartComponent.$on('update', () => { this.$emit('update') })
   },
   methods: {
     returnValue () {

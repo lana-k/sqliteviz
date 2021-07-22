@@ -2,9 +2,6 @@ import $ from 'jquery'
 import 'pivottable'
 import 'pivottable/dist/export_renderers.js'
 import 'pivottable/dist/plotly_renderers.js'
-import Chart from '@/views/Main/Editor/Tabs/Tab/DataView/Chart'
-import Vue from 'vue'
-const ChartClass = Vue.extend(Chart)
 
 export const zeroValAggregators = [
   'Count',
@@ -19,13 +16,6 @@ export const twoValAggregators = [
   '80% Lower Bound'
 ]
 
-/*
-  <!--<chart
-    :sql-result="result"
-    :init-options="initOptions"
-    @update="$store.commit('updateTab', { index: tabIndex, isUnsaved: true })"
-  />-->
-*/
 function customChartRenderer (data, options) {
   const rowKeys = data.getRowKeys()
   const colKeys = data.getColKeys()
@@ -55,7 +45,7 @@ function customChartRenderer (data, options) {
 
   options.customChartComponent.dataSources = dataSources
   options.customChartComponent.$mount()
-  
+
   return $(options.customChartComponent.$el)
 }
 
