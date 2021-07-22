@@ -2,6 +2,8 @@
   <div class="side-tool-bar">
     <icon-button
       :active="panel === 'sqlEditor'"
+      tooltip="Switch panel to SQL editor"
+      tooltip-position="top-left"
       @click.native="$emit('switchTo', 'sqlEditor')"
     >
       <sql-editor-icon />
@@ -9,6 +11,8 @@
 
     <icon-button
       :active="panel === 'table'"
+      tooltip="Switch panel to result set"
+      tooltip-position="top-left"
       @click.native="$emit('switchTo', 'table')"
     >
       <table-icon/>
@@ -16,6 +20,8 @@
 
     <icon-button
       :active="panel === 'dataView'"
+      tooltip="Switch panel to data view"
+      tooltip-position="top-left"
       @click.native="$emit('switchTo', 'dataView')"
     >
       <data-view-icon />

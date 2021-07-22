@@ -2,11 +2,11 @@
   <div
     :class="['icon-btn', { active }, { disabled }]"
     @click="$emit('click')"
-    @mouseover="showTooltip"
+    @mouseover="showTooltip($event, tooltipPosition)"
     @mouseout="hideTooltip"
   >
     <slot/>
-    <span v-if="tooltip" class="icon-tooltip" :style="tooltipStyle">
+    <span v-if="tooltip" class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
       {{ tooltip }}
     </span>
   </div>

@@ -15,7 +15,7 @@
       fill="#A2B1C6"
     />
   </svg>
-  <span class="icon-tooltip" :style="tooltipStyle">
+  <span class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
     Load another database or CSV
   </span>
 </div>

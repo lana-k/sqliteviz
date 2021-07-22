@@ -32,7 +32,7 @@
         </clipPath>
       </defs>
     </svg>
-    <span class="icon-tooltip" :style="tooltipStyle">
+    <span class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
       Add new table from CSV
     </span>
   </span>

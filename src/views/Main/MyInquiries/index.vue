@@ -68,7 +68,7 @@
                       @mouseout="hideTooltip"
                     >
                       Predefined
-                      <span class="icon-tooltip" :style="tooltipStyle">
+                      <span class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
                         Predefined inquiries come from the server.
                         These inquiries can’t be deleted or renamed.
                       </span>

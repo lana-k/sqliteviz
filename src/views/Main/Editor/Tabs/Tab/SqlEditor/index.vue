@@ -9,7 +9,12 @@
       />
     </div>
     <side-tool-bar panel="sqlEditor" @switchTo="$emit('switchTo', $event)">
-      <icon-button :disabled="runDisabled" @click="$emit('run')">
+      <icon-button
+        :disabled="runDisabled"
+        tooltip="Run SQL query"
+        tooltip-position="top-left"
+        @click="$emit('run')"
+      >
         <run-icon :disabled="runDisabled"/>
       </icon-button>
     </side-tool-bar>
