@@ -6,6 +6,7 @@ import fu from '@/lib/utils/fileIo'
 describe('storedInquiries.js', () => {
   beforeEach(() => {
     localStorage.removeItem('myInquiries')
+    localStorage.removeItem('myQueries')
   })
 
   afterEach(() => {
@@ -15,6 +16,40 @@ describe('storedInquiries.js', () => {
   it('getStoredInquiries returns emplty array when storage is empty', () => {
     const inquiries = storedInquiries.getStoredInquiries()
     expect(inquiries).to.eql([])
+  })
+
+  it('getStoredInquiries migrate and returns inquiries of v1', () => {
+    localStorage.setItem('myQueries', JSON.stringify([
+      {
+        id: '123',
+        name: 'foo',
+        query: 'SELECT * FROM foo',
+        chart: { here_are: 'foo chart settings' }
+      },
+      {
+        id: '456',
+        name: 'bar',
+        query: 'SELECT * FROM bar',
+        chart: { here_are: 'bar chart settings' }
+      }
+    ]))
+    const inquiries = storedInquiries.getStoredInquiries()
+    expect(inquiries).to.eql([
+      {
+        id: '123',
+        name: 'foo',
+        query: 'SELECT * FROM foo',
+        viewType: 'chart',
+        viewOptions: { here_are: 'foo chart settings' }
+      },
+      {
+        id: '456',
+        name: 'bar',
+        query: 'SELECT * FROM bar',
+        viewType: 'chart',
+        viewOptions: { here_are: 'bar chart settings' }
+      }
+    ])
   })
 
   it('updateStorage and getStoredInquiries', () => {
@@ -100,28 +135,36 @@ describe('storedInquiries.js', () => {
 
     expect(parsedJson).to.have.lengthOf(2)
     expect(parsedJson[1]).to.eql(inquiryList[1])
-    expect(parsedJson[0].id).to.equal(inquiryList[0].id)
-    expect(parsedJson[0].name).to.equal(inquiryList[0].name)
-    expect(parsedJson[0].query).to.equal(inquiryList[0].query)
-    expect(parsedJson[0].viewType).to.equal(inquiryList[0].viewType)
-    expect(parsedJson[0].viewOptions).to.eql(inquiryList[0].viewOptions)
-    expect(parsedJson[0].createdAt).to.eql(inquiryList[0].createdAt)
-    expect(parsedJson[0]).to.not.have.property('isPredefined')
+    expect(parsedJson[0]).to.eql({
+      id: 1,
+      name: 'foo',
+      query: 'SELECT from foo',
+      viewType: 'chart',
+      viewOptions: [],
+      createdAt: '2020-11-03T14:17:49.524Z'
+    })
   })
 
-  it('deserialiseInquiries return array for one inquiry', () => {
+  it('deserialiseInquiries return array for one inquiry of v1', () => {
     const str = `
       {
         "id": 1,
         "name": "foo",
         "query": "select * from foo",
-        "viewType": "chart",
-        "viewOptions": [],
+        "chart": [],
         "createdAt": "2020-11-03T14:17:49.524Z" 
       }
     `
+
     const inquiry = storedInquiries.deserialiseInquiries(str)
-    expect(inquiry).to.eql([JSON.parse(str)])
+    expect(inquiry).to.eql([{
+      id: 1,
+      name: 'foo',
+      query: 'select * from foo',
+      viewType: 'chart',
+      viewOptions: [],
+      createdAt: '2020-11-03T14:17:49.524Z'
+    }])
   })
 
   it('deserialiseInquiries generates new id to avoid duplication', () => {
@@ -160,21 +203,52 @@ describe('storedInquiries.js', () => {
     expect(inquiries[0].createdAt).to.equal(parsedStr.inquiries[0].createdAt)
   })
 
-  it('importInquiries', async () => {
+  it('importInquiries v1', async () => {
     const str = `
       {
         "id": 1,
         "name": "foo",
         "query": "select * from foo",
-        "viewType": "chart",
-        "viewOptions": [],
+        "chart": [],
         "createdAt": "2020-11-03T14:17:49.524Z" 
       }
     `
     sinon.stub(fu, 'importFile').returns(Promise.resolve(str))
     const inquiries = await storedInquiries.importInquiries()
 
-    expect(inquiries).to.eql([JSON.parse(str)])
+    expect(inquiries).to.eql([{
+      id: 1,
+      name: 'foo',
+      query: 'select * from foo',
+      viewType: 'chart',
+      viewOptions: [],
+      createdAt: '2020-11-03T14:17:49.524Z'
+    }])
+  })
+
+  it('importInquiries', async () => {
+    const str = `{
+      "version": 2,
+      "inquiries": [{
+        "id": 1,
+        "name": "foo",
+        "query": "select * from foo",
+        "viewType": "chart",
+        "viewOptions": [],
+        "createdAt": "2020-11-03T14:17:49.524Z" 
+      }]
+    }`
+    sinon.stub(fu, 'importFile').returns(Promise.resolve(str))
+    const inquiries = await storedInquiries.importInquiries()
+
+    expect(inquiries).to.eql([{
+      id: 1,
+      name: 'foo',
+      query: 'select * from foo',
+      viewType: 'chart',
+      viewOptions: [],
+      createdAt: '2020-11-03T14:17:49.524Z'
+    }])
   })
 
   it('readPredefinedInquiries', async () => {

@@ -24,11 +24,11 @@ describe('tooltipMixin.js', () => {
 
   it('tooltipStyle is correct when showTooltip: top-right', async () => {
     const component = {
-      template: `<div :style="{...tooltipStyle, width: '100px'}" ref="tooltip"></div>`,
+      template: '<div :style="{...tooltipStyle, width: \'100px\'}" ref="tooltip"></div>',
       mixins: [tooltipMixin]
     }
-    
-    const wrapper = mount(component, { attachTo: container})
+
+    const wrapper = mount(component, { attachTo: container })
 
     // by default top-right
     await wrapper.vm.showTooltip(new MouseEvent('mouseover', {
@@ -45,10 +45,10 @@ describe('tooltipMixin.js', () => {
 
   it('tooltipStyle is correct when showTooltip: top-left', async () => {
     const component = {
-      template: `<div :style="{...tooltipStyle, width: '100px'}" ref="tooltip"></div>`,
+      template: '<div :style="{...tooltipStyle, width: \'100px\'}" ref="tooltip"></div>',
       mixins: [tooltipMixin]
     }
-    const wrapper = mount(component, { attachTo: container})
+    const wrapper = mount(component, { attachTo: container })
 
     await wrapper.vm.showTooltip(new MouseEvent('mouseover', {
       clientX: 212,
@@ -66,10 +66,10 @@ describe('tooltipMixin.js', () => {
 
   it('tooltipStyle is correct when showTooltip: bottom-right', async () => {
     const component = {
-      template: `<div :style="{...tooltipStyle, width: '100px'}" ref="tooltip"></div>`,
+      template: '<div :style="{...tooltipStyle, width: \'100px\'}" ref="tooltip"></div>',
       mixins: [tooltipMixin]
     }
-    const wrapper = mount(component, { attachTo: container})
+    const wrapper = mount(component, { attachTo: container })
 
     await wrapper.vm.showTooltip(new MouseEvent('mouseover', {
       clientX: 10,
@@ -85,10 +85,10 @@ describe('tooltipMixin.js', () => {
 
   it('tooltipStyle is correct when showTooltip: bottom-left', async () => {
     const component = {
-      template: `<div :style="{...tooltipStyle, width: '100px'}" ref="tooltip"></div>`,
+      template: '<div :style="{...tooltipStyle, width: \'100px\'}" ref="tooltip"></div>',
       mixins: [tooltipMixin]
     }
-    const wrapper = mount(component, { attachTo: container})
+    const wrapper = mount(component, { attachTo: container })
 
     await wrapper.vm.showTooltip(new MouseEvent('mouseover', {
       clientX: 212,
