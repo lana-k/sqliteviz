@@ -27,8 +27,7 @@ export default {
       } else {
         this.tooltipStyle.left = e.clientX - offset - this.tooltipElement.offsetWidth + 'px'
       }
-      
-      
+
       this.tooltipStyle.visibility = 'visible'
     },
     hideTooltip () {
