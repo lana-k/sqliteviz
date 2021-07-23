@@ -44,7 +44,7 @@ describe('Tab.vue', () => {
     expect(wrapper.find('.tab-content-container').isVisible()).to.equal(true)
     expect(wrapper.find('.bottomPane .run-result-panel').exists()).to.equal(true)
     expect(wrapper.find('.run-result-panel .result-before').isVisible()).to.equal(true)
-    expect(wrapper.find('.above .sql-editor-panel').text()).to.equal('SELECT * FROM foo')
+    expect(wrapper.find('.above .sql-editor-panel .codemirror-container').text()).to.equal('SELECT * FROM foo')
   })
 
   it("Doesn't render tab when it's not active", () => {
