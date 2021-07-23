@@ -28,14 +28,15 @@ describe('csv.js', () => {
   it('getResult without fields', () => {
     const source = {
       data: [
-        [1, 'foo'],
-        [2, 'bar']
+        [1, 'foo', new Date('2021-06-30T14:10:24.717Z')],
+        [2, 'bar', new Date('2021-07-30T14:10:15.717Z')]
       ],
       meta: {}
     }
     expect(csv.getResult(source)).to.eql({
       col1: [1, 2],
-      col2: ['foo', 'bar']
+      col2: ['foo', 'bar'],
+      col3: ['2021-06-30T14:10:24.717Z', '2021-07-30T14:10:15.717Z']
     })
   })
 
