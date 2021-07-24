@@ -14,9 +14,9 @@ export default {
         : 'Untitled'
       tab.viewType = 'chart'
       tab.viewOptions = undefined
-      tab.isUnsaved = true
+      tab.isSaved = false
     } else {
-      tab.isUnsaved = false
+      tab.isSaved = true
     }
 
     // add new tab only if was not already opened

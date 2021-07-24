@@ -61,14 +61,14 @@ describe('MainMenu.vue', () => {
     expect(wrapper.find('#create-btn').isVisible()).to.equal(true)
   })
 
-  it('Save is disabled if current tab.isUnsaved is false', async () => {
+  it('Save is disabled if current tab.isSaved is true', async () => {
     const state = {
       currentTab: {
         query: 'SELECT * FROM foo',
         execute: sinon.stub(),
         tabIndex: 0
       },
-      tabs: [{ isUnsaved: true }],
+      tabs: [{ isSaved: false }],
       db: {}
     }
     const store = new Vuex.Store({ state })
@@ -82,7 +82,7 @@ describe('MainMenu.vue', () => {
     const vm = wrapper.vm
     expect(wrapper.find('#save-btn').element.disabled).to.equal(false)
 
-    await vm.$set(state.tabs[0], 'isUnsaved', false)
+    await vm.$set(state.tabs[0], 'isSaved', true)
     expect(wrapper.find('#save-btn').element.disabled).to.equal(true)
   })
 
@@ -93,7 +93,7 @@ describe('MainMenu.vue', () => {
         execute: sinon.stub(),
         tabIndex: 0
       },
-      tabs: [{ isUnsaved: true }],
+      tabs: [{ isSaved: false }],
       db: {}
     }
     const newInquiryId = 1
@@ -127,7 +127,7 @@ describe('MainMenu.vue', () => {
         execute: sinon.stub(),
         tabIndex: 0
       },
-      tabs: [{ isUnsaved: true }],
+      tabs: [{ isSaved: false }],
       db: {}
     }
     const newInquiryId = 1
@@ -162,7 +162,7 @@ describe('MainMenu.vue', () => {
           execute: sinon.stub(),
           tabIndex: 0
         },
-        tabs: [{ isUnsaved: true }],
+        tabs: [{ isSaved: false }],
         db: {}
       }
       const store = new Vuex.Store({ state })
@@ -207,7 +207,7 @@ describe('MainMenu.vue', () => {
           execute: sinon.stub(),
           tabIndex: 0
         },
-        tabs: [{ isUnsaved: true }],
+        tabs: [{ isSaved: false }],
         db: {}
       }
       const store = new Vuex.Store({ state })
@@ -251,7 +251,7 @@ describe('MainMenu.vue', () => {
         execute: sinon.stub(),
         tabIndex: 0
       },
-      tabs: [{ isUnsaved: true }],
+      tabs: [{ isSaved: false }],
       db: {}
     }
     const store = new Vuex.Store({ state })
@@ -286,7 +286,7 @@ describe('MainMenu.vue', () => {
           execute: sinon.stub(),
           tabIndex: 0
         },
-        tabs: [{ isUnsaved: true }],
+        tabs: [{ isSaved: false }],
         db: {}
       }
       const store = new Vuex.Store({ state })
@@ -308,7 +308,7 @@ describe('MainMenu.vue', () => {
       expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
 
       // tab is saved and route is /editor
-      await wrapper.vm.$set(state.tabs[0], 'isUnsaved', false)
+      await wrapper.vm.$set(state.tabs[0], 'isSaved', true)
       document.dispatchEvent(ctrlS)
       expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
       document.dispatchEvent(metaS)
@@ -316,7 +316,7 @@ describe('MainMenu.vue', () => {
 
       // tab is unsaved and route is not /editor
       await wrapper.vm.$set($route, 'path', '/my-inquiries')
-      await wrapper.vm.$set(state.tabs[0], 'isUnsaved', true)
+      await wrapper.vm.$set(state.tabs[0], 'isSaved', false)
       document.dispatchEvent(ctrlS)
       expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
       document.dispatchEvent(metaS)
@@ -331,7 +331,7 @@ describe('MainMenu.vue', () => {
           execute: sinon.stub(),
           tabIndex: 0
         },
-        tabs: [{ id: 1, name: 'foo', isUnsaved: true }],
+        tabs: [{ id: 1, name: 'foo', isSaved: false }],
         db: {}
       }
       const mutations = {
@@ -370,7 +370,7 @@ describe('MainMenu.vue', () => {
         query: 'SELECT * FROM foo',
         viewType: 'chart',
         viewOptions: [],
-        isUnsaved: false
+        isSaved: true
       }))).to.equal(true)
 
       // check that 'inquirySaved' event was triggered on $root
@@ -384,7 +384,7 @@ describe('MainMenu.vue', () => {
         execute: sinon.stub(),
         tabIndex: 0
       },
-      tabs: [{ id: 1, name: null, tempName: 'Untitled', isUnsaved: true }],
+      tabs: [{ id: 1, name: null, tempName: 'Untitled', isSaved: false }],
       db: {}
     }
     const mutations = {
@@ -430,7 +430,7 @@ describe('MainMenu.vue', () => {
         execute: sinon.stub(),
         tabIndex: 0
       },
-      tabs: [{ id: 1, name: null, tempName: 'Untitled', isUnsaved: true }],
+      tabs: [{ id: 1, name: null, tempName: 'Untitled', isSaved: false }],
       db: {}
     }
     const mutations = {
@@ -481,7 +481,7 @@ describe('MainMenu.vue', () => {
       query: 'SELECT * FROM foo',
       viewType: 'chart',
       viewOptions: [],
-      isUnsaved: false
+      isSaved: true
     }))).to.equal(true)
 
     // check that 'inquirySaved' event was triggered on $root
@@ -505,7 +505,7 @@ describe('MainMenu.vue', () => {
         viewType: 'chart',
         viewOptions: []
       },
-      tabs: [{ id: 1, name: 'foo', isUnsaved: true, isPredefined: true }],
+      tabs: [{ id: 1, name: 'foo', isSaved: false, isPredefined: true }],
       db: {}
     }
     const mutations = {
@@ -559,7 +559,7 @@ describe('MainMenu.vue', () => {
       query: 'SELECT * FROM foo',
       viewType: 'chart',
       viewOptions: [],
-      isUnsaved: false
+      isSaved: true
     }))).to.equal(true)
 
     // check that 'inquirySaved' event was triggered on $root
@@ -586,7 +586,7 @@ describe('MainMenu.vue', () => {
         execute: sinon.stub(),
         tabIndex: 0
       },
-      tabs: [{ id: 1, name: null, tempName: 'Untitled', isUnsaved: true }],
+      tabs: [{ id: 1, name: null, tempName: 'Untitled', isSaved: false }],
       db: {}
     }
     const mutations = {

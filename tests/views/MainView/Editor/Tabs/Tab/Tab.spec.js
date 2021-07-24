@@ -111,7 +111,7 @@ describe('Tab.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'SELECT * FROM foo', chart: [], isUnsaved: false }
+        { id: 1, name: 'foo', query: 'SELECT * FROM foo', chart: [], isSaved: true }
       ],
       currentTabId: 1
     }
@@ -133,7 +133,7 @@ describe('Tab.vue', () => {
       }
     })
     await wrapper.findComponent({ name: 'SqlEditor' }).vm.$emit('input', ' limit 100')
-    expect(state.tabs[0].isUnsaved).to.equal(true)
+    expect(state.tabs[0].isSaved).to.equal(false)
   })
 
   it('Shows .result-in-progress message when executing query', async () => {

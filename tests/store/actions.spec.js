@@ -17,7 +17,7 @@ describe('actions', () => {
       tempName: 'Untitled',
       viewType: 'chart',
       viewOptions: undefined,
-      isUnsaved: true
+      isSaved: false
     })
     expect(state.untitledLastIndex).to.equal(1)
     
@@ -28,7 +28,7 @@ describe('actions', () => {
       tempName: 'Untitled 1',
       viewType: 'chart',
       viewOptions: undefined,
-      isUnsaved: true
+      isSaved: false
     })
     expect(state.untitledLastIndex).to.equal(2)
   })
@@ -45,7 +45,7 @@ describe('actions', () => {
       query: 'SELECT * from foo',
       viewType: 'chart',
       viewOptions: {},
-      isUnsaved: false
+      isSaved: true
     }
     await addTab({ state }, tab)
     expect(state.tabs[0]).to.eql(tab)
@@ -60,7 +60,7 @@ describe('actions', () => {
       query: 'SELECT * from foo',
       viewType: 'chart',
       viewOptions: {},
-      isUnsaved: false
+      isSaved: true
     }
 
     const tab2 = {
@@ -70,7 +70,7 @@ describe('actions', () => {
       query: 'SELECT * from bar',
       viewType: 'chart',
       viewOptions: {},
-      isUnsaved: false
+      isSaved: true
     }
 
     const state = {

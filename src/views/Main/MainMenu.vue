@@ -10,7 +10,7 @@
         id="save-btn"
         v-show="currentInquiry && $route.path === '/editor'"
         class="primary"
-        :disabled="!isUnsaved"
+        :disabled="isSaved"
         @click="checkInquiryBeforeSave"
       >
         Save
@@ -75,13 +75,13 @@ export default {
     currentInquiry () {
       return this.$store.state.currentTab
     },
-    isUnsaved () {
+    isSaved () {
       if (!this.currentInquiry) {
         return false
       }
       const tabIndex = this.currentInquiry.tabIndex
       const tab = this.$store.state.tabs[tabIndex]
-      return tab && tab.isUnsaved
+      return tab && tab.isSaved
     },
     isPredefined () {
       if (this.currentInquiry) {
@@ -145,7 +145,7 @@ export default {
         query: value.query,
         viewType: value.viewType,
         viewOptions: value.viewOptions,
-        isUnsaved: false
+        isSaved: true
       })
 
       // Restore data:
@@ -178,7 +178,7 @@ export default {
         // Save inquiry Ctrl+S
         if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
           e.preventDefault()
-          if (this.isUnsaved) {
+          if (!this.isSaved) {
             this.checkInquiryBeforeSave()
           }
           return

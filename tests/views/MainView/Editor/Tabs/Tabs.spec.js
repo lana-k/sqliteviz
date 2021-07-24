@@ -31,8 +31,8 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isUnsaved: false },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isUnsaved: true }
+        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
+        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
       ],
       currentTabId: 2
     }
@@ -65,8 +65,8 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isUnsaved: false },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isUnsaved: true }
+        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
+        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
       ],
       currentTabId: 2
     }
@@ -94,8 +94,8 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isUnsaved: false },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isUnsaved: true }
+        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
+        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
       ],
       currentTabId: 2
     }
@@ -125,8 +125,8 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isUnsaved: false },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isUnsaved: true }
+        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
+        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
       ],
       currentTabId: 2
     }
@@ -166,8 +166,8 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isUnsaved: false },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isUnsaved: true }
+        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
+        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
       ],
       currentTabId: 2
     }
@@ -211,8 +211,8 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isUnsaved: false },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isUnsaved: true }
+        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
+        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
       ],
       currentTabId: 2
     }
@@ -259,8 +259,8 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isUnsaved: false },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isUnsaved: true }
+        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
+        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
       ],
       currentTabId: 2
     }
@@ -284,7 +284,7 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isUnsaved: false }
+        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true }
       ],
       currentTabId: 1
     }

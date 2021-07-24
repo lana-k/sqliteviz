@@ -8,7 +8,7 @@
         :class="[{'tab-selected': (tab.id === selectedIndex)}, 'tab']"
       >
         <div class="tab-name">
-          <span v-show="tab.isUnsaved" class="star">*</span>
+          <span v-show="!tab.isSaved" class="star">*</span>
           <span v-if="tab.name">{{ tab.name }}</span>
           <span v-else class="tab-untitled">{{ tab.tempName }}</span>
         </div>
@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     leavingSqliteviz (event) {
-      if (this.tabs.some(tab => tab.isUnsaved)) {
+      if (this.tabs.some(tab => !tab.isSaved)) {
         event.preventDefault()
         event.returnValue = ''
       }
@@ -99,7 +99,7 @@ export default {
     },
     beforeCloseTab (index) {
       this.closingTabIndex = index
-      if (this.tabs[index].isUnsaved) {
+      if (!this.tabs[index].isSaved) {
         this.$modal.show('close-warn')
       } else {
         this.closeTab(index)

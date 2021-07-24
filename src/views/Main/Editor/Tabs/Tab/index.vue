@@ -97,7 +97,7 @@ export default {
       }
     },
     query () {
-      this.$store.commit('updateTab', { index: this.tabIndex, isUnsaved: true })
+      this.$store.commit('updateTab', { index: this.tabIndex, isSaved: false })
     }
   },
   methods: {
@@ -107,7 +107,7 @@ export default {
       this.layout[to] = fromPosition
     },
     onDataViewUpdate () {
-      this.$store.commit('updateTab', { index: this.tabIndex, isUnsaved: true })
+      this.$store.commit('updateTab', { index: this.tabIndex, isSaved: false })
     },
     async execute () {
       this.isGettingResults = true
