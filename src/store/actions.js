@@ -13,6 +13,7 @@ export default {
         ? `Untitled ${state.untitledLastIndex}`
         : 'Untitled'
       tab.viewType = 'chart'
+      tab.viewOptions = undefined
       tab.isUnsaved = true
     } else {
       tab.isUnsaved = false

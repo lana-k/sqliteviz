@@ -10,12 +10,27 @@ describe('actions', () => {
       untitledLastIndex: 0
     }
 
-    const id = await addTab({ state })
-    expect(state.tabs[0].id).to.eql(id)
-    expect(state.tabs[0].name).to.eql(null)
-    expect(state.tabs[0].tempName).to.eql('Untitled')
-    expect(state.tabs[0].isUnsaved).to.eql(true)
+    let id = await addTab({ state })
+    expect(state.tabs[0]).to.eql({
+      id: id,
+      name: null,
+      tempName: 'Untitled',
+      viewType: 'chart',
+      viewOptions: undefined,
+      isUnsaved: true
+    })
     expect(state.untitledLastIndex).to.equal(1)
+    
+    id = await addTab({ state })
+    expect(state.tabs[1]).to.eql({
+      id: id,
+      name: null,
+      tempName: 'Untitled 1',
+      viewType: 'chart',
+      viewOptions: undefined,
+      isUnsaved: true
+    })
+    expect(state.untitledLastIndex).to.equal(2)
   })
 
   it('addTab adds tab from saved inquiries', async () => {
