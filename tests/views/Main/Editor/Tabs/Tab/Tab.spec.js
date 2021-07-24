@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { mount } from '@vue/test-utils'
+import { mount, createWrapper } from '@vue/test-utils'
 import mutations from '@/store/mutations'
 import Vuex from 'vuex'
 import Tab from '@/views/Main/Editor/Tabs/Tab'
@@ -272,5 +272,53 @@ describe('Tab.vue', () => {
 
     await wrapper.vm.execute()
     expect(state.db.refreshSchema.calledOnce).to.equal(true)
+  })
+
+  it('Switches views', async () => {
+    const state = {
+      currentTabId: 1,
+      db: {}
+    }
+
+    const store = new Vuex.Store({ state, mutations })
+
+    const wrapper = mount(Tab, {
+      attachTo: place,
+      store,
+      stubs: ['chart'],
+      propsData: {
+        id: 1,
+        initName: 'foo',
+        initQuery: 'SELECT * FROM foo; CREATE TABLE bar(a,b);',
+        initViewOptions: [],
+        initViewType: 'chart',
+        tabIndex: 0,
+        isPredefined: false
+      }
+    })
+
+    let tableBtn = createWrapper(wrapper.find('.above .side-tool-bar').findComponent({ name: 'tableIcon'}).vm.$parent)
+    await tableBtn.trigger('click')
+
+    expect(wrapper.find('.bottomPane .sql-editor-panel').exists()).to.equal(true)
+    expect(wrapper.find('.above .run-result-panel').exists()).to.equal(true)
+
+    let dataViewBtn = createWrapper(wrapper.find('.above .side-tool-bar').findComponent({ name: 'dataViewIcon'}).vm.$parent)
+    await dataViewBtn.trigger('click')
+
+    expect(wrapper.find('.bottomPane .sql-editor-panel').exists()).to.equal(true)
+    expect(wrapper.find('.above .data-view-panel').exists()).to.equal(true)
+
+    const sqlEditorBtn = createWrapper(wrapper.find('.above .side-tool-bar').findComponent({ name: 'sqlEditorIcon'}).vm.$parent)
+    await sqlEditorBtn.trigger('click')
+
+    expect(wrapper.find('.above .sql-editor-panel').exists()).to.equal(true)
+    expect(wrapper.find('.bottomPane .data-view-panel').exists()).to.equal(true)
+
+    tableBtn = createWrapper(wrapper.find('.bottomPane .side-tool-bar').findComponent({ name: 'tableIcon'}).vm.$parent)
+    await tableBtn.trigger('click')
+
+    expect(wrapper.find('.above .sql-editor-panel').exists()).to.equal(true)
+    expect(wrapper.find('.bottomPane .run-result-panel').exists()).to.equal(true)
   })
 })
