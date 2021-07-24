@@ -25,7 +25,20 @@ export default {
   },
   data () {
     return {
-      pivotOptions: !this.initOptions ? {} : {
+      pivotOptions: !this.initOptions
+      ? {
+        rows: [],
+        cols: [],
+        colOrder: 'key_a_to_z',
+        rowOrder: 'key_a_to_z',
+        aggregatorName: 'Count',
+        aggregator: $.pivotUtilities.aggregators['Count'](),
+        vals: [],
+        rendererName: 'Table',
+        renderer: $.pivotUtilities.renderers['Table'],
+        rendererOptions: undefined
+      }
+      : {
         rows: this.initOptions.rows,
         cols: this.initOptions.cols,
         colOrder: this.initOptions.colOrder,
@@ -35,7 +48,7 @@ export default {
         vals: this.initOptions.vals,
         rendererName: this.initOptions.rendererName,
         renderer: $.pivotUtilities.renderers[this.initOptions.rendererName],
-        rendererOptions: !this.initOptions.rendererOptions ? {} : {
+        rendererOptions: !this.initOptions.rendererOptions ? undefined : {
           customChartComponent: new ChartClass({
             propsData: { initOptions: this.initOptions.rendererOptions.customChartOptions }
           })

@@ -3,7 +3,7 @@
     <div class="data-view-panel-content">
       <component
         :is="mode"
-        :init-options="initOptions"
+        :init-options="mode === initMode ? initOptions : undefined"
         :data-sources="dataSource"
         ref="viewComponent"
         @update="$emit('update')"
@@ -48,6 +48,11 @@ export default {
   data () {
     return {
       mode: this.initMode
+    }
+  },
+  watch: {
+    mode () {
+      this.$emit('update')
     }
   },
   methods: {

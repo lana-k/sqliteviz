@@ -158,14 +158,14 @@ export default {
       collapsed: false,
       renderer: { name: rendererName, fun: $.pivotUtilities.renderers[rendererName] },
       aggregator: { name: aggregatorName, fun: $.pivotUtilities.aggregators[aggregatorName] },
-      rows: this.value.rows || [],
-      cols: this.value.cols || [],
-      val1: (this.value.vals && this.value.vals[0]) || '',
-      val2: (this.value.vals && this.value.vals[1]) || '',
-      colOrder: this.value.colOrder || 'key_a_to_z',
-      rowOrder: this.value.rowOrder || 'key_a_to_z',
+      rows: (this.value && this.value.rows) || [],
+      cols: (this.value && this.value.cols) || [],
+      val1: (this.value && this.value.vals && this.value.vals[0]) || '',
+      val2: (this.value && this.value.vals && this.value.vals[1]) || '',
+      colOrder: (this.value && this.value.colOrder) || 'key_a_to_z',
+      rowOrder: (this.value && this.value.rowOrder) || 'key_a_to_z',
       customChartComponent:
-        (this.value.rendererOptions && this.value.rendererOptions.customChartComponent) ||
+        (this.value && this.value.rendererOptions && this.value.rendererOptions.customChartComponent) ||
         new ChartClass()
     }
   },
