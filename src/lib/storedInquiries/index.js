@@ -83,13 +83,10 @@ export default {
     let inquiryList = []
     if (!inquiries.version) {
       // Turn data into array if they are not
-      if (!Array.isArray(inquiries)) {
-        inquiryList = [inquiries]
-      }
-
+      inquiryList = !Array.isArray(inquiries) ? [inquiries] : inquiries
       inquiryList = migrate(1, inquiryList)
     } else {
-      inquiryList = inquiries.inquiries
+      inquiryList = inquiries.inquiries || []
     }
 
     // Generate new ids if they are the same as existing inquiries

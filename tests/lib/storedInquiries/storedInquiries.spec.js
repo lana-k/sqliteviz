@@ -145,6 +145,45 @@ describe('storedInquiries.js', () => {
     })
   })
 
+  it('deserialiseInquiries migrates inquiries', () => {
+    const str = `[
+      {
+        "id": 1,
+        "name": "foo",
+        "query": "select * from foo",
+        "chart": [],
+        "createdAt": "2020-11-03T14:17:49.524Z" 
+      },
+      {
+        "id": 2,
+        "name": "bar",
+        "query": "select * from bar",
+        "chart": [],
+        "createdAt": "2020-11-04T14:17:49.524Z" 
+      }
+    ]`
+
+    const inquiry = storedInquiries.deserialiseInquiries(str)
+    expect(inquiry).to.eql([
+      {
+        id: 1,
+        name: 'foo',
+        query: 'select * from foo',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-11-03T14:17:49.524Z'
+      },
+      {
+        id: 2,
+        name: 'bar',
+        query: 'select * from bar',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-11-04T14:17:49.524Z'
+      }
+    ])
+  })
+
   it('deserialiseInquiries return array for one inquiry of v1', () => {
     const str = `
       {
