@@ -11,14 +11,18 @@
     </div>
     <side-tool-bar panel="dataView" @switchTo="$emit('switchTo', $event)">
       <icon-button
-       :active="mode === 'chart'"
-       @click="mode = 'chart'"
+        :active="mode === 'chart'"
+        @click="mode = 'chart'"
+        tooltip="Switch to chart"
+        tooltip-position="top-left"
       >
         <chart-icon />
       </icon-button>
       <icon-button
         :active="mode === 'pivot'"
         @click="mode = 'pivot'"
+        tooltip="Switch to pivot"
+        tooltip-position="top-left"
       >
         <pivot-icon />
       </icon-button>
