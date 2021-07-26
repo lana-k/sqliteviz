@@ -260,7 +260,6 @@ describe('SQLite extensions', function () {
       ALTER TABLE surface DROP COLUMN rownum;
       SELECT * FROM surface;
     `)
-    console.log(actual)
     expect(actual).to.eql({
       x: [5, 10, 15],
       y: [3, 6, 9],
