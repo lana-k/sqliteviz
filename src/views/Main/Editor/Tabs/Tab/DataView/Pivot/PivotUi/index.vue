@@ -4,7 +4,7 @@
       <div class="row">
         <label>Columns</label>
         <multiselect
-          class="sqliteviz-select"
+          class="sqliteviz-select cols"
           v-model="cols"
           :options="colsToSelect"
           :disabled="colsToSelect.length === 0"
@@ -32,7 +32,7 @@
       <div class="row">
         <label>Rows</label>
         <multiselect
-          class="sqliteviz-select"
+          class="sqliteviz-select rows"
           v-model="rows"
           :options="rowsToSelect"
           :disabled="rowsToSelect.length === 0"
@@ -61,7 +61,7 @@
       <div class="row aggregator">
         <label>Aggregator</label>
         <multiselect
-          class="sqliteviz-select short"
+          class="sqliteviz-select short aggregator"
           v-model="aggregator"
           :options="aggregators"
           label="name"
@@ -110,7 +110,7 @@
       <div class="row">
         <label>View</label>
         <multiselect
-          class="sqliteviz-select short"
+          class="sqliteviz-select short renderer"
           v-model="renderer"
           :options="renderers"
           label="name"
