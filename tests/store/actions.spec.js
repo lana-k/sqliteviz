@@ -20,7 +20,7 @@ describe('actions', () => {
       isSaved: false
     })
     expect(state.untitledLastIndex).to.equal(1)
-    
+
     id = await addTab({ state })
     expect(state.tabs[1]).to.eql({
       id: id,

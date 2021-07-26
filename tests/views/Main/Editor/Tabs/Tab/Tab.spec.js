@@ -297,25 +297,25 @@ describe('Tab.vue', () => {
       }
     })
 
-    let tableBtn = createWrapper(wrapper.find('.above .side-tool-bar').findComponent({ name: 'tableIcon'}).vm.$parent)
+    let tableBtn = createWrapper(wrapper.find('.above .side-tool-bar').findComponent({ name: 'tableIcon' }).vm.$parent)
     await tableBtn.trigger('click')
 
     expect(wrapper.find('.bottomPane .sql-editor-panel').exists()).to.equal(true)
     expect(wrapper.find('.above .run-result-panel').exists()).to.equal(true)
 
-    let dataViewBtn = createWrapper(wrapper.find('.above .side-tool-bar').findComponent({ name: 'dataViewIcon'}).vm.$parent)
+    const dataViewBtn = createWrapper(wrapper.find('.above .side-tool-bar').findComponent({ name: 'dataViewIcon' }).vm.$parent)
     await dataViewBtn.trigger('click')
 
     expect(wrapper.find('.bottomPane .sql-editor-panel').exists()).to.equal(true)
     expect(wrapper.find('.above .data-view-panel').exists()).to.equal(true)
 
-    const sqlEditorBtn = createWrapper(wrapper.find('.above .side-tool-bar').findComponent({ name: 'sqlEditorIcon'}).vm.$parent)
+    const sqlEditorBtn = createWrapper(wrapper.find('.above .side-tool-bar').findComponent({ name: 'sqlEditorIcon' }).vm.$parent)
     await sqlEditorBtn.trigger('click')
 
     expect(wrapper.find('.above .sql-editor-panel').exists()).to.equal(true)
     expect(wrapper.find('.bottomPane .data-view-panel').exists()).to.equal(true)
 
-    tableBtn = createWrapper(wrapper.find('.bottomPane .side-tool-bar').findComponent({ name: 'tableIcon'}).vm.$parent)
+    tableBtn = createWrapper(wrapper.find('.bottomPane .side-tool-bar').findComponent({ name: 'tableIcon' }).vm.$parent)
     await tableBtn.trigger('click')
 
     expect(wrapper.find('.above .sql-editor-panel').exists()).to.equal(true)
