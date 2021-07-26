@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import plotly from 'plotly.js/dist/plotly'
+import plotly from 'plotly.js'
 import 'react-chart-editor/lib/react-chart-editor.min.css'
 
 import PlotlyEditor from 'react-chart-editor'
