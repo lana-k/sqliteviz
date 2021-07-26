@@ -145,7 +145,7 @@ import Vue from 'vue'
 const ChartClass = Vue.extend(Chart)
 
 export default {
-  name: 'pivot',
+  name: 'pivotUi',
   props: ['keyNames', 'value'],
   components: {
     Multiselect,
