@@ -51,7 +51,7 @@ export default {
   },
   data () {
     return {
-      mode: this.initMode
+      mode: this.initMode || 'chart'
     }
   },
   watch: {
