@@ -16,11 +16,11 @@ export const twoValAggregators = [
   '80% Lower Bound'
 ]
 
-function customChartRenderer (data, options) {
-  const rowKeys = data.getRowKeys()
-  const colKeys = data.getColKeys()
+export function _getDataSources (pivotData) {
+  const rowKeys = pivotData.getRowKeys()
+  const colKeys = pivotData.getColKeys()
 
-  let dataSources = {
+  const dataSources = {
     'Column keys': colKeys.map(colKey => colKey.join('-')),
     'Row keys': rowKeys.map(rowKey => rowKey.join('-'))
   }
@@ -28,22 +28,28 @@ function customChartRenderer (data, options) {
   const dataSourcesByRows = {}
   const dataSourcesByCols = {}
 
+  const rowAttrs = pivotData.rowAttrs.join('-')
+  const colAttrs = pivotData.colAttrs.join('-')
+
   colKeys.forEach(colKey => {
-    const sourceColKey = data.colAttrs.join('-') + ':' + colKey.join('-')
+    const sourceColKey = colAttrs + ':' + colKey.join('-')
     dataSourcesByCols[sourceColKey] = []
     rowKeys.forEach(rowKey => {
-      const value = data.getAggregator(rowKey, colKey).value()
+      const value = pivotData.getAggregator(rowKey, colKey).value()
       dataSourcesByCols[sourceColKey].push(value)
-      const sourceRowKey = data.rowAttrs.join('-') + ':' + rowKey.join('-')
+      const sourceRowKey = rowAttrs + ':' + rowKey.join('-')
       if (!dataSourcesByRows[sourceRowKey]) {
         dataSourcesByRows[sourceRowKey] = []
       }
       dataSourcesByRows[sourceRowKey].push(value)
     })
   })
-  dataSources = Object.assign(dataSources, dataSourcesByCols, dataSourcesByRows)
 
-  options.customChartComponent.dataSources = dataSources
+  return Object.assign(dataSources, dataSourcesByCols, dataSourcesByRows)
+}
+
+function customChartRenderer (data, options) {
+  options.customChartComponent.dataSources = _getDataSources(data)
   options.customChartComponent.$mount()
 
   return $(options.customChartComponent.$el)
