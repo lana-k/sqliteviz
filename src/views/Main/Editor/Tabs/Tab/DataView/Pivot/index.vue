@@ -25,6 +25,7 @@ export default {
   },
   data () {
     return {
+      resizeObserver: null,
       pivotOptions: !this.initOptions
         ? {
           rows: [],
@@ -71,11 +72,38 @@ export default {
   },
   mounted () {
     this.show()
+    this.resizeObserver = new ResizeObserver(this.handleResize)
+    this.resizeObserver.observe(this.$refs.pivotOutput)
+  },
+  beforeDestroy () {
+    this.resizeObserver.unobserve(this.$refs.chartContainer)
   },
   methods: {
+    handleResize () {
+      // hack: plotly changes size only on window.resize event,
+      // so, we trigger it when container resizes (e.g. when move splitter)
+      if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
+        window.dispatchEvent(new Event('resize'))
+      }
+    },
     show () {
       if (!this.dataSources) {
         return
+      }
+
+      const options = { ...this.pivotOptions }
+      if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
+        options.rendererOptions = {
+          plotly: {
+            autosize: true,
+            width: null,
+            height: null
+          },
+          plotlyConfig: {
+            displaylogo: false,
+            responsive: true
+          }
+        }
       }
 
       $(this.$refs.pivotOutput).pivot(
@@ -89,8 +117,13 @@ export default {
             callback(row)
           }
         }.bind(this),
-        this.pivotOptions
+        options
       )
+      
+      // fix for Firefox: fit plotly renderers just after choosing it in pivotUi
+      if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
+        window.dispatchEvent(new Event('resize'))
+      }
     },
     getOptionsForSave () {
       const options = { ...this.pivotOptions }
