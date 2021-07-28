@@ -2,7 +2,7 @@
   <nav>
     <div>
       <router-link to="/editor">Editor</router-link>
-      <router-link to="/my-inquiries">My inquiries</router-link>
+      <router-link to="/inquiries">Inquiries</router-link>
       <a href="https://github.com/lana-k/sqliteviz/wiki" target="_blank">Help</a>
     </div>
     <div id="nav-buttons">

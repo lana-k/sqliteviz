@@ -2,12 +2,12 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import { mount, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
-import MyInquiries from '@/views/Main/MyInquiries'
+import Inquiries from '@/views/Main/Inquiries'
 import storedInquiries from '@/lib/storedInquiries'
 import mutations from '@/store/mutations'
 import fu from '@/lib/utils/fileIo'
 
-describe('MyInquiries.vue', () => {
+describe('Inquiries.vue', () => {
   afterEach(() => {
     sinon.restore()
   })
@@ -22,7 +22,7 @@ describe('MyInquiries.vue', () => {
       updatePredefinedInquiries: sinon.stub()
     }
     const store = new Vuex.Store({ state, mutations })
-    const wrapper = shallowMount(MyInquiries, { store })
+    const wrapper = shallowMount(Inquiries, { store })
 
     expect(wrapper.find('#start-guide').exists()).to.equal(true)
   })
@@ -61,7 +61,7 @@ describe('MyInquiries.vue', () => {
     }
 
     const store = new Vuex.Store({ state, mutations })
-    const wrapper = shallowMount(MyInquiries, { store })
+    const wrapper = shallowMount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -115,7 +115,7 @@ describe('MyInquiries.vue', () => {
     }
 
     const store = new Vuex.Store({ state, mutations })
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await wrapper.find('#toolbar-search input').setValue('OO')
     await wrapper.vm.$nextTick()
 
@@ -151,7 +151,7 @@ describe('MyInquiries.vue', () => {
     }
 
     const store = new Vuex.Store({ state, mutations })
-    const wrapper = shallowMount(MyInquiries, { store })
+    const wrapper = shallowMount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -180,7 +180,7 @@ describe('MyInquiries.vue', () => {
     }
 
     const store = new Vuex.Store({ state, mutations })
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -214,7 +214,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -258,7 +258,7 @@ describe('MyInquiries.vue', () => {
       }
       const store = new Vuex.Store({ state, mutations })
 
-      const wrapper = mount(MyInquiries, { store })
+      const wrapper = mount(Inquiries, { store })
       await storedInquiries.readPredefinedInquiries.returnValues[0]
       await storedInquiries.getStoredInquiries.returnValues[0]
       await wrapper.vm.$nextTick()
@@ -290,7 +290,7 @@ describe('MyInquiries.vue', () => {
     const $router = { push: sinon.stub() }
     const store = new Vuex.Store({ state, mutations, actions })
 
-    const wrapper = shallowMount(MyInquiries, {
+    const wrapper = shallowMount(Inquiries, {
       store,
       mocks: { $router }
     })
@@ -324,7 +324,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -350,7 +350,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -412,7 +412,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -461,7 +461,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = shallowMount(MyInquiries, { store })
+    const wrapper = shallowMount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -504,7 +504,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -538,7 +538,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -572,7 +572,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -633,7 +633,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -694,7 +694,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -744,7 +744,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -807,7 +807,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -885,7 +885,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -960,7 +960,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -1021,7 +1021,7 @@ describe('MyInquiries.vue', () => {
     }
     const store = new Vuex.Store({ state, mutations })
 
-    const wrapper = mount(MyInquiries, { store })
+    const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()

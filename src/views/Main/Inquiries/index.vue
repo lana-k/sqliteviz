@@ -153,7 +153,7 @@ import storedInquiries from '@/lib/storedInquiries'
 import fu from '@/lib/utils/fileIo'
 
 export default {
-  name: 'MyInquiries',
+  name: 'Inquiries',
   components: {
     RenameIcon,
     CopyIcon,

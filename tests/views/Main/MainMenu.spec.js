@@ -35,7 +35,7 @@ describe('MainMenu.vue', () => {
     expect(wrapper.find('#create-btn').exists()).to.equal(true)
     expect(wrapper.find('#create-btn').isVisible()).to.equal(true)
 
-    await wrapper.vm.$set(wrapper.vm.$route, 'path', '/my-inquiries')
+    await wrapper.vm.$set(wrapper.vm.$route, 'path', '/inquiries')
     expect(wrapper.find('#save-btn').exists()).to.equal(true)
     expect(wrapper.find('#save-btn').isVisible()).to.equal(false)
     expect(wrapper.find('#create-btn').exists()).to.equal(true)
@@ -138,7 +138,7 @@ describe('MainMenu.vue', () => {
       setCurrentTabId: sinon.stub()
     }
     const store = new Vuex.Store({ state, mutations, actions })
-    const $route = { path: '/my-inquiries' }
+    const $route = { path: '/inquiries' }
     const $router = { push: sinon.stub() }
 
     wrapper = shallowMount(MainMenu, {
@@ -192,7 +192,7 @@ describe('MainMenu.vue', () => {
 
       // Running is enabled and route path is not editor
       await wrapper.vm.$set(state, 'db', {})
-      await wrapper.vm.$set($route, 'path', '/my-inquiries')
+      await wrapper.vm.$set($route, 'path', '/inquiries')
       document.dispatchEvent(ctrlR)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
       document.dispatchEvent(metaR)
@@ -237,7 +237,7 @@ describe('MainMenu.vue', () => {
 
       // Running is enabled and route path is not editor
       await wrapper.vm.$set(state, 'db', {})
-      await wrapper.vm.$set($route, 'path', '/my-inquiries')
+      await wrapper.vm.$set($route, 'path', '/inquiries')
       document.dispatchEvent(ctrlEnter)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
       document.dispatchEvent(metaEnter)
@@ -271,7 +271,7 @@ describe('MainMenu.vue', () => {
     document.dispatchEvent(metaB)
     expect(wrapper.vm.createNewInquiry.calledTwice).to.equal(true)
 
-    await wrapper.vm.$set($route, 'path', '/my-inquiries')
+    await wrapper.vm.$set($route, 'path', '/inquiries')
     document.dispatchEvent(ctrlB)
     expect(wrapper.vm.createNewInquiry.calledThrice).to.equal(true)
     document.dispatchEvent(metaB)
@@ -315,7 +315,7 @@ describe('MainMenu.vue', () => {
       expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
 
       // tab is unsaved and route is not /editor
-      await wrapper.vm.$set($route, 'path', '/my-inquiries')
+      await wrapper.vm.$set($route, 'path', '/inquiries')
       await wrapper.vm.$set(state.tabs[0], 'isSaved', false)
       document.dispatchEvent(ctrlS)
       expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
