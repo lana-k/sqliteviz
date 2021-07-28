@@ -75,7 +75,7 @@ export default {
   serialiseInquiries (inquiryList) {
     const preparedData = JSON.parse(JSON.stringify(inquiryList))
     preparedData.forEach(inquiry => delete inquiry.isPredefined)
-    return JSON.stringify(preparedData, null, 4)
+    return JSON.stringify({ version: this.version, inquiries: preparedData }, null, 4)
   },
 
   deserialiseInquiries (str) {

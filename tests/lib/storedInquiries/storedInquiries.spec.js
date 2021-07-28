@@ -133,9 +133,10 @@ describe('storedInquiries.js', () => {
     const str = storedInquiries.serialiseInquiries(inquiryList)
     const parsedJson = JSON.parse(str)
 
-    expect(parsedJson).to.have.lengthOf(2)
-    expect(parsedJson[1]).to.eql(inquiryList[1])
-    expect(parsedJson[0]).to.eql({
+    expect(parsedJson.version).to.equal(2)
+    expect(parsedJson.inquiries).to.have.lengthOf(2)
+    expect(parsedJson.inquiries[1]).to.eql(inquiryList[1])
+    expect(parsedJson.inquiries[0]).to.eql({
       id: 1,
       name: 'foo',
       query: 'SELECT from foo',
