@@ -7,7 +7,7 @@
       viewBox="0 0 18 18"
       fill="none"
       @click.stop="onClick"
-      @mouseenter="showTooltip"
+      @mouseenter="showTooltip($event, tooltipPosition)"
       @mouseleave="hideTooltip"
     >
       <path
@@ -27,7 +27,7 @@ import tooltipMixin from '@/tooltipMixin'
 export default {
   name: 'ExportIcon',
   mixins: [tooltipMixin],
-  props: ['tooltip'],
+  props: ['tooltip', 'tooltipPosition'],
   methods: {
     onClick () {
       this.hideTooltip()

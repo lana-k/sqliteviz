@@ -7,7 +7,7 @@
       viewBox="0 0 18 18"
       fill="none"
       @click.stop="onClick"
-      @mouseenter="showTooltip"
+      @mouseenter="showTooltip($event, 'top-left')"
       @mouseleave="hideTooltip"
     >
       <path

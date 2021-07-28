@@ -84,6 +84,7 @@
                     <export-icon
                       @click="exportToFile([inquiry], `${inquiry.name}.json`)"
                       tooltip="Export inquiry to file"
+                      tooltip-position="top-left"
                     />
                     <delete-icon
                       v-if="!inquiry.isPredefined"
