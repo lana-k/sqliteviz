@@ -72,11 +72,13 @@ export default {
   },
   mounted () {
     this.show()
+    // We need to detect resizing because plotly doesn't resize when resixe its container
+    // but it resize on window.resize (we will trigger it manualy in order to make plotly resize)
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.pivotOutput)
   },
   beforeDestroy () {
-    this.resizeObserver.unobserve(this.$refs.chartContainer)
+    this.resizeObserver.unobserve(this.$refs.pivotOutput)
   },
   methods: {
     handleResize () {
