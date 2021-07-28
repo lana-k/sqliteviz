@@ -119,7 +119,7 @@ export default {
         }.bind(this),
         options
       )
-      
+
       // fix for Firefox: fit plotly renderers just after choosing it in pivotUi
       if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
         window.dispatchEvent(new Event('resize'))
