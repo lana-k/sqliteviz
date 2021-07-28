@@ -31,7 +31,7 @@ describe('tooltipMixin.js', () => {
     const wrapper = mount(component, { attachTo: container })
 
     // by default top-right
-    await wrapper.vm.showTooltip(new MouseEvent('mouseover', {
+    await wrapper.vm.showTooltip(new MouseEvent('mouseenter', {
       clientX: 10,
       clientY: 20
     }))
@@ -50,7 +50,7 @@ describe('tooltipMixin.js', () => {
     }
     const wrapper = mount(component, { attachTo: container })
 
-    await wrapper.vm.showTooltip(new MouseEvent('mouseover', {
+    await wrapper.vm.showTooltip(new MouseEvent('mouseenter', {
       clientX: 212,
       clientY: 20
     }), 'top-left')
@@ -71,7 +71,7 @@ describe('tooltipMixin.js', () => {
     }
     const wrapper = mount(component, { attachTo: container })
 
-    await wrapper.vm.showTooltip(new MouseEvent('mouseover', {
+    await wrapper.vm.showTooltip(new MouseEvent('mouseenter', {
       clientX: 10,
       clientY: 20
     }), 'bottom-right')
@@ -90,7 +90,7 @@ describe('tooltipMixin.js', () => {
     }
     const wrapper = mount(component, { attachTo: container })
 
-    await wrapper.vm.showTooltip(new MouseEvent('mouseover', {
+    await wrapper.vm.showTooltip(new MouseEvent('mouseenter', {
       clientX: 212,
       clientY: 20
     }), 'bottom-left')
@@ -109,7 +109,7 @@ describe('tooltipMixin.js', () => {
       mixins: [tooltipMixin]
     }
     const wrapper = mount(component)
-    await wrapper.vm.showTooltip(new MouseEvent('mouseover', {
+    await wrapper.vm.showTooltip(new MouseEvent('mouseenter', {
       clientX: 10,
       clientY: 20
     }))

@@ -1,6 +1,6 @@
 <template>
   <div class="db-uploader-container" :style="{ width }">
-    <change-db-icon v-if="type === 'small'" @click.native="browse"/>
+    <change-db-icon v-if="type === 'small'" @click="browse"/>
     <div v-if="type === 'illustrated'" class="drop-area-container">
       <div
         class="drop-area"

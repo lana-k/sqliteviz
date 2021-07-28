@@ -64,8 +64,8 @@
                     <div
                       v-if="inquiry.isPredefined"
                       class="badge"
-                      @mouseover="showTooltip"
-                      @mouseout="hideTooltip"
+                      @mouseenter="showTooltip"
+                      @mouseleave="hideTooltip"
                     >
                       Predefined
                       <span class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
