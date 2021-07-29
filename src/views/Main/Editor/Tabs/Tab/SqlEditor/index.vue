@@ -36,7 +36,7 @@ import RunIcon from '@/components/svg/run'
 
 export default {
   name: 'SqlEditor',
-  props: ['value'],
+  props: ['value', 'isGettingResults'],
   components: {
     codemirror,
     SideToolBar,
@@ -59,7 +59,7 @@ export default {
   },
   computed: {
     runDisabled () {
-      return (!this.$store.state.db || !this.query)
+      return (!this.$store.state.db || !this.query || this.isGettingResults)
     }
   },
   watch: {

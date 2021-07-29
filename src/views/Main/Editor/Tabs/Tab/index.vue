@@ -20,6 +20,7 @@
       <sql-editor
         ref="sqlEditor"
         v-model="query"
+        :is-getting-results="isGettingResults"
         @switchTo="onSwitchView('sqlEditor', $event)"
         @run="execute"
       />
