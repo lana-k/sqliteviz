@@ -88,7 +88,7 @@ export default {
     },
     async saveAsPng () {
       const chartElement = this.$refs.plotlyEditor.$el.querySelector('.js-plotly-plot')
-      const url = await plotly.toImage(chartElement, { format: 'png' })
+      const url = await plotly.toImage(chartElement, { format: 'png', width: null, height: null })
       fIo.downloadFromUrl(url, 'pivot', 'image/png')
     }
   }

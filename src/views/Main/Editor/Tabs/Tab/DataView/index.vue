@@ -32,7 +32,7 @@
 
       <icon-button
         :disabled="!importToPngEnabled"
-        tooltip="Save as png image"
+        tooltip="Save as PNG image"
         tooltip-position="top-left"
         @click="saveAsPng"
       >

@@ -152,7 +152,11 @@ export default {
         this.pivotOptions.rendererOptions.customChartComponent.saveAsPng()
       } else if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
         const chartElement = this.$refs.pivotOutput.querySelector('.js-plotly-plot')
-        const url = await plotly.toImage(chartElement, { format: 'png' })
+        const url = await plotly.toImage(chartElement, {
+          format: 'png',
+          width: null,
+          height: null
+        })
         fIo.downloadFromUrl(url, 'pivot', 'image/png')
       } else {
         const tableElement = this.$refs.pivotOutput.querySelector('.pvtTable')
