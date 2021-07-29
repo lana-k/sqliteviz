@@ -27,7 +27,7 @@
       <data-view-icon />
     </icon-button>
 
-    <div class="divider" v-if="$slots.default"/>
+    <div class="side-tool-bar-divider" v-if="$slots.default"/>
 
     <slot/>
   </div>
@@ -58,7 +58,7 @@ export default {
   padding: 6px;
 }
 
-.divider {
+.side-tool-bar-divider {
   width: 26px;
   height: 1px;
   background: var(--color-border-light);

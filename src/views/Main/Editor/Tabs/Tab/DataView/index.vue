@@ -5,6 +5,7 @@
         :is="mode"
         :init-options="mode === initMode ? initOptions : undefined"
         :data-sources="dataSource"
+        :import-to-png-enabled.sync="importToPngEnabled"
         ref="viewComponent"
         @update="$emit('update')"
       />
@@ -26,6 +27,17 @@
       >
         <pivot-icon />
       </icon-button>
+
+      <div class="side-tool-bar-divider"/>
+
+      <icon-button
+        :disabled="!importToPngEnabled"
+        tooltip="Save as png image"
+        tooltip-position="top-left"
+        @click="saveAsPng"
+      >
+        <png-icon />
+      </icon-button>
     </side-tool-bar>
   </div>
 </template>
@@ -37,6 +49,7 @@ import SideToolBar from '../SideToolBar'
 import IconButton from '@/components/IconButton'
 import ChartIcon from '@/components/svg/chart'
 import PivotIcon from '@/components/svg/pivot'
+import PngIcon from '@/components/svg/png'
 
 export default {
   name: 'DataView',
@@ -47,19 +60,25 @@ export default {
     SideToolBar,
     IconButton,
     ChartIcon,
-    PivotIcon
+    PivotIcon,
+    PngIcon
   },
   data () {
     return {
-      mode: this.initMode || 'chart'
+      mode: this.initMode || 'chart',
+      importToPngEnabled: true
     }
   },
   watch: {
     mode () {
       this.$emit('update')
+      this.importToPngEnabled = true
     }
   },
   methods: {
+    saveAsPng () {
+      this.$refs.viewComponent.saveAsPng()
+    },
     getOptionsForSave () {
       return this.$refs.viewComponent.getOptionsForSave()
     }

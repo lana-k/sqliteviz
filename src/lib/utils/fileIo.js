@@ -10,11 +10,9 @@ export default {
     return file.name.replace(/\.[^.]+$/, '')
   },
 
-  exportToFile (str, fileName, type = 'octet/stream') {
+  downloadFromUrl (url, fileName) {
     // Create downloader
     const downloader = document.createElement('a')
-    const blob = new Blob([str], { type })
-    const url = URL.createObjectURL(blob)
     downloader.href = url
     downloader.download = fileName
 
@@ -23,6 +21,12 @@ export default {
 
     // Clean up
     URL.revokeObjectURL(url)
+  },
+
+  async exportToFile (str, fileName, type = 'octet/stream') {
+    const blob = new Blob([str], { type })
+    const url = URL.createObjectURL(blob)
+    this.downloadFromUrl(url, fileName)
   },
 
   /**

@@ -7,7 +7,7 @@
       :data="state.data"
       :layout="state.layout"
       :frames="state.frames"
-      :config="{ editable: true, displaylogo: false }"
+      :config="{ editable: true, displaylogo: false, modeBarButtonsToRemove: ['toImage'] }"
       :dataSources="dataSources"
       :dataSourceOptions="dataSourceOptions"
       :plotly="plotly"
@@ -30,10 +30,11 @@ import 'react-chart-editor/lib/react-chart-editor.min.css'
 import PlotlyEditor from 'react-chart-editor'
 import chartHelper from './chartHelper'
 import dereference from 'react-chart-editor/lib/lib/dereference'
+import fIo from '@/lib/utils/fileIo'
 
 export default {
   name: 'Chart',
-  props: ['dataSources', 'initOptions'],
+  props: ['dataSources', 'initOptions', 'importToPngEnabled'],
   components: {
     PlotlyEditor
   },
@@ -84,6 +85,11 @@ export default {
     },
     getOptionsForSave () {
       return chartHelper.getOptionsForSave(this.state, this.dataSources)
+    },
+    async saveAsPng () {
+      const chartElement = this.$refs.plotlyEditor.$el.querySelector('.js-plotly-plot')
+      const url = await plotly.toImage(chartElement, { format: 'png' })
+      fIo.downloadFromUrl(url, 'pivot', 'image/png')
     }
   }
 }

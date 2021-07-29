@@ -9,6 +9,9 @@
 </template>
 
 <script>
+import html2canvas from 'html2canvas'
+import plotly from 'plotly.js'
+import fIo from '@/lib/utils/fileIo'
 import $ from 'jquery'
 import 'pivottable'
 import 'pivottable/dist/pivot.css'
@@ -19,7 +22,7 @@ const ChartClass = Vue.extend(Chart)
 
 export default {
   name: 'pivot',
-  props: ['dataSources', 'initOptions'],
+  props: ['dataSources', 'initOptions', 'importToPngEnabled'],
   components: {
     PivotUi
   },
@@ -66,6 +69,12 @@ export default {
     dataSources () {
       this.show()
     },
+    'pivotOptions.rendererName': {
+      immediate: true,
+      handler () {
+        this.$emit('update:importToPngEnabled', this.pivotOptions.rendererName !== 'TSV Export')
+      }
+    },
     pivotOptions () {
       this.show()
     }
@@ -88,11 +97,8 @@ export default {
         window.dispatchEvent(new Event('resize'))
       }
     },
-    show () {
-      if (!this.dataSources) {
-        return
-      }
 
+    show () {
       const options = { ...this.pivotOptions }
       if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
         options.rendererOptions = {
@@ -103,14 +109,15 @@ export default {
           },
           plotlyConfig: {
             displaylogo: false,
-            responsive: true
+            responsive: true,
+            modeBarButtonsToRemove: ['toImage']
           }
         }
       }
 
       $(this.$refs.pivotOutput).pivot(
         function (callback) {
-          const rowCount = this.dataSources[this.columns[0]].length
+          const rowCount = !this.dataSources ? 0 : this.dataSources[this.columns[0]].length
           for (let i = 1; i <= rowCount; i++) {
             const row = {}
             this.columns.forEach(col => {
@@ -127,6 +134,7 @@ export default {
         window.dispatchEvent(new Event('resize'))
       }
     },
+
     getOptionsForSave () {
       const options = { ...this.pivotOptions }
       if (options.rendererOptions) {
@@ -137,6 +145,20 @@ export default {
       }
 
       return options
+    },
+
+    async saveAsPng () {
+      if (this.pivotOptions.rendererName === 'Custom chart') {
+        this.pivotOptions.rendererOptions.customChartComponent.saveAsPng()
+      } else if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
+        const chartElement = this.$refs.pivotOutput.querySelector('.js-plotly-plot')
+        const url = await plotly.toImage(chartElement, { format: 'png' })
+        fIo.downloadFromUrl(url, 'pivot', 'image/png')
+      } else {
+        const tableElement = this.$refs.pivotOutput.querySelector('.pvtTable')
+        const canvas = await html2canvas(tableElement)
+        fIo.downloadFromUrl(canvas.toDataURL('image/png'), 'pivot', 'image/png')
+      }
     }
   }
 }
