@@ -18,7 +18,13 @@
         No rows retrieved according to your query
       </div>
       <logs v-if="error" :messages="[error]"/>
-      <sql-table v-if="result" :data-set="result" :time="time" :height="tableHeight" />
+      <sql-table
+        v-if="result"
+        :data-set="result"
+        :time="time"
+        :height="tableHeight"
+        class="straight"
+      />
     </div>
     <side-tool-bar @switchTo="$emit('switchTo', $event)" panel="table"/>
   </div>
@@ -62,8 +68,7 @@ export default {
       // 34 - table footer hight
       // 5 - padding-bottom of rounded table container
       // 35 - height of table header
-      // 64 = 32 * 2 - double area padding
-      const freeSpace = runResultPanel.offsetHeight - 34 - 5 - 35 - 64
+      const freeSpace = runResultPanel.offsetHeight - 34 - 5 - 35
       this.tableHeight = freeSpace - (freeSpace % 35)
     }
   }
@@ -80,7 +85,6 @@ export default {
 .run-result-panel-content {
   position: relative;
   flex-grow: 1;
-  padding: 32px;
   height: 100%;
   width: 0;
   box-sizing: border-box;
