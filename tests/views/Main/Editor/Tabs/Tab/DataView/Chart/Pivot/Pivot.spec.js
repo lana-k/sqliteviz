@@ -137,26 +137,6 @@ describe('Pivot.vue', () => {
     expect(rows.at(1).find('td.rowTotal').text()).to.equal('2')
   })
 
-  it('do nothing when dataSource is empty', () => {
-    const wrapper = mount(Pivot, {
-      propsData: {
-        dataSources: null,
-        initOptions: {
-          rows: ['item'],
-          cols: ['year'],
-          colOrder: 'key_a_to_z',
-          rowOrder: 'key_a_to_z',
-          aggregatorName: 'Count',
-          vals: [],
-          rendererName: 'Table'
-        }
-      }
-    })
-
-    expect(wrapper.find('.pivot-output table').exists()).to.equal(false)
-    expect(wrapper.find('.pivot-warning').exists()).to.equal(true)
-  })
-
   it('returns options for save', async () => {
     const wrapper = mount(Pivot, {
       propsData: {

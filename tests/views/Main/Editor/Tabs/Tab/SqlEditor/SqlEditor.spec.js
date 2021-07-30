@@ -17,13 +17,13 @@ describe('SqlEditor.vue', () => {
     expect(wrapper.emitted('input')[0]).to.eql(['SELECT * FROM foo'])
   })
 
-  it('Run is disabled if there is no db or no query', async () => {
+  it('Run is disabled if there is no db or no query or is getting result set', async () => {
     const state = {
       db: null
     }
     const store = new Vuex.Store({ state })
 
-    const wrapper = mount(SqlEditor, { store })
+    const wrapper = mount(SqlEditor, { store, propsData: { isGettingResults: false } })
     await wrapper.findComponent({ name: 'codemirror' }).vm.$emit('input', 'SELECT * FROM foo')
     const runButton = wrapper.findComponent({ name: 'RunIcon' }).vm.$parent
 
@@ -33,6 +33,12 @@ describe('SqlEditor.vue', () => {
     expect(runButton.disabled).to.equal(false)
 
     await wrapper.findComponent({ name: 'codemirror' }).vm.$emit('input', '')
+    expect(runButton.disabled).to.equal(true)
+
+    await wrapper.findComponent({ name: 'codemirror' }).vm.$emit('input', 'SELECT * FROM foo')
+    expect(runButton.disabled).to.equal(false)
+
+    await wrapper.setProps({ isGettingResults: true })
     expect(runButton.disabled).to.equal(true)
   })
 })

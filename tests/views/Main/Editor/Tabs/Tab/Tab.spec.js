@@ -163,7 +163,7 @@ describe('Tab.vue', () => {
 
     wrapper.vm.execute()
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('.result-in-progress').isVisible()).to.equal(true)
+    expect(wrapper.find('.run-result-panel .result-in-progress').isVisible()).to.equal(true)
   })
 
   it('Shows error when executing query ends with error', async () => {
@@ -193,8 +193,8 @@ describe('Tab.vue', () => {
     })
 
     await wrapper.vm.execute()
-    expect(wrapper.find('.result-before').isVisible()).to.equal(false)
-    expect(wrapper.find('.result-in-progress').exists()).to.equal(false)
+    expect(wrapper.find('.run-result-panel .result-before').isVisible()).to.equal(false)
+    expect(wrapper.find('.run-result-panel .result-in-progress').exists()).to.equal(false)
     expect(wrapper.findComponent({ name: 'logs' }).isVisible()).to.equal(true)
     expect(wrapper.findComponent({ name: 'logs' }).text()).to.include('There is no table foo')
   })
@@ -231,8 +231,8 @@ describe('Tab.vue', () => {
     })
 
     await wrapper.vm.execute()
-    expect(wrapper.find('.result-before').isVisible()).to.equal(false)
-    expect(wrapper.find('.result-in-progress').exists()).to.equal(false)
+    expect(wrapper.find('.run-result-panel .result-before').isVisible()).to.equal(false)
+    expect(wrapper.find('.run-result-panel .result-in-progress').exists()).to.equal(false)
     expect(wrapper.findComponent({ name: 'logs' }).exists()).to.equal(false)
     expect(wrapper.findComponent({ name: 'SqlTable' }).vm.dataSet).to.eql(result)
   })

@@ -6,7 +6,7 @@
     @mouseleave="hideTooltip"
   >
     <div class="icon"><slot /></div>
-    <div v-show="loading" class="result-in-progress">
+    <div v-show="loading" class="icon-in-progress">
       <loading-indicator />
     </div>
     <span v-if="tooltip" class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
@@ -70,7 +70,7 @@ export default {
   fill: var(--color-border);
 }
 
-.result-in-progress {
+.icon-in-progress {
   position: absolute;
   width: 26px;
   height: 26px;
