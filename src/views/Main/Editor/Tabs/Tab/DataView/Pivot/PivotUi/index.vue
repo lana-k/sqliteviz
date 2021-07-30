@@ -222,6 +222,7 @@ export default {
   },
   created () {
     this.customChartComponent.$on('update', () => { this.$emit('update') })
+    this.customChartComponent.$on('loadingImageCompleted', value => { this.$emit('loadingCustomChartImageCompleted') })
   },
   methods: {
     returnValue () {

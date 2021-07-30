@@ -6,6 +6,7 @@
         :init-options="mode === initMode ? initOptions : undefined"
         :data-sources="dataSource"
         :import-to-png-enabled.sync="importToPngEnabled"
+        @loadingImageCompleted="loadingImage = false"
         ref="viewComponent"
         @update="$emit('update')"
       />
@@ -31,7 +32,8 @@
       <div class="side-tool-bar-divider"/>
 
       <icon-button
-        :disabled="!importToPngEnabled"
+        :disabled="!importToPngEnabled || loadingImage"
+        :loading="loadingImage"
         tooltip="Save as PNG image"
         tooltip-position="top-left"
         @click="saveAsPng"
@@ -66,7 +68,8 @@ export default {
   data () {
     return {
       mode: this.initMode || 'chart',
-      importToPngEnabled: true
+      importToPngEnabled: true,
+      loadingImage: false
     }
   },
   watch: {
@@ -76,8 +79,19 @@ export default {
     }
   },
   methods: {
-    saveAsPng () {
-      this.$refs.viewComponent.saveAsPng()
+    async saveAsPng () {
+      this.loadingImage = true
+      /*
+      setTimeout does its thing by putting its callback on the callback queue. The callback queue is only called by the browser after both the call stack and the render queue are done. So our animation (which is on the call stack) gets done, the render queue renders it, and then the browser is ready for the callback queue and calls the long-calculation.
+
+      nextTick allows you to do something after you have changed the data and VueJS has updated the DOM based on your data change, but before the browser has rendered those changed on the page.
+
+      Lees meer van Katinka Hesselink: http://www.hesselinkwebdesign.nl/2019/nexttick-vs-settimeout-in-vue/
+
+      */
+      setTimeout(() => {
+        this.$refs.viewComponent.saveAsPng()
+      }, 0)
     },
     getOptionsForSave () {
       return this.$refs.viewComponent.getOptionsForSave()

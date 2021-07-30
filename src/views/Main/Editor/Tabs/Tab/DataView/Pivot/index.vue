@@ -3,7 +3,12 @@
   <div class="warning pivot-warning" v-show="!dataSources">
     There is no data to build a pivot. Run your SQL query and make sure the result is not empty.
   </div>
-  <pivot-ui :key-names="columns" v-model="pivotOptions" @update="$emit('update')"/>
+  <pivot-ui
+    :key-names="columns"
+    v-model="pivotOptions"
+    @update="$emit('update')"
+    @loadingCustomChartImageCompleted="$emit('loadingImageCompleted')"
+  />
   <div ref="pivotOutput" class="pivot-output"/>
 </div>
 </template>
@@ -157,10 +162,12 @@ export default {
           width: null,
           height: null
         })
+        this.$emit('loadingImageCompleted')
         fIo.downloadFromUrl(url, 'pivot', 'image/png')
       } else {
         const tableElement = this.$refs.pivotOutput.querySelector('.pvtTable')
         const canvas = await html2canvas(tableElement)
+        this.$emit('loadingImageCompleted')
         fIo.downloadFromUrl(canvas.toDataURL('image/png'), 'pivot', 'image/png')
       }
     }

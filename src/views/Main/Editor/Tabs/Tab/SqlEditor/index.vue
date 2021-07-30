@@ -11,6 +11,7 @@
     <side-tool-bar panel="sqlEditor" @switchTo="$emit('switchTo', $event)">
       <icon-button
         :disabled="runDisabled"
+        :loading="isGettingResults"
         tooltip="Run SQL query"
         tooltip-position="top-left"
         @click="$emit('run')"
