@@ -49,6 +49,7 @@ export default {
 .paginator-continer {
   display: flex;
   align-items: center;
+  line-height: 10px;
 }
 >>> .paginator-page-link {
   padding: 2px 3px;

@@ -22,7 +22,7 @@
         v-if="result"
         :data-set="result"
         :time="time"
-        :height="tableHeight"
+        :pageSize="pageSize"
         class="straight"
       />
     </div>
@@ -42,7 +42,7 @@ export default {
   data () {
     return {
       resizeObserver: null,
-      tableHeight: 0
+      pageSize: 20
     }
   },
   components: {
@@ -54,22 +54,22 @@ export default {
   mounted () {
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.runResultPanel)
-    this.calculateTableHeight()
+    this.calculatePageSize()
   },
   beforeDestroy () {
     this.resizeObserver.unobserve(this.$refs.runResultPanel)
   },
   methods: {
     handleResize () {
-      this.calculateTableHeight()
+      this.calculatePageSize()
     },
-    calculateTableHeight () {
+    calculatePageSize () {
       const runResultPanel = this.$refs.runResultPanel
-      // 34 - table footer hight
+      // 27 - table footer hight
       // 5 - padding-bottom of rounded table container
       // 35 - height of table header
-      const freeSpace = runResultPanel.offsetHeight - 34 - 5 - 35
-      this.tableHeight = freeSpace - (freeSpace % 35)
+      const freeSpace = runResultPanel.offsetHeight - 27 - 5 - 35
+      this.pageSize = Math.max(Math.floor(freeSpace / 35), 20)
     }
   }
 }

@@ -59,7 +59,6 @@
           && (previewData.rowCount > 0 || Object.keys(previewData).length > 0)
         "
         :data-set="previewData"
-        height="160"
         class="preview-table"
         :preview="true"
       />

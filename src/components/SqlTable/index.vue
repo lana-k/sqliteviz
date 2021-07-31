@@ -17,7 +17,6 @@
         class="table-container"
         ref="table-container"
         @scroll="onScrollTable"
-        :style="{maxHeight: `${height}px`}"
       >
       <table ref="table" class="sqliteviz-table">
         <thead>
@@ -56,7 +55,15 @@ import Pager from './Pager'
 export default {
   name: 'SqlTable',
   components: { Pager },
-  props: ['dataSet', 'time', 'height', 'preview'],
+  props: {
+    dataSet: Object,
+    time: String,
+    pageSize: {
+      type: Number,
+      default: 20
+    },
+    preview: Boolean
+  },
   data () {
     return {
       header: null,
@@ -75,9 +82,6 @@ export default {
     cellStyle () {
       const eq = this.tableWidth / this.columns.length
       return { maxWidth: `${Math.max(eq, 100)}px` }
-    },
-    pageSize () {
-      return Math.max(Math.floor(this.height / 40), 20)
     },
     pageCount () {
       return Math.ceil(this.rowCount / this.pageSize)
