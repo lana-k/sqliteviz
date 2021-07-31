@@ -166,7 +166,6 @@ export default {
 
 #tabs-header .tab-selected {
   color: var(--color-text-active);
-  font-weight: 600;
   border-bottom: none;
   background-color: var(--color-white);
   position: relative;
