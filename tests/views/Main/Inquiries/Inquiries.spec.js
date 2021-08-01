@@ -303,7 +303,7 @@ describe('Inquiries.vue', () => {
     expect(actions.addTab.getCall(0).args[1]).to.equals(inquiryInStorage)
     await actions.addTab.returnValues[0]
     expect(mutations.setCurrentTabId.calledOnceWith(state, 1)).to.equals(true)
-    expect($router.push.calledOnceWith('/editor')).to.equals(true)
+    expect($router.push.calledOnceWith('/workspace')).to.equals(true)
   })
 
   it('Rename is not available for predefined inquiries', async () => {

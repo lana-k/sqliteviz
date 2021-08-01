@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Editor from '@/views/Main/Editor'
+import Workspace from '@/views/Main/Workspace'
 import Inquiries from '@/views/Main/Inquiries'
 import Welcome from '@/views/Welcome'
 import Main from '@/views/Main'
@@ -21,9 +21,9 @@ const routes = [
     component: Main,
     children: [
       {
-        path: '/editor',
-        name: 'Editor',
-        component: Editor
+        path: '/workspace',
+        name: 'Workspace',
+        component: Workspace
       },
       {
         path: '/inquiries',

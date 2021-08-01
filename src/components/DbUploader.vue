@@ -110,8 +110,8 @@ export default {
 
     async finish () {
       this.$store.commit('setDb', this.newDb)
-      if (this.$route.path !== '/editor') {
-        this.$router.push('/editor')
+      if (this.$route.path !== '/workspace') {
+        this.$router.push('/workspace')
       }
     },
 

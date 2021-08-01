@@ -277,7 +277,7 @@ export default {
       const tab = this.showedInquiries[index]
       this.$store.dispatch('addTab', tab).then(id => {
         this.$store.commit('setCurrentTabId', id)
-        this.$router.push('/editor')
+        this.$router.push('/workspace')
       })
     },
     showRenameDialog (id) {

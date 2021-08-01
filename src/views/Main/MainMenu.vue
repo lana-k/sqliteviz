@@ -1,14 +1,14 @@
 <template>
   <nav>
     <div>
-      <router-link to="/editor">Editor</router-link>
+      <router-link to="/workspace">Workspace</router-link>
       <router-link to="/inquiries">Inquiries</router-link>
       <a href="https://github.com/lana-k/sqliteviz/wiki" target="_blank">Help</a>
     </div>
     <div id="nav-buttons">
       <button
         id="save-btn"
-        v-show="currentInquiry && $route.path === '/editor'"
+        v-show="currentInquiry && $route.path === '/workspace'"
         class="primary"
         :disabled="isSaved"
         @click="checkInquiryBeforeSave"
@@ -106,8 +106,8 @@ export default {
     createNewInquiry () {
       this.$store.dispatch('addTab').then(id => {
         this.$store.commit('setCurrentTabId', id)
-        if (this.$route.path !== '/editor') {
-          this.$router.push('/editor')
+        if (this.$route.path !== '/workspace') {
+          this.$router.push('/workspace')
         }
       })
     },
@@ -165,7 +165,7 @@ export default {
       this.$root.$emit('inquirySaved')
     },
     _keyListener (e) {
-      if (this.$route.path === '/editor') {
+      if (this.$route.path === '/workspace') {
         // Run query Ctrl+R or Ctrl+Enter
         if ((e.key === 'r' || e.key === 'Enter') && (e.ctrlKey || e.metaKey)) {
           e.preventDefault()

@@ -16,14 +16,14 @@ describe('MainMenu.vue', () => {
     wrapper.destroy()
   })
 
-  it('Create and Save are visible only on /editor page', async () => {
+  it('Create and Save are visible only on /workspace page', async () => {
     const state = {
       currentTab: { query: '', execute: sinon.stub() },
       tabs: [{}],
       db: {}
     }
     const store = new Vuex.Store({ state })
-    const $route = { path: '/editor' }
+    const $route = { path: '/workspace' }
     // mount the component
     wrapper = shallowMount(MainMenu, {
       store,
@@ -49,7 +49,7 @@ describe('MainMenu.vue', () => {
       db: {}
     }
     const store = new Vuex.Store({ state })
-    const $route = { path: '/editor' }
+    const $route = { path: '/workspace' }
     wrapper = shallowMount(MainMenu, {
       store,
       mocks: { $route },
@@ -72,7 +72,7 @@ describe('MainMenu.vue', () => {
       db: {}
     }
     const store = new Vuex.Store({ state })
-    const $route = { path: '/editor' }
+    const $route = { path: '/workspace' }
 
     wrapper = shallowMount(MainMenu, {
       store,
@@ -104,7 +104,7 @@ describe('MainMenu.vue', () => {
       setCurrentTabId: sinon.stub()
     }
     const store = new Vuex.Store({ state, mutations, actions })
-    const $route = { path: '/editor' }
+    const $route = { path: '/workspace' }
     const $router = { push: sinon.stub() }
 
     wrapper = shallowMount(MainMenu, {
@@ -120,7 +120,7 @@ describe('MainMenu.vue', () => {
     expect($router.push.calledOnce).to.equal(false)
   })
 
-  it('Creates a tab and redirects to editor', async () => {
+  it('Creates a tab and redirects to workspace', async () => {
     const state = {
       currentTab: {
         query: 'SELECT * FROM foo',
@@ -154,7 +154,7 @@ describe('MainMenu.vue', () => {
     expect($router.push.calledOnce).to.equal(true)
   })
 
-  it('Ctrl R calls currentTab.execute if running is enabled and route.path is "/editor"',
+  it('Ctrl R calls currentTab.execute if running is enabled and route.path is "/workspace"',
     async () => {
       const state = {
         currentTab: {
@@ -166,7 +166,7 @@ describe('MainMenu.vue', () => {
         db: {}
       }
       const store = new Vuex.Store({ state })
-      const $route = { path: '/editor' }
+      const $route = { path: '/workspace' }
       const $router = { push: sinon.stub() }
 
       wrapper = shallowMount(MainMenu, {
@@ -177,20 +177,20 @@ describe('MainMenu.vue', () => {
 
       const ctrlR = new KeyboardEvent('keydown', { key: 'r', ctrlKey: true })
       const metaR = new KeyboardEvent('keydown', { key: 'r', metaKey: true })
-      // Running is enabled and route path is editor
+      // Running is enabled and route path is workspace
       document.dispatchEvent(ctrlR)
       expect(state.currentTab.execute.calledOnce).to.equal(true)
       document.dispatchEvent(metaR)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
 
-      // Running is disabled and route path is editor
+      // Running is disabled and route path is workspace
       await wrapper.vm.$set(state, 'db', null)
       document.dispatchEvent(ctrlR)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
       document.dispatchEvent(metaR)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
 
-      // Running is enabled and route path is not editor
+      // Running is enabled and route path is not workspace
       await wrapper.vm.$set(state, 'db', {})
       await wrapper.vm.$set($route, 'path', '/inquiries')
       document.dispatchEvent(ctrlR)
@@ -199,7 +199,7 @@ describe('MainMenu.vue', () => {
       expect(state.currentTab.execute.calledTwice).to.equal(true)
     })
 
-  it('Ctrl Enter calls currentTab.execute if running is enabled and route.path is "/editor"',
+  it('Ctrl Enter calls currentTab.execute if running is enabled and route.path is "/workspace"',
     async () => {
       const state = {
         currentTab: {
@@ -211,7 +211,7 @@ describe('MainMenu.vue', () => {
         db: {}
       }
       const store = new Vuex.Store({ state })
-      const $route = { path: '/editor' }
+      const $route = { path: '/workspace' }
       const $router = { push: sinon.stub() }
 
       wrapper = shallowMount(MainMenu, {
@@ -222,20 +222,20 @@ describe('MainMenu.vue', () => {
 
       const ctrlEnter = new KeyboardEvent('keydown', { key: 'Enter', ctrlKey: true })
       const metaEnter = new KeyboardEvent('keydown', { key: 'Enter', metaKey: true })
-      // Running is enabled and route path is editor
+      // Running is enabled and route path is workspace
       document.dispatchEvent(ctrlEnter)
       expect(state.currentTab.execute.calledOnce).to.equal(true)
       document.dispatchEvent(metaEnter)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
 
-      // Running is disabled and route path is editor
+      // Running is disabled and route path is workspace
       await wrapper.vm.$set(state, 'db', null)
       document.dispatchEvent(ctrlEnter)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
       document.dispatchEvent(metaEnter)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
 
-      // Running is enabled and route path is not editor
+      // Running is enabled and route path is not workspace
       await wrapper.vm.$set(state, 'db', {})
       await wrapper.vm.$set($route, 'path', '/inquiries')
       document.dispatchEvent(ctrlEnter)
@@ -255,7 +255,7 @@ describe('MainMenu.vue', () => {
       db: {}
     }
     const store = new Vuex.Store({ state })
-    const $route = { path: '/editor' }
+    const $route = { path: '/workspace' }
 
     wrapper = shallowMount(MainMenu, {
       store,
@@ -278,7 +278,7 @@ describe('MainMenu.vue', () => {
     expect(wrapper.vm.createNewInquiry.callCount).to.equal(4)
   })
 
-  it('Ctrl S calls checkInquiryBeforeSave if the tab is unsaved and route path is /editor',
+  it('Ctrl S calls checkInquiryBeforeSave if the tab is unsaved and route path is /workspace',
     async () => {
       const state = {
         currentTab: {
@@ -290,7 +290,7 @@ describe('MainMenu.vue', () => {
         db: {}
       }
       const store = new Vuex.Store({ state })
-      const $route = { path: '/editor' }
+      const $route = { path: '/workspace' }
 
       wrapper = shallowMount(MainMenu, {
         store,
@@ -301,20 +301,20 @@ describe('MainMenu.vue', () => {
 
       const ctrlS = new KeyboardEvent('keydown', { key: 's', ctrlKey: true })
       const metaS = new KeyboardEvent('keydown', { key: 's', metaKey: true })
-      // tab is unsaved and route is /editor
+      // tab is unsaved and route is /workspace
       document.dispatchEvent(ctrlS)
       expect(wrapper.vm.checkInquiryBeforeSave.calledOnce).to.equal(true)
       document.dispatchEvent(metaS)
       expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
 
-      // tab is saved and route is /editor
+      // tab is saved and route is /workspace
       await wrapper.vm.$set(state.tabs[0], 'isSaved', true)
       document.dispatchEvent(ctrlS)
       expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
       document.dispatchEvent(metaS)
       expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
 
-      // tab is unsaved and route is not /editor
+      // tab is unsaved and route is not /workspace
       await wrapper.vm.$set($route, 'path', '/inquiries')
       await wrapper.vm.$set(state.tabs[0], 'isSaved', false)
       document.dispatchEvent(ctrlS)
@@ -338,7 +338,7 @@ describe('MainMenu.vue', () => {
         updateTab: sinon.stub()
       }
       const store = new Vuex.Store({ state, mutations })
-      const $route = { path: '/editor' }
+      const $route = { path: '/workspace' }
       sinon.stub(storedInquiries, 'isTabNeedName').returns(false)
       sinon.stub(storedInquiries, 'save').returns({
         name: 'foo',
@@ -391,7 +391,7 @@ describe('MainMenu.vue', () => {
       updateTab: sinon.stub()
     }
     const store = new Vuex.Store({ state, mutations })
-    const $route = { path: '/editor' }
+    const $route = { path: '/workspace' }
     sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
     sinon.stub(storedInquiries, 'save').returns({
       name: 'foo',
@@ -437,7 +437,7 @@ describe('MainMenu.vue', () => {
       updateTab: sinon.stub()
     }
     const store = new Vuex.Store({ state, mutations })
-    const $route = { path: '/editor' }
+    const $route = { path: '/workspace' }
     sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
     sinon.stub(storedInquiries, 'save').returns({
       name: 'foo',
@@ -512,7 +512,7 @@ describe('MainMenu.vue', () => {
       updateTab: sinon.stub()
     }
     const store = new Vuex.Store({ state, mutations })
-    const $route = { path: '/editor' }
+    const $route = { path: '/workspace' }
     sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
     sinon.stub(storedInquiries, 'save').returns({
       name: 'bar',
@@ -593,7 +593,7 @@ describe('MainMenu.vue', () => {
       updateTab: sinon.stub()
     }
     const store = new Vuex.Store({ state, mutations })
-    const $route = { path: '/editor' }
+    const $route = { path: '/workspace' }
     sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
     sinon.stub(storedInquiries, 'save').returns({
       name: 'bar',
