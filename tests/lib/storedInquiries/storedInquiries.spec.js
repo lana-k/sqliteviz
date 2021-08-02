@@ -291,8 +291,20 @@ describe('storedInquiries.js', () => {
     }])
   })
 
-  it('readPredefinedInquiries', async () => {
-    const str = `
+  it('readPredefinedInquiries old', async () => {
+    const str = `[
+      {
+        "id": 1,
+        "name": "foo",
+        "query": "select * from foo",
+        "chart": [],
+        "createdAt": "2020-11-03T14:17:49.524Z" 
+      }]
+    `
+    sinon.stub(fu, 'readFile').returns(Promise.resolve(new Response(str)))
+    const inquiries = await storedInquiries.readPredefinedInquiries()
+    expect(fu.readFile.calledOnceWith('./inquiries.json')).to.equal(true)
+    expect(inquiries).to.eql([
       {
         "id": 1,
         "name": "foo",
@@ -300,12 +312,35 @@ describe('storedInquiries.js', () => {
         "viewType": "chart",
         "viewOptions": [],
         "createdAt": "2020-11-03T14:17:49.524Z" 
-      }
+      }])
+  })
+
+  it('readPredefinedInquiries', async () => {
+    const str = `{
+      "version": 2,
+      "inquiries": [
+      {
+        "id": 1,
+        "name": "foo",
+        "query": "select * from foo",
+        "viewType": "chart",
+        "viewOptions": [],
+        "createdAt": "2020-11-03T14:17:49.524Z" 
+      }]
+    }
     `
     sinon.stub(fu, 'readFile').returns(Promise.resolve(new Response(str)))
     const inquiries = await storedInquiries.readPredefinedInquiries()
     expect(fu.readFile.calledOnceWith('./inquiries.json')).to.equal(true)
-    expect(inquiries).to.eql(JSON.parse(str))
+    expect(inquiries).to.eql([
+      {
+        "id": 1,
+        "name": "foo",
+        "query": "select * from foo",
+        "viewType": "chart",
+        "viewOptions": [],
+        "createdAt": "2020-11-03T14:17:49.524Z" 
+      }])
   })
 
   it('save adds new inquiry in the storage', () => {

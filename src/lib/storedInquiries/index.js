@@ -107,10 +107,14 @@ export default {
       })
   },
 
-  readPredefinedInquiries () {
-    return fu.readFile('./inquiries.json')
-      .then(resp => {
-        return resp.json()
-      })
+  async readPredefinedInquiries () {
+    const res = await fu.readFile('./inquiries.json')
+    const data = await res.json()
+
+    if (!data.version) {
+      return data.length > 0 ? migrate(1, data) : []
+    } else {
+      return data.inquiries
+    }
   }
 }
