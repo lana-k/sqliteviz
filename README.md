@@ -7,10 +7,10 @@
 Sqliteviz is a single-page offline-first PWA for fully client-side visualisation of SQLite databases or CSV files.
 
 With sqliteviz you can:
-- run SQL queries against a SQLite database and create [Plotly][11] charts based on the result sets
+- run SQL queries against a SQLite database and create [Plotly][11] charts and pivot tables based on the result sets
 - import a CSV file into a SQLite database and visualize imported data
-- manage queries and chart settings and run them against different databases
-- import/export queries and chart settings to/from a JSON file
+- manage inquiries and run them against different databases
+- import/export inquiries to/from a JSON file
 - export a modified SQLite database
 - use it offline from your OS application menu like any other desktop app
 
@@ -26,7 +26,7 @@ For user documentation, check out sqliteviz [Wiki][7].
 It's a kind of middleground between [Plotly Falcon][1] and [Redash][2].
 
 ## Components
-It is built on top of [react-chart-editor][3], [sql.js][4] and [Vue-Codemirror][8] in [Vue.js][5]. CSV parsing is performed with [Papa Parse][9].
+It is built on top of [react-chart-editor][3], [PivotTable.js][12], [sql.js][4] and [Vue-Codemirror][8] in [Vue.js][5]. CSV parsing is performed with [Papa Parse][9].
 
 [1]: https://github.com/plotly/falcon
 [2]: https://github.com/getredash/redash
@@ -39,3 +39,4 @@ It is built on top of [react-chart-editor][3], [sql.js][4] and [Vue-Codemirror][
 [9]: https://www.papaparse.com/
 [10]: https://github.com/lana-k/sqliteviz/wiki/Predefined-queries
 [11]: https://github.com/plotly/plotly.js
+[12]: https://github.com/nicolaskruchten/pivottable
