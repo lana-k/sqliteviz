@@ -30,7 +30,7 @@
     />
     <div v-show="tabs.length === 0" id="start-guide">
       <span class="link" @click="$root.$emit('createNewInquiry')">Create</span>
-      a new inquiry from scratch or open the one from
+      new inquiry from scratch or open one from
       <router-link class="link" to="/inquiries">Inquiries</router-link>
     </div>
 
