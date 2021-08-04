@@ -25,8 +25,7 @@ module.exports = function (config) {
         included: false,
         served: true,
         nocache: false
-      },
-      { pattern: 'benchmark_sample.csv', served: true, included: false }
+      }
     ],
 
     // list of files / patterns to exclude
@@ -41,7 +40,12 @@ module.exports = function (config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['spec'],
+    reporters: ['spec', 'coverage'],
+
+    coverageReporter: {
+      dir: 'coverage',
+      reporters: [{ type: 'lcov', subdir: '.' }, { type: 'text-summary' }]
+    },
 
     // !!DONOT delete this reporter, or vue-cli-addon-ui-karma doesnot work
     jsonResultReporter: {
@@ -78,15 +82,11 @@ module.exports = function (config) {
         prefs: {
           'dom.w3c_touch_events.enabled': 1
         }
-      },
-      ChromiumHeadlessNoSandbox: {
-        base: 'ChromiumHeadless',
-        flags: ['--no-sandbox']
       }
     },
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['ChromiumHeadlessNoSandbox', 'FirefoxHeadlessTouch'],
+    browsers: ['ChromiumHeadless', 'FirefoxHeadlessTouch'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -94,13 +94,12 @@ module.exports = function (config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: 1,
+    concurrency: 2,
 
-    browserNoActivityTimeout: 2 * 60 * 1000,
     client: {
       captureConsole: true,
       mocha: {
-        timeout: 2 * 60 * 1000
+        timeout: 7000
       }
     },
     browserConsoleLogOptions: {
@@ -129,6 +128,19 @@ module.exports = function (config) {
             ]
           },
           {
+            test: /\.js$/,
+            include: /src/,
+            exclude: /(node_modules|bower_components|\.spec\.js$)/,
+            use: [
+              {
+                loader: 'istanbul-instrumenter-loader',
+                options: {
+                  esModules: true
+                }
+              }
+            ]
+          },
+          {
             test: /worker\.js$/,
             loader: 'worker-loader'
           },
@@ -142,6 +154,9 @@ module.exports = function (config) {
             options: {
               loaders: {
                 js: 'babel-loader'
+              },
+              postLoaders: {
+                js: 'istanbul-instrumenter-loader?esModules=true'
               }
             }
           },
@@ -161,9 +176,6 @@ module.exports = function (config) {
               name: resolve('fonts/[name].[hash:7].[ext]')
             }
           }
-        ],
-        noParse: [
-           path.resolve(__dirname, './node_modules/benchmark/benchmark.js')
         ]
       },
       plugins: [new VueLoaderPlugin()],

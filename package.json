@@ -38,8 +38,6 @@
     "@vue/eslint-config-standard": "^5.1.2",
     "@vue/test-utils": "^1.1.2",
     "babel-eslint": "^10.1.0",
-    "benchmark": "^2.1.4",
-    "lodash": "^4.17.4",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "eslint": "^6.7.2",

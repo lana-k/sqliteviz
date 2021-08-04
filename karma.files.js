@@ -7,7 +7,7 @@ Vue.use(VModal)
 Vue.config.productionTip = false
 
 // require all test files (files that ends with .spec.js)
-const testsContext = require.context('./tests', true, /sqliteBenchmark\.spec\.js$/)
+const testsContext = require.context('./tests', true, /\.spec.js$/)
 
 // Read more about why we need to call testContext:
 // https://www.npmjs.com/package/require-context#context-api
