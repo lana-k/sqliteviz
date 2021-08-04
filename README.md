@@ -14,7 +14,7 @@ With sqliteviz you can:
 - export a modified SQLite database
 - use it offline from your OS application menu like any other desktop app
 
-https://user-images.githubusercontent.com/24638357/117355518-fa332680-aeb2-11eb-8a69-fbcea4f7aeb0.mp4
+https://user-images.githubusercontent.com/24638357/128249848-f8fab0f5-9add-46e0-a9c1-dd5085a8623e.mp4
 
 ## Quickstart
 The latest release of sqliteviz is deployed on GitHub Pages at [lana-k.github.io/sqliteviz][6].
