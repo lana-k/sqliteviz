@@ -306,12 +306,12 @@ describe('storedInquiries.js', () => {
     expect(fu.readFile.calledOnceWith('./inquiries.json')).to.equal(true)
     expect(inquiries).to.eql([
       {
-        "id": 1,
-        "name": "foo",
-        "query": "select * from foo",
-        "viewType": "chart",
-        "viewOptions": [],
-        "createdAt": "2020-11-03T14:17:49.524Z" 
+        id: 1,
+        name: 'foo',
+        query: 'select * from foo',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-11-03T14:17:49.524Z'
       }])
   })
 
@@ -334,12 +334,12 @@ describe('storedInquiries.js', () => {
     expect(fu.readFile.calledOnceWith('./inquiries.json')).to.equal(true)
     expect(inquiries).to.eql([
       {
-        "id": 1,
-        "name": "foo",
-        "query": "select * from foo",
-        "viewType": "chart",
-        "viewOptions": [],
-        "createdAt": "2020-11-03T14:17:49.524Z" 
+        id: 1,
+        name: 'foo',
+        query: 'select * from foo',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-11-03T14:17:49.524Z'
       }])
   })
 
