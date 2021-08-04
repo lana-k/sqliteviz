@@ -30,7 +30,6 @@ emflags = (
     '-s', 'INLINING_LIMIT=50',
     '-O3',
     '-flto',
-    '--closure', '1',
     # sql.js
     '-s', 'EXPORTED_FUNCTIONS=@src/sqljs/exported_functions.json',
     '-s', 'EXPORTED_RUNTIME_METHODS=@src/sqljs/exported_runtime_methods.json',
