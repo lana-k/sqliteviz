@@ -6,6 +6,12 @@
   border: 1px solid var(--color-border-light);
   box-sizing: border-box;
 }
+
+.straight .rounded-bg {
+  border-radius: 0;
+  border-width: 0 0 1px 0;
+}
+
 .header-container {
   overflow: hidden;
   position: absolute;
@@ -16,6 +22,19 @@
   box-sizing: border-box;
   background-color: var(--color-bg-dark);
   border-radius: 5px 5px 0 0;
+}
+
+.straight .header-container {
+  border-radius: 0;
+}
+
+.straight {
+  height: 100%;
+}
+
+.straight .rounded-bg {
+  /* 27 - height of table footer */
+  height: calc(100% - 27px);
 }
 
 @supports (-moz-appearance:none) {
@@ -32,22 +51,25 @@
 }
 .table-container {
   width: 100%;
+  max-height: 100%;
   overflow: auto;
 }
-table {
+table.sqliteviz-table {
   min-width: 100%;
   margin-top: -35px;
   border-collapse: collapse;
 }
-thead th, .fixed-header {
+.sqliteviz-table thead th, .fixed-header {
   font-size: 14px;
   font-weight: 600;
   box-sizing: border-box;
   background-color: var(--color-bg-dark);
   color: var(--color-text-light);
   border-right: 1px solid var(--color-border-light);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-tbody td {
+.sqliteviz-table tbody td {
   font-size: 13px;
   background-color:white;
   color: var(--color-text-base);
@@ -55,18 +77,20 @@ tbody td {
   border-bottom: 1px solid var(--color-border-light);
   border-right: 1px solid var(--color-border-light);
 }
-td, th, .fixed-header {
+.sqliteviz-table td,
+.sqliteviz-table th,
+.fixed-header {
   padding: 8px 24px;
   white-space: nowrap;
 }
 
-tbody tr td:last-child,
-thead tr th:last-child,
+.sqliteviz-table tbody tr td:last-child,
+.sqliteviz-table thead tr th:last-child,
 .header-container div .fixed-header:last-child {
   border-right: none;
 }
 
-td > div.cell-data {
+.sqliteviz-table td > div.cell-data {
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;

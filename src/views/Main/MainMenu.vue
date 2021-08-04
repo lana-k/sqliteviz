@@ -1,53 +1,44 @@
 <template>
   <nav>
     <div>
-      <router-link to="/editor">Editor</router-link>
-      <router-link to="/my-queries">My queries</router-link>
+      <router-link to="/workspace">Workspace</router-link>
+      <router-link to="/inquiries">Inquiries</router-link>
       <a href="https://github.com/lana-k/sqliteviz/wiki" target="_blank">Help</a>
     </div>
     <div id="nav-buttons">
       <button
-        id="run-btn"
-        v-if="currentQuery && $route.path === '/editor'"
-        class="primary"
-        :disabled="runDisabled"
-        @click="currentQuery.execute"
-      >
-        Run
-      </button>
-      <button
         id="save-btn"
-        v-show="currentQuery && $route.path === '/editor'"
+        v-show="currentInquiry && $route.path === '/workspace'"
         class="primary"
-        :disabled="!isUnsaved"
-        @click="checkQueryBeforeSave"
+        :disabled="isSaved"
+        @click="checkInquiryBeforeSave"
       >
         Save
       </button>
       <button
         id="create-btn"
         class="primary"
-        @click="createNewQuery"
+        @click="createNewInquiry"
       >
         Create
       </button>
       <app-diagnostic-info />
     </div>
 
-    <!--Save Query dialog  -->
+    <!--Save Inquiry dialog  -->
     <modal name="save" classes="dialog" height="auto">
       <div class="dialog-header">
-        Save query
+        Save inquiry
         <close-icon @click="cancelSave"/>
       </div>
       <div class="dialog-body">
         <div v-show="isPredefined" id="save-note">
           <img :src="require('@/assets/images/info.svg')">
-          Note: Predefined queries can't be edited.
-          That's why your modifications will be saved as a new query. Enter the name for it.
+          Note: Predefined inquiries can't be edited.
+          That's why your modifications will be saved as a new inquiry. Enter the name for it.
         </div>
         <text-field
-          label="Query name"
+          label="Inquiry name"
           :error-msg="errorMsg"
           v-model="name"
           width="100%"
@@ -55,7 +46,7 @@
       </div>
       <div class="dialog-buttons-container">
         <button class="secondary" @click="cancelSave">Cancel</button>
-        <button class="primary" @click="saveQuery">Save</button>
+        <button class="primary" @click="saveInquiry">Save</button>
       </div>
     </modal>
   </nav>
@@ -64,7 +55,7 @@
 <script>
 import TextField from '@/components/TextField'
 import CloseIcon from '@/components/svg/close'
-import storedQueries from '@/lib/storedQueries'
+import storedInquiries from '@/lib/storedInquiries'
 import AppDiagnosticInfo from './AppDiagnosticInfo'
 
 export default {
@@ -81,121 +72,122 @@ export default {
     }
   },
   computed: {
-    currentQuery () {
+    currentInquiry () {
       return this.$store.state.currentTab
     },
-    isUnsaved () {
-      if (!this.currentQuery) {
+    isSaved () {
+      if (!this.currentInquiry) {
         return false
       }
-      const tabIndex = this.currentQuery.tabIndex
+      const tabIndex = this.currentInquiry.tabIndex
       const tab = this.$store.state.tabs[tabIndex]
-      return tab && tab.isUnsaved
+      return tab && tab.isSaved
     },
     isPredefined () {
-      if (this.currentQuery) {
-        return this.currentQuery.isPredefined
+      if (this.currentInquiry) {
+        return this.currentInquiry.isPredefined
       } else {
         return false
       }
     },
     runDisabled () {
-      return this.currentQuery && (!this.$store.state.db || !this.currentQuery.query)
+      return this.currentInquiry && (!this.$store.state.db || !this.currentInquiry.query)
     }
   },
   created () {
-    this.$root.$on('createNewQuery', this.createNewQuery)
-    this.$root.$on('saveQuery', this.checkQueryBeforeSave)
+    this.$root.$on('createNewInquiry', this.createNewInquiry)
+    this.$root.$on('saveInquiry', this.checkInquiryBeforeSave)
     document.addEventListener('keydown', this._keyListener)
   },
   beforeDestroy () {
     document.removeEventListener('keydown', this._keyListener)
   },
   methods: {
-    createNewQuery () {
+    createNewInquiry () {
       this.$store.dispatch('addTab').then(id => {
         this.$store.commit('setCurrentTabId', id)
-        if (this.$route.path !== '/editor') {
-          this.$router.push('/editor')
+        if (this.$route.path !== '/workspace') {
+          this.$router.push('/workspace')
         }
       })
     },
     cancelSave () {
       this.$modal.hide('save')
-      this.$root.$off('querySaved')
+      this.$root.$off('inquirySaved')
     },
-    checkQueryBeforeSave () {
+    checkInquiryBeforeSave () {
       this.errorMsg = null
       this.name = ''
 
-      if (storedQueries.isTabNeedName(this.currentQuery)) {
+      if (storedInquiries.isTabNeedName(this.currentInquiry)) {
         this.$modal.show('save')
       } else {
-        this.saveQuery()
+        this.saveInquiry()
       }
     },
-    saveQuery () {
-      const isNeedName = storedQueries.isTabNeedName(this.currentQuery)
+    saveInquiry () {
+      const isNeedName = storedInquiries.isTabNeedName(this.currentInquiry)
       if (isNeedName && !this.name) {
-        this.errorMsg = 'Query name can\'t be empty'
+        this.errorMsg = 'Inquiry name can\'t be empty'
         return
       }
-      const dataSet = this.currentQuery.result
-      const tabView = this.currentQuery.view
+      const dataSet = this.currentInquiry.result
+      const tabView = this.currentInquiry.view
 
-      // Save query
-      const value = storedQueries.save(this.currentQuery, this.name)
+      // Save inquiry
+      const value = storedInquiries.save(this.currentInquiry, this.name)
 
       // Update tab in store
       this.$store.commit('updateTab', {
-        index: this.currentQuery.tabIndex,
+        index: this.currentInquiry.tabIndex,
         name: value.name,
         id: value.id,
         query: value.query,
-        chart: value.chart,
-        isUnsaved: false
+        viewType: value.viewType,
+        viewOptions: value.viewOptions,
+        isSaved: true
       })
 
       // Restore data:
-      // e.g. if we save predefined query the tab will be created again
+      // e.g. if we save predefined inquiry the tab will be created again
       // (because of new id) and
       // it will be without sql result and has default view - table.
       // That's why we need to restore data and view
       this.$nextTick(() => {
-        this.currentQuery.result = dataSet
-        this.currentQuery.view = tabView
+        this.currentInquiry.result = dataSet
+        this.currentInquiry.view = tabView
       })
 
       // Hide dialog
       this.$modal.hide('save')
 
       // Signal about saving
-      this.$root.$emit('querySaved')
+      this.$root.$emit('inquirySaved')
     },
     _keyListener (e) {
-      if (this.$route.path === '/editor') {
+      if (this.$route.path === '/workspace') {
         // Run query Ctrl+R or Ctrl+Enter
         if ((e.key === 'r' || e.key === 'Enter') && (e.ctrlKey || e.metaKey)) {
           e.preventDefault()
           if (!this.runDisabled) {
-            this.currentQuery.execute()
+            this.currentInquiry.execute()
           }
           return
         }
 
-        // Save query Ctrl+S
+        // Save inquiry Ctrl+S
         if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
           e.preventDefault()
-          if (this.isUnsaved) {
-            this.checkQueryBeforeSave()
+          if (!this.isSaved) {
+            this.checkInquiryBeforeSave()
           }
           return
         }
       }
-      // New (blank) query Ctrl+B
+      // New (blank) inquiry Ctrl+B
       if (e.key === 'b' && (e.ctrlKey || e.metaKey)) {
         e.preventDefault()
-        this.createNewQuery()
+        this.createNewInquiry()
       }
     }
   }

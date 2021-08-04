@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Editor from '@/views/Main/Editor'
-import MyQueries from '@/views/Main/MyQueries'
+import Workspace from '@/views/Main/Workspace'
+import Inquiries from '@/views/Main/Inquiries'
 import Welcome from '@/views/Welcome'
 import Main from '@/views/Main'
 import store from '@/store'
@@ -21,14 +21,14 @@ const routes = [
     component: Main,
     children: [
       {
-        path: '/editor',
-        name: 'Editor',
-        component: Editor
+        path: '/workspace',
+        name: 'Workspace',
+        component: Workspace
       },
       {
-        path: '/my-queries',
-        name: 'MyQueries',
-        component: MyQueries
+        path: '/inquiries',
+        name: 'Inquiries',
+        component: Inquiries
       }
     ]
   }

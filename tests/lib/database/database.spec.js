@@ -25,10 +25,7 @@ describe('database.js', () => {
   it('creates schema', async () => {
     const SQL = await getSQL
     const tempDb = new SQL.Database()
-    tempDb.run(`CREATE TABLE test (
-      col1,
-      col2 integer
-    )`)
+    tempDb.run('CREATE TABLE test (col1, col2 integer)')
 
     const data = tempDb.export()
     const buffer = new Blob([data])
@@ -88,11 +85,11 @@ describe('database.js', () => {
 
     await db.loadDb(buffer)
     const result = await db.execute('SELECT * from test limit 1; SELECT * from test;')
-    expect(result.columns).to.have.lengthOf(3)
-    expect(result.columns).to.eql(['id', 'name', 'faculty'])
-    expect(result.values).to.have.lengthOf(2)
-    expect(result.values[0]).to.eql([1, 'Harry Potter', 'Griffindor'])
-    expect(result.values[1]).to.eql([2, 'Draco Malfoy', 'Slytherin'])
+    expect(result).to.eql({
+      id: [1, 2],
+      name: ['Harry Potter', 'Draco Malfoy'],
+      faculty: ['Griffindor', 'Slytherin']
+    })
   })
 
   it('returns an error', async () => {
@@ -119,11 +116,9 @@ describe('database.js', () => {
 
   it('adds table from csv', async () => {
     const data = {
-      columns: ['id', 'name', 'faculty'],
-      values: [
-        [1, 'Harry Potter', 'Griffindor'],
-        [2, 'Draco Malfoy', 'Slytherin']
-      ]
+      id: [1, 2],
+      name: ['Harry Potter', 'Draco Malfoy'],
+      faculty: ['Griffindor', 'Slytherin']
     }
     const progressHandler = sinon.spy()
     const progressCounterId = db.createProgressCounter(progressHandler)
@@ -140,8 +135,7 @@ describe('database.js', () => {
     expect(db.schema[0].columns[2]).to.eql({ name: 'faculty', type: 'text' })
 
     const result = await db.execute('SELECT * from foo')
-    expect(result.columns).to.eql(data.columns)
-    expect(result.values).to.eql(data.values)
+    expect(result).to.eql(data)
 
     expect(progressHandler.calledTwice).to.equal(true)
     expect(progressHandler.firstCall.calledWith(0)).to.equal(true)
@@ -150,16 +144,13 @@ describe('database.js', () => {
 
   it('addTableFromCsv throws errors', async () => {
     const data = {
-      columns: ['id', 'name'],
-      values: [
-        [1, 'Harry Potter', 'Griffindor'],
-        [2, 'Draco Malfoy', 'Slytherin']
-      ]
+      id: [1, 2],
+      name: ['Harry Potter', 'Draco Malfoy'],
+      faculty: null
     }
     const progressHandler = sinon.stub()
     const progressCounterId = db.createProgressCounter(progressHandler)
-    await expect(db.addTableFromCsv('foo', data, progressCounterId))
-      .to.be.rejectedWith('column index out of range')
+    await expect(db.addTableFromCsv('foo', data, progressCounterId)).to.be.rejected
   })
 
   it('progressCounters', () => {
@@ -222,9 +213,10 @@ describe('database.js', () => {
 
     // check that new db works and has the same table and data
     result = await anotherDb.execute('SELECT * from foo')
-    expect(result.columns).to.eql(['id', 'name'])
-    expect(result.values).to.have.lengthOf(1)
-    expect(result.values[0]).to.eql([1, 'Harry Potter'])
+    expect(result).to.eql({
+      id: [1],
+      name: ['Harry Potter']
+    })
   })
 
   it('sanitizeTableName', () => {

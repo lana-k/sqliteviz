@@ -29,7 +29,7 @@ describe('DbUploader.vue', () => {
     place.remove()
   })
 
-  it('loads db on click and redirects to /editor', async () => {
+  it('loads db on click and redirects to /workspace', async () => {
     // mock getting a file from user
     const file = { name: 'test.db' }
     sinon.stub(fu, 'getFileFromUser').resolves(file)
@@ -59,11 +59,11 @@ describe('DbUploader.vue', () => {
     await db.loadDb.returnValues[0]
     await wrapper.vm.animationPromise
     await wrapper.vm.$nextTick()
-    expect($router.push.calledOnceWith('/editor')).to.equal(true)
+    expect($router.push.calledOnceWith('/workspace')).to.equal(true)
     wrapper.destroy()
   })
 
-  it('loads db on drop and redirects to /editor', async () => {
+  it('loads db on drop and redirects to /workspace', async () => {
     // mock db loading
     const db = {
       loadDb: sinon.stub().resolves()
@@ -97,11 +97,11 @@ describe('DbUploader.vue', () => {
     await db.loadDb.returnValues[0]
     await wrapper.vm.animationPromise
     await wrapper.vm.$nextTick()
-    expect($router.push.calledOnceWith('/editor')).to.equal(true)
+    expect($router.push.calledOnceWith('/workspace')).to.equal(true)
     wrapper.destroy()
   })
 
-  it("doesn't redirect if already on /editor", async () => {
+  it("doesn't redirect if already on /workspace", async () => {
     // mock getting a file from user
     const file = { name: 'test.db' }
     sinon.stub(fu, 'getFileFromUser').resolves(file)
@@ -114,7 +114,7 @@ describe('DbUploader.vue', () => {
 
     // mock router
     const $router = { push: sinon.stub() }
-    const $route = { path: '/editor' }
+    const $route = { path: '/workspace' }
 
     // mount the component
     const wrapper = shallowMount(DbUploader, {
@@ -141,7 +141,7 @@ describe('DbUploader.vue', () => {
 
     // mock router
     const $router = { push: sinon.stub() }
-    const $route = { path: '/editor' }
+    const $route = { path: '/workspace' }
 
     // mount the component
     const wrapper = mount(DbUploader, {
@@ -175,7 +175,7 @@ describe('DbUploader.vue', () => {
 
     // mock router
     const $router = { push: sinon.stub() }
-    const $route = { path: '/editor' }
+    const $route = { path: '/workspace' }
 
     // mount the component
     const wrapper = mount(DbUploader, {

@@ -8,6 +8,7 @@ describe('Logs.vue', () => {
     place = document.createElement('div')
     document.body.appendChild(place)
   })
+
   afterEach(() => {
     place.remove()
   })

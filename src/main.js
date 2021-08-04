@@ -11,6 +11,8 @@ import '@/assets/styles/tables.css'
 import '@/assets/styles/dialogs.css'
 import '@/assets/styles/tooltips.css'
 import '@/assets/styles/messages.css'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
+import '@/assets/styles/multiselect.css'
 
 if (!['localhost', '127.0.0.1'].includes(location.hostname)) {
   import('./registerServiceWorker') // eslint-disable-line no-unused-expressions

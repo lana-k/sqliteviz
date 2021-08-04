@@ -10,29 +10,26 @@ export default {
   getResult (source) {
     const result = {}
     if (source.meta.fields) {
-      result.columns = source.meta.fields.map(col => col.trim())
-      result.values = source.data.map(row => {
-        const resultRow = []
-        source.meta.fields.forEach(col => {
+      source.meta.fields.forEach(col => {
+        result[col.trim()] = source.data.map(row => {
           let value = row[col]
           if (value instanceof Date) {
             value = value.toISOString()
           }
-          resultRow.push(value)
+          return value
         })
-
-        return resultRow
       })
     } else {
-      result.values = source.data.map(row => row.map(value =>
-        value instanceof Date ? value.toISOString() : value
-      ))
-      result.columns = []
-      for (let i = 1; i <= source.data[0].length; i++) {
-        result.columns.push(`col${i}`)
+      for (let i = 0; i <= source.data[0].length - 1; i++) {
+        result[`col${i + 1}`] = source.data.map(row => {
+          let value = row[i]
+          if (value instanceof Date) {
+            value = value.toISOString()
+          }
+          return value
+        })
       }
     }
-
     return result
   },
 
@@ -55,7 +52,8 @@ export default {
           const res = {
             data: this.getResult(results),
             delimiter: results.meta.delimiter,
-            hasErrors: false
+            hasErrors: false,
+            rowCount: results.data.length
           }
           res.messages = results.errors.map(msg => {
             msg.type = msg.code === 'UndetectableDelimiter' ? 'info' : 'error'

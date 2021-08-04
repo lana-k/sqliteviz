@@ -55,8 +55,7 @@ class Database {
   async addTableFromCsv (tabName, data, progressCounterId) {
     const result = await this.pw.postMessage({
       action: 'import',
-      columns: data.columns,
-      values: data.values,
+      data,
       progressCounterId,
       tabName
     })
@@ -89,11 +88,11 @@ class Database {
     const result = await this.execute(getSchemaSql)
     // Parse DDL statements to get column names and types
     const parsedSchema = []
-    if (result && result.values) {
-      result.values.forEach(item => {
+    if (result && result.name) {
+      result.name.forEach((table, index) => {
         parsedSchema.push({
-          name: item[0],
-          columns: stms.getColumns(item[1])
+          name: table,
+          columns: stms.getColumns(result.sql[index])
         })
       })
     }

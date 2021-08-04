@@ -3,6 +3,6 @@ export default {
   currentTab: null,
   currentTabId: null,
   untitledLastIndex: 0,
-  predefinedQueries: [],
+  predefinedInquiries: [],
   db: null
 }

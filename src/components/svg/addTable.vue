@@ -6,9 +6,9 @@
       height="18"
       viewBox="0 0 18 18"
       fill="none"
-      @click.stop="$emit('click')"
-      @mouseover="showTooltip"
-      @mouseout="hideTooltip"
+      @click.stop="onClick"
+      @mouseenter="showTooltip"
+      @mouseleave="hideTooltip"
     >
       <g clip-path="url(#clip0)">
         <path
@@ -32,7 +32,7 @@
         </clipPath>
       </defs>
     </svg>
-    <span class="icon-tooltip" :style="tooltipStyle">
+    <span class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
       Add new table from CSV
     </span>
   </span>
@@ -44,7 +44,13 @@ import tooltipMixin from '@/tooltipMixin'
 export default {
   name: 'AddTableIcon',
   mixins: [tooltipMixin],
-  props: ['tooltip']
+  props: ['tooltip'],
+  methods: {
+    onClick () {
+      this.hideTooltip()
+      this.$emit('click')
+    }
+  }
 }
 </script>
 

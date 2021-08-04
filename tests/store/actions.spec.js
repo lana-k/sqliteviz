@@ -10,15 +10,30 @@ describe('actions', () => {
       untitledLastIndex: 0
     }
 
-    const id = await addTab({ state })
-    expect(state.tabs[0].id).to.eql(id)
-    expect(state.tabs[0].name).to.eql(null)
-    expect(state.tabs[0].tempName).to.eql('Untitled')
-    expect(state.tabs[0].isUnsaved).to.eql(true)
+    let id = await addTab({ state })
+    expect(state.tabs[0]).to.eql({
+      id: id,
+      name: null,
+      tempName: 'Untitled',
+      viewType: 'chart',
+      viewOptions: undefined,
+      isSaved: false
+    })
     expect(state.untitledLastIndex).to.equal(1)
+
+    id = await addTab({ state })
+    expect(state.tabs[1]).to.eql({
+      id: id,
+      name: null,
+      tempName: 'Untitled 1',
+      viewType: 'chart',
+      viewOptions: undefined,
+      isSaved: false
+    })
+    expect(state.untitledLastIndex).to.equal(2)
   })
 
-  it('addTab adds tab from saved queries', async () => {
+  it('addTab adds tab from saved inquiries', async () => {
     const state = {
       tabs: [],
       untitledLastIndex: 0
@@ -28,22 +43,24 @@ describe('actions', () => {
       name: 'test',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
     await addTab({ state }, tab)
     expect(state.tabs[0]).to.eql(tab)
     expect(state.untitledLastIndex).to.equal(0)
   })
 
-  it("addTab doesn't add anything when the query is already opened", async () => {
+  it("addTab doesn't add anything when the inquiry is already opened", async () => {
     const tab1 = {
       id: 1,
       name: 'test',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const tab2 = {
@@ -51,8 +68,9 @@ describe('actions', () => {
       name: 'bar',
       tempName: null,
       query: 'SELECT * from bar',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const state = {

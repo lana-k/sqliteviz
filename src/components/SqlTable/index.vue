@@ -17,20 +17,21 @@
         class="table-container"
         ref="table-container"
         @scroll="onScrollTable"
-        :style="{maxHeight: `${height}px`}"
       >
-      <table ref="table">
+      <table ref="table" class="sqliteviz-table">
         <thead>
           <tr>
-            <th v-for="(th,index) in dataSet.columns" :key="index" ref="th">
+            <th v-for="(th, index) in columns" :key="index" ref="th">
               <div class="cell-data" :style="cellStyle">{{ th }}</div>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(row,index) in currentPageData" :key="index">
-            <td v-for="(value, valIndex) in row" :key="valIndex">
-              <div class="cell-data" :style="cellStyle">{{ value }}</div>
+          <tr v-for="rowIndex in currentPageData.count" :key="rowIndex">
+            <td v-for="(col, colIndex) in columns" :key="colIndex">
+              <div class="cell-data" :style="cellStyle">
+                {{ dataSet[col][rowIndex - 1 + currentPageData.start] }}
+              </div>
             </td>
           </tr>
         </tbody>
@@ -39,7 +40,7 @@
     </div>
     <div class="table-footer">
       <div class="table-footer-count">
-        {{ dataSet.values.length}} {{dataSet.values.length === 1 ? 'row' : 'rows'}} retrieved
+        {{ rowCount }} {{rowCount === 1 ? 'row' : 'rows'}} retrieved
         <span v-if="preview">for preview</span>
         <span v-if="time">in {{ time }}</span>
       </div>
@@ -54,7 +55,15 @@ import Pager from './Pager'
 export default {
   name: 'SqlTable',
   components: { Pager },
-  props: ['dataSet', 'time', 'height', 'preview'],
+  props: {
+    dataSet: Object,
+    time: String,
+    pageSize: {
+      type: Number,
+      default: 20
+    },
+    preview: Boolean
+  },
   data () {
     return {
       header: null,
@@ -64,20 +73,30 @@ export default {
     }
   },
   computed: {
+    columns () {
+      return Object.keys(this.dataSet)
+    },
+    rowCount () {
+      return this.dataSet[this.columns[0]].length
+    },
     cellStyle () {
-      const eq = this.tableWidth / this.dataSet.columns.length
-
+      const eq = this.tableWidth / this.columns.length
       return { maxWidth: `${Math.max(eq, 100)}px` }
     },
-    pageSize () {
-      return Math.max(Math.floor(this.height / 40), 20)
-    },
     pageCount () {
-      return Math.ceil(this.dataSet.values.length / this.pageSize)
+      return Math.ceil(this.rowCount / this.pageSize)
     },
     currentPageData () {
       const start = (this.currentPage - 1) * this.pageSize
-      return this.dataSet.values.slice(start, start + this.pageSize)
+      let end = start + this.pageSize
+      if (end > this.rowCount - 1) {
+        end = this.rowCount - 1
+      }
+      return {
+        start,
+        end,
+        count: end - start + 1
+      }
     }
   },
   methods: {

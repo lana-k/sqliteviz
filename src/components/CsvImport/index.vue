@@ -55,9 +55,10 @@
         :disabled="disableDialog"
       />
       <sql-table
-        v-if="previewData && (previewData.values.length > 0 || previewData.columns.length > 0)"
+        v-if="previewData
+          && (previewData.rowCount > 0 || Object.keys(previewData).length > 0)
+        "
         :data-set="previewData"
-        height="160"
         class="preview-table"
         :preview="true"
       />
@@ -255,7 +256,7 @@ export default {
         let end = new Date()
 
         if (!parseResult.hasErrors) {
-          const rowCount = parseResult.data.values.length
+          const rowCount = parseResult.rowCount
           let period = time.getPeriod(start, end)
           parseCsvMsg.type = 'success'
 

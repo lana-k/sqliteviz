@@ -6,7 +6,7 @@ const {
   deleteTab,
   setCurrentTabId,
   setCurrentTab,
-  updatePredefinedQueries,
+  updatePredefinedInquiries,
   setDb
 } = mutations
 
@@ -23,14 +23,15 @@ describe('mutations', () => {
     expect(oldDb.shutDown.calledOnce).to.equal(true)
   })
 
-  it('updateTab (save)', () => {
+  it('updateTab - save', () => {
     const tab = {
       id: 1,
       name: 'test',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: true,
+      viewType: 'chart',
+      viewOptions: { here_are: 'chart settings' },
+      isSaved: false,
       isPredefined: false
     }
 
@@ -39,7 +40,9 @@ describe('mutations', () => {
       id: 1,
       name: 'new test',
       query: 'SELECT * from bar',
-      isUnsaved: false
+      viewType: 'pivot',
+      viewOptions: { here_are: 'pivot settings' },
+      isSaved: true
     }
 
     const state = {
@@ -47,21 +50,26 @@ describe('mutations', () => {
     }
 
     updateTab(state, newTab)
-    expect(state.tabs[0].id).to.equal(1)
-    expect(state.tabs[0].name).to.equal('new test')
-    expect(state.tabs[0].tempName).to.equal(null)
-    expect(state.tabs[0].query).to.equal('SELECT * from bar')
-    expect(state.tabs[0].isUnsaved).to.equal(false)
+    expect(state.tabs[0]).to.eql({
+      id: 1,
+      name: 'new test',
+      tempName: null,
+      query: 'SELECT * from bar',
+      viewType: 'pivot',
+      viewOptions: { here_are: 'pivot settings' },
+      isSaved: true
+    })
   })
 
-  it('updateTab (save predefined)', () => {
+  it('updateTab - save predefined', () => {
     const tab = {
       id: 1,
       name: 'test',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: true,
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: false,
       isPredefined: true
     }
 
@@ -70,8 +78,9 @@ describe('mutations', () => {
       id: 2,
       name: 'new test',
       query: 'SELECT * from bar',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const state = {
@@ -85,18 +94,19 @@ describe('mutations', () => {
     expect(state.tabs[0].id).to.equal(2)
     expect(state.tabs[0].name).to.equal('new test')
     expect(state.tabs[0].query).to.equal('SELECT * from bar')
-    expect(state.tabs[0].isUnsaved).to.equal(false)
+    expect(state.tabs[0].isSaved).to.equal(true)
     expect(state.tabs[0].isPredefined).to.equal(undefined)
   })
 
-  it('updateTab (rename)', () => {
+  it('updateTab - rename', () => {
     const tab = {
       id: 1,
       name: 'test',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: true
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: false
     }
 
     const newTab = {
@@ -114,23 +124,24 @@ describe('mutations', () => {
     expect(state.tabs[0].id).to.equal(1)
     expect(state.tabs[0].name).to.equal('new test')
     expect(state.tabs[0].query).to.equal('SELECT * from foo')
-    expect(state.tabs[0].isUnsaved).to.equal(true)
+    expect(state.tabs[0].isSaved).to.equal(false)
   })
 
-  it('updateTab (changes detected)', () => {
+  it('updateTab - changes detected', () => {
     const tab = {
       id: 1,
       name: 'test',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: false,
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true,
       isPredefined: true
     }
 
     const newTab = {
       index: 0,
-      isUnsaved: true
+      isSaved: false
     }
 
     const state = {
@@ -142,17 +153,18 @@ describe('mutations', () => {
     expect(state.tabs[0].id).to.equal(1)
     expect(state.tabs[0].name).to.equal('test')
     expect(state.tabs[0].query).to.equal('SELECT * from foo')
-    expect(state.tabs[0].isUnsaved).to.equal(true)
+    expect(state.tabs[0].isSaved).to.equal(false)
   })
 
-  it('deleteTab (opened, first)', () => {
+  it('deleteTab - opened, first', () => {
     const tab1 = {
       id: 1,
       name: 'foo',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const tab2 = {
@@ -160,8 +172,9 @@ describe('mutations', () => {
       name: 'bar',
       tempName: null,
       query: 'SELECT * from bar',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const state = {
@@ -175,14 +188,15 @@ describe('mutations', () => {
     expect(state.currentTabId).to.equal(2)
   })
 
-  it('deleteTab (opened, last)', () => {
+  it('deleteTab - opened, last', () => {
     const tab1 = {
       id: 1,
       name: 'foo',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const tab2 = {
@@ -190,8 +204,9 @@ describe('mutations', () => {
       name: 'bar',
       tempName: null,
       query: 'SELECT * from bar',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const state = {
@@ -205,14 +220,15 @@ describe('mutations', () => {
     expect(state.currentTabId).to.equal(1)
   })
 
-  it('deleteTab (opened, in the middle)', () => {
+  it('deleteTab - opened, in the middle', () => {
     const tab1 = {
       id: 1,
       name: 'foo',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const tab2 = {
@@ -220,8 +236,9 @@ describe('mutations', () => {
       name: 'bar',
       tempName: null,
       query: 'SELECT * from bar',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const tab3 = {
@@ -229,8 +246,9 @@ describe('mutations', () => {
       name: 'foobar',
       tempName: null,
       query: 'SELECT * from foobar',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const state = {
@@ -245,14 +263,15 @@ describe('mutations', () => {
     expect(state.currentTabId).to.equal(3)
   })
 
-  it('deleteTab (opened, single)', () => {
+  it('deleteTab - opened, single', () => {
     const tab1 = {
       id: 1,
       name: 'foo',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const state = {
@@ -265,14 +284,15 @@ describe('mutations', () => {
     expect(state.currentTabId).to.equal(null)
   })
 
-  it('deleteTab (not opened)', () => {
+  it('deleteTab - not opened', () => {
     const tab1 = {
       id: 1,
       name: 'foo',
       tempName: null,
       query: 'SELECT * from foo',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const tab2 = {
@@ -280,8 +300,9 @@ describe('mutations', () => {
       name: 'bar',
       tempName: null,
       query: 'SELECT * from bar',
-      chart: {},
-      isUnsaved: false
+      viewType: 'chart',
+      viewOptions: {},
+      isSaved: true
     }
 
     const state = {
@@ -313,44 +334,47 @@ describe('mutations', () => {
     expect(state.currentTab).to.eql({ id: 2 })
   })
 
-  it('updatePredefinedQueries (single)', () => {
-    const query = {
+  it('updatePredefinedInquiries - single', () => {
+    const inquiry = {
       id: 1,
       name: 'foo',
       query: 'SELECT * FROM foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       createdAt: '2020-11-07T20:57:04.492Z'
     }
 
     const state = {
-      predefinedQueries: []
+      predefinedInquiries: []
     }
 
-    updatePredefinedQueries(state, query)
-    expect(state.predefinedQueries).to.eql([query])
+    updatePredefinedInquiries(state, inquiry)
+    expect(state.predefinedInquiries).to.eql([inquiry])
   })
 
-  it('updatePredefinedQueries (array)', () => {
-    const queries = [{
+  it('updatePredefinedInquiries - array', () => {
+    const inquiries = [{
       id: 1,
       name: 'foo',
       query: 'SELECT * FROM foo',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       createdAt: '2020-11-07T20:57:04.492Z'
     },
     {
       id: 2,
       name: 'bar',
       query: 'SELECT * FROM bar',
-      chart: {},
+      viewType: 'chart',
+      viewOptions: {},
       createdAt: '2020-11-07T20:57:04.492Z'
     }]
 
     const state = {
-      predefinedQueries: []
+      predefinedInquiries: []
     }
 
-    updatePredefinedQueries(state, queries)
-    expect(state.predefinedQueries).to.eql(queries)
+    updatePredefinedInquiries(state, inquiries)
+    expect(state.predefinedInquiries).to.eql(inquiries)
   })
 })

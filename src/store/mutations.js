@@ -8,7 +8,7 @@ export default {
     state.db = db
   },
 
-  updateTab (state, { index, name, id, query, chart, isUnsaved }) {
+  updateTab (state, { index, name, id, query, viewType, viewOptions, isSaved }) {
     const tab = state.tabs[index]
     const oldId = tab.id
 
@@ -19,15 +19,17 @@ export default {
     if (id) { tab.id = id }
     if (name) { tab.name = name }
     if (query) { tab.query = query }
-    if (chart) { tab.chart = chart }
-    if (isUnsaved !== undefined) { tab.isUnsaved = isUnsaved }
-    if (!isUnsaved) {
-      // Saved query is not predefined
+    if (viewType) { tab.viewType = viewType }
+    if (viewOptions) { tab.viewOptions = viewOptions }
+    if (isSaved !== undefined) { tab.isSaved = isSaved }
+    if (isSaved) {
+      // Saved inquiry is not predefined
       delete tab.isPredefined
     }
 
     Vue.set(state.tabs, index, tab)
   },
+
   deleteTab (state, index) {
     // If closing tab is the current opened
     if (state.tabs[index].id === state.currentTabId) {
@@ -49,11 +51,7 @@ export default {
   setCurrentTab (state, tab) {
     state.currentTab = tab
   },
-  updatePredefinedQueries (state, queries) {
-    if (Array.isArray(queries)) {
-      state.predefinedQueries = queries
-    } else {
-      state.predefinedQueries = [queries]
-    }
+  updatePredefinedInquiries (state, inquiries) {
+    state.predefinedInquiries = Array.isArray(inquiries) ? inquiries : [inquiries]
   }
 }

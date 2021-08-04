@@ -1,0 +1,136 @@
+.sqliteviz-select,
+.sqliteviz-select .multiselect__tags {
+  min-height: 36px;
+  color: var(--color-text-base);
+}
+
+.sqliteviz-select .multiselect__select {
+  height: 34px;
+  min-height: 34px;
+  padding: 6px;
+  width: 32px;
+  height: 32px;
+  margin-top: 1px;
+}
+
+.sqliteviz-select .multiselect__tags {
+  border-radius: var(--border-radius-medium-2);
+  border: 1px solid var(--color-border);
+  padding: 4px 32px 0 6px;
+}
+
+.sqliteviz-select,
+.sqliteviz-select .multiselect__input,
+.sqliteviz-select .multiselect__single,
+.sqliteviz-select .multiselect__placeholder {
+  font-size: 12px;
+}
+
+.sqliteviz-select .multiselect__single,
+.sqliteviz-select .multiselect__placeholder,
+.sqliteviz-select .multiselect__input {
+  padding: 0;
+  margin-bottom: 0;
+  line-height: 28px;
+}
+
+.sqliteviz-select .multiselect__input {
+  width: 0 !important;
+  color: var(--color-text-base);
+}
+
+.sqliteviz-select.multiselect--active .multiselect__input {
+  width: auto !important;
+}
+
+.sqliteviz-select .multiselect__placeholder,
+.sqliteviz-select .multiselect__input::placeholder {
+  color: var(--color-text-light-2);
+}
+
+.sqliteviz-select .multiselect__option.multiselect__option--highlight {
+  background-color: var(--color-bg-light);
+  color: var(--color-text-active);
+}
+
+.sqliteviz-select .multiselect__tag {
+  background-color: var(--color-bg-light-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-small);
+  color: var(--color-text-active);
+  font-size: 11.05px;
+  margin: 2px;
+}
+.sqliteviz-select .multiselect__tag-icon:after {
+  content: url('~@/assets/images/delete-tag.svg');
+  height: 14px;
+  width: 14px;
+}
+
+.sqliteviz-select .multiselect__tag-icon:focus:after,
+.sqliteviz-select .multiselect__tag-icon:hover:after {
+  content: url('~@/assets/images/delete-tag-hover.svg');
+}
+
+.sqliteviz-select .multiselect__tag-icon:focus,
+.sqliteviz-select .multiselect__tag-icon:hover {
+  background-color: var(--color-bg-danger);
+  border-radius: var(--border-radius-small);
+}
+
+.sqliteviz-select .multiselect__option {
+  min-height: 29px;
+  padding: 8px 12px;
+  line-height: 13px;
+}
+
+.sqliteviz-select .multiselect__option:after {
+  line-height: 29px;
+}
+
+.sqliteviz-select .multiselect__content-wrapper {
+  border-radius: var(--border-radius-medium-2);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-1);
+  top: calc(100% - 1px);
+  max-height: 292px !important;
+}
+
+.sqliteviz-select.multiselect--above .multiselect__content-wrapper {
+  top: unset;
+  bottom: calc(100% - 1px);
+}
+
+.sqliteviz-select .multiselect__select:before {
+  content: url('~@/assets/images/arrow.svg');
+  border: none;
+  top: 0;
+}
+
+.sqliteviz-select.multiselect--active .multiselect__select {
+  transform: none;
+}
+
+.sqliteviz-select:hover .multiselect__tags {
+  border-color: var(--color-border-dark);
+}
+
+.sqliteviz-select .multiselect__select:hover:before {
+  content: url('~@/assets/images/arrow-hover.svg');
+}
+
+.sqliteviz-select.multiselect--active .multiselect__tags {
+  border-radius: var(--border-radius-medium-2);
+}
+
+.sqliteviz-select .multiselect__option  .no-results {
+  color: var(--color-text-light-2);
+}
+
+.sqliteviz-select.multiselect--disabled {
+  opacity: unset;
+}
+
+.sqliteviz-select.multiselect--disabled .multiselect__select {
+  background: unset;
+}
