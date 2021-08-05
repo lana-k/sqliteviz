@@ -5,17 +5,21 @@ from pathlib import Path
 
 cflags = (
     '-O2',
-    '-DSQLITE_OMIT_LOAD_EXTENSION',
+    '-DSQLITE_DEFAULT_CACHE_SIZE=-65536',  # 64 MiB
+    '-DSQLITE_DEFAULT_MEMSTATUS=0',
+    '-DSQLITE_DEFAULT_SYNCHRONOUS=0',
     '-DSQLITE_DISABLE_LFS',
+    '-DSQLITE_DQS=0',
     '-DSQLITE_ENABLE_FTS3',
     '-DSQLITE_ENABLE_FTS3_PARENTHESIS',
     '-DSQLITE_ENABLE_FTS5',
     '-DSQLITE_ENABLE_JSON1',
-    '-DSQLITE_THREADSAFE=0',
     '-DSQLITE_ENABLE_NORMALIZE',
     '-DSQLITE_EXTRA_INIT=extra_init',
-    '-DSQLITE_DEFAULT_MEMSTATUS=0',
-    '-DSQLITE_USE_ALLOCA',
+    '-DSQLITE_OMIT_DEPRECATED',
+    '-DSQLITE_OMIT_LOAD_EXTENSION',
+    '-DSQLITE_OMIT_SHARED_CACHE',
+    '-DSQLITE_THREADSAFE=0',
 )
 emflags = (
     # Base
@@ -30,7 +34,6 @@ emflags = (
     '-s', 'INLINING_LIMIT=50',
     '-O3',
     '-flto',
-    '--closure', '1',
     # sql.js
     '-s', 'EXPORTED_FUNCTIONS=@src/sqljs/exported_functions.json',
     '-s', 'EXPORTED_RUNTIME_METHODS=@src/sqljs/exported_runtime_methods.json',
