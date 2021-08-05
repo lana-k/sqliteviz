@@ -27,7 +27,7 @@ jobs:
     - name: Create archive
       run: |
         cd dist
-        zip -9 -r  dist.zip . -x "js/*.map"
+        zip -9 -r  dist.zip . -x "js/*.map" -x "/*.map"
 
     - name: Create Release Notes
       run: |
