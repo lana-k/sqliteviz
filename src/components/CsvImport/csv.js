@@ -14,7 +14,7 @@ export default {
     const values = {}
     if (source.meta.fields) {
       source.meta.fields.forEach(col => {
-        let colName = col.trim()
+        const colName = col.trim()
         result.columns.push(colName)
         values[colName] = source.data.map(row => {
           let value = row[col]
@@ -26,7 +26,7 @@ export default {
       })
     } else {
       for (let i = 0; i <= source.data[0].length - 1; i++) {
-        let colName = `col${i + 1}`
+        const colName = `col${i + 1}`
         result.columns.push(colName)
         values[colName] = source.data.map(row => {
           let value = row[i]

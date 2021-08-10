@@ -35,7 +35,7 @@ describe('_sql.js', () => {
     const result = sql.exec('SELECT * from test')
     expect(result).to.have.lengthOf(1)
     expect(result[0]).to.eql({
-      columns: ['id', 'name','faculty'],
+      columns: ['id', 'name', 'faculty'],
       values: {
         id: [1, 2],
         name: ['Harry Potter', 'Draco Malfoy'],

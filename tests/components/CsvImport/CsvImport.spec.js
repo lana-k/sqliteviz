@@ -58,7 +58,7 @@ describe('CsvImport.vue', () => {
     sinon.stub(csv, 'parse').resolves({
       delimiter: '|',
       data: {
-        columns: ['col2', 'col1' ],
+        columns: ['col2', 'col1'],
         values: {
           col1: [1, 2],
           col2: ['foo', 'bar']
@@ -212,7 +212,7 @@ describe('CsvImport.vue', () => {
     expect(rows).to.have.lengthOf(1)
     expect(rows.at(0).findAll('td').at(0).text()).to.equal('corge')
     expect(rows.at(0).findAll('td').at(1).text()).to.equal('5')
-    
+
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.include('Preview parsing is completed in')
   })

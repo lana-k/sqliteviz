@@ -116,7 +116,7 @@ describe('database.js', () => {
 
   it('adds table from csv', async () => {
     const data = {
-      columns: ['id', 'name','faculty'],
+      columns: ['id', 'name', 'faculty'],
       values: {
         id: [1, 2],
         name: ['Harry Potter', 'Draco Malfoy'],
