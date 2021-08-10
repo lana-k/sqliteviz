@@ -48,17 +48,22 @@ export default class Sql {
       throw new Error('exec: Missing query string')
     }
     const sqlResults = this.db.exec(sql, params)
-    return sqlResults.map(result => _getDataSourcesFromSqlResult(result))
+    return sqlResults.map(result => {
+      return {
+        columns: result.columns,
+        values: _getDataSourcesFromSqlResult(result)
+      }
+    })
   }
 
   import (tabName, data, progressCounterId, progressCallback, chunkSize = 1500) {
     if (this.db === null) {
       this.createDb()
     }
-    const columns = Object.keys(data)
-    const rowCount = data[columns[0]].length
-    this.db.exec(dbUtils.getCreateStatement(tabName, data))
-    const chunks = dbUtils.generateChunks(data, chunkSize)
+    const columns = data.columns
+    const rowCount = data.values[columns[0]].length
+    this.db.exec(dbUtils.getCreateStatement(tabName, data.values))
+    const chunks = dbUtils.generateChunks(data.values, chunkSize)
     const chunksAmount = Math.ceil(rowCount / chunkSize)
     let count = 0
     const insertStr = dbUtils.getInsertStmt(tabName, columns)

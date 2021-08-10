@@ -85,7 +85,7 @@ describe('database.js', () => {
 
     await db.loadDb(buffer)
     const result = await db.execute('SELECT * from test limit 1; SELECT * from test;')
-    expect(result).to.eql({
+    expect(result.values).to.eql({
       id: [1, 2],
       name: ['Harry Potter', 'Draco Malfoy'],
       faculty: ['Griffindor', 'Slytherin']
@@ -116,9 +116,12 @@ describe('database.js', () => {
 
   it('adds table from csv', async () => {
     const data = {
-      id: [1, 2],
-      name: ['Harry Potter', 'Draco Malfoy'],
-      faculty: ['Griffindor', 'Slytherin']
+      columns: ['id', 'name','faculty'],
+      values: {
+        id: [1, 2],
+        name: ['Harry Potter', 'Draco Malfoy'],
+        faculty: ['Griffindor', 'Slytherin']
+      }
     }
     const progressHandler = sinon.spy()
     const progressCounterId = db.createProgressCounter(progressHandler)
@@ -144,9 +147,12 @@ describe('database.js', () => {
 
   it('addTableFromCsv throws errors', async () => {
     const data = {
-      id: [1, 2],
-      name: ['Harry Potter', 'Draco Malfoy'],
-      faculty: null
+      columns: [],
+      values: {
+        id: [1, 2],
+        name: ['Harry Potter', 'Draco Malfoy'],
+        faculty: null
+      }
     }
     const progressHandler = sinon.stub()
     const progressCounterId = db.createProgressCounter(progressHandler)
@@ -214,8 +220,11 @@ describe('database.js', () => {
     // check that new db works and has the same table and data
     result = await anotherDb.execute('SELECT * from foo')
     expect(result).to.eql({
-      id: [1],
-      name: ['Harry Potter']
+      columns: ['id', 'name'],
+      values: {
+        id: [1],
+        name: ['Harry Potter']
+      }
     })
   })
 

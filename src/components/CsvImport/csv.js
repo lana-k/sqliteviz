@@ -8,10 +8,15 @@ const hintsByCode = {
 
 export default {
   getResult (source) {
-    const result = {}
+    const result = {
+      columns: []
+    }
+    const values = {}
     if (source.meta.fields) {
       source.meta.fields.forEach(col => {
-        result[col.trim()] = source.data.map(row => {
+        let colName = col.trim()
+        result.columns.push(colName)
+        values[colName] = source.data.map(row => {
           let value = row[col]
           if (value instanceof Date) {
             value = value.toISOString()
@@ -21,7 +26,9 @@ export default {
       })
     } else {
       for (let i = 0; i <= source.data[0].length - 1; i++) {
-        result[`col${i + 1}`] = source.data.map(row => {
+        let colName = `col${i + 1}`
+        result.columns.push(colName)
+        values[colName] = source.data.map(row => {
           let value = row[i]
           if (value instanceof Date) {
             value = value.toISOString()
@@ -30,6 +37,8 @@ export default {
         })
       }
     }
+
+    result.values = values
     return result
   },
 

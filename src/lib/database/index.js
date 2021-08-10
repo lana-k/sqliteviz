@@ -88,11 +88,11 @@ class Database {
     const result = await this.execute(getSchemaSql)
     // Parse DDL statements to get column names and types
     const parsedSchema = []
-    if (result && result.name) {
-      result.name.forEach((table, index) => {
+    if (result && result.values && result.values.name) {
+      result.values.name.forEach((table, index) => {
         parsedSchema.push({
           name: table,
-          columns: stms.getColumns(result.sql[index])
+          columns: stms.getColumns(result.values.sql[index])
         })
       })
     }

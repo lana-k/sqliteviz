@@ -30,7 +30,7 @@
           <tr v-for="rowIndex in currentPageData.count" :key="rowIndex">
             <td v-for="(col, colIndex) in columns" :key="colIndex">
               <div class="cell-data" :style="cellStyle">
-                {{ dataSet[col][rowIndex - 1 + currentPageData.start] }}
+                {{ dataSet.values[col][rowIndex - 1 + currentPageData.start] }}
               </div>
             </td>
           </tr>
@@ -74,10 +74,10 @@ export default {
   },
   computed: {
     columns () {
-      return Object.keys(this.dataSet)
+      return this.dataSet.columns
     },
     rowCount () {
-      return this.dataSet[this.columns[0]].length
+      return this.dataSet.values[this.columns[0]].length
     },
     cellStyle () {
       const eq = this.tableWidth / this.columns.length

@@ -37,7 +37,7 @@ describe('SQLite extensions', function () {
         abs(pi() / 2 - atan2(1, 0)) < 0.000001
     `)
 
-    expect(actual).to.eql({
+    expect(actual.values).to.eql({
       'abs(3.1415926 - pi())       < 0.000001': [1],
       'abs(1 - cos(2 * pi()))      < 0.000001': [1],
       'abs(0 - sin(pi()))          < 0.000001': [1],
@@ -71,7 +71,7 @@ describe('SQLite extensions', function () {
         ceil(-1.95) + ceil(1.95),
         floor(-1.95) + floor(1.95)
     `)
-    expect(actual).to.eql({
+    expect(actual.values).to.eql({
       'exp(0)': [1],
       'log(exp(1))': [1],
       'log10(10000)': [4],
@@ -99,7 +99,7 @@ describe('SQLite extensions', function () {
         padc('foo', 5),
         strfilter('abcba', 'bc')
     `)
-    expect(actual).to.eql({
+    expect(actual.values).to.eql({
       "replicate('ab', 4)": ['abababab'],
       "charindex('ab', 'foobarabbarfoo')": [7],
       "charindex('ab', 'foobarabbarfoo', 8)": [0],
@@ -137,7 +137,7 @@ describe('SQLite extensions', function () {
         VALUES (1)
       )
     `)
-    expect(actual).to.eql({
+    expect(actual.values).to.eql({
       'abs( 3.77406806 - stdev(x))    < 0.000001': [1],
       'abs(14.24358974 - variance(x)) < 0.000001': [1],
       'mode(x)': [1],
@@ -152,7 +152,7 @@ describe('SQLite extensions', function () {
       SELECT value
       FROM generate_series(5, 20, 5)
     `)
-    expect(actual).to.eql({
+    expect(actual.values).to.eql({
       value: [5, 10, 15, 20]
     })
   })
@@ -194,7 +194,7 @@ describe('SQLite extensions', function () {
         WHERE nc.root = 2 AND nc.depth = 2
       );
     `)
-    expect(actual).to.eql({
+    expect(actual.values).to.eql({
       name: [
         '_sql.spec.js',
         '_statements.spec.js',
@@ -212,7 +212,7 @@ describe('SQLite extensions', function () {
         length(uuid()) as length,
         uuid_str(uuid_blob('26a8349c8a7f4cbeb519bf792c3d7ac6')) as uid
     `)
-    expect(actual).to.eql({
+    expect(actual.values).to.eql({
       length: [36],
       uid: ['26a8349c-8a7f-4cbe-b519-bf792c3d7ac6']
     })
@@ -225,7 +225,7 @@ describe('SQLite extensions', function () {
         regexpi('=\\s?\\d+', 'const foo = 123; const bar = "bar"') as two,
         'const foo = 123; const bar = "bar"' REGEXP '=\\s?\\d+' as three
     `)
-    expect(actual).to.eql({
+    expect(actual.values).to.eql({
       one: [1],
       two: [1],
       three: [1]
@@ -260,7 +260,7 @@ describe('SQLite extensions', function () {
       ALTER TABLE surface DROP COLUMN rownum;
       SELECT * FROM surface;
     `)
-    expect(actual).to.eql({
+    expect(actual.values).to.eql({
       x: [5, 10, 15],
       y: [3, 6, 9],
       '5.0': [3.2, 4.3, 5.4],
@@ -292,7 +292,7 @@ describe('SQLite extensions', function () {
       WHERE body MATCH '"full-text" NOT document'
       ORDER BY rank;
     `)
-    expect(actual).to.eql({
+    expect(actual.values).to.eql({
       sender: ['bar@localhost']
     })
   })

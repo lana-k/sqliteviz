@@ -38,7 +38,7 @@
 
     <teleport :to="`#${layout.dataView}-${tabIndex}`">
       <data-view
-        :data-source="result"
+        :data-source="(result && result.values) || null"
         :init-options="initViewOptions"
         :init-mode="initViewType"
         ref="dataView"

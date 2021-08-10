@@ -58,8 +58,11 @@ describe('CsvImport.vue', () => {
     sinon.stub(csv, 'parse').resolves({
       delimiter: '|',
       data: {
-        col1: [1, 2],
-        col2: ['foo', 'bar']
+        columns: ['col2', 'col1' ],
+        values: {
+          col1: [1, 2],
+          col2: ['foo', 'bar']
+        }
       },
       rowCount: 2,
       messages: [{
@@ -82,10 +85,10 @@ describe('CsvImport.vue', () => {
     expect(wrapper.findComponent({ name: 'check-box' }).vm.checked).to.equal(true)
     const rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(2)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equal('1')
-    expect(rows.at(0).findAll('td').at(1).text()).to.equal('foo')
-    expect(rows.at(1).findAll('td').at(0).text()).to.equal('2')
-    expect(rows.at(1).findAll('td').at(1).text()).to.equal('bar')
+    expect(rows.at(0).findAll('td').at(0).text()).to.equal('foo')
+    expect(rows.at(0).findAll('td').at(1).text()).to.equal('1')
+    expect(rows.at(1).findAll('td').at(0).text()).to.equal('bar')
+    expect(rows.at(1).findAll('td').at(1).text()).to.equal('2')
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.include('Information about row 0. Comma was used as a standart delimiter.')
     expect(wrapper.findComponent({ name: 'logs' }).text())
@@ -99,8 +102,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(0).resolves({
       delimiter: '|',
       data: {
-        col1: [1],
-        col2: ['foo']
+        columns: ['col2', 'col1'],
+        values: {
+          col1: [1],
+          col2: ['foo']
+        }
       },
       rowCount: 1
     })
@@ -113,8 +119,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(1).resolves({
       delimiter: ',',
       data: {
-        col1: [2],
-        col2: ['bar']
+        columns: ['col2', 'col1'],
+        values: {
+          col1: [2],
+          col2: ['bar']
+        }
       },
       rowCount: 1,
       hasErrors: false
@@ -125,16 +134,19 @@ describe('CsvImport.vue', () => {
 
     let rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(1)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equal('2')
-    expect(rows.at(0).findAll('td').at(1).text()).to.equal('bar')
+    expect(rows.at(0).findAll('td').at(0).text()).to.equal('bar')
+    expect(rows.at(0).findAll('td').at(1).text()).to.equal('2')
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.include('Preview parsing is completed in')
 
     parse.onCall(2).resolves({
       delimiter: ',',
       data: {
-        col1: [3],
-        col2: ['baz']
+        columns: ['col2', 'col1'],
+        values: {
+          col1: [3],
+          col2: ['baz']
+        }
       },
       rowCount: 1,
       hasErrors: true,
@@ -152,8 +164,8 @@ describe('CsvImport.vue', () => {
     await csv.parse.returnValues[2]
     rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(1)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equal('3')
-    expect(rows.at(0).findAll('td').at(1).text()).to.equal('baz')
+    expect(rows.at(0).findAll('td').at(0).text()).to.equal('baz')
+    expect(rows.at(0).findAll('td').at(1).text()).to.equal('3')
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.contain('Error in row 0. Quote is missed. Edit your CSV so that the field has a closing quote char.')
     expect(wrapper.findComponent({ name: 'logs' }).text())
@@ -162,8 +174,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(3).resolves({
       delimiter: ',',
       data: {
-        col1: [4],
-        col2: ['qux']
+        columns: ['col2', 'col1'],
+        values: {
+          col1: [4],
+          col2: ['qux']
+        }
       },
       rowCount: 1,
       hasErrors: false
@@ -173,16 +188,19 @@ describe('CsvImport.vue', () => {
     await csv.parse.returnValues[3]
     rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(1)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equal('4')
-    expect(rows.at(0).findAll('td').at(1).text()).to.equal('qux')
+    expect(rows.at(0).findAll('td').at(0).text()).to.equal('qux')
+    expect(rows.at(0).findAll('td').at(1).text()).to.equal('4')
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.contain('Preview parsing is completed in')
 
     parse.onCall(4).resolves({
       delimiter: ',',
       data: {
-        col1: [5],
-        col2: ['corge']
+        columns: ['col2', 'col1'],
+        values: {
+          col1: [5],
+          col2: ['corge']
+        }
       },
       rowCount: 1,
       hasErrors: false
@@ -192,8 +210,9 @@ describe('CsvImport.vue', () => {
     await csv.parse.returnValues[4]
     rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(1)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equal('5')
-    expect(rows.at(0).findAll('td').at(1).text()).to.equal('corge')
+    expect(rows.at(0).findAll('td').at(0).text()).to.equal('corge')
+    expect(rows.at(0).findAll('td').at(1).text()).to.equal('5')
+    
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.include('Preview parsing is completed in')
   })

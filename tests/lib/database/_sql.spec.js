@@ -35,9 +35,12 @@ describe('_sql.js', () => {
     const result = sql.exec('SELECT * from test')
     expect(result).to.have.lengthOf(1)
     expect(result[0]).to.eql({
-      id: [1, 2],
-      name: ['Harry Potter', 'Draco Malfoy'],
-      faculty: ['Griffindor', 'Slytherin']
+      columns: ['id', 'name','faculty'],
+      values: {
+        id: [1, 2],
+        name: ['Harry Potter', 'Draco Malfoy'],
+        faculty: ['Griffindor', 'Slytherin']
+      }
     })
   })
 
@@ -64,13 +67,16 @@ describe('_sql.js', () => {
 
   it('imports', async () => {
     const data = {
-      id: [1, 2, 3, 4],
-      name: [
-        'Harry Potter',
-        'Draco Malfoy',
-        'Hermione Granger',
-        'Ron Weasley'
-      ]
+      columns: ['id', 'name'],
+      values: {
+        id: [1, 2, 3, 4],
+        name: [
+          'Harry Potter',
+          'Draco Malfoy',
+          'Hermione Granger',
+          'Ron Weasley'
+        ]
+      }
     }
     const progressCallback = sinon.stub()
     const progressCounterId = 1
@@ -104,7 +110,7 @@ describe('_sql.js', () => {
     anotherSql.open(data)
     const result = anotherSql.exec('SELECT * from test')
     expect(result).to.have.lengthOf(1)
-    expect(result[0]).to.eql({
+    expect(result[0].values).to.eql({
       id: [1, 2],
       name: ['Harry Potter', 'Draco Malfoy'],
       faculty: ['Griffindor', 'Slytherin']
@@ -146,26 +152,29 @@ describe('_sql.js', () => {
     `)
 
     let result = sql.exec('SELECT * from test')
-    expect(result[0]).to.eql({
+    expect(result[0].values).to.eql({
       id: [1, 2],
       name: ['foo', 'bar']
     })
 
     const data = {
-      id: [1, 2, 3, 4],
-      name: [
-        'Harry Potter',
-        'Draco Malfoy',
-        'Hermione Granger',
-        'Ron Weasley'
-      ]
+      columns: ['id', 'name'],
+      values: {
+        id: [1, 2, 3, 4],
+        name: [
+          'Harry Potter',
+          'Draco Malfoy',
+          'Hermione Granger',
+          'Ron Weasley'
+        ]
+      }
     }
     // import adds table
     sql.import('foo', data, 1, sinon.stub(), 2)
     result = sql.exec('SELECT * from foo')
     expect(result[0]).to.eql(data)
     result = sql.exec('SELECT * from test')
-    expect(result[0]).to.eql({
+    expect(result[0].values).to.eql({
       id: [1, 2],
       name: ['foo', 'bar']
     })

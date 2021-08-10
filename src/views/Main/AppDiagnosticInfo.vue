@@ -44,13 +44,13 @@ export default {
 
   async created () {
     const state = this.$store.state
-    let result = await state.db.execute('select sqlite_version()')
+    let result = (await state.db.execute('select sqlite_version()')).values
     this.info.push({
       name: 'SQLite version',
       info: result['sqlite_version()']
     })
 
-    result = await state.db.execute('PRAGMA compile_options')
+    result = (await state.db.execute('PRAGMA compile_options')).values
     this.info.push({
       name: 'SQLite compile options',
       info: result.compile_options
