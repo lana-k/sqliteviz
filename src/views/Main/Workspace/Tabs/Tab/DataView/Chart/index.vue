@@ -66,7 +66,9 @@ export default {
     dataSources () {
       // we need to update state.data in order to update the graph
       // https://github.com/plotly/react-chart-editor/issues/948
-      dereference(this.state.data, this.dataSources)
+      if (this.dataSources) {
+        dereference(this.state.data, this.dataSources)
+      }
     }
   },
   methods: {

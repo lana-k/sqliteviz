@@ -27,7 +27,7 @@ describe('Chart.vue', () => {
     expect(wrapper.emitted('update')).to.have.lengthOf(1)
   })
 
-  it('calls dereference when sqlResult is changed', async () => {
+  it('calls dereference when dataSources is changed', async () => {
     sinon.stub(dereference, 'default')
     const dataSources = {
       id: [1],
@@ -46,5 +46,21 @@ describe('Chart.vue', () => {
 
     await wrapper.setProps({ dataSources: newDataSources })
     expect(dereference.default.called).to.equal(true)
+  })
+
+  it(`doesn't calls dereference when dataSources is null`, async () => {
+    sinon.stub(dereference, 'default')
+    const dataSources = {
+      id: [1],
+      name: ['foo']
+    }
+
+    // mount the component
+    const wrapper = shallowMount(Chart, {
+      propsData: { dataSources }
+    })
+
+    await wrapper.setProps({ dataSources: null })
+    expect(dereference.default.called).to.equal(false)
   })
 })
