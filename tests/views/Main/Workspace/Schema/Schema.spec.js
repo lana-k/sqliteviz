@@ -166,7 +166,7 @@ describe('Schema.vue', () => {
     await state.db.refreshSchema.returnValues[0]
 
     expect(wrapper.vm.$store.state.db.schema).to.eql([
-      { name: 'test', columns: [{ name: 'col1', type: 'real' }, { name: 'col2', type: 'text' }] },
+      { name: 'test', columns: [{ name: 'col1', type: 'REAL' }, { name: 'col2', type: 'TEXT' }] },
       { name: 'foo', columns: [{ name: 'id', type: 'N/A' }] }
     ])
 
