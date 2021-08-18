@@ -47,6 +47,36 @@ describe('database.js', () => {
     expect(schema[0].columns[1].type).to.equal('integer')
   })
 
+  it('creates schema with view', async () => {
+    await db.loadDb()
+    await db.execute(`
+      CREATE TABLE test (col1, col2 integer);
+      CREATE VIEW test_view AS SELECT col2 as amount FROM test;
+    `)
+
+    await db.refreshSchema()
+    const schema = db.schema
+    expect(db.dbName).to.equal('database')
+    expect(schema).to.have.lengthOf(2)
+    expect(schema[0].name).to.equal('test')
+    expect(schema[1].name).to.equal('test_view')
+
+    expect(schema[0].columns[0]).to.eql({
+      name: 'col1',
+      type: 'N/A'
+    })
+
+    expect(schema[0].columns[1]).to.eql({
+      name: 'col2',
+      type: 'integer'
+    })
+
+    expect(schema[1].columns).to.eql([{
+      name: 'amount',
+      type: 'integer'
+    }])
+  })
+
   it('creates empty db with name database', async () => {
     sinon.spy(db, 'refreshSchema')
 
