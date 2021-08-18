@@ -48,7 +48,7 @@ describe('Chart.vue', () => {
     expect(dereference.default.called).to.equal(true)
   })
 
-  it(`doesn't calls dereference when dataSources is null`, async () => {
+  it("doesn't calls dereference when dataSources is null", async () => {
     sinon.stub(dereference, 'default')
     const dataSources = {
       id: [1],
