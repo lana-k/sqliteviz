@@ -166,8 +166,8 @@ describe('Schema.vue', () => {
     await state.db.refreshSchema.returnValues[0]
 
     expect(wrapper.vm.$store.state.db.schema).to.eql([
-      { name: 'test', columns: [{ name: 'col1', type: 'REAL' }, { name: 'col2', type: 'TEXT' }] },
-      { name: 'foo', columns: [{ name: 'id', type: 'N/A' }] }
+      { name: 'foo', columns: [{ name: 'id', type: 'N/A' }] },
+      { name: 'test', columns: [{ name: 'col1', type: 'REAL' }, { name: 'col2', type: 'TEXT' }] }
     ])
 
     const res = await wrapper.vm.$store.state.db.execute('select * from test')
