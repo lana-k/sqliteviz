@@ -133,9 +133,9 @@ describe('database.js', () => {
     expect(db.schema).to.have.lengthOf(1)
     expect(db.schema[0].name).to.equal('foo')
     expect(db.schema[0].columns).to.have.lengthOf(3)
-    expect(db.schema[0].columns[0]).to.eql({ name: 'id', type: 'real' })
-    expect(db.schema[0].columns[1]).to.eql({ name: 'name', type: 'text' })
-    expect(db.schema[0].columns[2]).to.eql({ name: 'faculty', type: 'text' })
+    expect(db.schema[0].columns[0]).to.eql({ name: 'id', type: 'REAL' })
+    expect(db.schema[0].columns[1]).to.eql({ name: 'name', type: 'TEXT' })
+    expect(db.schema[0].columns[2]).to.eql({ name: 'faculty', type: 'TEXT' })
 
     const result = await db.execute('SELECT * from foo')
     expect(result).to.eql(data)
