@@ -35,32 +35,4 @@ describe('_statements.js', () => {
       'CREATE table "foo"("id" REAL, "name" TEXT, "isAdmin" INTEGER, "startDate" TEXT);'
     )
   })
-
-  it('getColumns', () => {
-    const sql = `CREATE TABLE test (
-      col1,
-      col2 integer,
-      col3 decimal(5,2),
-      col4 varchar(30)
-    )`
-    expect(stmts.getColumns(sql)).to.eql([
-      { name: 'col1', type: 'N/A' },
-      { name: 'col2', type: 'integer' },
-      { name: 'col3', type: 'decimal(5, 2)' },
-      { name: 'col4', type: 'varchar(30)' }
-    ])
-  })
-
-  it('getColumns with virtual table', async () => {
-    const sql = `
-      CREATE VIRTUAL TABLE test_virtual USING fts4(
-        col1, col2,
-        notindexed=col1, notindexed=col2,
-        tokenize=unicode61 "tokenchars=.+#")
-    `
-    expect(stmts.getColumns(sql)).to.eql([
-      { name: 'col1', type: 'N/A' },
-      { name: 'col2', type: 'N/A' }
-    ])
-  })
 })

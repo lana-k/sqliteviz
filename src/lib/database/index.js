@@ -1,4 +1,3 @@
-import stms from './_statements'
 import fu from '@/lib/utils/fileIo'
 // We can import workers like so because of worker-loader:
 // https://webpack.js.org/loaders/worker-loader/
@@ -81,24 +80,14 @@ class Database {
 
   async refreshSchema () {
     const getSchemaSql = `
-      SELECT name, sql
-      FROM sqlite_master
-      WHERE type='table' AND name NOT LIKE 'sqlite_%';
+    WITH columns as (SELECT a.tbl_name, json_group_array(json_object('name', b.name,'type', IIF(b.type = '', 'N/A', b.type))) as column_json
+    FROM sqlite_master a, pragma_table_info(a.name) b
+    WHERE a.type in ('table','view') AND a.name NOT LIKE 'sqlite_%' group by tbl_name
+    )
+    SELECT json_group_array(json_object('name',tbl_name, 'columns', json(column_json))) objects from columns;
     `
     const result = await this.execute(getSchemaSql)
-    // Parse DDL statements to get column names and types
-    const parsedSchema = []
-    if (result && result.values && result.values.name) {
-      result.values.name.forEach((table, index) => {
-        parsedSchema.push({
-          name: table,
-          columns: stms.getColumns(result.values.sql[index])
-        })
-      })
-    }
-
-    // Refresh schema
-    this.schema = parsedSchema
+    this.schema = JSON.parse(result.values.objects[0])
   }
 
   async execute (commands) {
