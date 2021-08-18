@@ -1,6 +1,6 @@
 {
   "name": "sqliteviz",
-  "version": "0.15.3",
+  "version": "0.16.0",
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
@@ -23,7 +23,6 @@
     "react-chart-editor": "^0.45.0",
     "react-dom": "^16.13.1",
     "sql.js": "file:./lib/sql-js",
-    "sqlite-parser": "^1.0.1",
     "vue": "^2.6.11",
     "vue-codemirror": "^4.0.6",
     "vue-js-modal": "^2.0.0-rc.6",
