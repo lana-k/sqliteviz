@@ -80,7 +80,7 @@ class Database {
 
   async refreshSchema () {
     const getSchemaSql = `
-    WITH columns as (SELECT a.tbl_name, json_group_array(json_object('name', b.name,'type', b.type)) as column_json 
+    WITH columns as (SELECT a.tbl_name, json_group_array(json_object('name', b.name,'type', IIF(b.type = '', 'N/A', b.type))) as column_json
     FROM sqlite_master a, pragma_table_info(a.name) b
     WHERE a.type in ('table','view') AND a.name NOT LIKE 'sqlite_%' group by tbl_name
     )
