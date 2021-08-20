@@ -28,9 +28,10 @@ import plotly from 'plotly.js'
 import 'react-chart-editor/lib/react-chart-editor.min.css'
 
 import PlotlyEditor from 'react-chart-editor'
-import chartHelper from './chartHelper'
+import chartHelper from '@/lib/chartHelper'
 import dereference from 'react-chart-editor/lib/lib/dereference'
 import fIo from '@/lib/utils/fileIo'
+import cIo from '@/lib/utils/clipboardIo'
 
 export default {
   name: 'Chart',
@@ -89,10 +90,13 @@ export default {
       return chartHelper.getOptionsForSave(this.state, this.dataSources)
     },
     async saveAsPng () {
-      const chartElement = this.$refs.plotlyEditor.$el.querySelector('.js-plotly-plot')
-      const url = await plotly.toImage(chartElement, { format: 'png', width: null, height: null })
+      const url = await chartHelper.getImageDataUrl(this.$refs.plotlyEditor.$el, 'png')
       this.$emit('loadingImageCompleted')
       fIo.downloadFromUrl(url, 'chart')
+    },
+    async copyPngToClipboard () {
+      const url = await chartHelper.getImageDataUrl(this.$refs.plotlyEditor.$el, 'png')
+      cIo.copyFromDataUrl(url)
     }
   }
 }

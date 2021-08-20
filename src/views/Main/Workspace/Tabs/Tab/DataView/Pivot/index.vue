@@ -14,14 +14,15 @@
 </template>
 
 <script>
-import html2canvas from 'html2canvas'
-import plotly from 'plotly.js'
 import fIo from '@/lib/utils/fileIo'
+import cIo from '@/lib/utils/clipboardIo'
 import $ from 'jquery'
 import 'pivottable'
 import 'pivottable/dist/pivot.css'
 import PivotUi from './PivotUi'
+import { getPivotCanvas } from './pivotHelper'
 import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart'
+import chartHelper from '@/lib/chartHelper'
 import Vue from 'vue'
 const ChartClass = Vue.extend(Chart)
 
@@ -156,21 +157,27 @@ export default {
       if (this.pivotOptions.rendererName === 'Custom chart') {
         this.pivotOptions.rendererOptions.customChartComponent.saveAsPng()
       } else if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
-        const chartElement = this.$refs.pivotOutput.querySelector('.js-plotly-plot')
-        const url = await plotly.toImage(chartElement, {
-          format: 'png',
-          width: null,
-          height: null
-        })
+        const url = await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
         this.$emit('loadingImageCompleted')
         fIo.downloadFromUrl(url, 'pivot')
       } else {
-        const tableElement = this.$refs.pivotOutput.querySelector('.pvtTable')
-        const canvas = await html2canvas(tableElement)
+        const canvas = await getPivotCanvas(this.$refs.pivotOutput)
         this.$emit('loadingImageCompleted')
         fIo.downloadFromUrl(canvas.toDataURL('image/png'), 'pivot', 'image/png')
       }
-    }
+    },
+    async copyPngToClipboard () {
+      if (this.pivotOptions.rendererName === 'Custom chart') {
+        this.pivotOptions.rendererOptions.customChartComponent.copyPngToClipboard()
+      } else if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
+        const url = await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
+        cIo.copyFromDataUrl(url)
+      } else {
+        const canvas = await getPivotCanvas(this.$refs.pivotOutput)
+        cIo.copyCanvas(canvas)
+      }
+    },
+
   }
 }
 </script>

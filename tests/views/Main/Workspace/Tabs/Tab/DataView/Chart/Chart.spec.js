@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import { mount, shallowMount } from '@vue/test-utils'
 import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart'
-import chartHelper from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart/chartHelper'
+import chartHelper from '@/lib/chartHelper'
 import * as dereference from 'react-chart-editor/lib/lib/dereference'
 
 describe('Chart.vue', () => {

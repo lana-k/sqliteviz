@@ -2,6 +2,7 @@ import $ from 'jquery'
 import 'pivottable'
 import 'pivottable/dist/export_renderers.js'
 import 'pivottable/dist/plotly_renderers.js'
+import html2canvas from 'html2canvas'
 
 export const zeroValAggregators = [
   'Count',
@@ -75,3 +76,8 @@ export const aggregators = Object.keys($.pivotUtilities.aggregators).map(key => 
     fun: $.pivotUtilities.aggregators[key]
   }
 })
+
+export async function getPivotCanvas (pivotOutput) {
+  const tableElement = pivotOutput.querySelector('.pvtTable')
+  return await html2canvas(tableElement)
+}

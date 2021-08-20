@@ -40,6 +40,14 @@
       >
         <png-icon />
       </icon-button>
+
+       <icon-button
+        tooltip="Copy visualisation to clipboard"
+        tooltip-position="top-left"
+        @click="copyToClipboard"
+      >
+        <clipboard-icon/>
+      </icon-button>
     </side-tool-bar>
   </div>
 </template>
@@ -52,6 +60,7 @@ import IconButton from '@/components/IconButton'
 import ChartIcon from '@/components/svg/chart'
 import PivotIcon from '@/components/svg/pivot'
 import PngIcon from '@/components/svg/png'
+import ClipboardIcon from '@/components/svg/clipboard'
 
 export default {
   name: 'DataView',
@@ -63,7 +72,8 @@ export default {
     IconButton,
     ChartIcon,
     PivotIcon,
-    PngIcon
+    PngIcon,
+    ClipboardIcon
   },
   data () {
     return {
@@ -95,6 +105,9 @@ export default {
     },
     getOptionsForSave () {
       return this.$refs.viewComponent.getOptionsForSave()
+    },
+    copyToClipboard () {
+      this.$refs.viewComponent.copyPngToClipboard()
     }
   }
 }

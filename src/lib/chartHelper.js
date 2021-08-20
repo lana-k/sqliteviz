@@ -1,4 +1,5 @@
 import dereference from 'react-chart-editor/lib/lib/dereference'
+import plotly from 'plotly.js'
 
 export function getOptionsFromDataSources (dataSources) {
   if (!dataSources) {
@@ -23,7 +24,17 @@ export function getOptionsForSave (state, dataSources) {
   return stateCopy
 }
 
+export async function getImageDataUrl (element, type) {
+  const chartElement = element.querySelector('.js-plotly-plot')
+  return await plotly.toImage(chartElement, {
+    format: type,
+    width: null,
+    height: null
+  })
+}
+
 export default {
   getOptionsFromDataSources,
-  getOptionsForSave
+  getOptionsForSave,
+  getImageDataUrl
 }

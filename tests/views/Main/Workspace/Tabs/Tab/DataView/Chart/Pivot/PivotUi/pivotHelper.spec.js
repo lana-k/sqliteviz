@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { _getDataSources } from '@/views/Main/Workspace/Tabs/Tab/DataView/Pivot/PivotUi/pivotHelper'
+import { _getDataSources } from '@/views/Main/Workspace/Tabs/Tab/DataView/Pivot/pivotHelper'
 
 describe('pivotHelper.js', () => {
   it('_getDataSources returns data sources', () => {

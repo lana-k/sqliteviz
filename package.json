@@ -12,6 +12,7 @@
   "dependencies": {
     "codemirror": "^5.57.0",
     "core-js": "^3.6.5",
+    "dataurl-to-blob": "^0.0.1",
     "html2canvas": "^1.1.4",
     "jquery": "^3.6.0",
     "nanoid": "^3.1.12",

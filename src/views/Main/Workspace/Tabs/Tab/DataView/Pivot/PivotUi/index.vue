@@ -139,7 +139,7 @@
 import $ from 'jquery'
 import Multiselect from 'vue-multiselect'
 import PivotSortBtn from './PivotSortBtn'
-import { renderers, aggregators, zeroValAggregators, twoValAggregators } from './pivotHelper'
+import { renderers, aggregators, zeroValAggregators, twoValAggregators } from '../pivotHelper'
 import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart'
 import Vue from 'vue'
 const ChartClass = Vue.extend(Chart)
