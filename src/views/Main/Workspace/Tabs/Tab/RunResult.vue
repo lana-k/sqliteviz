@@ -33,7 +33,16 @@
         tooltip-position="top-left"
         @click="exportToCsv"
       >
-        <export-to-csv-icon :disabled="!result"/>
+        <export-to-csv-icon/>
+      </icon-button>
+
+      <icon-button
+        :disabled="!result"
+        tooltip="Copy result set to clipboard"
+        tooltip-position="top-left"
+        @click="copyToClipboard"
+      >
+        <clipboard-icon/>
       </icon-button>
     </side-tool-bar>
   </div>
@@ -45,9 +54,11 @@ import SqlTable from '@/components/SqlTable'
 import LoadingIndicator from '@/components/LoadingIndicator'
 import SideToolBar from './SideToolBar'
 import ExportToCsvIcon from '@/components/svg/exportToCsv'
+import ClipboardIcon from '@/components/svg/clipboard'
 import IconButton from '@/components/IconButton'
 import csv from '@/lib/csv'
 import fIo from '@/lib/utils/fileIo'
+import cIo from '@/lib/utils/clipboardIo'
 
 export default {
   name: 'RunResult',
@@ -64,7 +75,8 @@ export default {
     Logs,
     SideToolBar,
     ExportToCsvIcon,
-    IconButton
+    IconButton,
+    ClipboardIcon
   },
   mounted () {
     this.resizeObserver = new ResizeObserver(this.handleResize)
@@ -93,6 +105,9 @@ export default {
     },
     exportToCsv () {
       fIo.exportToFile(csv.serialize(this.result), 'result_set.csv', 'text/csv')
+    },
+    copyToClipboard () {
+      cIo.copyCsv(csv.serialize(this.result))
     }
   }
 }
