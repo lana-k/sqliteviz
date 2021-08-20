@@ -26,7 +26,16 @@
         class="straight"
       />
     </div>
-    <side-tool-bar @switchTo="$emit('switchTo', $event)" panel="table"/>
+    <side-tool-bar @switchTo="$emit('switchTo', $event)" panel="table">
+      <icon-button
+        :disabled="!result"
+        tooltip="Export result set to CSV file"
+        tooltip-position="top-left"
+        @click="exportToCsv"
+      >
+        <export-to-csv-icon :disabled="!result"/>
+      </icon-button>
+    </side-tool-bar>
   </div>
 </template>
 
@@ -35,6 +44,10 @@ import Logs from '@/components/Logs'
 import SqlTable from '@/components/SqlTable'
 import LoadingIndicator from '@/components/LoadingIndicator'
 import SideToolBar from './SideToolBar'
+import ExportToCsvIcon from '@/components/svg/exportToCsv'
+import IconButton from '@/components/IconButton'
+import csv from '@/lib/csv'
+import fIo from '@/lib/utils/fileIo'
 
 export default {
   name: 'RunResult',
@@ -49,7 +62,9 @@ export default {
     SqlTable,
     LoadingIndicator,
     Logs,
-    SideToolBar
+    SideToolBar,
+    ExportToCsvIcon,
+    IconButton
   },
   mounted () {
     this.resizeObserver = new ResizeObserver(this.handleResize)
@@ -58,6 +73,11 @@ export default {
   },
   beforeDestroy () {
     this.resizeObserver.unobserve(this.$refs.runResultPanel)
+  },
+  watch: {
+    result () {
+      console.log(this.result)
+    }
   },
   methods: {
     handleResize () {
@@ -70,6 +90,9 @@ export default {
       // 35 - height of table header
       const freeSpace = runResultPanel.offsetHeight - 27 - 5 - 35
       this.pageSize = Math.max(Math.floor(freeSpace / 35), 20)
+    },
+    exportToCsv () {
+      fIo.exportToFile(csv.serialize(this.result), 'result_set.csv', 'text/csv')
     }
   }
 }

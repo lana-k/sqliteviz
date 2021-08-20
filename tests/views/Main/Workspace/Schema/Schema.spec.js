@@ -6,7 +6,7 @@ import Schema from '@/views/Main/Workspace/Schema'
 import TableDescription from '@/views/Main/Workspace/Schema/TableDescription'
 import database from '@/lib/database'
 import fIo from '@/lib/utils/fileIo'
-import csv from '@/components/CsvImport/csv'
+import csv from '@/lib/csv'
 
 const localVue = createLocalVue()
 localVue.use(Vuex)

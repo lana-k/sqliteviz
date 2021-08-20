@@ -42,6 +42,21 @@ export default {
     return result
   },
 
+  prepareForExport (resultSet) {
+    const columns = resultSet.columns
+    const rowCount = resultSet.values[columns[0]].length
+    const result = {
+      fields: columns,
+      data: []
+    }
+
+    for (let rowNumber = 0; rowNumber < rowCount; rowNumber++) {
+      result.data.push(columns.map(column => resultSet.values[column][rowNumber]))
+    }
+
+    return result
+  },
+
   parse (file, config = {}) {
     return new Promise((resolve, reject) => {
       const defaultConfig = {
@@ -90,5 +105,9 @@ export default {
 
       Papa.parse(file, { ...defaultConfig, ...config })
     })
+  },
+
+  serialize (resultSet) {
+    return Papa.unparse(this.prepareForExport(resultSet))
   }
 }

@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import csv from '@/components/CsvImport/csv'
+import csv from '@/lib/csv'
 import Papa from 'papaparse'
 
 describe('csv.js', () => {
@@ -114,5 +114,22 @@ describe('csv.js', () => {
     })
     const file = {}
     await expect(csv.parse(file)).to.be.rejectedWith(err)
+  })
+
+  it('prepareForExport', () => {
+    const resultSet = {
+      columns: ['id', 'name'],
+      values: {
+        id: [1, 2],
+        name: ['foo', 'bar']
+      }
+    }
+    expect(csv.prepareForExport(resultSet)).to.eql({
+      fields: ['id', 'name'],
+      data: [
+        [1, 'foo'],
+        [2, 'bar']
+      ]
+    })
   })
 })

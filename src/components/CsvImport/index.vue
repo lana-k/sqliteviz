@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import csv from './csv'
+import csv from '@/lib/csv'
 import CloseIcon from '@/components/svg/close'
 import TextField from '@/components/TextField'
 import DelimiterSelector from './DelimiterSelector'

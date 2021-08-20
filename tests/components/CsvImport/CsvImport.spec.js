@@ -3,7 +3,7 @@ import sinon from 'sinon'
 import Vuex from 'vuex'
 import { mount } from '@vue/test-utils'
 import CsvImport from '@/components/CsvImport'
-import csv from '@/components/CsvImport/csv'
+import csv from '@/lib/csv'
 
 describe('CsvImport.vue', () => {
   let state = {}
