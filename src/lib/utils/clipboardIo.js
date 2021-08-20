@@ -3,7 +3,7 @@ import dataUrlToBlob from 'dataurl-to-blob'
 
 async function _copyBlob (blob) {
   await navigator.clipboard.write([
-    new ClipboardItem({
+    new ClipboardItem({ // eslint-disable-line no-undef
       [blob.type]: blob
     })
   ])
