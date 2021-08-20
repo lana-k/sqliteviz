@@ -108,6 +108,6 @@ export default {
   },
 
   serialize (resultSet) {
-    return Papa.unparse(this.prepareForExport(resultSet))
+    return Papa.unparse(this.prepareForExport(resultSet), { delimiter: "\t" })
   }
 }
