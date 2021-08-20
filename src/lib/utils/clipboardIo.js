@@ -1,7 +1,7 @@
 import Lib from 'plotly.js/src/lib'
 import dataUrlToBlob from 'dataurl-to-blob'
 
-async function _copyBlob(blob) {
+async function _copyBlob (blob) {
   await navigator.clipboard.write([
     new ClipboardItem({
       [blob.type]: blob

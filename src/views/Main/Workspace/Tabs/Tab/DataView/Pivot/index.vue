@@ -176,8 +176,7 @@ export default {
         const canvas = await getPivotCanvas(this.$refs.pivotOutput)
         cIo.copyCanvas(canvas)
       }
-    },
-
+    }
   }
 }
 </script>

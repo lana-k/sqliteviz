@@ -107,7 +107,11 @@ export default {
       return this.$refs.viewComponent.getOptionsForSave()
     },
     copyToClipboard () {
-      this.$refs.viewComponent.copyPngToClipboard()
+      if ('ClipboardItem' in window) {
+        this.$refs.viewComponent.copyPngToClipboard()
+      } else {
+        alert ("Your browser doesn't support copying images into the clipboard. If you use Firefox you can enable it by setting dom.events.asyncClipboard.clipboardItem to true.")
+      }
     }
   }
 }
