@@ -6,6 +6,7 @@
         :init-options="mode === initMode ? initOptions : undefined"
         :data-sources="dataSource"
         :import-to-png-enabled.sync="importToPngEnabled"
+        :import-to-svg-enabled.sync="importToSvgEnabled"
         @loadingImageCompleted="loadingImage = false"
         ref="viewComponent"
         @update="$emit('update')"
@@ -42,6 +43,15 @@
       </icon-button>
 
       <icon-button
+        :disabled="!importToSvgEnabled"
+        tooltip="Save as SVG"
+        tooltip-position="top-left"
+        @click="saveAsSvg"
+      >
+        <export-to-svg-icon />
+      </icon-button>
+
+      <icon-button
         :loading="copyingImage"
         tooltip="Copy visualisation to clipboard"
         tooltip-position="top-left"
@@ -71,6 +81,7 @@ import SideToolBar from '../SideToolBar'
 import IconButton from '@/components/IconButton'
 import ChartIcon from '@/components/svg/chart'
 import PivotIcon from '@/components/svg/pivot'
+import ExportToSvgIcon from '@/components/svg/exportToSvg'
 import PngIcon from '@/components/svg/png'
 import ClipboardIcon from '@/components/svg/clipboard'
 import cIo from '@/lib/utils/clipboardIo'
@@ -86,6 +97,7 @@ export default {
     IconButton,
     ChartIcon,
     PivotIcon,
+    ExportToSvgIcon,
     PngIcon,
     ClipboardIcon,
     loadingDialog
@@ -94,6 +106,7 @@ export default {
     return {
       mode: this.initMode || 'chart',
       importToPngEnabled: true,
+      importToSvgEnabled: true,
       loadingImage: false,
       copyingImage: false,
       preparingCopy: false,
@@ -151,6 +164,10 @@ export default {
     cancelCopy () {
       this.dataToCopy = null
       this.$modal.hide('prepareCopy')
+    },
+
+    saveAsSvg () {
+      this.$refs.viewComponent.saveAsSvg()
     }
   }
 }

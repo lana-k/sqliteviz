@@ -27,7 +27,7 @@ const ChartClass = Vue.extend(Chart)
 
 export default {
   name: 'pivot',
-  props: ['dataSources', 'initOptions', 'importToPngEnabled'],
+  props: ['dataSources', 'initOptions', 'importToPngEnabled', 'importToSvgEnabled'],
   components: {
     PivotUi
   },
@@ -68,6 +68,14 @@ export default {
   computed: {
     columns () {
       return Object.keys(this.dataSources || {})
+    },
+
+    viewStandartChart () {
+      return this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers
+    },
+
+    viewCustomChart () {
+      return this.pivotOptions.rendererName === 'Custom chart'
     }
   },
   watch: {
@@ -78,6 +86,7 @@ export default {
       immediate: true,
       handler () {
         this.$emit('update:importToPngEnabled', this.pivotOptions.rendererName !== 'TSV Export')
+        this.$emit('update:importToSvgEnabled', this.viewStandartChart || this.viewCustomChart)
       }
     },
     pivotOptions () {
@@ -98,14 +107,14 @@ export default {
     handleResize () {
       // hack: plotly changes size only on window.resize event,
       // so, we trigger it when container resizes (e.g. when move splitter)
-      if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
+      if (this.viewStandartChart) {
         window.dispatchEvent(new Event('resize'))
       }
     },
 
     show () {
       const options = { ...this.pivotOptions }
-      if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
+      if (this.viewStandartChart) {
         options.rendererOptions = {
           plotly: {
             autosize: true,
@@ -135,7 +144,7 @@ export default {
       )
 
       // fix for Firefox: fit plotly renderers just after choosing it in pivotUi
-      if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
+      if (this.viewStandartChart) {
         window.dispatchEvent(new Event('resize'))
       }
     },
@@ -153,9 +162,9 @@ export default {
     },
 
     async saveAsPng () {
-      if (this.pivotOptions.rendererName === 'Custom chart') {
+      if (this.viewCustomChart) {
         this.pivotOptions.rendererOptions.customChartComponent.saveAsPng()
-      } else if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
+      } else if (this.viewStandartChart) {
         const url = await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
         this.$emit('loadingImageCompleted')
         fIo.downloadFromUrl(url, 'pivot')
@@ -167,12 +176,21 @@ export default {
     },
 
     async prepareCopy () {
-      if (this.pivotOptions.rendererName === 'Custom chart') {
+      if (this.viewCustomChart) {
         return await this.pivotOptions.rendererOptions.customChartComponent.prepareCopy()
-      } else if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
+      } else if (this.viewStandartChart) {
         return await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
       } else {
         return await getPivotCanvas(this.$refs.pivotOutput)
+      }
+    },
+
+    async saveAsSvg () {
+      if (this.viewCustomChart) {
+        this.pivotOptions.rendererOptions.customChartComponent.saveAsSvg()
+      } else if (this.viewStandartChart) {
+        const url = await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'svg')
+        fIo.downloadFromUrl(url, 'pivot')
       }
     }
   }

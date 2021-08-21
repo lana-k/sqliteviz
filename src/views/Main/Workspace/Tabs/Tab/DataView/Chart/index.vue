@@ -34,7 +34,7 @@ import fIo from '@/lib/utils/fileIo'
 
 export default {
   name: 'Chart',
-  props: ['dataSources', 'initOptions', 'importToPngEnabled'],
+  props: ['dataSources', 'initOptions', 'importToPngEnabled', 'importToSvgEnabled'],
   components: {
     PlotlyEditor
   },
@@ -93,8 +93,14 @@ export default {
       this.$emit('loadingImageCompleted')
       fIo.downloadFromUrl(url, 'chart')
     },
-    async prepareCopy () {
-      return await chartHelper.getImageDataUrl(this.$refs.plotlyEditor.$el, 'png')
+
+    async saveAsSvg () {
+      const url = await this.prepareCopy('svg')
+      fIo.downloadFromUrl(url, 'chart')
+    },
+
+    async prepareCopy (type = 'png') {
+      return await chartHelper.getImageDataUrl(this.$refs.plotlyEditor.$el, type)
     }
   }
 }
