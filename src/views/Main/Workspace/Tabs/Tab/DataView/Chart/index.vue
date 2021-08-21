@@ -31,7 +31,6 @@ import PlotlyEditor from 'react-chart-editor'
 import chartHelper from '@/lib/chartHelper'
 import dereference from 'react-chart-editor/lib/lib/dereference'
 import fIo from '@/lib/utils/fileIo'
-import cIo from '@/lib/utils/clipboardIo'
 
 export default {
   name: 'Chart',
@@ -90,13 +89,12 @@ export default {
       return chartHelper.getOptionsForSave(this.state, this.dataSources)
     },
     async saveAsPng () {
-      const url = await chartHelper.getImageDataUrl(this.$refs.plotlyEditor.$el, 'png')
+      const url = await this.prepareCopy()
       this.$emit('loadingImageCompleted')
       fIo.downloadFromUrl(url, 'chart')
     },
-    async copyPngToClipboard () {
-      const url = await chartHelper.getImageDataUrl(this.$refs.plotlyEditor.$el, 'png')
-      cIo.copyFromDataUrl(url)
+    async prepareCopy () {
+      return await chartHelper.getImageDataUrl(this.$refs.plotlyEditor.$el, 'png')
     }
   }
 }

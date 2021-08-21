@@ -41,14 +41,26 @@
         <png-icon />
       </icon-button>
 
-       <icon-button
+      <icon-button
+        :loading="copyingImage"
         tooltip="Copy visualisation to clipboard"
         tooltip-position="top-left"
-        @click="copyToClipboard"
+        @click="prepareCopy"
       >
         <clipboard-icon/>
       </icon-button>
     </side-tool-bar>
+
+  <loading-dialog
+    loadingMsg="Rendering the visualisation..."
+    successMsg="Image is ready"
+    actionBtnName="Copy"
+    name="prepareCopy"
+    title="Copy to clipboard"
+    :loading="preparingCopy"
+    @action="copyToClipboard"
+    @cancel="cancelCopy"
+  />
   </div>
 </template>
 
@@ -61,6 +73,8 @@ import ChartIcon from '@/components/svg/chart'
 import PivotIcon from '@/components/svg/pivot'
 import PngIcon from '@/components/svg/png'
 import ClipboardIcon from '@/components/svg/clipboard'
+import cIo from '@/lib/utils/clipboardIo'
+import loadingDialog from '@/components/LoadingDialog'
 
 export default {
   name: 'DataView',
@@ -73,13 +87,17 @@ export default {
     ChartIcon,
     PivotIcon,
     PngIcon,
-    ClipboardIcon
+    ClipboardIcon,
+    loadingDialog
   },
   data () {
     return {
       mode: this.initMode || 'chart',
       importToPngEnabled: true,
-      loadingImage: false
+      loadingImage: false,
+      copyingImage: false,
+      preparingCopy: false,
+      dataToCopy: null
     }
   },
   watch: {
@@ -106,12 +124,33 @@ export default {
     getOptionsForSave () {
       return this.$refs.viewComponent.getOptionsForSave()
     },
-    copyToClipboard () {
+    async prepareCopy () {
       if ('ClipboardItem' in window) {
-        this.$refs.viewComponent.copyPngToClipboard()
+        this.preparingCopy = true
+        this.$modal.show('prepareCopy')
+        const t0 = performance.now()
+
+        setTimeout(async () => {
+          this.dataToCopy = await this.$refs.viewComponent.prepareCopy()
+          const t1 = performance.now()
+          if ((t1 - t0) < 950) {
+            this.$modal.hide('prepareCopy')
+            this.copyToClipboard()
+          } else {
+            this.preparingCopy = false
+          }
+        }, 0)
       } else {
         alert("Your browser doesn't support copying images into the clipboard. If you use Firefox you can enable it by setting dom.events.asyncClipboard.clipboardItem to true.")
       }
+    },
+    async copyToClipboard () {
+      cIo.copyImage(this.dataToCopy)
+      this.$modal.hide('prepareCopy')
+    },
+    cancelCopy () {
+      this.dataToCopy = null
+      this.$modal.hide('prepareCopy')
     }
   }
 }
@@ -131,5 +170,20 @@ export default {
   width: calc(100% - 39px);
   height: 100%;
   overflow: auto;
+}
+>>>.vm--container {
+  animation: show-modal 1s linear 0s 1;
+}
+
+@keyframes show-modal {
+  0% {
+    opacity: 0;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>

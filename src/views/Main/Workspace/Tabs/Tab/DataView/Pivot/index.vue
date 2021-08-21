@@ -15,7 +15,6 @@
 
 <script>
 import fIo from '@/lib/utils/fileIo'
-import cIo from '@/lib/utils/clipboardIo'
 import $ from 'jquery'
 import 'pivottable'
 import 'pivottable/dist/pivot.css'
@@ -166,15 +165,14 @@ export default {
         fIo.downloadFromUrl(canvas.toDataURL('image/png'), 'pivot', 'image/png')
       }
     },
-    async copyPngToClipboard () {
+
+    async prepareCopy () {
       if (this.pivotOptions.rendererName === 'Custom chart') {
-        this.pivotOptions.rendererOptions.customChartComponent.copyPngToClipboard()
+        return await this.pivotOptions.rendererOptions.customChartComponent.prepareCopy()
       } else if (this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers) {
-        const url = await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
-        cIo.copyFromDataUrl(url)
+        return await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
       } else {
-        const canvas = await getPivotCanvas(this.$refs.pivotOutput)
-        cIo.copyCanvas(canvas)
+        return await getPivotCanvas(this.$refs.pivotOutput)
       }
     }
   }
