@@ -40,11 +40,22 @@
         :disabled="!result"
         tooltip="Copy result set to clipboard"
         tooltip-position="top-left"
-        @click="copyToClipboard"
+        @click="prepareCopy"
       >
         <clipboard-icon/>
       </icon-button>
     </side-tool-bar>
+
+    <loading-dialog
+      loadingMsg="Building CSV..."
+      successMsg="CSV is ready"
+      actionBtnName="Copy"
+      name="prepareCSVCopy"
+      title="Copy to clipboard"
+      :loading="preparingCopy"
+      @action="copyToClipboard"
+      @cancel="cancelCopy"
+    />
   </div>
 </template>
 
@@ -59,6 +70,7 @@ import IconButton from '@/components/IconButton'
 import csv from '@/lib/csv'
 import fIo from '@/lib/utils/fileIo'
 import cIo from '@/lib/utils/clipboardIo'
+import loadingDialog from '@/components/LoadingDialog'
 
 export default {
   name: 'RunResult',
@@ -66,7 +78,9 @@ export default {
   data () {
     return {
       resizeObserver: null,
-      pageSize: 20
+      pageSize: 20,
+      preparingCopy: false,
+      dataToCopy: null
     }
   },
   components: {
@@ -76,7 +90,8 @@ export default {
     SideToolBar,
     ExportToCsvIcon,
     IconButton,
-    ClipboardIcon
+    ClipboardIcon,
+    loadingDialog
   },
   mounted () {
     this.resizeObserver = new ResizeObserver(this.handleResize)
@@ -86,15 +101,11 @@ export default {
   beforeDestroy () {
     this.resizeObserver.unobserve(this.$refs.runResultPanel)
   },
-  watch: {
-    result () {
-      console.log(this.result)
-    }
-  },
   methods: {
     handleResize () {
       this.calculatePageSize()
     },
+
     calculatePageSize () {
       const runResultPanel = this.$refs.runResultPanel
       // 27 - table footer hight
@@ -103,11 +114,40 @@ export default {
       const freeSpace = runResultPanel.offsetHeight - 27 - 5 - 35
       this.pageSize = Math.max(Math.floor(freeSpace / 35), 20)
     },
+
     exportToCsv () {
       fIo.exportToFile(csv.serialize(this.result), 'result_set.csv', 'text/csv')
     },
+
+    async prepareCopy () {
+      if ('ClipboardItem' in window) {
+        this.preparingCopy = true
+        this.$modal.show('prepareCSVCopy')
+        const t0 = performance.now()
+
+        setTimeout(async () => {
+          this.dataToCopy = csv.serialize(this.result)
+          const t1 = performance.now()
+          if ((t1 - t0) < 950) {
+            this.$modal.hide('prepareCSVCopy')
+            this.copyToClipboard()
+          } else {
+            this.preparingCopy = false
+          }
+        }, 0)
+      } else {
+        alert("Your browser doesn't support copying images into the clipboard. If you use Firefox you can enable it by setting dom.events.asyncClipboard.clipboardItem to true.")
+      }
+    },
+
     copyToClipboard () {
-      cIo.copyCsv(csv.serialize(this.result))
+      cIo.copyCsv(this.dataToCopy)
+      this.$modal.hide('prepareCSVCopy')
+    },
+
+    cancelCopy () {
+      this.dataToCopy = null
+      this.$modal.hide('prepareCSVCopy')
     }
   }
 }
@@ -155,6 +195,22 @@ export default {
 }
 
 @keyframes show-loader {
+  0% {
+    opacity: 0;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+>>>.vm--container {
+  animation: show-modal 1s linear 0s 1;
+}
+
+@keyframes show-modal {
   0% {
     opacity: 0;
   }
