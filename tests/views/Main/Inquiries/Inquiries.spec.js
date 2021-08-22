@@ -1089,4 +1089,93 @@ describe('Inquiries.vue', () => {
     expect(checkboxes.at(0).vm.checked).to.equals(false)
     expect(checkboxes.at(0).vm.checked).to.equals(false)
   })
+
+  it('Selection and filter', async () => {
+    sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([
+      {
+        id: 0,
+        name: 'hello_world',
+        query: '',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-03-08T19:57:56.299Z'
+      }
+    ])
+    const foo = {
+      id: 1,
+      name: 'foo',
+      query: '',
+      viewType: 'chart',
+      viewOptions: [],
+      createdAt: '2020-03-08T19:57:56.299Z'
+    }
+    const bar = {
+      id: 2,
+      name: 'bar',
+      query: '',
+      viewType: 'chart',
+      viewOptions: [],
+      createdAt: '2020-03-08T19:57:56.299Z'
+    }
+    sinon.stub(storedInquiries, 'getStoredInquiries').returns([foo, bar])
+
+    const state = {
+      predefinedInquiries: []
+    }
+    const store = new Vuex.Store({ state, mutations })
+
+    const wrapper = mount(Inquiries, { store })
+    await storedInquiries.readPredefinedInquiries.returnValues[0]
+    await storedInquiries.getStoredInquiries.returnValues[0]
+    await wrapper.vm.$nextTick()
+
+    const mainCheckBox = wrapper.findComponent({ ref: 'mainCheckBox' })
+    // Select all with main checkbox
+    await mainCheckBox.find('.checkbox-container').trigger('click')
+    expect([...wrapper.vm.selectedInquiriesIds]).to.eql([0, 1, 2])
+    expect(wrapper.vm.selectedNotPredefinedCount).to.eql(2)
+    let checkboxes = wrapper.findAllComponents({ ref: 'rowCheckBox' })
+    expect(checkboxes.at(0).vm.checked).to.equals(true)
+    expect(checkboxes.at(1).vm.checked).to.equals(true)
+    expect(checkboxes.at(2).vm.checked).to.equals(true)
+
+    // Filter
+    await wrapper.find('#toolbar-search input').setValue('foo')
+    await wrapper.vm.$nextTick()
+    expect([...wrapper.vm.selectedInquiriesIds]).to.eql([1])
+    expect(wrapper.vm.selectedNotPredefinedCount).to.eql(1)
+    checkboxes = wrapper.findAllComponents({ ref: 'rowCheckBox' })
+    expect(checkboxes.at(0).vm.checked).to.equals(true)
+
+    // Clear filter
+    await wrapper.find('#toolbar-search input').setValue('')
+    await wrapper.vm.$nextTick()
+    expect([...wrapper.vm.selectedInquiriesIds]).to.eql([1])
+    expect(wrapper.vm.selectedNotPredefinedCount).to.eql(1)
+    checkboxes = wrapper.findAll('tr .checkbox-container')
+    expect(checkboxes.at(0).classes()).to.not.include('checked')
+    expect(checkboxes.at(1).classes()).to.include('checked')
+    expect(checkboxes.at(2).classes()).to.not.include('checked')
+
+    // Select also first inquiry
+    wrapper.find('tbody tr .checkbox-container').trigger('click')
+    expect([...wrapper.vm.selectedInquiriesIds]).to.eql([1, 0])
+    expect(wrapper.vm.selectedNotPredefinedCount).to.eql(1)
+
+    // Filter
+    await wrapper.find('#toolbar-search input').setValue('hello')
+    await wrapper.vm.$nextTick()
+    expect([...wrapper.vm.selectedInquiriesIds]).to.eql([0])
+    expect(wrapper.vm.selectedNotPredefinedCount).to.eql(0)
+    checkboxes = wrapper.findAllComponents({ ref: 'rowCheckBox' })
+    expect(checkboxes.at(0).vm.checked).to.equals(true)
+
+    // Select all with main checkbox
+    await mainCheckBox.find('.checkbox-container').trigger('click')
+
+    // Clear filter - main checkbox bocomes not checked
+    await wrapper.find('#toolbar-search input').setValue('')
+    await wrapper.vm.$nextTick()
+    expect(mainCheckBox.vm.checked).to.equals(false)
+  })
 })

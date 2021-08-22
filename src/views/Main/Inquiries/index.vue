@@ -206,10 +206,6 @@ export default {
       return showedInquiries
     },
 
-    showedInquiriesIds () {
-      return this.showedInquiries.map(inquiry => inquiry.id)
-    },
-
     allInquiries () {
       return this.predefinedInquiries.concat(this.inquiries)
     },
