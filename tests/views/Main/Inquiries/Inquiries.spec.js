@@ -27,7 +27,7 @@ describe('Inquiries.vue', () => {
     expect(wrapper.find('#start-guide').exists()).to.equal(true)
   })
 
-  it('Renders the list on saved or predefined inquiries', async () => {
+  it('Renders the list of saved and predefined inquiries', async () => {
     sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([
       {
         id: 0,
@@ -123,6 +123,49 @@ describe('Inquiries.vue', () => {
     expect(rows).to.have.lengthOf(1)
     expect(rows.at(0).findAll('td').at(0).text()).to.equals('foo')
     expect(rows.at(0).findAll('td').at(1).text()).to.contains('3 November 2020 20:57')
+  })
+
+  it('Shows No found message when filter returns nothing', async () => {
+    sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([
+      {
+        id: 0,
+        name: 'hello_world',
+        query: '',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-03-08T19:57:56.299Z'
+      }
+    ])
+    sinon.stub(storedInquiries, 'getStoredInquiries').returns([
+      {
+        id: 1,
+        name: 'foo',
+        query: '',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-11-03T19:57:56.299Z'
+      },
+      {
+        id: 2,
+        name: 'bar',
+        query: '',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-12-04T18:53:56.299Z'
+      }
+    ])
+    const state = {
+      predefinedInquiries: []
+    }
+
+    const store = new Vuex.Store({ state, mutations })
+    const wrapper = mount(Inquiries, { store })
+    await wrapper.find('#toolbar-search input').setValue('baz')
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.find('#inquiries-not-found').text()).to.equal('No inquiries found')
+    expect(wrapper.find('#start-guide').exists()).to.equal(false)
+    expect(wrapper.find('tbody').isVisible()).to.equal(false)
   })
 
   it('Predefined inquiry has a badge', async () => {
@@ -231,7 +274,7 @@ describe('Inquiries.vue', () => {
     ).to.equals(true)
   })
 
-  it('Makes the copy of the inquiry selected if all inquiries were selected before duplication',
+  it('The copy of the inquiry is not selected if all inquiries were selected before duplication',
     async () => {
       sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([])
       const inquiryInStorage = {
@@ -267,7 +310,7 @@ describe('Inquiries.vue', () => {
 
       const checkboxes = wrapper.findAllComponents({ ref: 'rowCheckBox' })
       expect(checkboxes.at(0).vm.checked).to.equals(true)
-      expect(checkboxes.at(1).vm.checked).to.equals(true)
+      expect(checkboxes.at(1).vm.checked).to.equals(false)
     })
 
   it('Opens an inquiry', async () => {
@@ -478,7 +521,7 @@ describe('Inquiries.vue', () => {
     )).to.equals(true)
   })
 
-  it('Imported inquiries are selected if master check box is checked', async () => {
+  it('Imported inquiries are not selected if master check box was checked', async () => {
     sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([])
     const inquiryInStorage = {
       id: 1,
@@ -516,8 +559,9 @@ describe('Inquiries.vue', () => {
     await wrapper.find('#toolbar-btns-import').trigger('click')
 
     const checkboxes = wrapper.findAllComponents({ ref: 'rowCheckBox' })
+    expect(wrapper.findComponent({ ref: 'mainCheckBox' }).vm.checked).to.equals(false)
     expect(checkboxes.at(0).vm.checked).to.equals(true)
-    expect(checkboxes.at(1).vm.checked).to.equals(true)
+    expect(checkboxes.at(1).vm.checked).to.equals(false)
   })
 
   it('Deletion is not available for predefined inquiries', async () => {

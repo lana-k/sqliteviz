@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div id="start-guide" v-if="showedInquiries.length === 0">
+    <div id="start-guide" v-if="allInquiries.length === 0">
       You don't have saved inquiries so far.
       <span class="link" @click="$root.$emit('createNewInquiry')">Create</span>
       the one from scratch or
       <span @click="importInquiries" class="link">import</span> from a file.
     </div>
-    <div id="my-inquiries-content" ref="my-inquiries-content" v-show="showedInquiries.length > 0">
+    <div id="my-inquiries-content" ref="my-inquiries-content" v-show="allInquiries.length > 0">
       <div id="my-inquiries-toolbar">
         <div id="toolbar-buttons">
           <button id="toolbar-btns-import" class="toolbar" @click="importInquiries">
@@ -33,7 +33,13 @@
           <text-field placeholder="Search inquiry by name" width="300px" v-model="filter"/>
         </div>
       </div>
-      <div class="rounded-bg">
+
+      <div v-show="showedInquiries.length === 0" id="inquiries-not-found">
+        No inquiries found
+      </div>
+
+
+      <div v-show="showedInquiries.length > 0" class="rounded-bg">
       <div class="header-container">
         <div>
           <div class="fixed-header" ref="name-th">
@@ -200,6 +206,11 @@ export default {
       }
       return showedInquiries
     },
+
+    showedInquiriesIds () {
+      return this.showedInquiries.map(inquiry => inquiry.id)
+    },
+
     allInquiries () {
       return this.predefinedInquiries.concat(this.inquiries)
     },
@@ -222,6 +233,22 @@ export default {
         : `"${this.inquiries[this.processedInquiryIndex].name}"`
 
       return `Are you sure you want to delete ${deleteItem}?`
+    }
+  },
+  watch: {
+    showedInquiries () {
+      this.selectedInquiriesIds = new Set(this.showedInquiries
+        .filter(inquiry => this.selectedInquiriesIds.has(inquiry.id))
+        .map(inquiry => inquiry.id)
+      )
+      this.selectedInquiriesCount = this.selectedInquiriesIds.size
+      this.selectedNotPredefinedCount =  ([...this.selectedInquiriesIds]
+        .filter(id => !this.predefinedInquiriesIds.has(id))).length
+
+      if (this.selectedInquiriesIds.size < this.showedInquiries.length) {
+        this.$refs.mainCheckBox.checked = false
+        this.selectAll = false
+      }
     }
   },
   created () {
@@ -264,7 +291,7 @@ export default {
   },
   methods: {
     calcNameWidth () {
-      const nameWidth = this.$refs['name-td']
+      const nameWidth = this.$refs['name-td'] && this.$refs['name-td'][0]
         ? this.$refs['name-td'][0].getBoundingClientRect().width
         : 0
       this.$refs['name-th'].style = `width: ${nameWidth}px`
@@ -312,10 +339,6 @@ export default {
     },
     duplicateInquiry (index) {
       const newInquiry = storedInquiries.duplicateInquiry(this.showedInquiries[index])
-      if (this.selectAll) {
-        this.selectedInquiriesIds.add(newInquiry.id)
-        this.selectedInquiriesCount = this.selectedInquiriesIds.size
-      }
       this.inquiries.push(newInquiry)
       storedInquiries.updateStorage(this.inquiries)
     },
@@ -337,14 +360,14 @@ export default {
           this.$store.commit('deleteTab', tabIndex)
         }
 
-        // Clear checkboxes
+        // Clear checkbox
         if (this.selectedInquiriesIds.has(this.processedInquiryId)) {
           this.selectedInquiriesIds.delete(this.processedInquiryId)
         }
       } else {
-        this.inquiries = this.selectAll
-          ? []
-          : this.inquiries.filter(inquiry => !this.selectedInquiriesIds.has(inquiry.id))
+        this.inquiries = this.inquiries.filter(
+          inquiry => !this.selectedInquiriesIds.has(inquiry.id)
+        )
 
         // Close deleted inquiries if it was opened
         const tabs = this.$store.state.tabs
@@ -368,37 +391,36 @@ export default {
       fu.exportToFile(jsonStr, fileName)
     },
     exportSelectedInquiries () {
-      const inquiryList = this.selectAll
-        ? this.allInquiries
-        : this.allInquiries.filter(inquiry => this.selectedInquiriesIds.has(inquiry.id))
+      const inquiryList = this.allInquiries.filter(
+        inquiry => this.selectedInquiriesIds.has(inquiry.id)
+      )
 
       this.exportToFile(inquiryList, 'My sqliteviz inquiries.json')
     },
+
     importInquiries () {
       storedInquiries.importInquiries()
         .then(importedInquiries => {
-          if (this.selectAll) {
-            importedInquiries.forEach(inquiry => {
-              this.selectedInquiriesIds.add(inquiry.id)
-            })
-            this.selectedInquiriesCount = this.selectedInquiriesIds.size
-          }
-
           this.inquiries = this.inquiries.concat(importedInquiries)
           storedInquiries.updateStorage(this.inquiries)
         })
     },
+
     toggleSelectAll (checked) {
       this.selectAll = checked
       this.$refs.rowCheckBox.forEach(item => { item.checked = checked })
 
       this.selectedInquiriesIds = checked
-        ? new Set(this.allInquiries.map(inquiry => inquiry.id))
+        ? new Set(this.showedInquiries.map(inquiry => inquiry.id))
         : new Set()
 
       this.selectedInquiriesCount = this.selectedInquiriesIds.size
-      this.selectedNotPredefinedCount = checked ? this.inquiries.length : 0
+      this.selectedNotPredefinedCount = checked
+        ? ([...this.selectedInquiriesIds].filter(id => !this.predefinedInquiriesIds.has(id)))
+            .length
+        : 0
     },
+
     toggleRow (checked, id) {
       const isPredefined = this.predefinedInquiriesIds.has(id)
       if (checked) {
@@ -407,7 +429,7 @@ export default {
           this.selectedNotPredefinedCount += 1
         }
       } else {
-        if (this.selectedInquiriesIds.size === this.allInquiries.length) {
+        if (this.selectedInquiriesIds.size === this.showedInquiries.length) {
           this.$refs.mainCheckBox.checked = false
           this.selectAll = false
         }
@@ -428,6 +450,15 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  color: var(--color-text-base);
+  font-size: 14px;
+  text-align: center;
+}
+
+#inquiries-not-found {
+  padding: 35px 5px;
+  border-radius: 5px;
+  border: 1px solid var(--color-border-light);
   color: var(--color-text-base);
   font-size: 14px;
   text-align: center;
