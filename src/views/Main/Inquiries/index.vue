@@ -38,7 +38,6 @@
         No inquiries found
       </div>
 
-
       <div v-show="showedInquiries.length > 0" class="rounded-bg">
       <div class="header-container">
         <div>
@@ -242,7 +241,7 @@ export default {
         .map(inquiry => inquiry.id)
       )
       this.selectedInquiriesCount = this.selectedInquiriesIds.size
-      this.selectedNotPredefinedCount =  ([...this.selectedInquiriesIds]
+      this.selectedNotPredefinedCount = ([...this.selectedInquiriesIds]
         .filter(id => !this.predefinedInquiriesIds.has(id))).length
 
       if (this.selectedInquiriesIds.size < this.showedInquiries.length) {
@@ -417,7 +416,7 @@ export default {
       this.selectedInquiriesCount = this.selectedInquiriesIds.size
       this.selectedNotPredefinedCount = checked
         ? ([...this.selectedInquiriesIds].filter(id => !this.predefinedInquiriesIds.has(id)))
-            .length
+          .length
         : 0
     },
 
