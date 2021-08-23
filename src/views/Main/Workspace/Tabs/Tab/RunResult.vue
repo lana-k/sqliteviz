@@ -70,6 +70,7 @@ import IconButton from '@/components/IconButton'
 import csv from '@/lib/csv'
 import fIo from '@/lib/utils/fileIo'
 import cIo from '@/lib/utils/clipboardIo'
+import time from '@/lib/utils/time'
 import loadingDialog from '@/components/LoadingDialog'
 
 export default {
@@ -125,16 +126,15 @@ export default {
         this.$modal.show('prepareCSVCopy')
         const t0 = performance.now()
 
-        setTimeout(async () => {
-          this.dataToCopy = csv.serialize(this.result)
-          const t1 = performance.now()
-          if ((t1 - t0) < 950) {
-            this.$modal.hide('prepareCSVCopy')
-            this.copyToClipboard()
-          } else {
-            this.preparingCopy = false
-          }
-        }, 0)
+        await time.sleep(0)
+        this.dataToCopy = csv.serialize(this.result)
+        const t1 = performance.now()
+        if ((t1 - t0) < 950) {
+          this.$modal.hide('prepareCSVCopy')
+          this.copyToClipboard()
+        } else {
+          this.preparingCopy = false
+        }
       } else {
         alert("Your browser doesn't support copying images into the clipboard. If you use Firefox you can enable it by setting dom.events.asyncClipboard.clipboardItem to true.")
       }

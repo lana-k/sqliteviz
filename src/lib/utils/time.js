@@ -11,5 +11,11 @@ export default {
       clearTimeout(timeout)
       timeout = setTimeout(() => func.apply(this, arguments), ms)
     }
+  },
+
+  sleep (ms) {
+    return new Promise(resolve => {
+      setTimeout(() => { resolve() }, ms)
+    })
   }
 }

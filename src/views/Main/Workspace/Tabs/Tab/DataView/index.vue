@@ -86,6 +86,7 @@ import PngIcon from '@/components/svg/png'
 import ClipboardIcon from '@/components/svg/clipboard'
 import cIo from '@/lib/utils/clipboardIo'
 import loadingDialog from '@/components/LoadingDialog'
+import time from '@/lib/utils/time'
 
 export default {
   name: 'DataView',
@@ -127,12 +128,11 @@ export default {
 
       nextTick allows you to do something after you have changed the data and VueJS has updated the DOM based on your data change, but before the browser has rendered those changed on the page.
 
-      Lees meer van Katinka Hesselink: http://www.hesselinkwebdesign.nl/2019/nexttick-vs-settimeout-in-vue/
+      http://www.hesselinkwebdesign.nl/2019/nexttick-vs-settimeout-in-vue/
 
       */
-      setTimeout(() => {
-        this.$refs.viewComponent.saveAsPng()
-      }, 0)
+      await time.sleep(0)
+      this.$refs.viewComponent.saveAsPng()
     },
     getOptionsForSave () {
       return this.$refs.viewComponent.getOptionsForSave()
@@ -143,16 +143,15 @@ export default {
         this.$modal.show('prepareCopy')
         const t0 = performance.now()
 
-        setTimeout(async () => {
-          this.dataToCopy = await this.$refs.viewComponent.prepareCopy()
-          const t1 = performance.now()
-          if ((t1 - t0) < 950) {
-            this.$modal.hide('prepareCopy')
-            this.copyToClipboard()
-          } else {
-            this.preparingCopy = false
-          }
-        }, 0)
+        await time.sleep(0)
+        this.dataToCopy = await this.$refs.viewComponent.prepareCopy()
+        const t1 = performance.now()
+        if ((t1 - t0) < 950) {
+          this.$modal.hide('prepareCopy')
+          this.copyToClipboard()
+        } else {
+          this.preparingCopy = false
+        }
       } else {
         alert("Your browser doesn't support copying images into the clipboard. If you use Firefox you can enable it by setting dom.events.asyncClipboard.clipboardItem to true.")
       }
