@@ -164,14 +164,13 @@ export default {
     async saveAsPng () {
       if (this.viewCustomChart) {
         this.pivotOptions.rendererOptions.customChartComponent.saveAsPng()
-      } else if (this.viewStandartChart) {
-        const url = await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
-        this.$emit('loadingImageCompleted')
-        fIo.downloadFromUrl(url, 'pivot')
       } else {
-        const canvas = await getPivotCanvas(this.$refs.pivotOutput)
+        const source = this.viewStandartChart ?
+          await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png') :
+          (await getPivotCanvas(this.$refs.pivotOutput)).toDataURL('image/png')
+
         this.$emit('loadingImageCompleted')
-        fIo.downloadFromUrl(canvas.toDataURL('image/png'), 'pivot', 'image/png')
+        fIo.downloadFromUrl(source, 'pivot')
       }
     },
 

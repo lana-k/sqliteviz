@@ -30,7 +30,6 @@ export default {
 
   async copyImage (source) {
     if (source instanceof HTMLCanvasElement) {
-      console.log('canvas')
       return _copyCanvas(source)
     } else {
       return _copyFromDataUrl(source)
