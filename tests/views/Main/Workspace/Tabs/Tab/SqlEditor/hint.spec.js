@@ -134,22 +134,25 @@ describe('hint.js', () => {
     expect(CM.showHint.called).to.equal(false)
   })
 
-  it('getHints returns [ ] if there is only one option and the token is already completed with this option', () => {
-    // mock CM.hint.sql and editor
-    sinon.stub(CM.hint, 'sql').returns({ list: [{ text: 'SELECT' }] })
-    const editor = {
-      getTokenAt () {
-        return {
-          string: 'select',
-          type: 'keyword'
-        }
-      },
-      getCursor: sinon.stub()
-    }
+  it(
+    'getHints returns [ ] if there is only one option and token is completed with this option',
+    () => {
+      // mock CM.hint.sql and editor
+      sinon.stub(CM.hint, 'sql').returns({ list: [{ text: 'SELECT' }] })
+      const editor = {
+        getTokenAt () {
+          return {
+            string: 'select',
+            type: 'keyword'
+          }
+        },
+        getCursor: sinon.stub()
+      }
 
-    const hints = getHints(editor, {})
-    expect(hints.list).to.eql([])
-  })
+      const hints = getHints(editor, {})
+      expect(hints.list).to.eql([])
+    }
+  )
 
   it('getHints returns hints as is when there are more than one option', () => {
     // mock CM.hint.sql and editor
@@ -174,23 +177,26 @@ describe('hint.js', () => {
     sinon.restore()
   })
 
-  it('getHints returns hints as is when there only one option but the token is not cpmpleted', () => {
-    // mock CM.hint.sql and editor
-    const list = [{ text: 'SELECT' }]
-    sinon.stub(CM.hint, 'sql').returns({ list })
-    const editor = {
-      getTokenAt () {
-        return {
-          string: 'sele',
-          type: 'keyword'
-        }
-      },
-      getCursor: sinon.stub()
-    }
+  it(
+    'getHints returns hints as is when there only one option but the token is not completed',
+    () => {
+      // mock CM.hint.sql and editor
+      const list = [{ text: 'SELECT' }]
+      sinon.stub(CM.hint, 'sql').returns({ list })
+      const editor = {
+        getTokenAt () {
+          return {
+            string: 'sele',
+            type: 'keyword'
+          }
+        },
+        getCursor: sinon.stub()
+      }
 
-    const hints = getHints(editor, {})
-    expect(hints.list).to.eql(list)
-  })
+      const hints = getHints(editor, {})
+      expect(hints.list).to.eql(list)
+    }
+  )
 
   it('tables is empty object when schema is null', () => {
     // mock store state
