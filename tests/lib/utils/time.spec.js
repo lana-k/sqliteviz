@@ -27,4 +27,14 @@ describe('time.js', () => {
 
     expect(time.getPeriod(start, end)).to.equal('0.045s')
   })
+
+  it('sleep resolves after n ms', async () => {
+    let before = performance.now()
+    await time.sleep(10)
+    expect(performance.now() - before).to.be.least(10)
+
+    before = performance.now()
+    await time.sleep(30)
+    expect(performance.now() - before).to.be.least(30)
+  })
 })
