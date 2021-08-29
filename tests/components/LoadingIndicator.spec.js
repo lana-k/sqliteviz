@@ -19,6 +19,7 @@ describe('LoadingIndicator.vue', () => {
     })
     // The lendth of circle in the component is 50.24. If progress is 50% then resulting arc
     // should be 25.12
-    expect(wrapper.find('.loader-svg.front').element.style.strokeDasharray).to.equal('25.12px, 25.12px')
+    expect(wrapper.find('.loader-svg.front').element.style.strokeDasharray)
+      .to.equal('25.12px, 25.12px')
   })
 })

@@ -80,11 +80,17 @@ class Database {
 
   async refreshSchema () {
     const getSchemaSql = `
-    WITH columns as (SELECT a.tbl_name, json_group_array(json_object('name', b.name,'type', IIF(b.type = '', 'N/A', b.type))) as column_json
-    FROM sqlite_master a, pragma_table_info(a.name) b
-    WHERE a.type in ('table','view') AND a.name NOT LIKE 'sqlite_%' group by tbl_name
+    WITH columns as (
+      SELECT
+        a.tbl_name,
+        json_group_array(
+          json_object('name', b.name,'type', IIF(b.type = '', 'N/A', b.type))
+        ) as column_json
+      FROM sqlite_master a, pragma_table_info(a.name) b
+      WHERE a.type in ('table','view') AND a.name NOT LIKE 'sqlite_%' group by tbl_name
     )
-    SELECT json_group_array(json_object('name',tbl_name, 'columns', json(column_json))) objects from columns;
+    SELECT json_group_array(json_object('name',tbl_name, 'columns', json(column_json))) objects
+    FROM columns;
     `
     const result = await this.execute(getSchemaSql)
     this.schema = JSON.parse(result.values.objects[0])

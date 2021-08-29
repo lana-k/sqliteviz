@@ -136,7 +136,11 @@ export default {
           this.preparingCopy = false
         }
       } else {
-        alert("Your browser doesn't support copying images into the clipboard. If you use Firefox you can enable it by setting dom.events.asyncClipboard.clipboardItem to true.")
+        alert(
+          "Your browser doesn't support copying images into the clipboard. " +
+          'If you use Firefox you can enable it ' +
+          'by setting dom.events.asyncClipboard.clipboardItem to true.'
+        )
       }
     },
 

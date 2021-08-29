@@ -84,7 +84,10 @@
                 <div class="second-column">
                   <div class="date-container">{{ inquiry.createdAt | date }}</div>
                   <div class="icons-container">
-                    <rename-icon v-if="!inquiry.isPredefined" @click="showRenameDialog(inquiry.id)" />
+                    <rename-icon
+                      v-if="!inquiry.isPredefined"
+                      @click="showRenameDialog(inquiry.id)"
+                    />
                     <copy-icon @click="duplicateInquiry(index)"/>
                     <export-icon
                       @click="exportToFile([inquiry], `${inquiry.name}.json`)"

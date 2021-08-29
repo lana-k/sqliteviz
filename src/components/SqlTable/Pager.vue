@@ -28,8 +28,11 @@ export default {
     return {
       page: this.value,
       chevron: `
-        <svg width="9" height="9" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0.721924 9.93097L4.85292 5.79997L0.721924 1.66897L1.99992 0.399973L7.39992 5.79997L1.99992 11.2L0.721924 9.93097Z" fill="#506784"/>
+        <svg width="9" height="9" viewBox="0 0 8 12" fill="none">
+        <path
+          d="M0.721924 9.93097L4.85292 5.79997L0.721924 1.66897L1.99992 0.399973L7.39992
+            5.79997L1.99992 11.2L0.721924 9.93097Z" fill="#506784"
+        />
         </svg>
       `
     }

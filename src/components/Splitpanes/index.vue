@@ -26,7 +26,10 @@
       <div
         :class="[
           'toggle-btns',
-          {'both': after.max === 100 && before.max === 100 && paneAfter.size > 0 && paneBefore.size > 0}
+          {
+            'both': after.max === 100 && before.max === 100 &&
+              paneAfter.size > 0 && paneBefore.size > 0
+          }
         ]"
       >
         <div

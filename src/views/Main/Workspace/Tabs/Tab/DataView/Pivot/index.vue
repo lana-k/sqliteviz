@@ -53,7 +53,9 @@ export default {
           colOrder: this.initOptions.colOrder,
           rowOrder: this.initOptions.rowOrder,
           aggregatorName: this.initOptions.aggregatorName,
-          aggregator: $.pivotUtilities.aggregators[this.initOptions.aggregatorName](this.initOptions.vals),
+          aggregator: $.pivotUtilities.aggregators[
+            this.initOptions.aggregatorName
+          ](this.initOptions.vals),
           vals: this.initOptions.vals,
           rendererName: this.initOptions.rendererName,
           renderer: $.pivotUtilities.renderers[this.initOptions.rendererName],
@@ -165,9 +167,9 @@ export default {
       if (this.viewCustomChart) {
         this.pivotOptions.rendererOptions.customChartComponent.saveAsPng()
       } else {
-        const source = this.viewStandartChart ?
-          await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png') :
-          (await getPivotCanvas(this.$refs.pivotOutput)).toDataURL('image/png')
+        const source = this.viewStandartChart
+          ? await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
+          : (await getPivotCanvas(this.$refs.pivotOutput)).toDataURL('image/png')
 
         this.$emit('loadingImageCompleted')
         fIo.downloadFromUrl(source, 'pivot')

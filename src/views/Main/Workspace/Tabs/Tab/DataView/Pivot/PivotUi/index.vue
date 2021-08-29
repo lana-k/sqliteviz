@@ -165,8 +165,11 @@ export default {
       colOrder: (this.value && this.value.colOrder) || 'key_a_to_z',
       rowOrder: (this.value && this.value.rowOrder) || 'key_a_to_z',
       customChartComponent:
-        (this.value && this.value.rendererOptions && this.value.rendererOptions.customChartComponent) ||
-        new ChartClass()
+        (
+          this.value &&
+          this.value.rendererOptions &&
+          this.value.rendererOptions.customChartComponent
+        ) || new ChartClass()
     }
   },
   computed: {
@@ -222,7 +225,10 @@ export default {
   },
   created () {
     this.customChartComponent.$on('update', () => { this.$emit('update') })
-    this.customChartComponent.$on('loadingImageCompleted', value => { this.$emit('loadingCustomChartImageCompleted') })
+    this.customChartComponent.$on(
+      'loadingImageCompleted',
+      value => { this.$emit('loadingCustomChartImageCompleted') }
+    )
   },
   methods: {
     returnValue () {

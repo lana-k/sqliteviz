@@ -167,7 +167,10 @@ describe('CsvImport.vue', () => {
     expect(rows.at(0).findAll('td').at(0).text()).to.equal('baz')
     expect(rows.at(0).findAll('td').at(1).text()).to.equal('3')
     expect(wrapper.findComponent({ name: 'logs' }).text())
-      .to.contain('Error in row 0. Quote is missed. Edit your CSV so that the field has a closing quote char.')
+      .to.contain(
+        'Error in row 0. Quote is missed. ' +
+        'Edit your CSV so that the field has a closing quote char.'
+      )
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.not.contain('Preview parsing is completed in')
 

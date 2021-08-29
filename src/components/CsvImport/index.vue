@@ -39,7 +39,10 @@
         />
         <text-field
           label="Escape char"
-          hint='The character used to escape the quote character within a field (e.g. "column with ""quotes"" in text").'
+          hint='
+            The character used to escape the quote character within a field
+            (e.g. "column with ""quotes"" in text").
+          '
           max-hint-width="242px"
           v-model="escapeChar"
           width="93px"

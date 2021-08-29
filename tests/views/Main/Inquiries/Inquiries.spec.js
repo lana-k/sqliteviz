@@ -305,7 +305,8 @@ describe('Inquiries.vue', () => {
       await storedInquiries.readPredefinedInquiries.returnValues[0]
       await storedInquiries.getStoredInquiries.returnValues[0]
       await wrapper.vm.$nextTick()
-      await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container').trigger('click')
+      await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
+        .trigger('click')
       await wrapper.findComponent({ name: 'CopyIcon' }).find('svg').trigger('click')
 
       const checkboxes = wrapper.findAllComponents({ ref: 'rowCheckBox' })
@@ -553,7 +554,8 @@ describe('Inquiries.vue', () => {
     await wrapper.vm.$nextTick()
 
     // click on master checkbox
-    await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container').trigger('click')
+    await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
+      .trigger('click')
 
     // click Import
     await wrapper.find('#toolbar-btns-import').trigger('click')

@@ -124,9 +124,15 @@ export default {
     async saveAsPng () {
       this.loadingImage = true
       /*
-      setTimeout does its thing by putting its callback on the callback queue. The callback queue is only called by the browser after both the call stack and the render queue are done. So our animation (which is on the call stack) gets done, the render queue renders it, and then the browser is ready for the callback queue and calls the long-calculation.
+      setTimeout does its thing by putting its callback on the callback queue.
+      The callback queue is only called by the browser after both the call stack
+      and the render queue are done. So our animation (which is on the call stack) gets done,
+      the render queue renders it, and then the browser is ready for the callback queue
+      and calls the long-calculation.
 
-      nextTick allows you to do something after you have changed the data and VueJS has updated the DOM based on your data change, but before the browser has rendered those changed on the page.
+      nextTick allows you to do something after you have changed the data
+      and VueJS has updated the DOM based on your data change,
+      but before the browser has rendered those changed on the page.
 
       http://www.hesselinkwebdesign.nl/2019/nexttick-vs-settimeout-in-vue/
 
@@ -153,7 +159,11 @@ export default {
           this.preparingCopy = false
         }
       } else {
-        alert("Your browser doesn't support copying images into the clipboard. If you use Firefox you can enable it by setting dom.events.asyncClipboard.clipboardItem to true.")
+        alert(
+          "Your browser doesn't support copying images into the clipboard. " +
+          'If you use Firefox you can enable it ' +
+          'by setting dom.events.asyncClipboard.clipboardItem to true.'
+        )
       }
     },
     async copyToClipboard () {
