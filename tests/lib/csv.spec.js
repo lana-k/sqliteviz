@@ -132,4 +132,15 @@ describe('csv.js', () => {
       ]
     })
   })
+
+  it('serialize returns tsv text', () => {
+    const resultSet = {
+      columns: ['id', 'name'],
+      values: {
+        id: [1, 2],
+        name: ['foo', 'bar']
+      }
+    }
+    expect(csv.serialize(resultSet)).to.eql('id\tname\r\n1\tfoo\r\n2\tbar')
+  })
 })
