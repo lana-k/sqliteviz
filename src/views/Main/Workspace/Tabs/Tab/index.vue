@@ -59,7 +59,9 @@ import Teleport from 'vue2-teleport'
 
 export default {
   name: 'Tab',
-  props: ['id', 'initName', 'initQuery', 'initViewOptions', 'tabIndex', 'isPredefined', 'initViewType'],
+  props: [
+    'id', 'initName', 'initQuery', 'initViewOptions', 'tabIndex', 'isPredefined', 'initViewType'
+  ],
   components: {
     SqlEditor,
     DataView,

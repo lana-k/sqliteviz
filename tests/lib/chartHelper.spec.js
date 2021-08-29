@@ -53,4 +53,18 @@ describe('chartHelper.js', () => {
 
     expect(ds).to.equal(JSON.parse.returnValues[0])
   })
+
+  it('getImageDataUrl returns dataUrl', async () => {
+    const element = document.createElement('div')
+    const child = document.createElement('div')
+    element.append(child)
+    child.classList.add('js-plotly-plot')
+
+    let url = await chartHelper.getImageDataUrl(element, 'png')
+    expect(/^data:image\/png/.test(url)).to.equal(true)
+
+    url = await chartHelper.getImageDataUrl(element, 'svg')
+    console.log()
+    expect(/^data:image\/svg\+xml/.test(url)).to.equal(true)
+  })
 })
