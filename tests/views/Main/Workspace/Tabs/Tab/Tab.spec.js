@@ -44,7 +44,8 @@ describe('Tab.vue', () => {
     expect(wrapper.find('.tab-content-container').isVisible()).to.equal(true)
     expect(wrapper.find('.bottomPane .run-result-panel').exists()).to.equal(true)
     expect(wrapper.find('.run-result-panel .result-before').isVisible()).to.equal(true)
-    expect(wrapper.find('.above .sql-editor-panel .codemirror-container').text()).to.equal('SELECT * FROM foo')
+    expect(wrapper.find('.above .sql-editor-panel .codemirror-container').text())
+      .to.equal('SELECT * FROM foo')
   })
 
   it("Doesn't render tab when it's not active", () => {
@@ -133,6 +134,35 @@ describe('Tab.vue', () => {
       }
     })
     await wrapper.findComponent({ name: 'SqlEditor' }).vm.$emit('input', ' limit 100')
+    expect(state.tabs[0].isSaved).to.equal(false)
+  })
+
+  it('Update tab state when data view settings are changed', async () => {
+    // mock store state
+    const state = {
+      tabs: [
+        { id: 1, name: 'foo', query: 'SELECT * FROM foo', chart: [], isSaved: true }
+      ],
+      currentTabId: 1
+    }
+
+    const store = new Vuex.Store({ state, mutations })
+
+    // mount the component
+    const wrapper = mount(Tab, {
+      store,
+      stubs: ['chart'],
+      propsData: {
+        id: 1,
+        initName: 'foo',
+        initQuery: 'SELECT * FROM foo',
+        initViewOptions: [],
+        initViewType: 'chart',
+        tabIndex: 0,
+        isPredefined: false
+      }
+    })
+    await wrapper.findComponent({ name: 'DataView' }).vm.$emit('update')
     expect(state.tabs[0].isSaved).to.equal(false)
   })
 
@@ -297,25 +327,29 @@ describe('Tab.vue', () => {
       }
     })
 
-    let tableBtn = createWrapper(wrapper.find('.above .side-tool-bar').findComponent({ name: 'tableIcon' }).vm.$parent)
+    let tableBtn = createWrapper(wrapper.find('.above .side-tool-bar')
+      .findComponent({ name: 'tableIcon' }).vm.$parent)
     await tableBtn.trigger('click')
 
     expect(wrapper.find('.bottomPane .sql-editor-panel').exists()).to.equal(true)
     expect(wrapper.find('.above .run-result-panel').exists()).to.equal(true)
 
-    const dataViewBtn = createWrapper(wrapper.find('.above .side-tool-bar').findComponent({ name: 'dataViewIcon' }).vm.$parent)
+    const dataViewBtn = createWrapper(wrapper.find('.above .side-tool-bar')
+      .findComponent({ name: 'dataViewIcon' }).vm.$parent)
     await dataViewBtn.trigger('click')
 
     expect(wrapper.find('.bottomPane .sql-editor-panel').exists()).to.equal(true)
     expect(wrapper.find('.above .data-view-panel').exists()).to.equal(true)
 
-    const sqlEditorBtn = createWrapper(wrapper.find('.above .side-tool-bar').findComponent({ name: 'sqlEditorIcon' }).vm.$parent)
+    const sqlEditorBtn = createWrapper(wrapper.find('.above .side-tool-bar')
+      .findComponent({ name: 'sqlEditorIcon' }).vm.$parent)
     await sqlEditorBtn.trigger('click')
 
     expect(wrapper.find('.above .sql-editor-panel').exists()).to.equal(true)
     expect(wrapper.find('.bottomPane .data-view-panel').exists()).to.equal(true)
 
-    tableBtn = createWrapper(wrapper.find('.bottomPane .side-tool-bar').findComponent({ name: 'tableIcon' }).vm.$parent)
+    tableBtn = createWrapper(wrapper.find('.bottomPane .side-tool-bar')
+      .findComponent({ name: 'tableIcon' }).vm.$parent)
     await tableBtn.trigger('click')
 
     expect(wrapper.find('.above .sql-editor-panel').exists()).to.equal(true)
