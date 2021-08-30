@@ -78,4 +78,96 @@ describe('DataView.vue', () => {
 
     window.ClipboardItem = ClipboardItem
   })
+
+  it('copy to clipboard more than 1 sec', async () => {
+    sinon.stub(window.navigator.clipboard, 'write').resolves()
+    const clock = sinon.useFakeTimers()
+    const wrapper = mount(DataView)
+    sinon.stub(wrapper.vm.$refs.viewComponent, 'prepareCopy').callsFake(() => {
+      clock.tick(5000)
+    })
+
+    // Click copy to clipboard
+    const copyBtn = createWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
+    await copyBtn.trigger('click')
+
+    // The dialog is shown...
+    expect(wrapper.find('[data-modal="prepareCopy"]').exists()).to.equal(true)
+
+    // ... with Rendering message...
+    expect(wrapper.find('.dialog-body').text()).to.equal('Rendering the visualisation...')
+
+    // Switch to microtasks (let prepareCopy run)
+    clock.tick(0)
+    // Wait untill prepareCopy is finished
+    await wrapper.vm.$refs.viewComponent.prepareCopy.returnValues[0]
+
+    await wrapper.vm.$nextTick()
+
+    // The dialog is shown...
+    expect(wrapper.find('[data-modal="prepareCopy"]').exists()).to.equal(true)
+
+    // ... with Ready message...
+    expect(wrapper.find('.dialog-body').text()).to.equal('Image is ready')
+
+    // Click copy
+    await wrapper.find('.dialog-buttons-container button.primary').trigger('click')
+
+    // The dialog is not shown...
+    expect(wrapper.find('[data-modal="prepareCopy"]').exists()).to.equal(false)
+  })
+
+  it('copy to clipboard less than 1 sec', async () => {
+    sinon.stub(window.navigator.clipboard, 'write').resolves()
+    const clock = sinon.useFakeTimers()
+    const wrapper = mount(DataView)
+    sinon.spy(wrapper.vm, 'copyToClipboard')
+    sinon.stub(wrapper.vm.$refs.viewComponent, 'prepareCopy').callsFake(() => {
+      clock.tick(500)
+    })
+
+    // Click copy to clipboard
+    const copyBtn = createWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
+    await copyBtn.trigger('click')
+
+    // Switch to microtasks (let prepareCopy run)
+    clock.tick(0)
+    // Wait untill prepareCopy is finished
+    await wrapper.vm.$refs.viewComponent.prepareCopy.returnValues[0]
+
+    await wrapper.vm.$nextTick()
+    // The dialog is not shown...
+    expect(wrapper.find('[data-modal="prepareCopy"]').exists()).to.equal(false)
+    // copyToClipboard is called
+    expect(wrapper.vm.copyToClipboard.calledOnce).to.equal(true)
+  })
+
+  it('cancel long copy', async () => {
+    sinon.stub(window.navigator.clipboard, 'write').resolves()
+    const clock = sinon.useFakeTimers()
+    const wrapper = mount(DataView)
+    sinon.spy(wrapper.vm, 'copyToClipboard')
+    sinon.stub(wrapper.vm.$refs.viewComponent, 'prepareCopy').callsFake(() => {
+      clock.tick(5000)
+    })
+
+    // Click copy to clipboard
+    const copyBtn = createWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
+    await copyBtn.trigger('click')
+
+    // Switch to microtasks (let prepareCopy run)
+    clock.tick(0)
+    // Wait untill prepareCopy is finished
+    await wrapper.vm.$refs.viewComponent.prepareCopy.returnValues[0]
+
+    await wrapper.vm.$nextTick()
+
+    // Click cancel
+    await wrapper.find('.dialog-buttons-container button.secondary').trigger('click')
+
+    // The dialog is not shown...
+    expect(wrapper.find('[data-modal="prepareCopy"]').exists()).to.equal(false)
+    // copyToClipboard is not called
+    expect(wrapper.vm.copyToClipboard.calledOnce).to.equal(false)
+  })
 })
