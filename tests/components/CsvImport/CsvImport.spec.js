@@ -225,8 +225,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(0).resolves({
       delimiter: '|',
       data: {
-        col1: [1],
-        col2: ['foo']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1],
+          col2: ['foo']
+        }
       },
       rowCount: 1
     })
@@ -278,8 +281,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(0).resolves({
       delimiter: '|',
       data: {
-        col1: [1],
-        col2: ['foo']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1],
+          col2: ['foo']
+        }
       },
       rowCount: 1,
       hasErrors: false,
@@ -289,8 +295,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(1).resolves({
       delimiter: '|',
       data: {
-        col1: [1, 2],
-        col2: ['foo', 'bar']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1, 2],
+          col2: ['foo', 'bar']
+        }
       },
       rowCount: 2,
       hasErrors: false,
@@ -333,8 +342,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(0).resolves({
       delimiter: '|',
       data: {
-        col1: [1],
-        col2: ['foo']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1],
+          col2: ['foo']
+        }
       },
       rowCount: 1,
       hasErrors: false,
@@ -344,8 +356,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(1).resolves({
       delimiter: '|',
       data: {
-        col1: [1, 2],
-        col2: ['foo', 'bar']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1, 2],
+          col2: ['foo', 'bar']
+        }
       },
       rowCount: 2,
       hasErrors: false,
@@ -395,8 +410,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(0).resolves({
       delimiter: '|',
       data: {
-        col1: [1],
-        col2: ['foo']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1],
+          col2: ['foo']
+        }
       },
       rowCount: 1,
       hasErrors: false,
@@ -406,8 +424,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(1).resolves({
       delimiter: '|',
       data: {
-        col1: [1, 2],
-        col2: ['foo', 'bar']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1, 2],
+          col2: ['foo', 'bar']
+        }
       },
       rowCount: 2,
       hasErrors: true,
@@ -451,8 +472,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(0).resolves({
       delimiter: '|',
       data: {
-        col1: [1],
-        col2: ['foo']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1],
+          col2: ['foo']
+        }
       },
       rowCount: 1,
       hasErrors: false,
@@ -462,8 +486,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(1).resolves({
       delimiter: '|',
       data: {
-        col1: [1, 2],
-        col2: ['foo', 'bar']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1, 2],
+          col2: ['foo', 'bar']
+        }
       },
       rowCount: 2,
       hasErrors: false,
@@ -518,8 +545,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(0).resolves({
       delimiter: '|',
       data: {
-        col1: [1],
-        col2: ['foo']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1],
+          col2: ['foo']
+        }
       },
       rowCount: 1,
       hasErrors: false,
@@ -529,8 +559,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(1).resolves({
       delimiter: '|',
       data: {
-        col1: [1, 2],
-        col2: ['foo', 'bar']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1, 2],
+          col2: ['foo', 'bar']
+        }
       },
       rowCount: 2,
       hasErrors: false,
@@ -567,8 +600,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(0).resolves({
       delimiter: '|',
       data: {
-        col1: [1],
-        col2: ['foo']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1],
+          col2: ['foo']
+        }
       },
       rowCount: 1,
       hasErrors: false,
@@ -578,8 +614,11 @@ describe('CsvImport.vue', () => {
     parse.onCall(1).resolves({
       delimiter: '|',
       data: {
-        col1: [1, 2],
-        col2: ['foo', 'bar']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1, 2],
+          col2: ['foo', 'bar']
+        }
       },
       rowCount: 2,
       hasErrors: false,
@@ -618,8 +657,11 @@ describe('CsvImport.vue', () => {
     sinon.stub(csv, 'parse').resolves({
       delimiter: '|',
       data: {
-        col1: [1],
-        col2: ['foo']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1],
+          col2: ['foo']
+        }
       },
       rowCount: 1,
       hasErrors: false,
@@ -646,8 +688,11 @@ describe('CsvImport.vue', () => {
     sinon.stub(csv, 'parse').resolves({
       delimiter: '|',
       data: {
-        col1: [1],
-        col2: ['foo']
+        columns: ['col1', 'col2'],
+        values: {
+          col1: [1],
+          col2: ['foo']
+        }
       },
       rowCount: 1,
       hasErrors: false,
