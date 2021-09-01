@@ -2,8 +2,12 @@ import { expect } from 'chai'
 import { mount } from '@vue/test-utils'
 import Pivot from '@/views/Main/Workspace/Tabs/Tab/DataView/Pivot'
 import $ from 'jquery'
+import sinon from 'sinon'
 
 describe('Pivot.vue', () => {
+  afterEach(() => {
+    sinon.restore()
+  })
   it('renders pivot table', () => {
     const wrapper = mount(Pivot, {
       propsData: {
@@ -191,6 +195,7 @@ describe('Pivot.vue', () => {
       rendererName: 'Custom chart',
       rendererOptions: {
         customChartComponent: {
+          $mount: sinon.stub(),
           getOptionsForSave () {
             return { here_are: 'custom chart settings' }
           }

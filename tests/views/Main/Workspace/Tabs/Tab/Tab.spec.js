@@ -231,8 +231,11 @@ describe('Tab.vue', () => {
 
   it('Passes result to sql-table component', async () => {
     const result = {
-      id: [1, 2],
-      name: ['foo', 'bar']
+      columns: ['id', 'name'],
+      values: {
+        id: [1, 2],
+        name: ['foo', 'bar']
+      }
     }
     // mock store state
     const state = {
@@ -269,8 +272,11 @@ describe('Tab.vue', () => {
 
   it('Updates schema after query execution', async () => {
     const result = {
-      id: [],
-      name: []
+      columns: ['id', 'name'],
+      values: {
+        id: [],
+        name: []
+      }
     }
 
     // mock store state

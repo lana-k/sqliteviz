@@ -2,6 +2,8 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import { mount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
+import actions from '@/store/actions'
+import mutations from '@/store/mutations'
 import Schema from '@/views/Main/Workspace/Schema'
 import TableDescription from '@/views/Main/Workspace/Schema/TableDescription'
 import database from '@/lib/database'
@@ -140,14 +142,15 @@ describe('Schema.vue', () => {
     })
 
     const state = {
-      db: database.getNewDatabase()
+      db: database.getNewDatabase(),
+      tabs: []
     }
     state.db.dbName = 'db'
     state.db.execute('CREATE TABLE foo(id)')
     state.db.refreshSchema()
     sinon.spy(state.db, 'refreshSchema')
 
-    const store = new Vuex.Store({ state })
+    const store = new Vuex.Store({ state, actions, mutations })
     const wrapper = mount(Schema, { store, localVue })
     sinon.spy(wrapper.vm.$refs.addCsv, 'previewCsv')
     sinon.spy(wrapper.vm, 'addCsv')

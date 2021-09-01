@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { mount } from '@vue/test-utils'
 import actions from '@/store/actions'
+import mutations from '@/store/mutations'
 import Vuex from 'vuex'
 import Workspace from '@/views/Main/Workspace'
 
@@ -10,8 +11,11 @@ describe('Workspace.vue', () => {
       db: {},
       tabs: []
     }
-    const store = new Vuex.Store({ state, actions })
-    mount(Workspace, { store })
+    const store = new Vuex.Store({ state, actions, mutations })
+    mount(Workspace, {
+      store, 
+      stubs: ['router-link']
+    })
 
     expect(state.tabs[0].query).to.include('Your database is empty.')
     expect(state.tabs[0].tempName).to.equal('Untitled')
