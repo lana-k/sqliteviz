@@ -253,7 +253,11 @@ describe('Pivot.vue', () => {
           renderer: $.pivotUtilities.renderers['Custom chart'],
           rendererName: 'Custom chart',
           rendererOptions: {
-            customChartOptions: {}
+            customChartOptions: {
+              data: [],
+              layout: {},
+              frames: []
+            }
           }
         }
       },
@@ -284,7 +288,11 @@ describe('Pivot.vue', () => {
           renderer: $.pivotUtilities.renderers['Custom chart'],
           rendererName: 'Custom chart',
           rendererOptions: {
-            customChartOptions: {}
+            customChartOptions: {
+              data: [],
+              layout: {},
+              frames: []
+            }
           }
         }
       },
