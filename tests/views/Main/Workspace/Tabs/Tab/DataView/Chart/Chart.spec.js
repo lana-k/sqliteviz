@@ -7,8 +7,6 @@ import * as dereference from 'react-chart-editor/lib/lib/dereference'
 import fIo from '@/lib/utils/fileIo'
 
 describe('Chart.vue', () => {
-  let container
-
   afterEach(() => {
     sinon.restore()
   })
