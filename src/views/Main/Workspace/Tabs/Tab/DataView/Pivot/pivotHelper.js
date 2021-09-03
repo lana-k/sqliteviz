@@ -79,5 +79,5 @@ export const aggregators = Object.keys($.pivotUtilities.aggregators).map(key => 
 
 export async function getPivotCanvas (pivotOutput) {
   const tableElement = pivotOutput.querySelector('.pvtTable')
-  return await html2canvas(tableElement)
+  return await html2canvas(tableElement, { logging: false })
 }
