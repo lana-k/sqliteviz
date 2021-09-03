@@ -13,7 +13,7 @@ describe('Workspace.vue', () => {
     }
     const store = new Vuex.Store({ state, actions, mutations })
     mount(Workspace, {
-      store, 
+      store,
       stubs: ['router-link']
     })
 
