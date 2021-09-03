@@ -4,8 +4,11 @@ import { mount, shallowMount } from '@vue/test-utils'
 import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart'
 import chartHelper from '@/lib/chartHelper'
 import * as dereference from 'react-chart-editor/lib/lib/dereference'
+import fIo from '@/lib/utils/fileIo'
 
 describe('Chart.vue', () => {
+  let container
+
   afterEach(() => {
     sinon.restore()
   })
@@ -62,5 +65,25 @@ describe('Chart.vue', () => {
 
     await wrapper.setProps({ dataSources: null })
     expect(dereference.default.called).to.equal(false)
+  })
+
+  it('saveAsPng', async () => {
+    sinon.spy(fIo, 'downloadFromUrl')
+    const dataSources = {
+      id: [1],
+      name: ['foo']
+    }
+
+    const wrapper = mount(Chart, {
+      propsData: { dataSources }
+    })
+    sinon.spy(wrapper.vm, 'prepareCopy')
+
+    await wrapper.vm.$nextTick() // chart is rendered
+    await wrapper.vm.saveAsPng()
+
+    const url = await wrapper.vm.prepareCopy.returnValues[0]
+    expect(wrapper.emitted().loadingImageCompleted.length).to.equal(1)
+    expect(fIo.downloadFromUrl.calledOnceWith(url, 'chart'))
   })
 })
