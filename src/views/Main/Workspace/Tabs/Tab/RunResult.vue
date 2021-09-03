@@ -137,7 +137,7 @@ export default {
         }
       } else {
         alert(
-          "Your browser doesn't support copying images into the clipboard. " +
+          "Your browser doesn't support copying into the clipboard. " +
           'If you use Firefox you can enable it ' +
           'by setting dom.events.asyncClipboard.clipboardItem to true.'
         )
