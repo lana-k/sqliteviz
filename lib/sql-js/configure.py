@@ -24,6 +24,8 @@ extension_urls = (
     ('https://sqlite.org/src/raw/dbfd8543?at=closure.c', 'sqlite3_closure_init'),
     ('https://sqlite.org/src/raw/5bb2264c?at=uuid.c', 'sqlite3_uuid_init'),
     ('https://sqlite.org/src/raw/5853b0e5?at=regexp.c', 'sqlite3_regexp_init'),
+    ('https://sqlite.org/src/raw/b9086e22?at=percentile.c', 'sqlite3_percentile_init'),
+    ('https://sqlite.org/src/raw/09f967dc?at=decimal.c', 'sqlite3_decimal_init'),
     # Third-party extension
     # =====================
     ('https://github.com/jakethaw/pivot_vtab/raw/08ab0797/pivot_vtab.c', 'sqlite3_pivotvtab_init'),

@@ -21,6 +21,9 @@ SQLite [miscellaneous extensions][3] included:
    [Querying Tree Structures in SQLite][11] ([closure.c][8])
 3. `uuid`, `uuid_str` and `uuid_blob` RFC-4122 UUID functions ([uuid.c][9])
 4. `regexp` (hence `REGEXP` operator) and `regexpi` functions ([regexp.c][10])
+5. `percentile` function ([percentile.c][13])
+6. `decimal`, `decimal_cmp`, `decimal_add`, `decimal_sub` and `decimal_mul` functions
+   ([decimal.c][14])
 
 SQLite 3rd party extensions included:
 
@@ -71,3 +74,5 @@ described in [this message from SQLite Forum][12]:
 [10]: https://sqlite.org/src/file/ext/misc/regexp.c
 [11]: https://charlesleifer.com/blog/querying-tree-structures-in-sqlite-using-python-and-the-transitive-closure-extension/
 [12]: https://sqlite.org/forum/forumpost/6ad7d4f4bebe5e06?raw
+[13]: https://sqlite.org/src/file/ext/misc/percentile.c
+[14]: https://sqlite.org/src/file/ext/misc/decimal.c

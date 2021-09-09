@@ -269,6 +269,48 @@ describe('SQLite extensions', function () {
     })
   })
 
+  it('supports percentile', async function () {
+    const actual = await db.execute(`
+      CREATE TABLE s(x INTEGER);
+      INSERT INTO s VALUES (15), (20), (35), (40), (50);
+
+      SELECT
+        percentile(x, 5) p5,
+        percentile(x, 30) p30,
+        percentile(x, 40) p40,
+        percentile(x, 50) p50,
+        percentile(x, 100) p100
+      FROM s;
+    `)
+    expect(actual.values).to.eql({
+      p5: [16],
+      p30: [23],
+      p40: [29],
+      p50: [35],
+      p100: [50]
+    })
+  })
+
+  it('supports decimal', async function () {
+    const actual = await db.execute(`
+      select
+        decimal_add(decimal('0.1'), decimal('0.2')) "add",
+        decimal_sub(0.2, 0.1) sub,
+        decimal_mul(power(2, 69), 2) mul,
+        decimal_cmp(decimal('0.1'), 0.1) cmp_e,
+        decimal_cmp(decimal('0.1'), decimal('0.099999')) cmp_g,
+        decimal_cmp(decimal('0.199999'), decimal('0.2')) cmp_l
+    `)
+    expect(actual.values).to.eql({
+      add: ['0.3'],
+      sub: ['0.1'],
+      mul: ['1180591620717412000000'],
+      cmp_e: [0],
+      cmp_g: [1],
+      cmp_l: [-1]
+    })
+  })
+
   it('supports FTS5', async function () {
     const actual = await db.execute(`
       CREATE VIRTUAL TABLE email USING fts5(sender, title, body, tokenize = 'porter ascii');
