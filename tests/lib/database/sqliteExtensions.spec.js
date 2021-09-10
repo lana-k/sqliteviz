@@ -338,4 +338,96 @@ describe('SQLite extensions', function () {
       sender: ['bar@localhost']
     })
   })
+
+  it('supports FTS3', async function () {
+    const actual = await db.execute(`
+      CREATE VIRTUAL TABLE email USING fts3(sender, title, body, tokenize = 'porter');
+
+      INSERT INTO email VALUES
+        (
+          'foo@localhost',
+          'fts3/4',
+          'FTS3 and FTS4 are SQLite virtual table modules that allows users to perform '
+          || 'full-text searches on a set of documents.'
+        ),
+        (
+          'bar@localhost',
+          'fts4',
+          'FTS5 is an SQLite virtual table module that provides full-text search '
+          || 'functionality to database applications.'
+        );
+
+      SELECT sender
+      FROM email
+      WHERE body MATCH '("full-text" NOT document AND (functionality OR table))';
+    `)
+    expect(actual.values).to.eql({
+      sender: ['bar@localhost']
+    })
+  })
+
+  it('supports FTS4', async function () {
+    const actual = await db.execute(`
+      CREATE VIRTUAL TABLE email USING fts4(
+        sender, title, body, notindexed=sender, tokenize='simple'
+      );
+
+      INSERT INTO email VALUES
+        (
+          'foo@localhost',
+          'fts3/4',
+          'FTS3 and FTS4 are SQLite virtual table modules that allows users to perform '
+          || 'full-text searches on a set of documents.'
+        ),
+        (
+          'bar@localhost',
+          'fts4',
+          'FTS5 is an SQLite virtual table module that provides full-text search '
+          || 'functionality to database applications.'
+        );
+
+      SELECT sender
+      FROM email
+      WHERE body MATCH '("full-text" NOT document AND (functionality OR table NOT modules))';
+    `)
+    expect(actual.values).to.eql({
+      sender: ['bar@localhost']
+    })
+  })
+
+  it('supports JSON1', async function () {
+    const actual = await db.execute(`
+      WITH input(filename) AS (
+        VALUES
+          ('/etc/redis/redis.conf'),
+          ('/run/redis/redis-server.pid'),
+          ('/var/log/redis-server.log')
+      ), tmp AS (
+        SELECT
+          filename,
+          '["' || replace(filename, '/', '", "') || '"]' as filename_array
+        FROM input
+      )
+      SELECT (
+        SELECT group_concat(ip.value, '/')
+        FROM json_each(filename_array) ip
+        WHERE ip.id <= p.id
+      ) AS path
+      FROM tmp, json_each(filename_array) AS p
+      WHERE p.id > 1  -- because the filenames start with the separator
+    `)
+    expect(actual.values).to.eql({
+      path: [
+        '/etc',
+        '/etc/redis',
+        '/etc/redis/redis.conf',
+        '/run',
+        '/run/redis',
+        '/run/redis/redis-server.pid',
+        '/var',
+        '/var/log',
+        '/var/log/redis-server.log'
+      ]
+    })
+  })
 })
