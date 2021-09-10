@@ -13,6 +13,21 @@ SQLite [amalgamation][2] extensions included:
 
 1. [FTS5][4] -- virtual table module that provides full-text search
    functionality
+2. [FTS3/FTS4][15] -- older virtual table modules for full-text search
+3. [JSON1][16] -- scalar, aggregate and table-valued functions for managing JSON data
+
+SQLite [contribution extensions][17]:
+
+1. [extension-functions][18] -- mathematical and string extension functions for SQL queries.
+
+   Math: `acos`, `asin`, `atan`, `atn2`, `atan2`, `acosh`, `asinh`, `atanh`, `difference`,
+   `degrees`, `radians`, `cos`, `sin`, `tan`, `cot`, `cosh`, `sinh`, `tanh`, `coth`,
+   `exp`, `log`, `log10`, `power`, `sign`, `sqrt`, `square`, `ceil`, `floor`, `pi`.
+
+   String: `replicate`, `charindex`, `leftstr`, `rightstr`, `ltrim`, `rtrim`, `trim`,
+   `replace`, `reverse`, `proper`, `padl`, `padr`, `padc`, `strfilter`.
+
+   Aggregate: `stdev`, `variance`, `mode`, `median`, `lower_quartile`, `upper_quartile`.
 
 SQLite [miscellaneous extensions][3] included:
 
@@ -21,6 +36,9 @@ SQLite [miscellaneous extensions][3] included:
    [Querying Tree Structures in SQLite][11] ([closure.c][8])
 3. `uuid`, `uuid_str` and `uuid_blob` RFC-4122 UUID functions ([uuid.c][9])
 4. `regexp` (hence `REGEXP` operator) and `regexpi` functions ([regexp.c][10])
+5. `percentile` function ([percentile.c][13])
+6. `decimal`, `decimal_cmp`, `decimal_add`, `decimal_sub` and `decimal_mul` functions
+   ([decimal.c][14])
 
 SQLite 3rd party extensions included:
 
@@ -28,6 +46,9 @@ SQLite 3rd party extensions included:
 
 To ease the step to have working clone locally, the build is committed into
 the repository.
+
+Examples of queries involving these extensions can be found in the test suite in
+[sqliteExtensions.spec.js][19].
 
 ## Build method
 
@@ -71,3 +92,10 @@ described in [this message from SQLite Forum][12]:
 [10]: https://sqlite.org/src/file/ext/misc/regexp.c
 [11]: https://charlesleifer.com/blog/querying-tree-structures-in-sqlite-using-python-and-the-transitive-closure-extension/
 [12]: https://sqlite.org/forum/forumpost/6ad7d4f4bebe5e06?raw
+[13]: https://sqlite.org/src/file/ext/misc/percentile.c
+[14]: https://sqlite.org/src/file/ext/misc/decimal.c
+[15]: https://sqlite.org/fts3.html
+[16]: https://sqlite.org/json1.html
+[17]: https://sqlite.org/contrib/
+[18]: https://sqlite.org/contrib//download/extension-functions.c?get=25
+[19]: https://github.com/lana-k/sqliteviz/blob/master/tests/lib/database/sqliteExtensions.spec.js
