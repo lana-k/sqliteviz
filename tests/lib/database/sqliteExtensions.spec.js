@@ -269,6 +269,48 @@ describe('SQLite extensions', function () {
     })
   })
 
+  it('supports percentile', async function () {
+    const actual = await db.execute(`
+      CREATE TABLE s(x INTEGER);
+      INSERT INTO s VALUES (15), (20), (35), (40), (50);
+
+      SELECT
+        percentile(x, 5) p5,
+        percentile(x, 30) p30,
+        percentile(x, 40) p40,
+        percentile(x, 50) p50,
+        percentile(x, 100) p100
+      FROM s;
+    `)
+    expect(actual.values).to.eql({
+      p5: [16],
+      p30: [23],
+      p40: [29],
+      p50: [35],
+      p100: [50]
+    })
+  })
+
+  it('supports decimal', async function () {
+    const actual = await db.execute(`
+      select
+        decimal_add(decimal('0.1'), decimal('0.2')) "add",
+        decimal_sub(0.2, 0.1) sub,
+        decimal_mul(power(2, 69), 2) mul,
+        decimal_cmp(decimal('0.1'), 0.1) cmp_e,
+        decimal_cmp(decimal('0.1'), decimal('0.099999')) cmp_g,
+        decimal_cmp(decimal('0.199999'), decimal('0.2')) cmp_l
+    `)
+    expect(actual.values).to.eql({
+      add: ['0.3'],
+      sub: ['0.1'],
+      mul: ['1180591620717412000000'],
+      cmp_e: [0],
+      cmp_g: [1],
+      cmp_l: [-1]
+    })
+  })
+
   it('supports FTS5', async function () {
     const actual = await db.execute(`
       CREATE VIRTUAL TABLE email USING fts5(sender, title, body, tokenize = 'porter ascii');
@@ -294,6 +336,98 @@ describe('SQLite extensions', function () {
     `)
     expect(actual.values).to.eql({
       sender: ['bar@localhost']
+    })
+  })
+
+  it('supports FTS3', async function () {
+    const actual = await db.execute(`
+      CREATE VIRTUAL TABLE email USING fts3(sender, title, body, tokenize = 'porter');
+
+      INSERT INTO email VALUES
+        (
+          'foo@localhost',
+          'fts3/4',
+          'FTS3 and FTS4 are SQLite virtual table modules that allows users to perform '
+          || 'full-text searches on a set of documents.'
+        ),
+        (
+          'bar@localhost',
+          'fts4',
+          'FTS5 is an SQLite virtual table module that provides full-text search '
+          || 'functionality to database applications.'
+        );
+
+      SELECT sender
+      FROM email
+      WHERE body MATCH '("full-text" NOT document AND (functionality OR table))';
+    `)
+    expect(actual.values).to.eql({
+      sender: ['bar@localhost']
+    })
+  })
+
+  it('supports FTS4', async function () {
+    const actual = await db.execute(`
+      CREATE VIRTUAL TABLE email USING fts4(
+        sender, title, body, notindexed=sender, tokenize='simple'
+      );
+
+      INSERT INTO email VALUES
+        (
+          'foo@localhost',
+          'fts3/4',
+          'FTS3 and FTS4 are SQLite virtual table modules that allows users to perform '
+          || 'full-text searches on a set of documents.'
+        ),
+        (
+          'bar@localhost',
+          'fts4',
+          'FTS5 is an SQLite virtual table module that provides full-text search '
+          || 'functionality to database applications.'
+        );
+
+      SELECT sender
+      FROM email
+      WHERE body MATCH '("full-text" NOT document AND (functionality OR table NOT modules))';
+    `)
+    expect(actual.values).to.eql({
+      sender: ['bar@localhost']
+    })
+  })
+
+  it('supports JSON1', async function () {
+    const actual = await db.execute(`
+      WITH input(filename) AS (
+        VALUES
+          ('/etc/redis/redis.conf'),
+          ('/run/redis/redis-server.pid'),
+          ('/var/log/redis-server.log')
+      ), tmp AS (
+        SELECT
+          filename,
+          '["' || replace(filename, '/', '", "') || '"]' as filename_array
+        FROM input
+      )
+      SELECT (
+        SELECT group_concat(ip.value, '/')
+        FROM json_each(filename_array) ip
+        WHERE ip.id <= p.id
+      ) AS path
+      FROM tmp, json_each(filename_array) AS p
+      WHERE p.id > 1  -- because the filenames start with the separator
+    `)
+    expect(actual.values).to.eql({
+      path: [
+        '/etc',
+        '/etc/redis',
+        '/etc/redis/redis.conf',
+        '/run',
+        '/run/redis',
+        '/run/redis/redis-server.pid',
+        '/var',
+        '/var/log',
+        '/var/log/redis-server.log'
+      ]
     })
   })
 })
