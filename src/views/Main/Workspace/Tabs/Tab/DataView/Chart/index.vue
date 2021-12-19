@@ -57,7 +57,7 @@ export default {
   },
   created () {
     // https://github.com/plotly/plotly.js/issues/4555
-    plotly.setPlotConfig ({
+    plotly.setPlotConfig({
       notifyOnLogging: 1
     })
   },
