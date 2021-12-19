@@ -55,6 +55,12 @@ export default {
       return chartHelper.getOptionsFromDataSources(this.dataSources)
     }
   },
+  created () {
+    // https://github.com/plotly/plotly.js/issues/4555
+    plotly.setPlotConfig ({
+      notifyOnLogging: 1
+    })
+  },
   mounted () {
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.chartContainer)
