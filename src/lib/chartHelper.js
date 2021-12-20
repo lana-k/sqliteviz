@@ -1,5 +1,6 @@
 import dereference from 'react-chart-editor/lib/lib/dereference'
 import plotly from 'plotly.js'
+import { nanoid } from 'nanoid'
 
 export function getOptionsFromDataSources (dataSources) {
   if (!dataSources) {
@@ -33,8 +34,40 @@ export async function getImageDataUrl (element, type) {
   })
 }
 
+export function getHtml (element, options) {
+  const chartElement = element.querySelector('.js-plotly-plot')
+  const chartId = nanoid()
+  return `
+    <head>
+      <meta charset="UTF-8">
+      <script src="https://cdn.plot.ly/plotly-latest.js"></script>
+    </head>
+    <body>
+      <div id="${chartId}"></div>
+      <script>
+        const el = document.getElementById("${chartId}")
+        
+        let timeout
+		    function debounceResize() {
+          clearTimeout(timeout)
+          timeout = setTimeout(() => {
+		        var r = el.getBoundingClientRect()
+		        Plotly.relayout(el, {width: r.width, height: r.height})
+		      }, 200)
+        }
+        
+        const resizeObserver = new ResizeObserver(debounceResize)
+        resizeObserver.observe(el)
+      
+        Plotly.newPlot(el, ${JSON.stringify(options.data)}, ${JSON.stringify(options.layout)})
+      </script>
+    </body>
+  `
+}
+
 export default {
   getOptionsFromDataSources,
   getOptionsForSave,
-  getImageDataUrl
+  getImageDataUrl,
+  getHtml
 }
