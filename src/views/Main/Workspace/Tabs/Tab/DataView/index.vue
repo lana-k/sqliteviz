@@ -52,6 +52,13 @@
       </icon-button>
 
       <icon-button
+        tooltip="Save as HTML"
+        tooltip-position="top-left"
+        @click="saveAsHtml"
+      >
+        <HtmlIcon />
+      </icon-button>
+      <icon-button
         :loading="copyingImage"
         tooltip="Copy visualisation to clipboard"
         tooltip-position="top-left"
@@ -81,6 +88,7 @@ import SideToolBar from '../SideToolBar'
 import IconButton from '@/components/IconButton'
 import ChartIcon from '@/components/svg/chart'
 import PivotIcon from '@/components/svg/pivot'
+import HtmlIcon from '@/components/svg/html'
 import ExportToSvgIcon from '@/components/svg/exportToSvg'
 import PngIcon from '@/components/svg/png'
 import ClipboardIcon from '@/components/svg/clipboard'
@@ -100,6 +108,7 @@ export default {
     PivotIcon,
     ExportToSvgIcon,
     PngIcon,
+    HtmlIcon,
     ClipboardIcon,
     loadingDialog
   },
@@ -177,6 +186,9 @@ export default {
 
     saveAsSvg () {
       this.$refs.viewComponent.saveAsSvg()
+    },
+    saveAsHtml () {
+      this.$refs.viewComponent.saveAsHtml()
     }
   }
 }

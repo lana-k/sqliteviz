@@ -81,3 +81,41 @@ export async function getPivotCanvas (pivotOutput) {
   const tableElement = pivotOutput.querySelector('.pvtTable')
   return await html2canvas(tableElement, { logging: false })
 }
+
+export function getPivotHtml (pivotOutput) {
+  return `
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        table.pvtTable {
+          font-family: Arial, sans-serif;
+          font-size: 12px;
+          text-align: left;
+          border-collapse: collapse;
+          min-width: 100%;
+        }
+        table.pvtTable .pvtColLabel {
+          text-align: center;
+        }
+        table.pvtTable .pvtTotalLabel {
+          text-align: right;
+        }
+        table.pvtTable tbody tr td {
+          color: #506784;
+          border: 1px solid #DFE8F3;
+          text-align: right;
+        }
+        table.pvtTable thead tr th,
+        table.pvtTable tbody tr th {
+          background-color: #506784;
+          color: #fff;
+          border: 1px solid #DFE8F3;
+        }
+      </style>
+    </head>
+    <body>
+      ${pivotOutput.outerHTML}
+    </body>
+  `
+}
+

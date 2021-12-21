@@ -105,6 +105,13 @@ export default {
       fIo.downloadFromUrl(url, 'chart')
     },
 
+    saveAsHtml () {
+      fIo.exportToFile(
+        chartHelper.getHtml(this.state),
+        'chart.html',
+        'text/html'
+      )
+    },
     async prepareCopy (type = 'png') {
       return await chartHelper.getImageDataUrl(this.$refs.plotlyEditor.$el, type)
     }

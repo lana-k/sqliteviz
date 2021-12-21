@@ -19,7 +19,7 @@ import $ from 'jquery'
 import 'pivottable'
 import 'pivottable/dist/pivot.css'
 import PivotUi from './PivotUi'
-import { getPivotCanvas } from './pivotHelper'
+import { getPivotCanvas, getPivotHtml } from './pivotHelper'
 import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart'
 import chartHelper from '@/lib/chartHelper'
 import Vue from 'vue'
@@ -192,6 +192,25 @@ export default {
       } else if (this.viewStandartChart) {
         const url = await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'svg')
         fIo.downloadFromUrl(url, 'pivot')
+      }
+    },
+
+    saveAsHtml () {
+      if (this.viewCustomChart) {
+        this.pivotOptions.rendererOptions.customChartComponent.saveAsHtml()
+      } else if (this.viewStandartChart) {
+        const chartState = chartHelper.getChartData(this.$refs.pivotOutput)
+        fIo.exportToFile(
+          chartHelper.getHtml(chartState),
+          'chart.html',
+          'text/html'
+        )
+      } else {
+        fIo.exportToFile(
+          getPivotHtml(this.$refs.pivotOutput),
+          'pivot.html',
+          'text/html'
+        )
       }
     }
   }

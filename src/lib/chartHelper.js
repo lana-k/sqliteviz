@@ -34,8 +34,15 @@ export async function getImageDataUrl (element, type) {
   })
 }
 
-export function getHtml (element, options) {
+export function getChartData (element) {
   const chartElement = element.querySelector('.js-plotly-plot')
+  return {
+    data: chartElement.data,
+    layout: chartElement.layout,
+  }
+}
+
+export function getHtml (options) {
   const chartId = nanoid()
   return `
     <head>
@@ -48,12 +55,12 @@ export function getHtml (element, options) {
         const el = document.getElementById("${chartId}")
         
         let timeout
-		    function debounceResize() {
+        function debounceResize() {
           clearTimeout(timeout)
           timeout = setTimeout(() => {
-		        var r = el.getBoundingClientRect()
-		        Plotly.relayout(el, {width: r.width, height: r.height})
-		      }, 200)
+            var r = el.getBoundingClientRect()
+            Plotly.relayout(el, {width: r.width, height: r.height})
+          }, 200)
         }
         
         const resizeObserver = new ResizeObserver(debounceResize)
@@ -69,5 +76,6 @@ export default {
   getOptionsFromDataSources,
   getOptionsForSave,
   getImageDataUrl,
-  getHtml
+  getHtml,
+  getChartData
 }
