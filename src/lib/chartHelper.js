@@ -38,7 +38,7 @@ export function getChartData (element) {
   const chartElement = element.querySelector('.js-plotly-plot')
   return {
     data: chartElement.data,
-    layout: chartElement.layout,
+    layout: chartElement.layout
   }
 }
 

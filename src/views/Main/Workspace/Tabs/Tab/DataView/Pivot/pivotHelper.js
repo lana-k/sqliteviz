@@ -118,4 +118,3 @@ export function getPivotHtml (pivotOutput) {
     </body>
   `
 }
-
