@@ -84,8 +84,6 @@ export async function getPivotCanvas (pivotOutput) {
 
 export function getPivotHtml (pivotOutput) {
   return `
-    <head>
-      <meta charset="UTF-8">
       <style>
         table.pvtTable {
           font-family: Arial, sans-serif;
@@ -112,9 +110,6 @@ export function getPivotHtml (pivotOutput) {
           border: 1px solid #DFE8F3;
         }
       </style>
-    </head>
-    <body>
       ${pivotOutput.outerHTML}
-    </body>
   `
 }

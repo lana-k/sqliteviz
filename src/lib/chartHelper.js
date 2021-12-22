@@ -45,11 +45,7 @@ export function getChartData (element) {
 export function getHtml (options) {
   const chartId = nanoid()
   return `
-    <head>
-      <meta charset="UTF-8">
-      <script src="https://cdn.plot.ly/plotly-latest.js"></script>
-    </head>
-    <body>
+      <script src="https://cdn.plot.ly/plotly-latest.js" charset="UTF-8"></script>
       <div id="${chartId}"></div>
       <script>
         const el = document.getElementById("${chartId}")
@@ -68,7 +64,6 @@ export function getHtml (options) {
       
         Plotly.newPlot(el, ${JSON.stringify(options.data)}, ${JSON.stringify(options.layout)})
       </script>
-    </body>
   `
 }
 
