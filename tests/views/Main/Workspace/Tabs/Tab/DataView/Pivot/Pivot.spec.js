@@ -5,6 +5,7 @@ import chartHelper from '@/lib/chartHelper'
 import fIo from '@/lib/utils/fileIo'
 import $ from 'jquery'
 import sinon from 'sinon'
+import pivotHelper from '@/views/Main/Workspace/Tabs/Tab/DataView/Pivot/pivotHelper'
 
 describe('Pivot.vue', () => {
   let container
@@ -271,6 +272,41 @@ describe('Pivot.vue', () => {
     expect(chartComponent.saveAsSvg.called).to.equal(true)
   })
 
+  it('saveAsHtml calls chart method if renderer is Custom Chart', async () => {
+    const wrapper = mount(Pivot, {
+      propsData: {
+        dataSources: {
+          item: ['foo', 'bar', 'bar', 'bar'],
+          year: [2021, 2021, 2020, 2020]
+        },
+        initOptions: {
+          rows: ['item'],
+          cols: ['year'],
+          colOrder: 'key_a_to_z',
+          rowOrder: 'key_a_to_z',
+          aggregatorName: 'Count',
+          vals: [],
+          renderer: $.pivotUtilities.renderers['Custom chart'],
+          rendererName: 'Custom chart',
+          rendererOptions: {
+            customChartOptions: {
+              data: [],
+              layout: {},
+              frames: []
+            }
+          }
+        }
+      },
+      attachTo: container
+    })
+
+    const chartComponent = wrapper.vm.pivotOptions.rendererOptions.customChartComponent
+    sinon.stub(chartComponent, 'saveAsHtml')
+
+    await wrapper.vm.saveAsHtml()
+    expect(chartComponent.saveAsHtml.called).to.equal(true)
+  })
+
   it('saveAsPng calls chart method if renderer is Custom Chart', async () => {
     const wrapper = mount(Pivot, {
       propsData: {
@@ -331,6 +367,66 @@ describe('Pivot.vue', () => {
 
     await wrapper.vm.saveAsSvg()
     expect(chartHelper.getImageDataUrl.calledOnce).to.equal(true)
+  })
+
+  it('saveAsHtml - standart chart', async () => {
+    sinon.spy(chartHelper, 'getChartData')
+    sinon.spy(chartHelper, 'getHtml')
+
+    const wrapper = mount(Pivot, {
+      propsData: {
+        dataSources: {
+          item: ['foo', 'bar', 'bar', 'bar'],
+          year: [2021, 2021, 2020, 2020]
+        },
+        initOptions: {
+          rows: ['item'],
+          cols: ['year'],
+          colOrder: 'key_a_to_z',
+          rowOrder: 'key_a_to_z',
+          aggregatorName: 'Count',
+          vals: [],
+          renderer: $.pivotUtilities.renderers['Bar Chart'],
+          rendererName: 'Bar Chart'
+        }
+      },
+      attachTo: container
+    })
+
+    await wrapper.vm.saveAsHtml()
+    expect(chartHelper.getChartData.calledOnce).to.equal(true)
+    const chartData = await chartHelper.getChartData.returnValues[0]
+    expect(chartHelper.getHtml.calledOnceWith(chartData)).to.equal(true)
+  })
+
+  it('saveAsHtml - table', async () => {
+    sinon.stub(pivotHelper, 'getPivotHtml')
+    sinon.stub(fIo, 'exportToFile')
+
+    const wrapper = mount(Pivot, {
+      propsData: {
+        dataSources: {
+          item: ['foo', 'bar', 'bar', 'bar'],
+          year: [2021, 2021, 2020, 2020]
+        },
+        initOptions: {
+          rows: ['item'],
+          cols: ['year'],
+          colOrder: 'key_a_to_z',
+          rowOrder: 'key_a_to_z',
+          aggregatorName: 'Count',
+          vals: [],
+          renderer: $.pivotUtilities.renderers.Table,
+          rendererName: 'Table'
+        }
+      },
+      attachTo: container
+    })
+
+    await wrapper.vm.saveAsHtml()
+    expect(pivotHelper.getPivotHtml.calledOnce).to.equal(true)
+    const html = pivotHelper.getPivotHtml.returnValues[0]
+    expect(fIo.exportToFile.calledOnceWith(html, 'pivot.html', 'text/html')).to.equal(true)
   })
 
   it('saveAsPng - standart chart', async () => {

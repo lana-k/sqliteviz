@@ -19,7 +19,7 @@ import $ from 'jquery'
 import 'pivottable'
 import 'pivottable/dist/pivot.css'
 import PivotUi from './PivotUi'
-import { getPivotCanvas, getPivotHtml } from './pivotHelper'
+import pivotHelper from './pivotHelper'
 import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart'
 import chartHelper from '@/lib/chartHelper'
 import Vue from 'vue'
@@ -169,7 +169,7 @@ export default {
       } else {
         const source = this.viewStandartChart
           ? await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
-          : (await getPivotCanvas(this.$refs.pivotOutput)).toDataURL('image/png')
+          : (await pivotHelper.getPivotCanvas(this.$refs.pivotOutput)).toDataURL('image/png')
 
         this.$emit('loadingImageCompleted')
         fIo.downloadFromUrl(source, 'pivot')
@@ -182,7 +182,7 @@ export default {
       } else if (this.viewStandartChart) {
         return await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
       } else {
-        return await getPivotCanvas(this.$refs.pivotOutput)
+        return await pivotHelper.getPivotCanvas(this.$refs.pivotOutput)
       }
     },
 
@@ -207,7 +207,7 @@ export default {
         )
       } else {
         fIo.exportToFile(
-          getPivotHtml(this.$refs.pivotOutput),
+          pivotHelper.getPivotHtml(this.$refs.pivotOutput),
           'pivot.html',
           'text/html'
         )

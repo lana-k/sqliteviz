@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { _getDataSources, getPivotCanvas }
+import { _getDataSources, getPivotCanvas, getPivotHtml }
   from '@/views/Main/Workspace/Tabs/Tab/DataView/Pivot/pivotHelper'
 
 describe('pivotHelper.js', () => {
@@ -62,5 +62,20 @@ describe('pivotHelper.js', () => {
     pivotOutput.append(child)
 
     expect(await getPivotCanvas(pivotOutput)).to.be.instanceof(HTMLCanvasElement)
+  })
+
+  it('getPivotHtml returns html with styles', async () => {
+    const pivotOutput = document.createElement('div')
+    pivotOutput.append('test')
+
+    const html = getPivotHtml(pivotOutput)
+    const doc = document.createElement('div')
+    doc.innerHTML = html
+
+    expect(doc.innerHTML).to.equal(html)
+    expect(doc.children).to.have.lengthOf(2)
+    expect(doc.children[0].tagName).to.equal('STYLE')
+    expect(doc.children[1].tagName).to.equal('DIV')
+    expect(doc.children[1].innerHTML).to.equal('test')
   })
 })

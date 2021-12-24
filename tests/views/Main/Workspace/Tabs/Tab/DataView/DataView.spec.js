@@ -59,6 +59,31 @@ describe('DataView.vue', () => {
     expect(pivot.saveAsSvg.calledOnce).to.equal(true)
   })
 
+  it('method saveAsHtml calls the same method of the current view component', async () => {
+    const wrapper = mount(DataView)
+
+    // Find chart and spy the method
+    const chart = wrapper.findComponent({ name: 'Chart' }).vm
+    sinon.spy(chart, 'saveAsHtml')
+
+    // Export to html
+    const htmlBtn = createWrapper(wrapper.findComponent({ name: 'htmlIcon' }).vm.$parent)
+    await htmlBtn.trigger('click')
+    expect(chart.saveAsHtml.calledOnce).to.equal(true)
+
+    // Switch to pivot
+    const pivotBtn = createWrapper(wrapper.findComponent({ name: 'pivotIcon' }).vm.$parent)
+    await pivotBtn.trigger('click')
+
+    // Find pivot and spy the method
+    const pivot = wrapper.findComponent({ name: 'pivot' }).vm
+    sinon.spy(pivot, 'saveAsHtml')
+
+    // Export to svg
+    await htmlBtn.trigger('click')
+    expect(pivot.saveAsHtml.calledOnce).to.equal(true)
+  })
+
   it('shows alert when ClipboardItem is not supported', async () => {
     const ClipboardItem = window.ClipboardItem
     delete window.ClipboardItem

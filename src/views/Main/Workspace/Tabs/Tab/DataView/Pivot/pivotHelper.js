@@ -113,3 +113,8 @@ export function getPivotHtml (pivotOutput) {
       ${pivotOutput.outerHTML}
   `
 }
+
+export default {
+  getPivotCanvas,
+  getPivotHtml
+}

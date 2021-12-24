@@ -64,7 +64,40 @@ describe('chartHelper.js', () => {
     expect(/^data:image\/png/.test(url)).to.equal(true)
 
     url = await chartHelper.getImageDataUrl(element, 'svg')
-    console.log()
     expect(/^data:image\/svg\+xml/.test(url)).to.equal(true)
+  })
+
+  it('getChartData returns plotly data and layout from element', async () => {
+    const element = document.createElement('div')
+    const child = document.createElement('div')
+    element.append(child)
+    child.classList.add('js-plotly-plot')
+    child.data = 'plotly data'
+    child.layout = 'plotly layout'
+
+    const chartData = chartHelper.getChartData(element)
+    expect(chartData).to.eql({
+      data: 'plotly data',
+      layout: 'plotly layout'
+    })
+  })
+
+  it('getHtml returns valid html', async () => {
+    const options = {
+      data: 'plotly data',
+      layout: 'plotly layout'
+    }
+
+    const html = chartHelper.getHtml(options)
+    const doc = document.createElement('div')
+    doc.innerHTML = html
+
+    expect(doc.innerHTML).to.equal(html)
+    expect(doc.children).to.have.lengthOf(3)
+    expect(doc.children[0].src).to.includes('plotly-latest.js')
+    expect(doc.children[1].id).to.have.lengthOf(21)
+    expect(doc.children[2].innerHTML).to.includes(doc.children[1].id)
+    expect(doc.children[2].innerHTML)
+      .to.includes('Plotly.newPlot(el, "plotly data", "plotly layout"')
   })
 })
