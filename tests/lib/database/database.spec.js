@@ -44,7 +44,7 @@ describe('database.js', () => {
     expect(schema[0].columns[0].type).to.equal('N/A')
 
     expect(schema[0].columns[1].name).to.equal('col2')
-    expect(schema[0].columns[1].type).to.equal('integer')
+    expect(schema[0].columns[1].type).to.equal('INTEGER')
   })
 
   it('creates schema with view', async () => {
@@ -68,12 +68,12 @@ describe('database.js', () => {
 
     expect(schema[0].columns[1]).to.eql({
       name: 'col2',
-      type: 'integer'
+      type: 'INTEGER'
     })
 
     expect(schema[1].columns).to.eql([{
       name: 'amount',
-      type: 'integer'
+      type: 'INTEGER'
     }])
   })
 
