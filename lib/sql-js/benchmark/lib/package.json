@@ -1,5 +1,0 @@
-{
-  "name": "sql.js",
-  "main": "./dist/sql-wasm.js",
-  "private": true
-}
