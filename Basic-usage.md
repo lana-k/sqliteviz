@@ -102,4 +102,4 @@ After that, the inquiry will be in the list on `Inquiries` page.
 > be saved. The result of the query execution won't be saved.
 
 [1]: https://plotly.com/chart-studio-help/tutorials/#basic
-[2]: Pivot-table
+[2]: ../Pivot-table
