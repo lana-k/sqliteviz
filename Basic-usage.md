@@ -12,20 +12,20 @@ If you choose a CSV file it will be parsed. Then sqliteviz creates a new
 database with data from the CSV. You can change parsing settings and table name
 in the dialog which is shown automatically if you choose a CSV file (fig. 2).
 
-![Fig. 2: CSV import dialog](./img/Screenshot_csv.png?0.15.0)
+![Fig. 2: CSV import dialog](./img/Screenshot_csv.png)
 
 
 If you don't have a database or CSV press `Create empty database` button and
 then fill an empty database using DDL and DML statements. A tab with an example
 of how to do it will be opened automatically (fig. 3).
 
-![Fig. 3: Workspace (empty database)](./img/Screenshot_editor.png?0.15.0)
+![Fig. 3: Workspace (empty database)](./img/Screenshot_editor.png)
 
 
 Database tables, columns and their types are shown in the left panel of the
 `Workspace` (fig. 4).
 
-![Fig. 4: Workspace (not empty database)](./img/Screenshot_editor_with_db.png?0.15.0)
+![Fig. 4: Workspace (not empty database)](./img/Screenshot_editor_with_db.png)
 
 
 ## Create inquiry
@@ -86,7 +86,7 @@ component (fig. 5). The same component with some additional features is used in
 Plotly Chart Studio. Explore its [documentation][1] to learn how to build charts
 with `react-chart-editor`.
 
-![Fig. 5: Visualisation with a chart](./img/Screenshot_chart.png?0.15.0)
+![Fig. 5: Visualisation with a chart](./img/Screenshot_chart.png)
 
 You can save any visualisation as an image by clicking ![](./img/camera.svg).
 
