@@ -1,7 +1,9 @@
+# How to build a pivot table in SQLite
+
 This how-to explores how to build pivot tables in SQLite, which doesn't have a
 special constructs like `PIVOT` or `CROSSTAB` in its SQL dialect.
 
-# Static-column pivot table
+## Static-column pivot table
 
 If the columns of a pivot table are known beforehand, it's possible to write a
 standard, say SQL-92, query that would produce a pivot table in its result set.
@@ -87,7 +89,7 @@ ORDER BY
   END
 ```
 
-# Dynamic-column pivot table
+## Dynamic-column pivot table
 
 SQLite in sqliteviz is built with [pivot_vtab][2] extension. The same result set
 can be produced with this, arguably simpler and more maintainable, query.

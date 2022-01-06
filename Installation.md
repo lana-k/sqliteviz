@@ -1,3 +1,5 @@
+# Installation
+
 The latest release of sqliteviz is running on [Github pages][1].
 
 Basically, you don't need to install sqliteviz. But if you want you can install

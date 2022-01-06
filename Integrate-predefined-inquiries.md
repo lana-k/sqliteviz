@@ -1,3 +1,5 @@
+# Integrate predefined inquiries
+
 If you run sqliteviz on your own server you can specify predefined inquiries.
 These inquiries will appear in `Inquiries` list for all users working with
 sqliteviz on your server.

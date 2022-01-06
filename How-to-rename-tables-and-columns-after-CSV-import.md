@@ -1,4 +1,6 @@
-# Rename columns
+# How to rename tables and columns after CSV import
+
+## Rename columns
 
 If sqliteviz parses CSV without `Use first row as column headers` option then
 it will name the columns like `col1`, `col2` etc. You can easily rename the
@@ -9,7 +11,7 @@ ALTER TABLE your_table_name
 RENAME COLUMN current_column_name TO new_column_name;
 ```
 
-## Column rename example
+### Column rename example
 
 There is a table `dots` with columns `col1`, `col2`, `col3`. Here are the steps
 to rename the columns to `x`, `y` and `z` respectively:
@@ -28,17 +30,17 @@ ALTER TABLE dots
 RENAME COLUMN col3 TO z;
 ```
 
-- Click <img src="./img/run.svg"/> to run the script
+- Click ![](./img/run.svg) to run the script
 
 
-# Rename table
+## Rename table
 
 ```sql
 ALTER TABLE current_table_name
 RENAME TO new_table_name;
 ```
 
-## Table rename example
+### Table rename example
 
 There is a table `dots`. Here are the steps to rename it to `point`:
 
@@ -49,4 +51,4 @@ There is a table `dots`. Here are the steps to rename it to `point`:
 ALTER TABLE dots RENAME TO point
 ```
 
-- Click <img src="./img/run.svg"/> to run the script
+- Click ![](./img/run.svg) to run the script
