@@ -41,5 +41,12 @@ module.exports = {
       .end()
 
     config.module.rule('js').exclude.add(/worker\.js$/)
+
+    config
+      .plugin('html')
+      .tap(args => {
+        args[0].minify = false
+        return args
+      })
   }
 }
