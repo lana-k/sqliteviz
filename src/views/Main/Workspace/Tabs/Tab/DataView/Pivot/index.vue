@@ -23,6 +23,7 @@ import pivotHelper from './pivotHelper'
 import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart'
 import chartHelper from '@/lib/chartHelper'
 import Vue from 'vue'
+import { send } from '@/lib/utils/events'
 const ChartClass = Vue.extend(Chart)
 
 export default {
@@ -89,6 +90,11 @@ export default {
       handler () {
         this.$emit('update:importToPngEnabled', this.pivotOptions.rendererName !== 'TSV Export')
         this.$emit('update:importToSvgEnabled', this.viewStandartChart || this.viewCustomChart)
+        send({
+          category: 'viz_pivot',
+          action: 'render',
+          label: `type=${this.pivotOptions.rendererName}`
+        })
       }
     },
     pivotOptions () {
@@ -179,11 +185,11 @@ export default {
     async prepareCopy () {
       if (this.viewCustomChart) {
         return await this.pivotOptions.rendererOptions.customChartComponent.prepareCopy()
-      } else if (this.viewStandartChart) {
-        return await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
-      } else {
-        return await pivotHelper.getPivotCanvas(this.$refs.pivotOutput)
       }
+      if (this.viewStandartChart) {
+        return await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
+      }
+      return await pivotHelper.getPivotCanvas(this.$refs.pivotOutput)
     },
 
     async saveAsSvg () {
@@ -198,20 +204,23 @@ export default {
     saveAsHtml () {
       if (this.viewCustomChart) {
         this.pivotOptions.rendererOptions.customChartComponent.saveAsHtml()
-      } else if (this.viewStandartChart) {
+        return
+      }
+
+      if (this.viewStandartChart) {
         const chartState = chartHelper.getChartData(this.$refs.pivotOutput)
         fIo.exportToFile(
           chartHelper.getHtml(chartState),
           'chart.html',
           'text/html'
         )
-      } else {
-        fIo.exportToFile(
-          pivotHelper.getPivotHtml(this.$refs.pivotOutput),
-          'pivot.html',
-          'text/html'
-        )
+        return
       }
+      fIo.exportToFile(
+        pivotHelper.getPivotHtml(this.$refs.pivotOutput),
+        'pivot.html',
+        'text/html'
+      )
     }
   }
 }

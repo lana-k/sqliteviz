@@ -1,3 +1,4 @@
+import { send } from '@/lib/utils/events'
 let refresh = false
 
 function invokeServiceWorkerUpdateFlow (registration) {
@@ -39,6 +40,13 @@ if ('serviceWorker' in navigator) {
         window.location.reload()
         refresh = false
       }
+    })
+  })
+
+  window.addEventListener('appinstalled', () => {
+    send({
+      category: 'pwa',
+      action: 'install'
     })
   })
 }

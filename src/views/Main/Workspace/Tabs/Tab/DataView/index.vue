@@ -95,6 +95,7 @@ import ClipboardIcon from '@/components/svg/clipboard'
 import cIo from '@/lib/utils/clipboardIo'
 import loadingDialog from '@/components/LoadingDialog'
 import time from '@/lib/utils/time'
+import { send } from '@/lib/utils/events'
 
 export default {
   name: 'DataView',
@@ -123,6 +124,11 @@ export default {
       dataToCopy: null
     }
   },
+  computed: {
+    plotlyInPivot () {
+      return this.mode === 'pivot' && this.$refs.viewComponent.viewCustomChart
+    }
+  },
   watch: {
     mode () {
       this.$emit('update')
@@ -148,6 +154,7 @@ export default {
       */
       await time.sleep(0)
       this.$refs.viewComponent.saveAsPng()
+      this.exportSignal('png')
     },
     getOptionsForSave () {
       return this.$refs.viewComponent.getOptionsForSave()
@@ -178,6 +185,7 @@ export default {
     async copyToClipboard () {
       cIo.copyImage(this.dataToCopy)
       this.$modal.hide('prepareCopy')
+      this.exportSignal('clipboard')
     },
     cancelCopy () {
       this.dataToCopy = null
@@ -186,9 +194,20 @@ export default {
 
     saveAsSvg () {
       this.$refs.viewComponent.saveAsSvg()
+      this.exportSignal('svg')
     },
     saveAsHtml () {
       this.$refs.viewComponent.saveAsHtml()
+      this.exportSignal('html')
+    },
+    exportSignal (to) {
+      send({
+        category: this.plotlyInPivot || this.mode === 'chart'
+          ? 'viz_plotly' : 'viz_pivot',
+        action: 'export',
+        label: `type=${to}${this.plotlyInPivot
+        ? ' pivot=true' : this.mode === 'chart' ? ' pivot=false' : ''}`
+      })
     }
   }
 }

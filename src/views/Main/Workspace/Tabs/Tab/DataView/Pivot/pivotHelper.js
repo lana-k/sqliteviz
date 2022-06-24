@@ -51,6 +51,8 @@ export function _getDataSources (pivotData) {
 
 function customChartRenderer (data, options) {
   options.customChartComponent.dataSources = _getDataSources(data)
+  options.customChartComponent.forPivot = true
+
   options.customChartComponent.$mount()
 
   return $(options.customChartComponent.$el)

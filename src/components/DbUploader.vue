@@ -58,6 +58,7 @@ import fIo from '@/lib/utils/fileIo'
 import ChangeDbIcon from '@/components/svg/changeDb'
 import database from '@/lib/database'
 import CsvImport from '@/components/CsvImport'
+import { send } from '@/lib/utils/events'
 
 export default {
   name: 'DbUploader',
@@ -127,6 +128,13 @@ export default {
       if (fIo.isDatabase(file)) {
         this.loadDb(file)
       } else {
+        send({
+          category: 'database',
+          action: 'import',
+          value: file.size,
+          label: 'from=csv new_db=true'
+        })
+
         this.file = file
         await this.$nextTick()
         const csvImport = this.$refs.addCsv

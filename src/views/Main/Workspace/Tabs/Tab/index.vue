@@ -56,6 +56,7 @@ import DataView from './DataView'
 import RunResult from './RunResult'
 import time from '@/lib/utils/time'
 import Teleport from 'vue2-teleport'
+import { send } from '@/lib/utils/events'
 
 export default {
   name: 'Tab',
@@ -121,11 +122,33 @@ export default {
         const start = new Date()
         this.result = await state.db.execute(this.query + ';')
         this.time = time.getPeriod(start, new Date())
+
+        if (this.result && this.result.values) {
+          send({
+            category: 'resultset',
+            action: 'create',
+            value: this.result.values[this.result.columns[0]].length
+          })
+        }
+
+        send({
+          category: 'query',
+          action: 'run',
+          value: this.time,
+          label: 'status=success'
+        })
       } catch (err) {
         this.error = {
           type: 'error',
           message: err
         }
+
+        send({
+          category: 'query',
+          action: 'run',
+          value: 0,
+          label: 'status=error'
+        })
       }
       state.db.refreshSchema()
       this.isGettingResults = false

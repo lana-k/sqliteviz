@@ -31,10 +31,15 @@ import PlotlyEditor from 'react-chart-editor'
 import chartHelper from '@/lib/chartHelper'
 import dereference from 'react-chart-editor/lib/lib/dereference'
 import fIo from '@/lib/utils/fileIo'
+import { send } from '@/lib/utils/events'
 
 export default {
   name: 'Chart',
-  props: ['dataSources', 'initOptions', 'importToPngEnabled', 'importToSvgEnabled'],
+  props: [
+    'dataSources', 'initOptions',
+    'importToPngEnabled', 'importToSvgEnabled',
+    'forPivot'
+  ],
   components: {
     PlotlyEditor
   },
@@ -60,6 +65,19 @@ export default {
     plotly.setPlotConfig({
       notifyOnLogging: 1
     })
+    this.$watch(
+      () => JSON.stringify(
+        this.state.data.map(trace => `${trace.type}-${trace.mode}`)
+      ),
+      (value) => {
+        send({
+          category: 'viz_plotly',
+          action: 'render',
+          label: `type=${value} pivot=${this.forPivot ? 'true' : 'false'}`
+        })
+      },
+      { deep: true }
+    )
   },
   mounted () {
     this.resizeObserver = new ResizeObserver(this.handleResize)

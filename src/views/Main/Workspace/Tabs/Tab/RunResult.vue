@@ -72,6 +72,7 @@ import fIo from '@/lib/utils/fileIo'
 import cIo from '@/lib/utils/clipboardIo'
 import time from '@/lib/utils/time'
 import loadingDialog from '@/components/LoadingDialog'
+import { send } from '@/lib/utils/events'
 
 export default {
   name: 'RunResult',
@@ -117,10 +118,28 @@ export default {
     },
 
     exportToCsv () {
+      if (this.result && this.result.values) {
+        send({
+          category: 'resultset',
+          action: 'export',
+          value: this.result.values[this.result.columns[0]].length,
+          label: 'to=csv'
+        })
+      }
+
       fIo.exportToFile(csv.serialize(this.result), 'result_set.csv', 'text/csv')
     },
 
     async prepareCopy () {
+      if (this.result && this.result.values) {
+        send({
+          category: 'resultset',
+          action: 'export',
+          value: this.result.values[this.result.columns[0]].length,
+          label: 'to=clipboard'
+        })
+      }
+
       if ('ClipboardItem' in window) {
         this.preparingCopy = true
         this.$modal.show('prepareCSVCopy')

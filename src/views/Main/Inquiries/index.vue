@@ -159,7 +159,6 @@ import TextField from '@/components/TextField'
 import CheckBox from '@/components/CheckBox'
 import tooltipMixin from '@/tooltipMixin'
 import storedInquiries from '@/lib/storedInquiries'
-import fu from '@/lib/utils/fileIo'
 
 export default {
   name: 'Inquiries',
@@ -385,8 +384,7 @@ export default {
       return this.$store.state.tabs.findIndex(tab => tab.id === id)
     },
     exportToFile (inquiryList, fileName) {
-      const jsonStr = storedInquiries.serialiseInquiries(inquiryList)
-      fu.exportToFile(jsonStr, fileName)
+      storedInquiries.export(inquiryList, fileName)
     },
     exportSelectedInquiries () {
       const inquiryList = this.allInquiries.filter(
