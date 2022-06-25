@@ -112,11 +112,7 @@ export default {
         }
       })
 
-      send({
-        category: 'inquiry',
-        action: 'create',
-        label: 'auto=false'
-      })
+      send('inquiry.create', undefined, { auto: false })
     },
     cancelSave () {
       this.$modal.hide('save')
@@ -170,10 +166,7 @@ export default {
 
       // Signal about saving
       this.$root.$emit('inquirySaved')
-      send({
-        category: 'inquiry',
-        action: 'save'
-      })
+      send('inquiry.save')
     },
     _keyListener (e) {
       if (this.$route.path === '/workspace') {

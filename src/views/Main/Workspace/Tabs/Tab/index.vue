@@ -109,6 +109,8 @@ export default {
       const fromPosition = this.layout[from]
       this.layout[from] = this.layout[to]
       this.layout[to] = fromPosition
+
+      send('inquiry.panel', undefined, { panel: to })
     },
     onDataViewUpdate () {
       this.$store.commit('updateTab', { index: this.tabIndex, isSaved: false })
@@ -124,31 +126,19 @@ export default {
         this.time = time.getPeriod(start, new Date())
 
         if (this.result && this.result.values) {
-          send({
-            category: 'resultset',
-            action: 'create',
-            value: this.result.values[this.result.columns[0]].length
-          })
+          send('resultset.create',
+            this.result.values[this.result.columns[0]].length
+          )
         }
 
-        send({
-          category: 'query',
-          action: 'run',
-          value: this.time,
-          label: 'status=success'
-        })
+        send('query.run', parseFloat(this.time), { status: 'success' })
       } catch (err) {
         this.error = {
           type: 'error',
           message: err
         }
 
-        send({
-          category: 'query',
-          action: 'run',
-          value: 0,
-          label: 'status=error'
-        })
+        send('query.run', 0, { status: 'error' })
       }
       state.db.refreshSchema()
       this.isGettingResults = false

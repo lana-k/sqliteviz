@@ -106,11 +106,7 @@ export default {
       .then(str => {
         const inquires = this.deserialiseInquiries(str)
 
-        send({
-          category: 'inquiry',
-          action: 'import',
-          value: inquires.length
-        })
+        send('inquiry.import', inquires.length)
 
         return inquires
       })
@@ -119,11 +115,7 @@ export default {
     const jsonStr = this.serialiseInquiries(inquiryList)
     fu.exportToFile(jsonStr, fileName)
 
-    send({
-      category: 'inquiry',
-      action: 'export',
-      value: inquiryList.length
-    })
+    send('inquiry.export', inquiryList.length)
   },
 
   async readPredefinedInquiries () {

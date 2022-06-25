@@ -112,6 +112,7 @@ import SqlTable from '@/components/SqlTable'
 import Logs from '@/components/Logs'
 import time from '@/lib/utils/time'
 import fIo from '@/lib/utils/fileIo'
+import { send } from '@/lib/utils/events'
 
 export default {
   name: 'CsvImport',
@@ -335,6 +336,7 @@ export default {
       this.$store.commit('setCurrentTabId', tabId)
       this.importCsvCompleted = false
       this.$emit('finish')
+      send('inquiry.create', undefined, { auto: true })
     }
   }
 }

@@ -119,12 +119,10 @@ export default {
 
     exportToCsv () {
       if (this.result && this.result.values) {
-        send({
-          category: 'resultset',
-          action: 'export',
-          value: this.result.values[this.result.columns[0]].length,
-          label: 'to=csv'
-        })
+        send('resultset.export',
+          this.result.values[this.result.columns[0]].length,
+          { to: 'csv' }
+        )
       }
 
       fIo.exportToFile(csv.serialize(this.result), 'result_set.csv', 'text/csv')
@@ -132,12 +130,10 @@ export default {
 
     async prepareCopy () {
       if (this.result && this.result.values) {
-        send({
-          category: 'resultset',
-          action: 'export',
-          value: this.result.values[this.result.columns[0]].length,
-          label: 'to=clipboard'
-        })
+        send('resultset.export',
+          this.result.values[this.result.columns[0]].length,
+          { to: 'clipboard' }
+        )
       }
 
       if ('ClipboardItem' in window) {

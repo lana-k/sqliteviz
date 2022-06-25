@@ -79,13 +79,9 @@ class Database {
     this.dbName = file ? fu.getFileName(file) : 'database'
     this.refreshSchema()
 
-    send({
-      category: 'database',
-      action: 'import',
-      value: file ? file.size : 0,
-      label: file
-        ? 'from=sqlite new_db=true'
-        : 'from=none new_db=true'
+    send('database.import', file ? file.size : 0, {
+      from: file ? 'sqlite' : 'none',
+      new_db: true
     })
   }
 
@@ -125,12 +121,7 @@ class Database {
       throw new Error(data.error)
     }
     fu.exportToFile(data, fileName)
-    send({
-      category: 'database',
-      action: 'export',
-      value: data.byteLength,
-      label: 'to=sqlite'
-    })
+    send('database.export', data.byteLength, { to: 'sqlite' })
   }
 
   async validateTableName (name) {

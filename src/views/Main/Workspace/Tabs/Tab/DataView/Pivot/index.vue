@@ -88,12 +88,16 @@ export default {
     'pivotOptions.rendererName': {
       immediate: true,
       handler () {
-        this.$emit('update:importToPngEnabled', this.pivotOptions.rendererName !== 'TSV Export')
-        this.$emit('update:importToSvgEnabled', this.viewStandartChart || this.viewCustomChart)
-        send({
-          category: 'viz_pivot',
-          action: 'render',
-          label: `type=${this.pivotOptions.rendererName}`
+        this.$emit(
+          'update:importToPngEnabled',
+          this.pivotOptions.rendererName !== 'TSV Export'
+        )
+        this.$emit(
+          'update:importToSvgEnabled',
+          this.viewStandartChart || this.viewCustomChart
+        )
+        send('viz_pivot.render', undefined, {
+          type: this.pivotOptions.rendererName
         })
       }
     },

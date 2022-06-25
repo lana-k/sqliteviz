@@ -44,9 +44,6 @@ if ('serviceWorker' in navigator) {
   })
 
   window.addEventListener('appinstalled', () => {
-    send({
-      category: 'pwa',
-      action: 'install'
-    })
+    send('pwa.install')
   })
 }

@@ -70,10 +70,9 @@ export default {
         this.state.data.map(trace => `${trace.type}-${trace.mode}`)
       ),
       (value) => {
-        send({
-          category: 'viz_plotly',
-          action: 'render',
-          label: `type=${value} pivot=${this.forPivot ? 'true' : 'false'}`
+        send('viz_plotly.render', undefined, {
+          type: value,
+          pivot: !!this.forPivot
         })
       },
       { deep: true }

@@ -51,11 +51,7 @@ export default {
       const tabId = await this.$store.dispatch('addTab', { query: stmt })
       this.$store.commit('setCurrentTabId', tabId)
 
-      send({
-        category: 'inquiry',
-        action: 'create',
-        label: 'auto=true'
-      })
+      send('inquiry.create', undefined, { auto: true })
     }
   }
 }

@@ -88,11 +88,9 @@ export default {
       await csvImport.previewCsv()
       csvImport.open()
 
-      send({
-        category: 'database',
-        action: 'import',
-        value: this.file.size,
-        label: 'from=csv new_db=false'
+      send('database.import', this.file.size, {
+        from: 'csv',
+        new_db: false
       })
     }
   }

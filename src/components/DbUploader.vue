@@ -128,11 +128,9 @@ export default {
       if (fIo.isDatabase(file)) {
         this.loadDb(file)
       } else {
-        send({
-          category: 'database',
-          action: 'import',
-          value: file.size,
-          label: 'from=csv new_db=true'
+        send('database.import', file.size, {
+          from: 'csv',
+          new_db: true
         })
 
         this.file = file

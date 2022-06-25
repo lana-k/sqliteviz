@@ -201,13 +201,19 @@ export default {
       this.exportSignal('html')
     },
     exportSignal (to) {
-      send({
-        category: this.plotlyInPivot || this.mode === 'chart'
-          ? 'viz_plotly' : 'viz_pivot',
-        action: 'export',
-        label: `type=${to}${this.plotlyInPivot
-        ? ' pivot=true' : this.mode === 'chart' ? ' pivot=false' : ''}`
-      })
+      const eventLabels = { type: to }
+
+      if (this.mode === 'chart' || this.plotlyInPivot) {
+        eventLabels.pivot = this.plotlyInPivot
+      }
+
+      send(
+        this.mode === 'chart' || this.plotlyInPivot
+          ? 'viz_plotly.export'
+          : 'viz_pivot.export',
+        undefined,
+        eventLabels
+      )
     }
   }
 }
