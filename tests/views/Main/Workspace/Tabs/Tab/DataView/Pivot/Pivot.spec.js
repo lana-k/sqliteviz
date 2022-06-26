@@ -461,6 +461,7 @@ describe('Pivot.vue', () => {
   })
 
   it('saveAsPng - table', async () => {
+    sinon.stub(pivotHelper, 'getPivotCanvas').returns(document.createElement('canvas'))
     sinon.stub(HTMLCanvasElement.prototype, 'toDataURL').returns('canvas data url')
     sinon.stub(fIo, 'downloadFromUrl')
 

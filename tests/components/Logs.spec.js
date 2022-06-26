@@ -56,6 +56,7 @@ describe('Logs.vue', () => {
     messages.push({ type: 'error', message: 'msg 5' })
 
     await wrapper.vm.$nextTick()
+    await wrapper.vm.$nextTick()
     const height = wrapper.find('.logs-container').element.scrollHeight
     expect(wrapper.find('.logs-container').element.scrollTop)
       .to.equal(height - viewHeight)
