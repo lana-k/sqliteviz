@@ -1,4 +1,4 @@
-FROM node:12-buster
+FROM node:14-bullseye
 
 RUN set -ex; \
     echo 'deb http://deb.debian.org/debian unstable main' \
