@@ -28,7 +28,7 @@ A pivot visualisation has the following settings:
 There are several built-in chart views for a pivot. But you can build your own
 with `Custom chart` view (fig. 4).
 
-![Fig. 4: Custom Chart](./img/Screenshot_pivot_custom chart.png)
+![Fig. 4: Custom Chart](./img/Screenshot_pivot_custom_chart.png)
 
 > **Note:**  You can switch to other pivot views and back to `Custom chart` –
 > all your custom chart settings will be remembered. But if you switch the
