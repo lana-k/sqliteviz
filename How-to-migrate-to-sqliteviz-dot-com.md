@@ -2,7 +2,7 @@
 
 All upcoming sqliteviz versions will be deployed on sqliteviz.com instead of
 Github Pages. If you have saved inquiries it's needed to migrate them in order
-to be able to use them with the lates version of sqliteviz.
+to be able to use them with the latest version of sqliteviz.
 
 ## Export inquiries
 
@@ -14,9 +14,9 @@ to be able to use them with the lates version of sqliteviz.
 
 If you installed sqliteviz as PWA uninstall it before install the new version.
 
-- Go to [chrome://apps/](chrome://apps/)
+- Go to `chrome://apps/` in your browser
 - Right click on sqliteviz icon
-- Remove from Chrome
+- Choose `Remove from Chrome`
 
 ## Import inquires
 
