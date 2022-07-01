@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib import request
 
 
-amalgamation_url = 'https://sqlite.org/2021/sqlite-amalgamation-3360000.zip'
+amalgamation_url = 'https://sqlite.org/2022/sqlite-amalgamation-3380500.zip'
 
 # Extension-functions
 # ===================
@@ -20,7 +20,7 @@ contrib_functions_url = 'https://sqlite.org/contrib/download/extension-functions
 extension_urls = (
     # Miscellaneous extensions
     # ========================
-    ('https://sqlite.org/src/raw/c6bd5d24?at=series.c', 'sqlite3_series_init'),
+    ('https://sqlite.org/src/raw/8d79354f?at=series.c', 'sqlite3_series_init'),
     ('https://sqlite.org/src/raw/dbfd8543?at=closure.c', 'sqlite3_closure_init'),
     ('https://sqlite.org/src/raw/5bb2264c?at=uuid.c', 'sqlite3_uuid_init'),
     ('https://sqlite.org/src/raw/5853b0e5?at=regexp.c', 'sqlite3_regexp_init'),
