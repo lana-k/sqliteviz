@@ -62,6 +62,7 @@ export default {
 <style scoped>
 #app-info-icon {
   cursor: pointer;
+  width: 24px;
 }
 #app-info-container {
   display: flex;
