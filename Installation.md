@@ -1,6 +1,6 @@
 # Installation
 
-The latest release of sqliteviz is running on [Github pages][1].
+The latest release of sqliteviz is running on [sqliteviz.com/app][1].
 
 Basically, you don't need to install sqliteviz. But if you want you can install
 it and use it as a regular desktop application with the following steps:
@@ -11,6 +11,6 @@ it and use it as a regular desktop application with the following steps:
 
 See more about PWA on [Google Chrome Help][3].
 
-[1]: https://lana-k.github.io/sqliteviz
+[1]: https://sqliteviz.com/app/
 [2]: https://www.google.com/chrome
 [3]: https://support.google.com/chrome/answer/9658361?hl=en&ref_topic=7439636
