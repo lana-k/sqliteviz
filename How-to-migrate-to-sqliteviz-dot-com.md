@@ -8,7 +8,7 @@ you still care about can be imported to sqliteviz.com as usual.
 
 - Click `Inquiries` in the main top menu
 - Select all inquiries by clicking the checkbox in the table header
-- Click `Export` and save your inquires in a JSON file
+- Click `Export` and save your inquiries in a JSON file
 
 ## Step 2: uninstall sqliteviz
 
@@ -18,9 +18,9 @@ If you installed sqliteviz as PWA uninstall it before install the new version.
 - Right click on sqliteviz icon
 - Choose `Remove from Chrome`
 
-## Step 3: import inquires
+## Step 3: import inquiries
 
 - Go to [https://sqliteviz.com/app/#/workspace](https://sqliteviz.com/app/#/workspace)
 - Click `Inquiries` in the main top menu
 - Click `Import`
-- Choose the file where you exported your inquires
+- Choose the file where you exported your inquiries
