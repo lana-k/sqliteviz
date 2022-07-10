@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages and create release
+name: Create release
 on:
   workflow_dispatch:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to GitHub Pages and create release
+    name: Create release
     runs-on: ubuntu-latest    
     steps:
     - uses: actions/checkout@v2
@@ -42,13 +42,3 @@ jobs:
         artifacts: "dist/dist.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
         bodyFile: "CHANGELOG.md"
-
-    - name: Deploy 🚀
-      uses: JamesIves/github-pages-deploy-action@4.1.1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        branch: build # The branch the action should deploy to.
-        folder: dist/ # The folder the action should deploy.
-        clean: true # Automatically remove deleted files from the deploy branch
-        clean-exclude: .nojekyll
-

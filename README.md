@@ -18,7 +18,7 @@ With sqliteviz you can:
 https://user-images.githubusercontent.com/24638357/128249848-f8fab0f5-9add-46e0-a9c1-dd5085a8623e.mp4
 
 ## Quickstart
-The latest release of sqliteviz is deployed on GitHub Pages at [lana-k.github.io/sqliteviz][6].
+The latest release of sqliteviz is deployed on [sqliteviz.com/app][6].
 
 ## Wiki
 For user documentation, check out sqliteviz [Wiki][7].
@@ -34,7 +34,7 @@ It is built on top of [react-chart-editor][3], [PivotTable.js][12], [sql.js][4] 
 [3]: https://github.com/plotly/react-chart-editor
 [4]: https://github.com/sql-js/sql.js
 [5]: https://github.com/vuejs/vue
-[6]: https://lana-k.github.io/sqliteviz/
+[6]: https://sqliteviz.com/app/
 [7]: https://github.com/lana-k/sqliteviz/wiki
 [8]: https://github.com/surmon-china/vue-codemirror#readme
 [9]: https://www.papaparse.com/
