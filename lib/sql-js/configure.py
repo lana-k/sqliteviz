@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib import request
 
 
-amalgamation_url = 'https://sqlite.org/2022/sqlite-amalgamation-3380500.zip'
+amalgamation_url = 'https://sqlite.org/2022/sqlite-amalgamation-3390000.zip'
 
 # Extension-functions
 # ===================
