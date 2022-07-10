@@ -21,7 +21,7 @@ https://user-images.githubusercontent.com/24638357/128249848-f8fab0f5-9add-46e0-
 The latest release of sqliteviz is deployed on [sqliteviz.com/app][6].
 
 ## Wiki
-For user documentation, check out sqliteviz [Wiki][7].
+For user documentation, check out sqliteviz [documentation][7].
 
 ## Motivation
 It's a kind of middleground between [Plotly Falcon][1] and [Redash][2].
@@ -35,7 +35,7 @@ It is built on top of [react-chart-editor][3], [PivotTable.js][12], [sql.js][4] 
 [4]: https://github.com/sql-js/sql.js
 [5]: https://github.com/vuejs/vue
 [6]: https://sqliteviz.com/app/
-[7]: https://github.com/lana-k/sqliteviz/wiki
+[7]: https://sqliteviz.com/docs
 [8]: https://github.com/surmon-china/vue-codemirror#readme
 [9]: https://www.papaparse.com/
 [10]: https://github.com/lana-k/sqliteviz/wiki/Predefined-queries
