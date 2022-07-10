@@ -1,7 +1,7 @@
 # How to migrate to sqliteviz.com
 
 All upcoming sqliteviz versions will be deployed on sqliteviz.com instead of
-Github Pages. If you have saved inquiries it's needed to migrate them in order
+[Github Pages](https://lana-k.github.io/sqliteviz/#/). If you have saved inquiries it's needed to migrate them in order
 to be able to use them with the latest version of sqliteviz.
 
 ## Export inquiries
