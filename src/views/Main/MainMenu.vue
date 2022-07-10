@@ -1,9 +1,12 @@
 <template>
   <nav>
-    <div>
+    <div id="nav-links">
+      <a href="https://sqliteviz.com">
+        <img :src="require('@/assets/images/logo_simple.svg')">
+      </a>
       <router-link to="/workspace">Workspace</router-link>
       <router-link to="/inquiries">Inquiries</router-link>
-      <a href="https://github.com/lana-k/sqliteviz/wiki" target="_blank">Help</a>
+      <a href="https://sqliteviz.com/docs" target="_blank">Help</a>
     </div>
     <div id="nav-buttons">
       <button
@@ -240,5 +243,13 @@ button {
 
 #nav-buttons {
   display: flex;
+}
+
+#nav-links {
+  display: flex;
+  align-items: center;
+}
+#nav-links img {
+  width: 32px;
 }
 </style>
