@@ -72,7 +72,7 @@ import fIo from '@/lib/utils/fileIo'
 import cIo from '@/lib/utils/clipboardIo'
 import time from '@/lib/utils/time'
 import loadingDialog from '@/components/LoadingDialog'
-import { send } from '@/lib/utils/events'
+import events from '@/lib/utils/events'
 
 export default {
   name: 'RunResult',
@@ -119,7 +119,7 @@ export default {
 
     exportToCsv () {
       if (this.result && this.result.values) {
-        send('resultset.export',
+        events.send('resultset.export',
           this.result.values[this.result.columns[0]].length,
           { to: 'csv' }
         )
@@ -130,7 +130,7 @@ export default {
 
     async prepareCopy () {
       if (this.result && this.result.values) {
-        send('resultset.export',
+        events.send('resultset.export',
           this.result.values[this.result.columns[0]].length,
           { to: 'clipboard' }
         )

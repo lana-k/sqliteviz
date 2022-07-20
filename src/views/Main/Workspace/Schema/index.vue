@@ -33,7 +33,7 @@
 
 <script>
 import fIo from '@/lib/utils/fileIo'
-import { send } from '@/lib/utils/events'
+import events from '@/lib/utils/events'
 import TableDescription from './TableDescription'
 import TextField from '@/components/TextField'
 import TreeChevron from '@/components/svg/treeChevron'
@@ -88,7 +88,7 @@ export default {
       await csvImport.previewCsv()
       csvImport.open()
 
-      send('database.import', this.file.size, {
+      events.send('database.import', this.file.size, {
         from: 'csv',
         new_db: false
       })

@@ -95,7 +95,7 @@ import ClipboardIcon from '@/components/svg/clipboard'
 import cIo from '@/lib/utils/clipboardIo'
 import loadingDialog from '@/components/LoadingDialog'
 import time from '@/lib/utils/time'
-import { send } from '@/lib/utils/events'
+import events from '@/lib/utils/events'
 
 export default {
   name: 'DataView',
@@ -207,11 +207,11 @@ export default {
         eventLabels.pivot = this.plotlyInPivot
       }
 
-      send(
+      events.send(
         this.mode === 'chart' || this.plotlyInPivot
           ? 'viz_plotly.export'
           : 'viz_pivot.export',
-        undefined,
+        null,
         eventLabels
       )
     }

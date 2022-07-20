@@ -1,4 +1,4 @@
-import { send } from '@/lib/utils/events'
+import events from '@/lib/utils/events'
 let refresh = false
 
 function invokeServiceWorkerUpdateFlow (registration) {
@@ -44,6 +44,6 @@ if ('serviceWorker' in navigator) {
   })
 
   window.addEventListener('appinstalled', () => {
-    send('pwa.install')
+    events.send('pwa.install')
   })
 }

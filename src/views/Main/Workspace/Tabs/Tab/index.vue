@@ -56,7 +56,7 @@ import DataView from './DataView'
 import RunResult from './RunResult'
 import time from '@/lib/utils/time'
 import Teleport from 'vue2-teleport'
-import { send } from '@/lib/utils/events'
+import events from '@/lib/utils/events'
 
 export default {
   name: 'Tab',
@@ -110,7 +110,7 @@ export default {
       this.layout[from] = this.layout[to]
       this.layout[to] = fromPosition
 
-      send('inquiry.panel', undefined, { panel: to })
+      events.send('inquiry.panel', null, { panel: to })
     },
     onDataViewUpdate () {
       this.$store.commit('updateTab', { index: this.tabIndex, isSaved: false })
@@ -126,19 +126,19 @@ export default {
         this.time = time.getPeriod(start, new Date())
 
         if (this.result && this.result.values) {
-          send('resultset.create',
+          events.send('resultset.create',
             this.result.values[this.result.columns[0]].length
           )
         }
 
-        send('query.run', parseFloat(this.time), { status: 'success' })
+        events.send('query.run', parseFloat(this.time), { status: 'success' })
       } catch (err) {
         this.error = {
           type: 'error',
           message: err
         }
 
-        send('query.run', 0, { status: 'error' })
+        events.send('query.run', 0, { status: 'error' })
       }
       state.db.refreshSchema()
       this.isGettingResults = false

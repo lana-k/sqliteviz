@@ -23,7 +23,7 @@ import pivotHelper from './pivotHelper'
 import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart'
 import chartHelper from '@/lib/chartHelper'
 import Vue from 'vue'
-import { send } from '@/lib/utils/events'
+import events from '@/lib/utils/events'
 const ChartClass = Vue.extend(Chart)
 
 export default {
@@ -96,7 +96,7 @@ export default {
           'update:importToSvgEnabled',
           this.viewStandartChart || this.viewCustomChart
         )
-        send('viz_pivot.render', undefined, {
+        events.send('viz_pivot.render', null, {
           type: this.pivotOptions.rendererName
         })
       }

@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 import fu from '@/lib/utils/fileIo'
-import { send } from '@/lib/utils/events'
+import events from '@/lib/utils/events'
 import migration from './_migrations'
 
 const migrate = migration._migrate
@@ -106,7 +106,7 @@ export default {
       .then(str => {
         const inquires = this.deserialiseInquiries(str)
 
-        send('inquiry.import', inquires.length)
+        events.send('inquiry.import', inquires.length)
 
         return inquires
       })
@@ -115,7 +115,7 @@ export default {
     const jsonStr = this.serialiseInquiries(inquiryList)
     fu.exportToFile(jsonStr, fileName)
 
-    send('inquiry.export', inquiryList.length)
+    events.send('inquiry.export', inquiryList.length)
   },
 
   async readPredefinedInquiries () {

@@ -7,7 +7,7 @@ import Worker from './_worker.js'
 // https://github.com/nolanlawson/promise-worker
 import PromiseWorker from 'promise-worker'
 
-import { send } from '@/lib/utils/events'
+import events from '@/lib/utils/events'
 
 function getNewDatabase () {
   const worker = new Worker()
@@ -79,7 +79,7 @@ class Database {
     this.dbName = file ? fu.getFileName(file) : 'database'
     this.refreshSchema()
 
-    send('database.import', file ? file.size : 0, {
+    events.send('database.import', file ? file.size : 0, {
       from: file ? 'sqlite' : 'none',
       new_db: true
     })
@@ -121,7 +121,7 @@ class Database {
       throw new Error(data.error)
     }
     fu.exportToFile(data, fileName)
-    send('database.export', data.byteLength, { to: 'sqlite' })
+    events.send('database.export', data.byteLength, { to: 'sqlite' })
   }
 
   async validateTableName (name) {

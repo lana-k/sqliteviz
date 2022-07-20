@@ -31,7 +31,7 @@ import PlotlyEditor from 'react-chart-editor'
 import chartHelper from '@/lib/chartHelper'
 import dereference from 'react-chart-editor/lib/lib/dereference'
 import fIo from '@/lib/utils/fileIo'
-import { send } from '@/lib/utils/events'
+import events from '@/lib/utils/events'
 
 export default {
   name: 'Chart',
@@ -66,11 +66,10 @@ export default {
       notifyOnLogging: 1
     })
     this.$watch(
-      () => JSON.stringify(
-        this.state.data.map(trace => `${trace.type}-${trace.mode}`)
-      ),
+      () => this.state.data.map(trace => `${trace.type}-${trace.mode}`)
+        .join(','),
       (value) => {
-        send('viz_plotly.render', undefined, {
+        events.send('viz_plotly.render', null, {
           type: value,
           pivot: !!this.forPivot
         })

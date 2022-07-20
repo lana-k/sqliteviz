@@ -19,7 +19,7 @@
 import Splitpanes from '@/components/Splitpanes'
 import Schema from './Schema'
 import Tabs from './Tabs'
-import { send } from '@/lib/utils/events'
+import events from '@/lib/utils/events'
 
 export default {
   name: 'Workspace',
@@ -51,7 +51,7 @@ export default {
       const tabId = await this.$store.dispatch('addTab', { query: stmt })
       this.$store.commit('setCurrentTabId', tabId)
 
-      send('inquiry.create', undefined, { auto: true })
+      events.send('inquiry.create', null, { auto: true })
     }
   }
 }

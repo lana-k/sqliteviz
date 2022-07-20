@@ -60,7 +60,7 @@ import TextField from '@/components/TextField'
 import CloseIcon from '@/components/svg/close'
 import storedInquiries from '@/lib/storedInquiries'
 import AppDiagnosticInfo from './AppDiagnosticInfo'
-import { send } from '@/lib/utils/events'
+import events from '@/lib/utils/events'
 
 export default {
   name: 'MainMenu',
@@ -115,7 +115,7 @@ export default {
         }
       })
 
-      send('inquiry.create', undefined, { auto: false })
+      events.send('inquiry.create', null, { auto: false })
     },
     cancelSave () {
       this.$modal.hide('save')
@@ -169,7 +169,7 @@ export default {
 
       // Signal about saving
       this.$root.$emit('inquirySaved')
-      send('inquiry.save')
+      events.send('inquiry.save')
     },
     _keyListener (e) {
       if (this.$route.path === '/workspace') {
