@@ -27,8 +27,8 @@ jobs:
     - name: Create archives
       run: |
         cd dist
-        zip -9 -r  dist.zip . -x "js/*.map" -x "/*.map"
-        zip -9 -r  dist_map.zip .
+        zip -9 -r ../dist.zip . -x "js/*.map" -x "/*.map"
+        zip -9 -r  ../dist_map.zip .
 
     - name: Create Release Notes
       run: |
@@ -40,6 +40,6 @@ jobs:
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "dist/dist.zip,dist/dist_map.zip"
+        artifacts: "dist.zip,dist_map.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
         bodyFile: "CHANGELOG.md"
