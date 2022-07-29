@@ -3,14 +3,20 @@ import 'codemirror/addon/hint/show-hint.js'
 import 'codemirror/addon/hint/sql-hint.js'
 import store from '@/store'
 
+function _getHintText (hint) {
+  return typeof hint === 'string' ? hint : hint.text
+}
 export function getHints (cm, options) {
-  const token = cm.getTokenAt(cm.getCursor()).string.toUpperCase()
   const result = CM.hint.sql(cm, options)
+
   // Don't show the hint if there is only one option
-  // and the token is already completed with this option
-  if (result.list.length === 1 && result.list[0].text.toUpperCase() === token) {
+  // and the replacingText is already equals to this option
+  const replacedText = cm.getRange(result.from, result.to).toUpperCase()
+  if (result.list.length === 1 &&
+    _getHintText(result.list[0]).toUpperCase() === replacedText) {
     result.list = []
   }
+
   return result
 }
 

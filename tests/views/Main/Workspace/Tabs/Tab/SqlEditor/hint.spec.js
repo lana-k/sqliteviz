@@ -138,15 +138,37 @@ describe('hint.js', () => {
     'getHints returns [ ] if there is only one option and token is completed with this option',
     () => {
       // mock CM.hint.sql and editor
-      sinon.stub(CM.hint, 'sql').returns({ list: [{ text: 'SELECT' }] })
+      sinon.stub(CM.hint, 'sql').returns({
+        list: [{ text: 'SELECT' }],
+        from: null, // from/to doesn't metter because getRange is mocked
+        to: null
+      })
+
       const editor = {
-        getTokenAt () {
-          return {
-            string: 'select',
-            type: 'keyword'
-          }
-        },
-        getCursor: sinon.stub()
+        getRange () {
+          return 'select'
+        }
+      }
+
+      const hints = getHints(editor, {})
+      expect(hints.list).to.eql([])
+    }
+  )
+
+  it(
+    'getHints returns [ ] if there is only one string option and token ' +
+    'is completed with this option',
+    () => {
+      // mock CM.hint.sql and editor
+      sinon.stub(CM.hint, 'sql').returns({
+        list: ['house.name'],
+        from: null, // from/to doesn't metter because getRange is mocked
+        to: null
+      })
+      const editor = {
+        getRange () {
+          return 'house.name'
+        }
       }
 
       const hints = getHints(editor, {})
@@ -160,15 +182,11 @@ describe('hint.js', () => {
       { text: 'SELECT' },
       { text: 'ST' }
     ]
-    sinon.stub(CM.hint, 'sql').returns({ list })
+    sinon.stub(CM.hint, 'sql').returns({ list, from: null, to: null })
     const editor = {
-      getTokenAt () {
-        return {
-          string: 'se',
-          type: 'keyword'
-        }
-      },
-      getCursor: sinon.stub()
+      getRange () {
+        return 'se'
+      }
     }
 
     const hints = getHints(editor, {})
@@ -182,15 +200,11 @@ describe('hint.js', () => {
     () => {
       // mock CM.hint.sql and editor
       const list = [{ text: 'SELECT' }]
-      sinon.stub(CM.hint, 'sql').returns({ list })
+      sinon.stub(CM.hint, 'sql').returns({ list, from: null, to: null })
       const editor = {
-        getTokenAt () {
-          return {
-            string: 'sele',
-            type: 'keyword'
-          }
-        },
-        getCursor: sinon.stub()
+        getRange () {
+          return 'sele'
+        }
       }
 
       const hints = getHints(editor, {})
