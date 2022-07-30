@@ -66,7 +66,8 @@ export default {
       notifyOnLogging: 1
     })
     this.$watch(
-      () => this.state.data.map(trace => `${trace.type}-${trace.mode}`)
+      () => this.state && this.state.data && this.state.data
+        .map(trace => `${trace.type}${trace.mode ? '-' + trace.mode : ''}`)
         .join(','),
       (value) => {
         events.send('viz_plotly.render', null, {
