@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
 cleanup () {
-  rm -rf lib/dist $flag_file
+  rm -rf lib/dist "$renice_flag_file"
+  docker rm -f sqljs-benchmark-run 2> /dev/null || true
 }
 trap cleanup EXIT
 
@@ -11,20 +12,21 @@ if [ ! -f sample.csv ]; then
     | gunzip -c > sample.csv
 fi
 
+getrootpid () {
+  docker inspect -f "{{.State.Pid}}" $1 2> /dev/null || true
+}
+
 # for renice to work run like "sudo -E env PATH=$PATH ./make.sh"
-test_ni=$(nice -n -1 nice)
-if [ $test_ni == -1 ]; then
-  flag_file=$(mktemp)
+test_ni=$(nice -n -5 nice)
+if [ $test_ni == -5 ]; then
+  renice_flag_file=$(mktemp)
 fi
 (
-  while [ -f $flag_file ]; do
-    root_pid=$(
-      docker ps -f status=running -f name='^sqljs-benchmark-' -q \
-        | xargs -r -I{} -- docker inspect -f '{{.State.Pid}}' {}
-    )
+  while [ -f $renice_flag_file ]; do
+    root_pid=$(getrootpid sqljs-benchmark-run)
     if [ ! -z $root_pid ]; then
       procpath query -d $'\n' "$..children[?(@.stat.pid == $root_pid)]..pid" \
-        | xargs -I{} -- renice -n -1 -p {} > /dev/null
+        | xargs -I{} -- renice -n -5 -p {} &> /dev/null
     fi
     sleep 1
   done &
@@ -35,10 +37,26 @@ for d in lib/build-* ; do
   rm -rf lib/dist
   cp -r $d lib/dist
 
-  name=$(basename $d)
-  docker build -t sqliteviz/sqljs-benchmark:$name .
-  docker rm sqljs-benchmark-$name 2> /dev/null || true
-  docker run -it --cpus 2 --name sqljs-benchmark-$name sqliteviz/sqljs-benchmark:$name
-  docker cp sqljs-benchmark-$name:/tmp/build/suite-result.json ${name}-result.json
-  docker rm sqljs-benchmark-$name
+  sample_name=$(basename $d)
+  (
+    root_pid=""
+    while [ -z $root_pid ]; do
+      root_pid=$(getrootpid sqljs-benchmark-run)
+      if [ ! -z $root_pid ]; then
+        rm -f ${sample_name}.sqlite
+        procpath record -d ${sample_name}.sqlite -i 1 \
+          --stop-without-result -p $root_pid \
+          "$..children[?(@.stat.pid == $root_pid)]"
+        procpath plot -q rss -q cpu -d ${sample_name}.sqlite -f ${sample_name}.svg -w 5
+        break
+      fi
+      sleep 1
+    done &
+  )
+
+  docker build -t sqliteviz/sqljs-benchmark .
+  docker rm sqljs-benchmark-run 2> /dev/null || true
+  docker run -it --cpus 2 --name sqljs-benchmark-run sqliteviz/sqljs-benchmark
+  docker cp sqljs-benchmark-run:/tmp/build/suite-result.json ${sample_name}-result.json
+  docker rm sqljs-benchmark-run
 done
