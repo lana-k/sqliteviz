@@ -2,7 +2,7 @@ WITH one_time_pid_condition AS (
     SELECT stat_pid
     FROM record
     GROUP BY 1
-    ORDER BY MAX(stat_rss) DESC
+    ORDER BY SUM(stat_rss) DESC
     LIMIT 2
 )
 SELECT
