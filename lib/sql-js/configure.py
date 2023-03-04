@@ -29,6 +29,7 @@ extension_urls = (
     # Third-party extension
     # =====================
     ('https://github.com/jakethaw/pivot_vtab/raw/9323ef93/pivot_vtab.c', 'sqlite3_pivotvtab_init'),
+    ('https://github.com/nalgeon/sqlean/raw/95e8d21a/src/pearson.c', 'sqlite3_pearson_init'),
 )
 
 sqljs_url = 'https://github.com/sql-js/sql.js/archive/refs/tags/v1.7.0.zip'
