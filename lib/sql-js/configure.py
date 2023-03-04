@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib import request
 
 
-amalgamation_url = 'https://sqlite.org/2022/sqlite-amalgamation-3390000.zip'
+amalgamation_url = 'https://sqlite.org/2022/sqlite-amalgamation-3390300.zip'
 
 # Extension-functions
 # ===================
@@ -31,7 +31,7 @@ extension_urls = (
     ('https://github.com/jakethaw/pivot_vtab/raw/08ab0797/pivot_vtab.c', 'sqlite3_pivotvtab_init'),
 )
 
-sqljs_url = 'https://github.com/sql-js/sql.js/archive/refs/tags/v1.5.0.zip'
+sqljs_url = 'https://github.com/sql-js/sql.js/archive/refs/tags/v1.7.0.zip'
 
 
 def _generate_extra_init_c_function(init_function_names):

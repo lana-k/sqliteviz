@@ -1,4 +1,4 @@
-FROM emscripten/emsdk:2.0.24
+FROM emscripten/emsdk:3.0.1
 
 WORKDIR /tmp/build
 
