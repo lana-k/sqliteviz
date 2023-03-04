@@ -28,7 +28,7 @@ extension_urls = (
     ('https://sqlite.org/src/raw/09f967dc?at=decimal.c', 'sqlite3_decimal_init'),
     # Third-party extension
     # =====================
-    ('https://github.com/jakethaw/pivot_vtab/raw/08ab0797/pivot_vtab.c', 'sqlite3_pivotvtab_init'),
+    ('https://github.com/jakethaw/pivot_vtab/raw/9323ef93/pivot_vtab.c', 'sqlite3_pivotvtab_init'),
 )
 
 sqljs_url = 'https://github.com/sql-js/sql.js/archive/refs/tags/v1.7.0.zip'
