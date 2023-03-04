@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib import request
 
 
-amalgamation_url = 'https://sqlite.org/2022/sqlite-amalgamation-3390300.zip'
+amalgamation_url = 'https://sqlite.org/2023/sqlite-amalgamation-3410000.zip'
 
 # Extension-functions
 # ===================
@@ -28,7 +28,8 @@ extension_urls = (
     ('https://sqlite.org/src/raw/09f967dc?at=decimal.c', 'sqlite3_decimal_init'),
     # Third-party extension
     # =====================
-    ('https://github.com/jakethaw/pivot_vtab/raw/08ab0797/pivot_vtab.c', 'sqlite3_pivotvtab_init'),
+    ('https://github.com/jakethaw/pivot_vtab/raw/9323ef93/pivot_vtab.c', 'sqlite3_pivotvtab_init'),
+    ('https://github.com/nalgeon/sqlean/raw/95e8d21a/src/pearson.c', 'sqlite3_pearson_init'),
 )
 
 sqljs_url = 'https://github.com/sql-js/sql.js/archive/refs/tags/v1.7.0.zip'
