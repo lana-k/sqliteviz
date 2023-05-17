@@ -4,5 +4,7 @@ export default {
   currentTabId: null,
   untitledLastIndex: 0,
   predefinedInquiries: [],
+  loadingPredefinedInquiries: false,
+  predefinedInquiriesLoaded: false,
   db: null
 }

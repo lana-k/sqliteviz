@@ -1,10 +1,17 @@
 <template>
-  <div>
+  <div id="my-inquiries-container">
     <div id="start-guide" v-if="allInquiries.length === 0">
       You don't have saved inquiries so far.
       <span class="link" @click="$root.$emit('createNewInquiry')">Create</span>
       the one from scratch or
       <span @click="importInquiries" class="link">import</span> from a file.
+    </div>
+    <div
+      id="loading-predefined-status"
+      v-if="$store.state.loadingPredefinedInquiries"
+    >
+      <loading-indicator/>
+      Loading predefined inquiries...
     </div>
     <div id="my-inquiries-content" ref="my-inquiries-content" v-show="allInquiries.length > 0">
       <div id="my-inquiries-toolbar">
@@ -157,6 +164,7 @@ import DeleteIcon from './svg/delete'
 import CloseIcon from '@/components/svg/close'
 import TextField from '@/components/TextField'
 import CheckBox from '@/components/CheckBox'
+import LoadingIndicator from '@/components/LoadingIndicator'
 import tooltipMixin from '@/tooltipMixin'
 import storedInquiries from '@/lib/storedInquiries'
 
@@ -169,7 +177,8 @@ export default {
     DeleteIcon,
     CloseIcon,
     TextField,
-    CheckBox
+    CheckBox,
+    LoadingIndicator
   },
   mixins: [tooltipMixin],
   data () {
@@ -248,15 +257,21 @@ export default {
       }
     }
   },
-  created () {
-    storedInquiries.readPredefinedInquiries()
-      .then(inquiries => {
+  async created () {
+    this.inquiries = storedInquiries.getStoredInquiries()
+    const loadingPredefinedInquiries = this.$store.state.loadingPredefinedInquiries
+    const predefinedInquiriesLoaded = this.$store.state.predefinedInquiriesLoaded
+    if (!predefinedInquiriesLoaded && !loadingPredefinedInquiries) {
+      try {
+        this.$store.commit('setLoadingPredefinedInquiries', true)
+        const inquiries = await storedInquiries.readPredefinedInquiries()
         this.$store.commit('updatePredefinedInquiries', inquiries)
-      })
-      .catch(console.error)
-      .finally(() => {
-        this.inquiries = storedInquiries.getStoredInquiries()
-      })
+        this.$store.commit('setPredefinedInquiriesLoaded', true)
+      } catch (e) {
+        console.error(e)
+      }
+      this.$store.commit('setLoadingPredefinedInquiries', false)
+    }
   },
   mounted () {
     this.resizeObserver = new ResizeObserver(this.calcMaxTableHeight)
@@ -441,6 +456,21 @@ export default {
 </script>
 
 <style scoped>
+#my-inquiries-container {
+  position: relative;
+}
+
+#loading-predefined-status {
+  position: absolute;
+  right: 0;
+  display: flex;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--color-text-light-2);
+  align-items: center;
+  padding: 8px;
+}
+
 #start-guide {
   position: absolute;
   top: 50%;

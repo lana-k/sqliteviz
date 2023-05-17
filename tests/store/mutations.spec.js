@@ -7,7 +7,9 @@ const {
   setCurrentTabId,
   setCurrentTab,
   updatePredefinedInquiries,
-  setDb
+  setDb,
+  setLoadingPredefinedInquiries,
+  setPredefinedInquiriesLoaded
 } = mutations
 
 describe('mutations', () => {
@@ -376,5 +378,23 @@ describe('mutations', () => {
 
     updatePredefinedInquiries(state, inquiries)
     expect(state.predefinedInquiries).to.eql(inquiries)
+  })
+
+  it('setLoadingPredefinedInquiries', () => {
+    const state = {
+      loadingPredefinedInquiries: false
+    }
+
+    setLoadingPredefinedInquiries(state, true)
+    expect(state.loadingPredefinedInquiries).to.equal(true)
+  })
+
+  it('setPredefinedInquiriesLoaded', () => {
+    const state = {
+      predefinedInquiriesLoaded: false
+    }
+
+    setPredefinedInquiriesLoaded(state, true)
+    expect(state.predefinedInquiriesLoaded).to.equal(true)
   })
 })

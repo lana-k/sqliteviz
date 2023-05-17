@@ -53,5 +53,11 @@ export default {
   },
   updatePredefinedInquiries (state, inquiries) {
     state.predefinedInquiries = Array.isArray(inquiries) ? inquiries : [inquiries]
+  },
+  setLoadingPredefinedInquiries (state, value) {
+    state.loadingPredefinedInquiries = value
+  },
+  setPredefinedInquiriesLoaded (state, value) {
+    state.predefinedInquiriesLoaded = value
   }
 }
