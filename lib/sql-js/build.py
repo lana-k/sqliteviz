@@ -2,9 +2,11 @@ import logging
 import subprocess
 from pathlib import Path
 
-
+# See the setting descriptions on these pages:
+# - https://emscripten.org/docs/optimizing/Optimizing-Code.html
+# - https://github.com/emscripten-core/emscripten/blob/main/src/settings.js
 cflags = (
-    '-O2',
+    # SQLite configuration
     '-DSQLITE_DEFAULT_CACHE_SIZE=-65536',  # 64 MiB
     '-DSQLITE_DEFAULT_MEMSTATUS=0',
     '-DSQLITE_DEFAULT_SYNCHRONOUS=0',
@@ -13,26 +15,26 @@ cflags = (
     '-DSQLITE_ENABLE_FTS3',
     '-DSQLITE_ENABLE_FTS3_PARENTHESIS',
     '-DSQLITE_ENABLE_FTS5',
-    '-DSQLITE_ENABLE_JSON1',
     '-DSQLITE_ENABLE_NORMALIZE',
     '-DSQLITE_EXTRA_INIT=extra_init',
     '-DSQLITE_OMIT_DEPRECATED',
     '-DSQLITE_OMIT_LOAD_EXTENSION',
     '-DSQLITE_OMIT_SHARED_CACHE',
     '-DSQLITE_THREADSAFE=0',
+    # Compile-time optimisation
+    '-Os',  # reduces the code size about in half comparing to -O2
+    '-flto',
 )
 emflags = (
     # Base
     '--memory-init-file', '0',
-    '-s', 'RESERVED_FUNCTION_POINTERS=64',
     '-s', 'ALLOW_TABLE_GROWTH=1',
-    '-s', 'SINGLE_FILE=0',
     # WASM
     '-s', 'WASM=1',
     '-s', 'ALLOW_MEMORY_GROWTH=1',
-    # Optimisation
-    '-s', 'INLINING_LIMIT=50',
-    '-O3',
+    '-s', 'ENVIRONMENT=web,worker',
+    # Link-time optimisation
+    '-Os',
     '-flto',
     # sql.js
     '-s', 'EXPORTED_FUNCTIONS=@src/sqljs/exported_functions.json',
@@ -50,22 +52,22 @@ def build(src: Path, dst: Path):
         'emcc',
         *cflags,
         '-c', src / 'sqlite3.c',
-        '-o', out / 'sqlite3.bc',
+        '-o', out / 'sqlite3.o',
     ])
     logging.info('Building LLVM bitcode for extension-functions.c')
     subprocess.check_call([
         'emcc',
         *cflags,
         '-c', src / 'extension-functions.c',
-        '-o', out / 'extension-functions.bc',
+        '-o', out / 'extension-functions.o',
     ])
 
     logging.info('Building WASM from bitcode')
     subprocess.check_call([
         'emcc',
         *emflags,
-        out / 'sqlite3.bc',
-        out / 'extension-functions.bc',
+        out / 'sqlite3.o',
+        out / 'extension-functions.o',
         '-o', out / 'sql-wasm.js',
     ])
 

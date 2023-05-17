@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
 cleanup () {
-  rm -rf lib/dist $flag_file
+  rm -rf lib/dist "$renice_flag_file"
+  docker rm -f sqljs-benchmark-run 2> /dev/null || true
 }
 trap cleanup EXIT
 
@@ -11,34 +12,36 @@ if [ ! -f sample.csv ]; then
     | gunzip -c > sample.csv
 fi
 
+PLAYBOOK=procpath/karma_docker.procpath
+
 # for renice to work run like "sudo -E env PATH=$PATH ./make.sh"
-test_ni=$(nice -n -1 nice)
-if [ $test_ni == -1 ]; then
-  flag_file=$(mktemp)
+test_ni=$(nice -n -5 nice)
+if [ $test_ni == -5 ]; then
+  renice_flag_file=$(mktemp)
 fi
-(
-  while [ -f $flag_file ]; do
-    root_pid=$(
-      docker ps -f status=running -f name='^sqljs-benchmark-' -q \
-        | xargs -r -I{} -- docker inspect -f '{{.State.Pid}}' {}
-    )
-    if [ ! -z $root_pid ]; then
-      procpath query -d $'\n' "$..children[?(@.stat.pid == $root_pid)]..pid" \
-        | xargs -I{} -- renice -n -1 -p {} > /dev/null
-    fi
-    sleep 1
-  done &
-)
+{
+  while [ -f $renice_flag_file ]; do
+    procpath --logging-level ERROR play -f $PLAYBOOK renice:watch
+  done
+} &
 
 shopt -s nullglob
 for d in lib/build-* ; do
   rm -rf lib/dist
   cp -r $d lib/dist
+  sample_name=$(basename $d)
 
-  name=$(basename $d)
-  docker build -t sqliteviz/sqljs-benchmark:$name .
-  docker rm sqljs-benchmark-$name 2> /dev/null || true
-  docker run -it --cpus 2 --name sqljs-benchmark-$name sqliteviz/sqljs-benchmark:$name
-  docker cp sqljs-benchmark-$name:/tmp/build/suite-result.json ${name}-result.json
-  docker rm sqljs-benchmark-$name
+  docker build -t sqliteviz/sqljs-benchmark .
+  docker rm sqljs-benchmark-run 2> /dev/null || true
+  docker run -d -it --cpus 2 --name sqljs-benchmark-run sqliteviz/sqljs-benchmark
+  {
+    rm -f ${sample_name}.sqlite
+    procpath play -f $PLAYBOOK -o database_file=${sample_name}.sqlite track:record
+    procpath play -f $PLAYBOOK -o database_file=${sample_name}.sqlite \
+      -o plot_file=${sample_name}.svg track:plot
+  } &
+
+  docker attach sqljs-benchmark-run
+  docker cp sqljs-benchmark-run:/tmp/build/suite-result.json ${sample_name}-result.json
+  docker rm sqljs-benchmark-run
 done

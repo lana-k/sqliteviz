@@ -1,0 +1,28 @@
+# This command may run when "sqljs-benchmark-run" does not yet exist or run
+[renice:watch]
+interval: 2
+repeat: 30
+environment:
+  ROOT_PID=docker inspect -f "{{.State.Pid}}" sqljs-benchmark-run 2> /dev/null || true
+query:
+  PIDS=$..children[?(@.stat.pid in [$ROOT_PID])]..pid
+command:
+  echo $PIDS | tr , '\n' | xargs --no-run-if-empty -I{} -- renice -n -5 -p {}
+
+# Expected input arguments: database_file
+[track:record]
+interval: 1
+stop_without_result: 1
+environment:
+  ROOT_PID=docker inspect -f "{{.State.Pid}}" sqljs-benchmark-run
+query:
+  $..children[?(@.stat.pid == $ROOT_PID)]
+pid_list: $ROOT_PID
+
+# Expected input arguments: database_file, plot_file
+[track:plot]
+moving_average_window: 5
+title: Chromium vs Firefox (№1 RSS, №2 CPU)
+custom_query_file:
+  procpath/top2_rss.sql
+  procpath/top2_cpu.sql

@@ -160,39 +160,39 @@ describe('SQLite extensions', function () {
   it('supports transitive_closure', async function () {
     const actual = await db.execute(`
       CREATE TABLE node(
-      node_id   INTEGER NOT NULL PRIMARY KEY,
-      parent_id INTEGER,
-      name      VARCHAR(127),
-      FOREIGN KEY (parent_id) REFERENCES node(node_id)
-    );
-    CREATE INDEX node_parent_id_idx ON node(parent_id);
-
-    CREATE VIRTUAL TABLE node_closure USING transitive_closure(
-        tablename    = "node",
-        idcolumn     = "node_id",
-        parentcolumn = "parent_id"
+        node_id   INTEGER NOT NULL PRIMARY KEY,
+        parent_id INTEGER,
+        name      VARCHAR(127),
+        FOREIGN KEY (parent_id) REFERENCES node(node_id)
       );
+      CREATE INDEX node_parent_id_idx ON node(parent_id);
 
-    INSERT INTO node VALUES
-      (1,  NULL, 'tests'),
-      (2,  1,    'lib'),
-      (3,  2,    'database'),
-      (4,  2,    'utils'),
-      (5,  2,    'storedQueries.spec.js'),
-      (6,  3,    '_sql.spec.js'),
-      (7,  3,    '_statements.spec.js'),
-      (8,  3,    'database.spec.js'),
-      (9,  3,    'sqliteExtensions.spec.js'),
-      (10, 4,    'fileIo.spec.js'),
-      (11, 4,    'time.spec.js');
+      CREATE VIRTUAL TABLE node_closure USING transitive_closure(
+          tablename    = "node",
+          idcolumn     = "node_id",
+          parentcolumn = "parent_id"
+        );
 
-      SELECT name
-      FROM node
-      WHERE node_id IN (
-        SELECT nc.id
-        FROM node_closure AS nc
-        WHERE nc.root = 2 AND nc.depth = 2
-      );
+      INSERT INTO node VALUES
+        (1,  NULL, 'tests'),
+        (2,  1,    'lib'),
+        (3,  2,    'database'),
+        (4,  2,    'utils'),
+        (5,  2,    'storedQueries.spec.js'),
+        (6,  3,    '_sql.spec.js'),
+        (7,  3,    '_statements.spec.js'),
+        (8,  3,    'database.spec.js'),
+        (9,  3,    'sqliteExtensions.spec.js'),
+        (10, 4,    'fileIo.spec.js'),
+        (11, 4,    'time.spec.js');
+
+        SELECT name
+        FROM node
+        WHERE node_id IN (
+          SELECT nc.id
+          FROM node_closure AS nc
+          WHERE nc.root = 2 AND nc.depth = 2
+        );
     `)
     expect(actual.values).to.eql({
       name: [
@@ -293,7 +293,7 @@ describe('SQLite extensions', function () {
 
   it('supports decimal', async function () {
     const actual = await db.execute(`
-      select
+      SELECT
         decimal_add(decimal('0.1'), decimal('0.2')) "add",
         decimal_sub(0.2, 0.1) sub,
         decimal_mul(power(2, 69), 2) mul,
@@ -428,6 +428,31 @@ describe('SQLite extensions', function () {
         '/var/log',
         '/var/log/redis-server.log'
       ]
+    })
+  })
+
+  it('supports pearson', async function () {
+    const actual = await db.execute(`
+      CREATE TABLE dataset(x REAL, y REAL, z REAL);
+      INSERT INTO dataset VALUES
+        (5,3,3.2),  (5,6,4.3),  (5,9,5.4),
+        (10,3,4),   (10,6,3.8), (10,9,3.6),
+        (15,3,4.8), (15,6,4),   (15,9,3.5);
+
+      SELECT
+        pearson(x, x) xx,
+        pearson(x, y) xy,
+        abs(-0.12666 - pearson(x, z)) < 0.00001 xz,
+        pearson(y, x) yx,
+        pearson(y, y) yy,
+        abs(0.10555 - pearson(y, z))  < 0.00001 yz,
+        abs(-0.12666 - pearson(z, x)) < 0.00001 zx,
+        abs(0.10555 - pearson(z, y))  < 0.00001 zy,
+        pearson(z, z) zz
+      FROM dataset;
+    `)
+    expect(actual.values).to.eql({
+      xx: [1], xy: [0], xz: [1], yx: [0], yy: [1], yz: [1], zx: [1], zy: [1], zz: [1]
     })
   })
 })

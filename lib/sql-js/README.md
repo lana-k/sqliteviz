@@ -43,6 +43,8 @@ SQLite [miscellaneous extensions][3] included:
 SQLite 3rd party extensions included:
 
 1. [pivot_vtab][5] -- a pivot virtual table
+2. `pearson` correlation coefficient function extension from [sqlean][21]
+   (which is part of [squib][20])
 
 To ease the step to have working clone locally, the build is committed into
 the repository.
@@ -99,3 +101,5 @@ described in [this message from SQLite Forum][12]:
 [17]: https://sqlite.org/contrib/
 [18]: https://sqlite.org/contrib//download/extension-functions.c?get=25
 [19]: https://github.com/lana-k/sqliteviz/blob/master/tests/lib/database/sqliteExtensions.spec.js
+[20]: https://github.com/mrwilson/squib/blob/master/pearson.c
+[21]: https://github.com/nalgeon/sqlean/blob/incubator/src/pearson.c
