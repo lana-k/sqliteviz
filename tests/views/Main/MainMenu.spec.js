@@ -45,7 +45,7 @@ describe('MainMenu.vue', () => {
   it('Save is not visible if there is no tabs', () => {
     const state = {
       currentTab: null,
-      tabs: [{}],
+      tabs: [],
       db: {}
     }
     const store = new Vuex.Store({ state })
@@ -62,13 +62,15 @@ describe('MainMenu.vue', () => {
   })
 
   it('Save is disabled if current tab.isSaved is true', async () => {
+    const tab = {
+      id: 1,
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isSaved: false
+    }
     const state = {
-      currentTab: {
-        query: 'SELECT * FROM foo',
-        execute: sinon.stub(),
-        tabIndex: 0
-      },
-      tabs: [{ isSaved: false }],
+      currentTab: tab,
+      tabs: [tab],
       db: {}
     }
     const store = new Vuex.Store({ state })
@@ -83,17 +85,19 @@ describe('MainMenu.vue', () => {
     expect(wrapper.find('#save-btn').element.disabled).to.equal(false)
 
     await vm.$set(state.tabs[0], 'isSaved', true)
+    await vm.$nextTick()
     expect(wrapper.find('#save-btn').element.disabled).to.equal(true)
   })
 
   it('Creates a tab', async () => {
+    const tab = {
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isSaved: false
+    }
     const state = {
-      currentTab: {
-        query: 'SELECT * FROM foo',
-        execute: sinon.stub(),
-        tabIndex: 0
-      },
-      tabs: [{ isSaved: false }],
+      currentTab: tab,
+      tabs: [tab],
       db: {}
     }
     const newInquiryId = 1
@@ -121,13 +125,14 @@ describe('MainMenu.vue', () => {
   })
 
   it('Creates a tab and redirects to workspace', async () => {
+    const tab = {
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isSaved: false
+    }
     const state = {
-      currentTab: {
-        query: 'SELECT * FROM foo',
-        execute: sinon.stub(),
-        tabIndex: 0
-      },
-      tabs: [{ isSaved: false }],
+      currentTab: tab,
+      tabs: [tab],
       db: {}
     }
     const newInquiryId = 1
@@ -156,13 +161,14 @@ describe('MainMenu.vue', () => {
 
   it('Ctrl R calls currentTab.execute if running is enabled and route.path is "/workspace"',
     async () => {
+      const tab = {
+        query: 'SELECT * FROM foo',
+        execute: sinon.stub(),
+        isSaved: false
+      }
       const state = {
-        currentTab: {
-          query: 'SELECT * FROM foo',
-          execute: sinon.stub(),
-          tabIndex: 0
-        },
-        tabs: [{ isSaved: false }],
+        currentTab: tab,
+        tabs: [tab],
         db: {}
       }
       const store = new Vuex.Store({ state })
@@ -201,13 +207,14 @@ describe('MainMenu.vue', () => {
 
   it('Ctrl Enter calls currentTab.execute if running is enabled and route.path is "/workspace"',
     async () => {
+      const tab = {
+        query: 'SELECT * FROM foo',
+        execute: sinon.stub(),
+        isSaved: false
+      }
       const state = {
-        currentTab: {
-          query: 'SELECT * FROM foo',
-          execute: sinon.stub(),
-          tabIndex: 0
-        },
-        tabs: [{ isSaved: false }],
+        currentTab: tab,
+        tabs: [tab],
         db: {}
       }
       const store = new Vuex.Store({ state })
@@ -245,13 +252,14 @@ describe('MainMenu.vue', () => {
     })
 
   it('Ctrl B calls createNewInquiry', async () => {
+    const tab = {
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isSaved: false
+    }
     const state = {
-      currentTab: {
-        query: 'SELECT * FROM foo',
-        execute: sinon.stub(),
-        tabIndex: 0
-      },
-      tabs: [{ isSaved: false }],
+      currentTab: tab,
+      tabs: [tab],
       db: {}
     }
     const store = new Vuex.Store({ state })
@@ -280,13 +288,14 @@ describe('MainMenu.vue', () => {
 
   it('Ctrl S calls checkInquiryBeforeSave if the tab is unsaved and route path is /workspace',
     async () => {
+      const tab = {
+        query: 'SELECT * FROM foo',
+        execute: sinon.stub(),
+        isSaved: false
+      }
       const state = {
-        currentTab: {
-          query: 'SELECT * FROM foo',
-          execute: sinon.stub(),
-          tabIndex: 0
-        },
-        tabs: [{ isSaved: false }],
+        currentTab: tab,
+        tabs: [tab],
         db: {}
       }
       const store = new Vuex.Store({ state })
@@ -325,13 +334,16 @@ describe('MainMenu.vue', () => {
 
   it('Saves the inquiry when no need the new name',
     async () => {
+      const tab = {
+        id: 1,
+        name: 'foo',
+        query: 'SELECT * FROM foo',
+        execute: sinon.stub(),
+        isSaved: false
+      }
       const state = {
-        currentTab: {
-          query: 'SELECT * FROM foo',
-          execute: sinon.stub(),
-          tabIndex: 0
-        },
-        tabs: [{ id: 1, name: 'foo', isSaved: false }],
+        currentTab: tab,
+        tabs: [tab],
         db: {}
       }
       const mutations = {
@@ -364,13 +376,15 @@ describe('MainMenu.vue', () => {
 
       // check that the tab was updated
       expect(mutations.updateTab.calledOnceWith(state, sinon.match({
-        index: 0,
-        name: 'foo',
-        id: 1,
-        query: 'SELECT * FROM foo',
-        viewType: 'chart',
-        viewOptions: [],
-        isSaved: true
+        tab,
+        newValues: {
+          name: 'foo',
+          id: 1,
+          query: 'SELECT * FROM foo',
+          viewType: 'chart',
+          viewOptions: [],
+          isSaved: true
+        }
       }))).to.equal(true)
 
       // check that 'inquirySaved' event was triggered on $root
@@ -378,13 +392,17 @@ describe('MainMenu.vue', () => {
     })
 
   it('Shows en error when the new name is needed but not specifyied', async () => {
+    const tab = {
+      id: 1,
+      name: null,
+      tempName: 'Untitled',
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isSaved: false
+    }
     const state = {
-      currentTab: {
-        query: 'SELECT * FROM foo',
-        execute: sinon.stub(),
-        tabIndex: 0
-      },
-      tabs: [{ id: 1, name: null, tempName: 'Untitled', isSaved: false }],
+      currentTab: tab,
+      tabs: [tab],
       db: {}
     }
     const mutations = {
@@ -424,13 +442,17 @@ describe('MainMenu.vue', () => {
   })
 
   it('Saves the inquiry with a new name', async () => {
+    const tab = {
+      id: 1,
+      name: null,
+      tempName: 'Untitled',
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isSaved: false
+    }
     const state = {
-      currentTab: {
-        query: 'SELECT * FROM foo',
-        execute: sinon.stub(),
-        tabIndex: 0
-      },
-      tabs: [{ id: 1, name: null, tempName: 'Untitled', isSaved: false }],
+      currentTab: tab,
+      tabs: [tab],
       db: {}
     }
     const mutations = {
@@ -475,13 +497,15 @@ describe('MainMenu.vue', () => {
 
     // check that the tab was updated
     expect(mutations.updateTab.calledOnceWith(state, sinon.match({
-      index: 0,
-      name: 'foo',
-      id: 1,
-      query: 'SELECT * FROM foo',
-      viewType: 'chart',
-      viewOptions: [],
-      isSaved: true
+      tab: tab,
+      newValues: {
+        name: 'foo',
+        id: 1,
+        query: 'SELECT * FROM foo',
+        viewType: 'chart',
+        viewOptions: [],
+        isSaved: true
+      }
     }))).to.equal(true)
 
     // check that 'inquirySaved' event was triggered on $root
@@ -489,23 +513,26 @@ describe('MainMenu.vue', () => {
   })
 
   it('Saves a predefined inquiry with a new name', async () => {
-    const state = {
-      currentTab: {
-        query: 'SELECT * FROM foo',
-        execute: sinon.stub(),
-        tabIndex: 0,
-        isPredefined: true,
-        result: {
-          columns: ['id', 'name'],
-          values: [
-            [1, 'Harry Potter'],
-            [2, 'Drako Malfoy']
-          ]
-        },
-        viewType: 'chart',
-        viewOptions: []
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isPredefined: true,
+      result: {
+        columns: ['id', 'name'],
+        values: [
+          [1, 'Harry Potter'],
+          [2, 'Drako Malfoy']
+        ]
       },
-      tabs: [{ id: 1, name: 'foo', isSaved: false, isPredefined: true }],
+      viewType: 'chart',
+      viewOptions: [],
+      isSaved: false
+    }
+    const state = {
+      currentTab: tab,
+      tabs: [tab],
       db: {}
     }
     const mutations = {
@@ -553,13 +580,15 @@ describe('MainMenu.vue', () => {
 
     // check that the tab was updated
     expect(mutations.updateTab.calledOnceWith(state, sinon.match({
-      index: 0,
-      name: 'bar',
-      id: 2,
-      query: 'SELECT * FROM foo',
-      viewType: 'chart',
-      viewOptions: [],
-      isSaved: true
+      tab,
+      newValues: {
+        name: 'bar',
+        id: 2,
+        query: 'SELECT * FROM foo',
+        viewType: 'chart',
+        viewOptions: [],
+        isSaved: true
+      }
     }))).to.equal(true)
 
     // check that 'inquirySaved' event was triggered on $root
@@ -580,13 +609,17 @@ describe('MainMenu.vue', () => {
   })
 
   it('Cancel saving', async () => {
+    const tab = {
+      id: 1,
+      name: null,
+      tempName: 'Untitled',
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isSaved: false
+    }
     const state = {
-      currentTab: {
-        query: 'SELECT * FROM foo',
-        execute: sinon.stub(),
-        tabIndex: 0
-      },
-      tabs: [{ id: 1, name: null, tempName: 'Untitled', isSaved: false }],
+      currentTab: tab,
+      tabs: [tab],
       db: {}
     }
     const mutations = {

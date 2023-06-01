@@ -94,8 +94,33 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
+        {
+          id: 1,
+          name: 'foo',
+          query: 'select * from foo',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isSaved: true
+        },
+        {
+          id: 2,
+          name: null,
+          tempName: 'Untitled',
+          query: '',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isSaved: false
+        }
       ],
       currentTabId: 2
     }
@@ -125,8 +150,33 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
+        {
+          id: 1,
+          name: 'foo',
+          query: 'select * from foo',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isSaved: true
+        },
+        {
+          id: 2,
+          name: null,
+          tempName: 'Untitled',
+          query: '',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isSaved: false
+        }
       ],
       currentTabId: 2
     }
@@ -166,8 +216,33 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
+        {
+          id: 1,
+          name: 'foo',
+          query: 'select * from foo',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isSaved: true
+        },
+        {
+          id: 2,
+          name: null,
+          tempName: 'Untitled',
+          query: '',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isSaved: false
+        }
       ],
       currentTabId: 2
     }
@@ -211,8 +286,33 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
+        {
+          id: 1,
+          name: 'foo',
+          query: 'select * from foo',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isSaved: true
+        },
+        {
+          id: 2,
+          name: null,
+          tempName: 'Untitled',
+          query: '',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isSaved: false
+        }
       ],
       currentTabId: 2
     }

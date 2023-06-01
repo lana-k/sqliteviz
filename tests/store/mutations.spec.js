@@ -5,7 +5,6 @@ const {
   updateTab,
   deleteTab,
   setCurrentTabId,
-  setCurrentTab,
   updatePredefinedInquiries,
   setDb,
   setLoadingPredefinedInquiries,
@@ -37,8 +36,7 @@ describe('mutations', () => {
       isPredefined: false
     }
 
-    const newTab = {
-      index: 0,
+    const newValues = {
       id: 1,
       name: 'new test',
       query: 'SELECT * from bar',
@@ -51,7 +49,7 @@ describe('mutations', () => {
       tabs: [tab]
     }
 
-    updateTab(state, newTab)
+    updateTab(state, { tab, newValues })
     expect(state.tabs[0]).to.eql({
       id: 1,
       name: 'new test',
@@ -75,8 +73,7 @@ describe('mutations', () => {
       isPredefined: true
     }
 
-    const newTab = {
-      index: 0,
+    const newValues = {
       id: 2,
       name: 'new test',
       query: 'SELECT * from bar',
@@ -90,7 +87,7 @@ describe('mutations', () => {
       currentTabId: 1
     }
 
-    updateTab(state, newTab)
+    updateTab(state, { tab, newValues })
     expect(state.tabs).to.have.lengthOf(1)
     expect(state.currentTabId).to.equal(2)
     expect(state.tabs[0].id).to.equal(2)
@@ -111,8 +108,7 @@ describe('mutations', () => {
       isSaved: false
     }
 
-    const newTab = {
-      index: 0,
+    const newValues = {
       id: 1,
       name: 'new test'
     }
@@ -121,7 +117,7 @@ describe('mutations', () => {
       tabs: [tab]
     }
 
-    updateTab(state, newTab)
+    updateTab(state, { tab, newValues })
     expect(state.tabs).to.have.lengthOf(1)
     expect(state.tabs[0].id).to.equal(1)
     expect(state.tabs[0].name).to.equal('new test')
@@ -141,8 +137,7 @@ describe('mutations', () => {
       isPredefined: true
     }
 
-    const newTab = {
-      index: 0,
+    const newValues = {
       isSaved: false
     }
 
@@ -150,7 +145,7 @@ describe('mutations', () => {
       tabs: [tab]
     }
 
-    updateTab(state, newTab)
+    updateTab(state, { tab, newValues })
     expect(state.tabs).to.have.lengthOf(1)
     expect(state.tabs[0].id).to.equal(1)
     expect(state.tabs[0].name).to.equal('test')
@@ -184,7 +179,7 @@ describe('mutations', () => {
       currentTabId: 1
     }
 
-    deleteTab(state, 0)
+    deleteTab(state, tab1)
     expect(state.tabs).to.have.lengthOf(1)
     expect(state.tabs[0].id).to.equal(2)
     expect(state.currentTabId).to.equal(2)
@@ -216,7 +211,7 @@ describe('mutations', () => {
       currentTabId: 2
     }
 
-    deleteTab(state, 1)
+    deleteTab(state, tab2)
     expect(state.tabs).to.have.lengthOf(1)
     expect(state.tabs[0].id).to.equal(1)
     expect(state.currentTabId).to.equal(1)
@@ -258,7 +253,7 @@ describe('mutations', () => {
       currentTabId: 2
     }
 
-    deleteTab(state, 1)
+    deleteTab(state, tab2)
     expect(state.tabs).to.have.lengthOf(2)
     expect(state.tabs[0].id).to.equal(1)
     expect(state.tabs[1].id).to.equal(3)
@@ -281,41 +276,9 @@ describe('mutations', () => {
       currentTabId: 1
     }
 
-    deleteTab(state, 0)
+    deleteTab(state, tab1)
     expect(state.tabs).to.have.lengthOf(0)
     expect(state.currentTabId).to.equal(null)
-  })
-
-  it('deleteTab - not opened', () => {
-    const tab1 = {
-      id: 1,
-      name: 'foo',
-      tempName: null,
-      query: 'SELECT * from foo',
-      viewType: 'chart',
-      viewOptions: {},
-      isSaved: true
-    }
-
-    const tab2 = {
-      id: 2,
-      name: 'bar',
-      tempName: null,
-      query: 'SELECT * from bar',
-      viewType: 'chart',
-      viewOptions: {},
-      isSaved: true
-    }
-
-    const state = {
-      tabs: [tab1, tab2],
-      currentTabId: 1
-    }
-
-    deleteTab(state, 1)
-    expect(state.tabs).to.have.lengthOf(1)
-    expect(state.tabs[0].id).to.equal(1)
-    expect(state.currentTabId).to.equal(1)
   })
 
   it('setCurrentTabId', () => {
@@ -325,15 +288,6 @@ describe('mutations', () => {
 
     setCurrentTabId(state, 2)
     expect(state.currentTabId).to.equal(2)
-  })
-
-  it('setCurrentTab', () => {
-    const state = {
-      currentTab: { id: 1 }
-    }
-
-    setCurrentTab(state, { id: 2 })
-    expect(state.currentTab).to.eql({ id: 2 })
   })
 
   it('updatePredefinedInquiries - single', () => {

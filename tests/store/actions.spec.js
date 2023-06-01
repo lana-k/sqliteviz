@@ -11,7 +11,7 @@ describe('actions', () => {
     }
 
     let id = await addTab({ state })
-    expect(state.tabs[0]).to.eql({
+    expect(state.tabs[0]).to.include({
       id: id,
       name: null,
       tempName: 'Untitled',
@@ -22,7 +22,7 @@ describe('actions', () => {
     expect(state.untitledLastIndex).to.equal(1)
 
     id = await addTab({ state })
-    expect(state.tabs[1]).to.eql({
+    expect(state.tabs[1]).to.include({
       id: id,
       name: null,
       tempName: 'Untitled 1',
@@ -41,14 +41,13 @@ describe('actions', () => {
     const tab = {
       id: 1,
       name: 'test',
-      tempName: null,
       query: 'SELECT * from foo',
       viewType: 'chart',
-      viewOptions: {},
+      viewOptions: 'an object with view options',
       isSaved: true
     }
     await addTab({ state }, tab)
-    expect(state.tabs[0]).to.eql(tab)
+    expect(state.tabs[0]).to.include(tab)
     expect(state.untitledLastIndex).to.equal(0)
   })
 

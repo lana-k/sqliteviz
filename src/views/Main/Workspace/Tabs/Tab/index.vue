@@ -7,40 +7,40 @@
       :after="{ size: 50, max: 100 }"
     >
       <template #left-pane>
-        <div :id="'above-' + tabIndex" class="above" />
+        <div :id="'above-' + tab.id" class="above" />
       </template>
       <template #right-pane>
-        <div :id="'bottom-'+ tabIndex" ref="bottomPane" class="bottomPane" />
+        <div :id="'bottom-'+ tab.id" ref="bottomPane" class="bottomPane" />
       </template>
     </splitpanes>
 
-    <div :id="'hidden-'+ tabIndex" class="hidden-part" />
+    <div :id="'hidden-'+ tab.id" class="hidden-part" />
 
-    <teleport :to="`#${layout.sqlEditor}-${tabIndex}`">
+    <teleport :to="`#${tab.layout.sqlEditor}-${tab.id}`">
       <sql-editor
         ref="sqlEditor"
-        v-model="query"
-        :is-getting-results="isGettingResults"
+        v-model="tab.query"
+        :is-getting-results="tab.isGettingResults"
         @switchTo="onSwitchView('sqlEditor', $event)"
-        @run="execute"
+        @run="tab.execute()"
       />
     </teleport>
 
-    <teleport :to="`#${layout.table}-${tabIndex}`">
+    <teleport :to="`#${tab.layout.table}-${tab.id}`">
       <run-result
-        :result="result"
-        :is-getting-results="isGettingResults"
-        :error="error"
-        :time="time"
+        :result="tab.result"
+        :is-getting-results="tab.isGettingResults"
+        :error="tab.error"
+        :time="tab.time"
         @switchTo="onSwitchView('table', $event)"
       />
     </teleport>
 
-    <teleport :to="`#${layout.dataView}-${tabIndex}`">
+    <teleport :to="`#${tab.layout.dataView}-${tab.id}`">
       <data-view
-        :data-source="(result && result.values) || null"
-        :init-options="initViewOptions"
-        :init-mode="initViewType"
+        :data-source="(tab.result && tab.result.values) || null"
+        :init-options="tab.viewOptions"
+        :init-mode="tab.viewType"
         ref="dataView"
         @switchTo="onSwitchView('dataView', $event)"
         @update="onDataViewUpdate"
@@ -54,15 +54,15 @@ import Splitpanes from '@/components/Splitpanes'
 import SqlEditor from './SqlEditor'
 import DataView from './DataView'
 import RunResult from './RunResult'
-import time from '@/lib/utils/time'
+
 import Teleport from 'vue2-teleport'
 import events from '@/lib/utils/events'
 
 export default {
   name: 'Tab',
-  props: [
-    'id', 'initName', 'initQuery', 'initViewOptions', 'tabIndex', 'isPredefined', 'initViewType'
-  ],
+  props: {
+    tab: Object
+  },
   components: {
     SqlEditor,
     DataView,
@@ -70,23 +70,9 @@ export default {
     Splitpanes,
     Teleport
   },
-  data () {
-    return {
-      query: this.initQuery,
-      result: null,
-      isGettingResults: false,
-      error: null,
-      time: 0,
-      layout: {
-        sqlEditor: 'above',
-        table: 'bottom',
-        dataView: 'hidden'
-      }
-    }
-  },
   computed: {
     isActive () {
-      return this.id === this.$store.state.currentTabId
+      return this.tab.id === this.$store.state.currentTabId
     }
   },
   watch: {
@@ -94,54 +80,34 @@ export default {
       immediate: true,
       async handler () {
         if (this.isActive) {
-          this.$store.commit('setCurrentTab', this)
           await this.$nextTick()
           this.$refs.sqlEditor.focus()
         }
       }
     },
-    query () {
-      this.$store.commit('updateTab', { index: this.tabIndex, isSaved: false })
+    'tab.query' () {
+      this.$store.commit('updateTab', {
+        tab: this.tab,
+        newValues: { isSaved: false }
+      })
     }
+  },
+  mounted () {
+    this.tab.dataView = this.$refs.dataView
   },
   methods: {
     onSwitchView (from, to) {
-      const fromPosition = this.layout[from]
-      this.layout[from] = this.layout[to]
-      this.layout[to] = fromPosition
+      const fromPosition = this.tab.layout[from]
+      this.tab.layout[from] = this.tab.layout[to]
+      this.tab.layout[to] = fromPosition
 
       events.send('inquiry.panel', null, { panel: to })
     },
     onDataViewUpdate () {
-      this.$store.commit('updateTab', { index: this.tabIndex, isSaved: false })
-    },
-    async execute () {
-      this.isGettingResults = true
-      this.result = null
-      this.error = null
-      const state = this.$store.state
-      try {
-        const start = new Date()
-        this.result = await state.db.execute(this.query + ';')
-        this.time = time.getPeriod(start, new Date())
-
-        if (this.result && this.result.values) {
-          events.send('resultset.create',
-            this.result.values[this.result.columns[0]].length
-          )
-        }
-
-        events.send('query.run', parseFloat(this.time), { status: 'success' })
-      } catch (err) {
-        this.error = {
-          type: 'error',
-          message: err
-        }
-
-        events.send('query.run', 0, { status: 'error' })
-      }
-      state.db.refreshSchema()
-      this.isGettingResults = false
+      this.$store.commit('updateTab', {
+        tab: this.tab,
+        newValues: { isSaved: false }
+      })
     }
   }
 }

@@ -31,13 +31,23 @@ describe('Tab.vue', () => {
       store,
       stubs: ['chart'],
       propsData: {
-        id: 1,
-        initName: 'foo',
-        initQuery: 'SELECT * FROM foo',
-        initViewType: 'chart',
-        initViewOptions: [],
-        tabIndex: 0,
-        isPredefined: false
+        tab: {
+          id: 1,
+          name: 'foo',
+          query: 'SELECT * FROM foo',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isPredefined: false,
+          result: null,
+          isGettingResults: false,
+          error: null,
+          time: 0
+        }
       }
     })
 
@@ -60,7 +70,23 @@ describe('Tab.vue', () => {
       store,
       stubs: ['chart'],
       propsData: {
-        id: 1
+        tab: {
+          id: 1,
+          name: 'foo',
+          query: 'SELECT * FROM foo',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isPredefined: false,
+          result: null,
+          isGettingResults: false,
+          error: null,
+          time: 0
+        }
       }
     })
     expect(wrapper.find('.tab-content-container').isVisible()).to.equal(false)
@@ -79,40 +105,51 @@ describe('Tab.vue', () => {
       store,
       stubs: ['chart'],
       propsData: {
-        id: 1
+        tab: {
+          id: 1,
+          name: 'foo',
+          query: 'SELECT * FROM foo',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isPredefined: false,
+          result: null,
+          isGettingResults: false,
+          error: null,
+          time: 0
+        }
       }
     })
 
     expect(wrapper.find('.tab-content-container').isVisible()).to.equal(false)
   })
 
-  it('Calls setCurrentTab when becomes active', async () => {
-    // mock store state
-    const state = {
-      currentTabId: 0
-    }
-    sinon.spy(mutations, 'setCurrentTab')
-    const store = new Vuex.Store({ state, mutations })
-
-    // mount the component
-    const wrapper = mount(Tab, {
-      store,
-      stubs: ['chart'],
-      propsData: {
-        id: 1
-      }
-    })
-
-    state.currentTabId = 1
-    await wrapper.vm.$nextTick()
-    expect(mutations.setCurrentTab.calledOnceWith(state, wrapper.vm)).to.equal(true)
-  })
-
   it('Update tab state when a query is changed', async () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'SELECT * FROM foo', chart: [], isSaved: true }
+        {
+          id: 1,
+          name: 'foo',
+          query: 'SELECT * FROM foo',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isPredefined: false,
+          result: null,
+          isGettingResults: false,
+          error: null,
+          time: 0,
+          isSaved: true
+        }
       ],
       currentTabId: 1
     }
@@ -124,13 +161,7 @@ describe('Tab.vue', () => {
       store,
       stubs: ['chart'],
       propsData: {
-        id: 1,
-        initName: 'foo',
-        initQuery: 'SELECT * FROM foo',
-        initViewOptions: [],
-        initViewType: 'chart',
-        tabIndex: 0,
-        isPredefined: false
+        tab: state.tabs[0]
       }
     })
     await wrapper.findComponent({ name: 'SqlEditor' }).vm.$emit('input', ' limit 100')
@@ -141,7 +172,24 @@ describe('Tab.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'SELECT * FROM foo', chart: [], isSaved: true }
+        {
+          id: 1,
+          name: 'foo',
+          query: 'SELECT * FROM foo',
+          viewType: 'chart',
+          viewOptions: {},
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          isPredefined: false,
+          result: null,
+          isGettingResults: false,
+          error: null,
+          time: 0,
+          isSaved: true
+        }
       ],
       currentTabId: 1
     }
@@ -153,13 +201,7 @@ describe('Tab.vue', () => {
       store,
       stubs: ['chart'],
       propsData: {
-        id: 1,
-        initName: 'foo',
-        initQuery: 'SELECT * FROM foo',
-        initViewOptions: [],
-        initViewType: 'chart',
-        tabIndex: 0,
-        isPredefined: false
+        tab: state.tabs[0]
       }
     })
     await wrapper.findComponent({ name: 'DataView' }).vm.$emit('update')
@@ -169,29 +211,38 @@ describe('Tab.vue', () => {
   it('Shows .result-in-progress message when executing query', async () => {
     // mock store state
     const state = {
-      currentTabId: 1,
-      db: {
-        execute () { return new Promise(() => {}) }
-      }
+      currentTabId: 1
     }
 
     const store = new Vuex.Store({ state, mutations })
     // mount the component
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo',
+      viewType: 'chart',
+      viewOptions: {},
+      layout: {
+        sqlEditor: 'above',
+        table: 'bottom',
+        dataView: 'hidden'
+      },
+      isPredefined: false,
+      result: null,
+      isGettingResults: false,
+      error: null,
+      time: 0,
+      isSaved: true
+    }
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
       propsData: {
-        id: 1,
-        initName: 'foo',
-        initQuery: 'SELECT * FROM foo',
-        initViewOptions: [],
-        initViewType: 'chart',
-        tabIndex: 0,
-        isPredefined: false
+        tab
       }
     })
 
-    wrapper.vm.execute()
+    tab.isGettingResults = true
     await wrapper.vm.$nextTick()
     expect(wrapper.find('.run-result-panel .result-in-progress').isVisible()).to.equal(true)
   })
@@ -199,30 +250,42 @@ describe('Tab.vue', () => {
   it('Shows error when executing query ends with error', async () => {
     // mock store state
     const state = {
-      currentTabId: 1,
-      db: {
-        execute: sinon.stub().rejects(new Error('There is no table foo')),
-        refreshSchema: sinon.stub().resolves()
-      }
+      currentTabId: 1
     }
 
     const store = new Vuex.Store({ state, mutations })
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo',
+      viewType: 'chart',
+      viewOptions: {},
+      layout: {
+        sqlEditor: 'above',
+        table: 'bottom',
+        dataView: 'hidden'
+      },
+      isPredefined: false,
+      result: null,
+      isGettingResults: false,
+      error: null,
+      time: 0,
+      isSaved: true
+    }
     // mount the component
     const wrapper = mount(Tab, {
       store,
       stubs: ['chart'],
       propsData: {
-        id: 1,
-        initName: 'foo',
-        initQuery: 'SELECT * FROM foo',
-        initViewOptions: [],
-        initViewType: 'chart',
-        tabIndex: 0,
-        isPredefined: false
+        tab
       }
     })
 
-    await wrapper.vm.execute()
+    tab.error = {
+      type: 'error',
+      message: 'There is no table foo'
+    }
+    await wrapper.vm.$nextTick()
     expect(wrapper.find('.run-result-panel .result-before').isVisible()).to.equal(false)
     expect(wrapper.find('.run-result-panel .result-in-progress').exists()).to.equal(false)
     expect(wrapper.findComponent({ name: 'logs' }).isVisible()).to.equal(true)
@@ -239,11 +302,26 @@ describe('Tab.vue', () => {
     }
     // mock store state
     const state = {
-      currentTabId: 1,
-      db: {
-        execute: sinon.stub().resolves(result),
-        refreshSchema: sinon.stub().resolves()
-      }
+      currentTabId: 1
+    }
+
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo',
+      viewType: 'chart',
+      viewOptions: {},
+      layout: {
+        sqlEditor: 'above',
+        table: 'bottom',
+        dataView: 'hidden'
+      },
+      isPredefined: false,
+      result: null,
+      isGettingResults: false,
+      error: null,
+      time: 0,
+      isSaved: true
     }
 
     const store = new Vuex.Store({ state, mutations })
@@ -253,83 +331,50 @@ describe('Tab.vue', () => {
       store,
       stubs: ['chart'],
       propsData: {
-        id: 1,
-        initName: 'foo',
-        initQuery: 'SELECT * FROM foo',
-        initViewOptions: [],
-        initViewType: 'chart',
-        tabIndex: 0,
-        isPredefined: false
+        tab
       }
     })
 
-    await wrapper.vm.execute()
+    tab.result = result
+    await wrapper.vm.$nextTick()
     expect(wrapper.find('.run-result-panel .result-before').isVisible()).to.equal(false)
     expect(wrapper.find('.run-result-panel .result-in-progress').exists()).to.equal(false)
     expect(wrapper.findComponent({ name: 'logs' }).exists()).to.equal(false)
     expect(wrapper.findComponent({ name: 'SqlTable' }).vm.dataSet).to.eql(result)
   })
 
-  it('Updates schema after query execution', async () => {
-    const result = {
-      columns: ['id', 'name'],
-      values: {
-        id: [],
-        name: []
-      }
-    }
-
-    // mock store state
-    const state = {
-      currentTabId: 1,
-      dbName: 'fooDb',
-      db: {
-        execute: sinon.stub().resolves(result),
-        refreshSchema: sinon.stub().resolves()
-      }
-    }
-
-    const store = new Vuex.Store({ state, mutations })
-
-    // mount the component
-    const wrapper = mount(Tab, {
-      store,
-      stubs: ['chart'],
-      propsData: {
-        id: 1,
-        initName: 'foo',
-        initQuery: 'SELECT * FROM foo; CREATE TABLE bar(a,b);',
-        initViewOptions: [],
-        initViewType: 'chart',
-        tabIndex: 0,
-        isPredefined: false
-      }
-    })
-
-    await wrapper.vm.execute()
-    expect(state.db.refreshSchema.calledOnce).to.equal(true)
-  })
-
   it('Switches views', async () => {
     const state = {
-      currentTabId: 1,
-      db: {}
+      currentTabId: 1
     }
 
     const store = new Vuex.Store({ state, mutations })
+
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo; CREATE TABLE bar(a,b);',
+      viewType: 'chart',
+      viewOptions: {},
+      layout: {
+        sqlEditor: 'above',
+        table: 'bottom',
+        dataView: 'hidden'
+      },
+      isPredefined: false,
+      result: null,
+      isGettingResults: false,
+      error: null,
+      time: 0,
+      isSaved: true
+    }
 
     const wrapper = mount(Tab, {
       attachTo: place,
       store,
       stubs: ['chart'],
       propsData: {
-        id: 1,
-        initName: 'foo',
-        initQuery: 'SELECT * FROM foo; CREATE TABLE bar(a,b);',
-        initViewOptions: [],
-        initViewType: 'chart',
-        tabIndex: 0,
-        isPredefined: false
+        tab
       }
     })
 

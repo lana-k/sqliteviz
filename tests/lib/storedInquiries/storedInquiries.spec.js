@@ -87,14 +87,14 @@ describe('storedInquiries.js', () => {
 
   it('isTabNeedName returns false when the inquiry has a name and is not predefined', () => {
     const tab = {
-      initName: 'foo'
+      name: 'foo'
     }
     expect(storedInquiries.isTabNeedName(tab)).to.equal(false)
   })
 
   it('isTabNeedName returns true when the inquiry has no name and is not predefined', () => {
     const tab = {
-      initName: null,
+      name: null,
       tempName: 'Untitled'
     }
     expect(storedInquiries.isTabNeedName(tab)).to.equal(true)
@@ -102,7 +102,7 @@ describe('storedInquiries.js', () => {
 
   it('isTabNeedName returns true when the inquiry is predefined', () => {
     const tab = {
-      initName: 'foo',
+      name: 'foo',
       isPredefined: true
     }
 
@@ -351,14 +351,13 @@ describe('storedInquiries.js', () => {
       query: 'select * from foo',
       viewType: 'chart',
       viewOptions: [],
-      initName: null,
-      $refs: {
-        dataView: {
-          getOptionsForSave () {
-            return ['chart']
-          }
+      name: null,
+      dataView: {
+        getOptionsForSave () {
+          return ['chart']
         }
       }
+
     }
     const value = storedInquiries.save(tab, 'foo')
     expect(value.id).to.equal(tab.id)
@@ -376,19 +375,18 @@ describe('storedInquiries.js', () => {
       query: 'select * from foo',
       viewType: 'chart',
       viewOptions: [],
-      initName: null,
-      $refs: {
-        dataView: {
-          getOptionsForSave () {
-            return ['chart']
-          }
+      name: null,
+      dataView: {
+        getOptionsForSave () {
+          return ['chart']
         }
       }
+
     }
 
     const first = storedInquiries.save(tab, 'foo')
 
-    tab.initName = 'foo'
+    tab.name = 'foo'
     tab.query = 'select * from foo'
     storedInquiries.save(tab)
     const inquiries = storedInquiries.getStoredInquiries()
@@ -409,12 +407,10 @@ describe('storedInquiries.js', () => {
       query: 'select * from foo',
       viewType: 'chart',
       viewOptions: [],
-      initName: 'foo predefined',
-      $refs: {
-        dataView: {
-          getOptionsForSave () {
-            return ['chart']
-          }
+      name: 'foo predefined',
+      dataView: {
+        getOptionsForSave () {
+          return ['chart']
         }
       },
       isPredefined: true

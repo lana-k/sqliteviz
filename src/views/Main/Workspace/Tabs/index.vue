@@ -5,7 +5,7 @@
         v-for="(tab, index) in tabs"
         :key="index"
         @click="selectTab(tab.id)"
-        :class="[{'tab-selected': (tab.id === selectedIndex)}, 'tab']"
+        :class="[{'tab-selected': (tab.id === selectedTabId)}, 'tab']"
       >
         <div class="tab-name">
           <span v-show="!tab.isSaved" class="star">*</span>
@@ -13,20 +13,14 @@
           <span v-else class="tab-untitled">{{ tab.tempName }}</span>
         </div>
         <div>
-          <close-icon class="close-icon" :size="10" @click="beforeCloseTab(index)"/>
+          <close-icon class="close-icon" :size="10" @click="beforeCloseTab(tab)"/>
         </div>
       </div>
     </div>
     <tab
-      v-for="(tab, index) in tabs"
+      v-for="tab in tabs"
       :key="tab.id"
-      :id="tab.id"
-      :init-name="tab.name"
-      :init-query="tab.query"
-      :init-view-options="tab.viewOptions"
-      :init-view-type="tab.viewType"
-      :is-predefined="tab.isPredefined"
-      :tab-index="index"
+      :tab="tab"
     />
     <div v-show="tabs.length === 0" id="start-guide">
       <span class="link" @click="$root.$emit('createNewInquiry')">Create</span>
@@ -38,25 +32,25 @@
     <modal name="close-warn" classes="dialog" height="auto">
       <div class="dialog-header">
         Close tab {{
-          closingTabIndex !== null
-          ? (tabs[closingTabIndex].name || `[${tabs[closingTabIndex].tempName}]`)
+          closingTab !== null
+          ? (closingTab.name || `[${closingTab.tempName}]`)
           : ''
         }}
         <close-icon @click="$modal.hide('close-warn')"/>
       </div>
       <div class="dialog-body">
         You have unsaved changes. Save changes in {{
-          closingTabIndex !== null
-          ? (tabs[closingTabIndex].name || `[${tabs[closingTabIndex].tempName}]`)
+          closingTab !== null
+          ? (closingTab.name || `[${closingTab.tempName}]`)
           : ''
         }} before closing?
       </div>
       <div class="dialog-buttons-container">
-        <button class="secondary" @click="closeTab(closingTabIndex)">
+        <button class="secondary" @click="closeTab(closingTab)">
           Close without saving
         </button>
         <button class="secondary" @click="$modal.hide('close-warn')">Cancel</button>
-        <button class="primary" @click="saveAndClose(closingTabIndex)">Save and close</button>
+        <button class="primary" @click="saveAndClose(closingTab)">Save and close</button>
       </div>
     </modal>
   </div>
@@ -73,14 +67,14 @@ export default {
   },
   data () {
     return {
-      closingTabIndex: null
+      closingTab: null
     }
   },
   computed: {
     tabs () {
       return this.$store.state.tabs
     },
-    selectedIndex () {
+    selectedTabId () {
       return this.$store.state.currentTabId
     }
   },
@@ -97,25 +91,24 @@ export default {
     selectTab (id) {
       this.$store.commit('setCurrentTabId', id)
     },
-    beforeCloseTab (index) {
-      this.closingTabIndex = index
-      if (!this.tabs[index].isSaved) {
+    beforeCloseTab (tab) {
+      this.closingTab = tab
+      if (!tab.isSaved) {
         this.$modal.show('close-warn')
       } else {
-        this.closeTab(index)
+        this.closeTab(tab)
       }
     },
-    closeTab (index) {
+    closeTab (tab) {
       this.$modal.hide('close-warn')
-      this.closingTabIndex = null
-      this.$store.commit('deleteTab', index)
+      this.$store.commit('deleteTab', tab)
     },
-    saveAndClose (index) {
+    saveAndClose (tab) {
       this.$root.$on('inquirySaved', () => {
-        this.closeTab(index)
+        this.closeTab(tab)
         this.$root.$off('inquirySaved')
       })
-      this.selectTab(this.tabs[index].id)
+      this.selectTab(tab.id)
       this.$modal.hide('close-warn')
       this.$nextTick(() => {
         this.$root.$emit('saveInquiry')

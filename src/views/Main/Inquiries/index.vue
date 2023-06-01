@@ -338,12 +338,14 @@ export default {
       storedInquiries.updateStorage(this.inquiries)
 
       // update tab, if renamed inquiry is opened
-      const tabIndex = this.findTabIndex(processedInquiry.id)
-      if (tabIndex >= 0) {
+      const tab = this.$store.state.tabs
+        .find(tab => tab.id === processedInquiry.id)
+      if (tab) {
         this.$store.commit('updateTab', {
-          index: tabIndex,
-          name: this.newName,
-          id: processedInquiry.id
+          tab,
+          newValues: {
+            name: this.newName
+          }
         })
       }
       // hide dialog
@@ -367,9 +369,10 @@ export default {
         this.inquiries.splice(this.processedInquiryIndex, 1)
 
         // Close deleted inquiry tab if it was opened
-        const tabIndex = this.findTabIndex(this.processedInquiryId)
-        if (tabIndex >= 0) {
-          this.$store.commit('deleteTab', tabIndex)
+        const tab = this.$store.state.tabs
+          .find(tab => tab.id === this.processedInquiryId)
+        if (tab) {
+          this.$store.commit('deleteTab', tab)
         }
 
         // Clear checkbox
@@ -383,10 +386,12 @@ export default {
 
         // Close deleted inquiries if it was opened
         const tabs = this.$store.state.tabs
-        for (let i = tabs.length - 1; i >= 0; i--) {
+        let i = tabs.length - 1
+        while (i > -1) {
           if (this.selectedInquiriesIds.has(tabs[i].id)) {
-            this.$store.commit('deleteTab', i)
+            this.$store.commit('deleteTab', tabs[i])
           }
+          i--
         }
 
         // Clear checkboxes
@@ -394,9 +399,6 @@ export default {
       }
       this.selectedInquiriesCount = this.selectedInquiriesIds.size
       storedInquiries.updateStorage(this.inquiries)
-    },
-    findTabIndex (id) {
-      return this.$store.state.tabs.findIndex(tab => tab.id === id)
     },
     exportToFile (inquiryList, fileName) {
       storedInquiries.export(inquiryList, fileName)

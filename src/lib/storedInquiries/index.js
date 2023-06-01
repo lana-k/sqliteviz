@@ -33,17 +33,16 @@ export default {
   },
 
   isTabNeedName (inquiryTab) {
-    const isFromScratch = !inquiryTab.initName
-    return inquiryTab.isPredefined || isFromScratch
+    return inquiryTab.isPredefined || !inquiryTab.name
   },
 
   save (inquiryTab, newName) {
     const value = {
       id: inquiryTab.isPredefined ? nanoid() : inquiryTab.id,
       query: inquiryTab.query,
-      viewType: inquiryTab.$refs.dataView.mode,
-      viewOptions: inquiryTab.$refs.dataView.getOptionsForSave(),
-      name: newName || inquiryTab.initName
+      viewType: inquiryTab.dataView.mode,
+      viewOptions: inquiryTab.dataView.getOptionsForSave(),
+      name: newName || inquiryTab.name
     }
 
     // Get inquiries from local storage

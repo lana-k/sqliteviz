@@ -80,19 +80,10 @@ export default {
       return this.$store.state.currentTab
     },
     isSaved () {
-      if (!this.currentInquiry) {
-        return false
-      }
-      const tabIndex = this.currentInquiry.tabIndex
-      const tab = this.$store.state.tabs[tabIndex]
-      return tab && tab.isSaved
+      return this.currentInquiry && this.currentInquiry.isSaved
     },
     isPredefined () {
-      if (this.currentInquiry) {
-        return this.currentInquiry.isPredefined
-      } else {
-        return false
-      }
+      return this.currentInquiry && this.currentInquiry.isPredefined
     },
     runDisabled () {
       return this.currentInquiry && (!this.$store.state.db || !this.currentInquiry.query)
@@ -145,13 +136,15 @@ export default {
 
       // Update tab in store
       this.$store.commit('updateTab', {
-        index: this.currentInquiry.tabIndex,
-        name: value.name,
-        id: value.id,
-        query: value.query,
-        viewType: value.viewType,
-        viewOptions: value.viewOptions,
-        isSaved: true
+        tab: this.currentInquiry,
+        newValues: {
+          name: value.name,
+          id: value.id,
+          query: value.query,
+          viewType: value.viewType,
+          viewOptions: value.viewOptions,
+          isSaved: true
+        }
       })
 
       // Restore data:

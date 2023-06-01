@@ -1,5 +1,3 @@
-import Vue from 'vue'
-
 export default {
   setDb (state, db) {
     if (state.db) {
@@ -8,8 +6,8 @@ export default {
     state.db = db
   },
 
-  updateTab (state, { index, name, id, query, viewType, viewOptions, isSaved }) {
-    const tab = state.tabs[index]
+  updateTab (state, { tab, newValues }) {
+    const { name, id, query, viewType, viewOptions, isSaved } = newValues
     const oldId = tab.id
 
     if (id && state.currentTabId === oldId) {
@@ -26,13 +24,12 @@ export default {
       // Saved inquiry is not predefined
       delete tab.isPredefined
     }
-
-    Vue.set(state.tabs, index, tab)
   },
 
-  deleteTab (state, index) {
+  deleteTab (state, tab) {
+    const index = state.tabs.indexOf(tab)
     // If closing tab is the current opened
-    if (state.tabs[index].id === state.currentTabId) {
+    if (tab.id === state.currentTabId) {
       if (index < state.tabs.length - 1) {
         state.currentTabId = state.tabs[index + 1].id
       } else if (index > 0) {
@@ -46,10 +43,12 @@ export default {
     state.tabs.splice(index, 1)
   },
   setCurrentTabId (state, id) {
-    state.currentTabId = id
-  },
-  setCurrentTab (state, tab) {
-    state.currentTab = tab
+    try {
+      state.currentTabId = id
+      state.currentTab = state.tabs.find(tab => tab.id === id)
+    } catch (e) {
+      console.error('Can\'t open a tab id:' + id)
+    }
   },
   updatePredefinedInquiries (state, inquiries) {
     state.predefinedInquiries = Array.isArray(inquiries) ? inquiries : [inquiries]
