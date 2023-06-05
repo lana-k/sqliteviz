@@ -3,8 +3,9 @@
     <splitpanes
       class="query-results-splitter"
       horizontal
-      :before="{ size: 50, max: 100 }"
-      :after="{ size: 50, max: 100 }"
+      :before="{ size: topPaneSize, max: 100 }"
+      :after="{ size: 100 - topPaneSize, max: 100 }"
+      :default="{ before: 50, after: 50 }"
     >
       <template #left-pane>
         <div :id="'above-' + tab.id" class="above" />
@@ -69,6 +70,13 @@ export default {
     RunResult,
     Splitpanes,
     Teleport
+  },
+  data () {
+    return {
+      topPaneSize: this.tab.maximize
+        ? this.tab.layout[this.tab.maximize] === 'above' ? 100 : 0
+        : 50
+    }
   },
   computed: {
     isActive () {

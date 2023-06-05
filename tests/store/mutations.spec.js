@@ -283,6 +283,7 @@ describe('mutations', () => {
 
   it('setCurrentTabId', () => {
     const state = {
+      tabs: [{ id: 1 }, { id: 2 }],
       currentTabId: 1
     }
 

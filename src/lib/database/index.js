@@ -77,7 +77,7 @@ class Database {
     }
 
     this.dbName = file ? fu.getFileName(file) : 'database'
-    this.refreshSchema()
+    await this.refreshSchema()
 
     events.send('database.import', file ? file.size : 0, {
       from: file ? 'sqlite' : 'none',

@@ -75,14 +75,23 @@ export default {
   props: {
     horizontal: { type: Boolean, default: false },
     before: { type: Object },
-    after: { type: Object }
+    after: { type: Object },
+    default: {
+      type: Object,
+      default: () => {
+        return {
+          before: 50,
+          after: 50
+        }
+      }
+    }
   },
   data () {
     return {
       container: null,
       paneBefore: this.before,
       paneAfter: this.after,
-      beforeMinimising: {
+      beforeMinimising: !this.after.size || !this.before.size ? this.default : {
         before: this.before.size,
         after: this.after.size
       },

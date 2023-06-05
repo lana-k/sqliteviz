@@ -19,7 +19,9 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: []
     }
     const mutations = {
-      updatePredefinedInquiries: sinon.stub()
+      setPredefinedInquiriesLoaded: sinon.stub(),
+      updatePredefinedInquiries: sinon.stub(),
+      setLoadingPredefinedInquiries: sinon.stub()
     }
     const store = new Vuex.Store({ state, mutations })
     const wrapper = shallowMount(Inquiries, { store })
@@ -327,6 +329,7 @@ describe('Inquiries.vue', () => {
     sinon.stub(storedInquiries, 'getStoredInquiries').returns([inquiryInStorage])
 
     const state = {
+      tabs: [],
       predefinedInquiries: []
     }
     const actions = { addTab: sinon.stub().resolves(1) }

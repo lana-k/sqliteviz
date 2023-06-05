@@ -22,6 +22,7 @@ export default class Tab {
       table: 'bottom',
       dataView: 'hidden'
     }
+    this.maximize = inquiry.maximize
 
     this.isSaved = !!inquiry.id
     this.state = state

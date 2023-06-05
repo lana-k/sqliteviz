@@ -406,4 +406,119 @@ describe('Tab.vue', () => {
     expect(wrapper.find('.above .sql-editor-panel').exists()).to.equal(true)
     expect(wrapper.find('.bottomPane .run-result-panel').exists()).to.equal(true)
   })
+
+  it('Maximize top panel if maximized panel is above', () => {
+    const state = {
+      currentTabId: 1
+    }
+    const store = new Vuex.Store({ state, mutations })
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo; CREATE TABLE bar(a,b);',
+      viewType: 'chart',
+      viewOptions: {},
+      layout: {
+        sqlEditor: 'above',
+        table: 'bottom',
+        dataView: 'hidden'
+      },
+      maximize: 'sqlEditor',
+      isPredefined: false,
+      result: null,
+      isGettingResults: false,
+      error: null,
+      time: 0,
+      isSaved: true
+    }
+
+    const wrapper = mount(Tab, {
+      attachTo: place,
+      store,
+      stubs: ['chart'],
+      propsData: {
+        tab
+      }
+    })
+
+    expect(wrapper.find('.above').element.parentElement.style.height)
+      .to.equal('100%')
+  })
+
+  it('Maximize bottom panel if maximized panel is below', () => {
+    const state = {
+      currentTabId: 1
+    }
+    const store = new Vuex.Store({ state, mutations })
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo; CREATE TABLE bar(a,b);',
+      viewType: 'chart',
+      viewOptions: {},
+      layout: {
+        sqlEditor: 'above',
+        table: 'bottom',
+        dataView: 'hidden'
+      },
+      maximize: 'table',
+      isPredefined: false,
+      result: null,
+      isGettingResults: false,
+      error: null,
+      time: 0,
+      isSaved: true
+    }
+
+    const wrapper = mount(Tab, {
+      attachTo: place,
+      store,
+      stubs: ['chart'],
+      propsData: {
+        tab
+      }
+    })
+
+    expect(wrapper.find('.bottomPane').element.parentElement.style.height)
+      .to.equal('100%')
+  })
+
+  it('Panel size is 50 is nothing to maximize', () => {
+    const state = {
+      currentTabId: 1
+    }
+    const store = new Vuex.Store({ state, mutations })
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo; CREATE TABLE bar(a,b);',
+      viewType: 'chart',
+      viewOptions: {},
+      layout: {
+        sqlEditor: 'above',
+        table: 'bottom',
+        dataView: 'hidden'
+      },
+      isPredefined: false,
+      result: null,
+      isGettingResults: false,
+      error: null,
+      time: 0,
+      isSaved: true
+    }
+
+    const wrapper = mount(Tab, {
+      attachTo: place,
+      store,
+      stubs: ['chart'],
+      propsData: {
+        tab
+      }
+    })
+
+    expect(wrapper.find('.above').element.parentElement.style.height)
+      .to.equal('50%')
+    expect(wrapper.find('.bottomPane').element.parentElement.style.height)
+      .to.equal('50%')
+  })
 })

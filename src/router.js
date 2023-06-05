@@ -4,6 +4,7 @@ import Workspace from '@/views/Main/Workspace'
 import Inquiries from '@/views/Main/Inquiries'
 import Welcome from '@/views/Welcome'
 import Main from '@/views/Main'
+import LoadView from '@/views/LoadView'
 import store from '@/store'
 import database from '@/lib/database'
 
@@ -31,6 +32,11 @@ const routes = [
         component: Inquiries
       }
     ]
+  },
+  {
+    path: '/load',
+    name: 'Load',
+    component: LoadView
   }
 ]
 
@@ -39,7 +45,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (!store.state.db) {
+  if (!store.state.db && to.name !== 'Load') {
     const newDb = database.getNewDatabase()
     await newDb.loadDb()
     store.commit('setDb', newDb)

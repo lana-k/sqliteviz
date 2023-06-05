@@ -40,7 +40,7 @@ describe('Splitpanes.vue', () => {
     expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.height).to.equal('40%')
   })
 
-  it('toggles correctly', async () => {
+  it('toggles correctly - no maximized initially', async () => {
     // mount the component
     const wrapper = shallowMount(Splitpanes, {
       slots: {
@@ -68,6 +68,64 @@ describe('Splitpanes.vue', () => {
     await wrapper.find('.toggle-btn').trigger('click')
     expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.width).to.equal('60%')
     expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.width).to.equal('40%')
+  })
+
+  it('toggles correctly - with maximized initially', async () => {
+    // mount the component
+    let wrapper = shallowMount(Splitpanes, {
+      slots: {
+        leftPane: '<div />',
+        rightPane: '<div />'
+      },
+      propsData: {
+        before: { size: 0, max: 100 },
+        after: { size: 100, max: 100 },
+        default: { before: 20, after: 80 }
+      }
+    })
+
+    await wrapper.find('.toggle-btn').trigger('click')
+    expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.width).to.equal('20%')
+    expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.width).to.equal('80%')
+
+    await wrapper.findAll('.toggle-btn').at(0).trigger('click')
+    expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.width).to.equal('0%')
+    expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.width).to.equal('100%')
+
+    await wrapper.find('.toggle-btn').trigger('click')
+    expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.width).to.equal('20%')
+    expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.width).to.equal('80%')
+
+    await wrapper.findAll('.toggle-btn').at(1).trigger('click')
+    expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.width).to.equal('100%')
+    expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.width).to.equal('0%')
+
+    wrapper = shallowMount(Splitpanes, {
+      slots: {
+        leftPane: '<div />',
+        rightPane: '<div />'
+      },
+      propsData: {
+        before: { size: 100, max: 100 },
+        after: { size: 0, max: 100 }
+      }
+    })
+
+    await wrapper.find('.toggle-btn').trigger('click')
+    expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.width).to.equal('50%')
+    expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.width).to.equal('50%')
+
+    await wrapper.findAll('.toggle-btn').at(0).trigger('click')
+    expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.width).to.equal('0%')
+    expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.width).to.equal('100%')
+
+    await wrapper.find('.toggle-btn').trigger('click')
+    expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.width).to.equal('50%')
+    expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.width).to.equal('50%')
+
+    await wrapper.findAll('.toggle-btn').at(1).trigger('click')
+    expect(wrapper.findAll('.splitpanes-pane').at(0).element.style.width).to.equal('100%')
+    expect(wrapper.findAll('.splitpanes-pane').at(1).element.style.width).to.equal('0%')
   })
 
   it('drag - vertical', async () => {

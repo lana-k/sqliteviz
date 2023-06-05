@@ -2,8 +2,9 @@
   <div>
     <splitpanes
       class="schema-tabs-splitter"
-      :before="{ size: 20, max: 30 }"
-      :after="{ size: 80, max: 100 }"
+      :before="{ size: schemaWidth, max: 30 }"
+      :after="{ size: 100 - schemaWidth, max: 100 }"
+      :default="{ before: 20, after: 80 }"
     >
       <template #left-pane>
         <schema/>
@@ -27,6 +28,11 @@ export default {
     Schema,
     Splitpanes,
     Tabs
+  },
+  data () {
+    return {
+      schemaWidth: this.$route.query.hide_schema === '1' ? 0 : 20
+    }
   },
   async beforeCreate () {
     const schema = this.$store.state.db.schema
