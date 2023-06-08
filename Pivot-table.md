@@ -50,4 +50,5 @@ though there are a couple of challenges with that:
 [How to build a pivot table in SQL(ite)][1] explores two options with static
 (or beforehand-known) and dynamic columns.
 
-[1]: How-to-build-a-pivot-table-in-SQLite
+[1]: How-to-build-a-pivot-table-in-SQ-Lite
+
