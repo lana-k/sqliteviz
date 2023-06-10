@@ -36,7 +36,7 @@ export default {
   },
   async beforeCreate () {
     const schema = this.$store.state.db.schema
-    if (!schema || schema.length === 0) {
+    if ((!schema || schema.length === 0) && this.$store.state.tabs.length === 0) {
       const stmt = [
         '/*',
         ' * Your database is empty. In order to start building charts',

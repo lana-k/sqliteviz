@@ -74,6 +74,9 @@ export default {
 
         if (dataFormat === 'sqlite') {
           await this.getSqliteDb(dataUrl)
+        } else {
+          this.dataMsg.message = 'Unknown data format'
+          this.dataMsg.type = 'error'
         }
 
         // Loading indicator is not needed anymore
