@@ -22,4 +22,4 @@ Use the following form to generate a share link:
 
 [1]: https://gist.github.com/
 [2]: https://cors-test.codehappy.dev/?origin=https%3A%2F%2Fsqliteviz.com%2F&method=get
-[3]: Manage-inquiries
+[3]: ../Manage-inquiries
