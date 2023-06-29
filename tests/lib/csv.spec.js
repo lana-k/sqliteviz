@@ -116,6 +116,27 @@ describe('csv.js', () => {
     await expect(csv.parse(file)).to.be.rejectedWith(err)
   })
 
+  it('parse rejects when getResult failed', async () => {
+    sinon.stub(Papa, 'parse').callsFake((file, config) => {
+      config.complete({
+        data: [
+          [1, new Date('invalid date')],
+          [2, new Date('2023-05-05T15:30:00Z')]
+        ],
+        errors: [],
+        meta: {
+          delimiter: ',',
+          linebreak: '\n',
+          aborted: false,
+          truncated: true
+        }
+      })
+    })
+
+    const file = {}
+    await expect(csv.parse(file)).to.be.rejectedWith('Invalid time value')
+  })
+
   it('prepareForExport', () => {
     const resultSet = {
       columns: ['id', 'name'],
