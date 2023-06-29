@@ -73,21 +73,26 @@ export default {
         comments: false,
         step: undefined,
         complete: results => {
-          const res = {
-            data: this.getResult(results),
-            delimiter: results.meta.delimiter,
-            hasErrors: false,
-            rowCount: results.data.length
+          let res
+          try {
+            res = {
+              data: this.getResult(results),
+              delimiter: results.meta.delimiter,
+              hasErrors: false,
+              rowCount: results.data.length
+            }
+            res.messages = results.errors.map(msg => {
+              msg.type = msg.code === 'UndetectableDelimiter' ? 'info' : 'error'
+              if (msg.type === 'error') res.hasErrors = true
+              msg.hint = hintsByCode[msg.code]
+              return msg
+            })
+          } catch (error) {
+            reject(error)
           }
-          res.messages = results.errors.map(msg => {
-            msg.type = msg.code === 'UndetectableDelimiter' ? 'info' : 'error'
-            if (msg.type === 'error') res.hasErrors = true
-            msg.hint = hintsByCode[msg.code]
-            return msg
-          })
           resolve(res)
         },
-        error: (error, file) => {
+        error: error => {
           reject(error)
         },
         download: false,
