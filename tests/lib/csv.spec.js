@@ -117,6 +117,12 @@ describe('csv.js', () => {
   })
 
   it('parse rejects when getResult failed', async () => {
+    let err
+    try {
+      new Date('invalid date').toISOString()
+    } catch (e) {
+      err = e // get error message, it's different depending on browser
+    }
     sinon.stub(Papa, 'parse').callsFake((file, config) => {
       config.complete({
         data: [
@@ -134,7 +140,7 @@ describe('csv.js', () => {
     })
 
     const file = {}
-    await expect(csv.parse(file)).to.be.rejectedWith('Invalid time value')
+    await expect(csv.parse(file)).to.be.rejectedWith(err.message)
   })
 
   it('prepareForExport', () => {
