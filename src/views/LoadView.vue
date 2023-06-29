@@ -18,6 +18,7 @@
 import fu from '@/lib/utils/fileIo'
 import database from '@/lib/database'
 import Logs from '@/components/Logs'
+import events from '@/lib/utils/events'
 
 export default {
   name: 'LoadView',
@@ -45,6 +46,14 @@ export default {
       inquiry_id: inquiryIds,
       maximize
     } = this.$route.query
+
+    events.send('share.load', null, {
+      has_data_url: !!dataUrl,
+      data_format: dataFormat,
+      has_inquiry_url: !!inquiryUrl,
+      inquiry_id_count: (inquiryIds || []).length,
+      maximize
+    })
 
     await this.loadData(dataUrl, dataFormat)
     const inquiries = await this.loadInquiries(inquiryUrl, inquiryIds)
