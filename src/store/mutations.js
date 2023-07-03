@@ -36,9 +36,11 @@ export default {
         state.currentTabId = state.tabs[index - 1].id
       } else {
         state.currentTabId = null
-        state.currentTab = null
         state.untitledLastIndex = 0
       }
+      state.currentTab = state.currentTabId
+        ? state.tabs.find(tab => tab.id === state.currentTabId)
+        : null
     }
     state.tabs.splice(index, 1)
   },

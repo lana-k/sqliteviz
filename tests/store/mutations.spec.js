@@ -176,13 +176,15 @@ describe('mutations', () => {
 
     const state = {
       tabs: [tab1, tab2],
-      currentTabId: 1
+      currentTabId: 1,
+      currentTab: tab1
     }
 
     deleteTab(state, tab1)
     expect(state.tabs).to.have.lengthOf(1)
     expect(state.tabs[0].id).to.equal(2)
     expect(state.currentTabId).to.equal(2)
+    expect(state.currentTab).to.eql(tab2)
   })
 
   it('deleteTab - opened, last', () => {
@@ -208,13 +210,15 @@ describe('mutations', () => {
 
     const state = {
       tabs: [tab1, tab2],
-      currentTabId: 2
+      currentTabId: 2,
+      currentTab: tab2
     }
 
     deleteTab(state, tab2)
     expect(state.tabs).to.have.lengthOf(1)
     expect(state.tabs[0].id).to.equal(1)
     expect(state.currentTabId).to.equal(1)
+    expect(state.currentTab).to.eql(tab1)
   })
 
   it('deleteTab - opened, in the middle', () => {
@@ -250,7 +254,8 @@ describe('mutations', () => {
 
     const state = {
       tabs: [tab1, tab2, tab3],
-      currentTabId: 2
+      currentTabId: 2,
+      currentTab: tab2
     }
 
     deleteTab(state, tab2)
@@ -258,6 +263,7 @@ describe('mutations', () => {
     expect(state.tabs[0].id).to.equal(1)
     expect(state.tabs[1].id).to.equal(3)
     expect(state.currentTabId).to.equal(3)
+    expect(state.currentTab).to.eql(tab3)
   })
 
   it('deleteTab - opened, single', () => {
@@ -273,12 +279,14 @@ describe('mutations', () => {
 
     const state = {
       tabs: [tab1],
-      currentTabId: 1
+      currentTabId: 1,
+      currentTab: tab1
     }
 
     deleteTab(state, tab1)
     expect(state.tabs).to.have.lengthOf(0)
     expect(state.currentTabId).to.equal(null)
+    expect(state.currentTab).to.equal(null)
   })
 
   it('setCurrentTabId', () => {
