@@ -29,6 +29,7 @@
 
     <teleport :to="`#${tab.layout.table}-${tab.id}`">
       <run-result
+        :tab="tab"
         :result="tab.result"
         :is-getting-results="tab.isGettingResults"
         :error="tab.error"

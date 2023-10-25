@@ -1,31 +1,21 @@
 <template>
-  <div class="run-result-panel" ref="runResultPanel">
-    <div class="run-result-panel-content">
-      <div
-        v-show="result === null && !isGettingResults && !error"
-        class="table-preview result-before"
-      >
-        Run your query and get results here
-      </div>
-      <div v-if="isGettingResults" class="table-preview result-in-progress">
-        <loading-indicator :size="30"/>
-        Fetching results...
-      </div>
-      <div
-        v-show="result === undefined && !isGettingResults && !error"
-        class="table-preview result-empty"
-      >
-        No rows retrieved according to your query
-      </div>
-      <logs v-if="error" :messages="[error]"/>
-      <sql-table
-        v-if="result"
-        :data-set="result"
-        :time="time"
-        :pageSize="pageSize"
-        class="straight"
-      />
-    </div>
+  <div class="run-result-panel">
+   <component
+      :is="viewValuePanelVisible ? 'splitpanes':'div'"
+      :before="{ size: 50, max: 100 }"
+      :after="{ size: 50, max: 100 }"
+      :default="{ before: 50, after: 50 }"
+      class="run-result-panel-content"
+    >
+      <template  #left-pane>
+      <div :id="'run-result-left-pane-'+tab.id" class="result-set-container"/>
+      </template>
+      <div :id="'run-result-result-set-'+tab.id" class="result-set-container"/>
+      <template #right-pane v-if="viewValuePanelVisible">
+        <div>hello</div>
+      </template>
+    </component>
+
     <side-tool-bar @switchTo="$emit('switchTo', $event)" panel="table">
       <icon-button
         :disabled="!result"
@@ -44,6 +34,15 @@
       >
         <clipboard-icon/>
       </icon-button>
+
+      <icon-button
+        :disabled="!result"
+        tooltip="View value"
+        tooltip-position="top-left"
+        @click="toggleViewValuePanel"
+      >
+        <clipboard-icon/>
+      </icon-button>
     </side-tool-bar>
 
     <loading-dialog
@@ -56,6 +55,35 @@
       @action="copyToClipboard"
       @cancel="cancelCopy"
     />
+
+    <teleport :to="resultSetTeleportTarget">
+      <div ref="runResultPanel">
+            <div
+              v-show="result === null && !isGettingResults && !error"
+              class="table-preview result-before"
+            >
+              Run your query and get results here
+            </div>
+            <div v-if="isGettingResults" class="table-preview result-in-progress">
+              <loading-indicator :size="30"/>
+              Fetching results...
+            </div>
+            <div
+              v-show="result === undefined && !isGettingResults && !error"
+              class="table-preview result-empty"
+            >
+              No rows retrieved according to your query
+            </div>
+            <logs v-if="error" :messages="[error]"/>
+            <sql-table
+              v-if="result"
+              :data-set="result"
+              :time="time"
+              :pageSize="pageSize"
+              class="straight"
+            />
+          </div>
+    </teleport>
   </div>
 </template>
 
@@ -63,7 +91,8 @@
 import Logs from '@/components/Logs'
 import SqlTable from '@/components/SqlTable'
 import LoadingIndicator from '@/components/LoadingIndicator'
-import SideToolBar from './SideToolBar'
+import SideToolBar from '../SideToolBar'
+import Splitpanes from '@/components/Splitpanes'
 import ExportToCsvIcon from '@/components/svg/exportToCsv'
 import ClipboardIcon from '@/components/svg/clipboard'
 import IconButton from '@/components/IconButton'
@@ -73,16 +102,24 @@ import cIo from '@/lib/utils/clipboardIo'
 import time from '@/lib/utils/time'
 import loadingDialog from '@/components/LoadingDialog'
 import events from '@/lib/utils/events'
+import Teleport from 'vue2-teleport'
 
 export default {
   name: 'RunResult',
-  props: ['result', 'isGettingResults', 'error', 'time'],
+  props: {
+    tab: Object,
+    result: Object,
+    isGettingResults: Boolean,
+    error: Object,
+    time: [String, Number]
+  },
   data () {
     return {
       resizeObserver: null,
       pageSize: 20,
       preparingCopy: false,
-      dataToCopy: null
+      dataToCopy: null,
+      viewValuePanelVisible: false
     }
   },
   components: {
@@ -93,7 +130,19 @@ export default {
     ExportToCsvIcon,
     IconButton,
     ClipboardIcon,
-    loadingDialog
+    loadingDialog,
+    Splitpanes,
+    Teleport
+  },
+  computed: {
+    resultSetTeleportTarget () {
+      const base = `#${this.viewValuePanelVisible
+        ? 'run-result-left-pane'
+        : 'run-result-result-set'
+      }`
+      const tabIdPostfix = `-${this.tab.id}`
+      return base + tabIdPostfix
+    }
   },
   mounted () {
     this.resizeObserver = new ResizeObserver(this.handleResize)
@@ -167,6 +216,10 @@ export default {
     cancelCopy () {
       this.dataToCopy = null
       this.$modal.hide('prepareCSVCopy')
+    },
+
+    toggleViewValuePanel () {
+      this.viewValuePanelVisible = !this.viewValuePanelVisible
     }
   }
 }
@@ -180,10 +233,15 @@ export default {
 }
 
 .run-result-panel-content {
-  position: relative;
   flex-grow: 1;
   height: 100%;
   width: 0;
+}
+
+.result-set-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
   box-sizing: border-box;
 }
 
