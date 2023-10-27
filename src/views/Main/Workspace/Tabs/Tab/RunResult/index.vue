@@ -12,7 +12,7 @@
       </template>
       <div :id="'run-result-result-set-'+tab.id" class="result-set-container"/>
       <template #right-pane v-if="viewValuePanelVisible">
-        <div>hello</div>
+        <div><value-viewer :cellValue="testCell"/></div>
       </template>
     </component>
 
@@ -103,6 +103,7 @@ import time from '@/lib/utils/time'
 import loadingDialog from '@/components/LoadingDialog'
 import events from '@/lib/utils/events'
 import Teleport from 'vue2-teleport'
+import ValueViewer from './ValueViewer'
 
 export default {
   name: 'RunResult',
@@ -119,7 +120,12 @@ export default {
       pageSize: 20,
       preparingCopy: false,
       dataToCopy: null,
-      viewValuePanelVisible: false
+      viewValuePanelVisible: false,
+      testCell: JSON.stringify(
+        JSON.parse('{"x": 1, "y": 2, "vector": [1,2,3]}'),
+        null,
+        4
+      )
     }
   },
   components: {
@@ -131,6 +137,7 @@ export default {
     IconButton,
     ClipboardIcon,
     loadingDialog,
+    ValueViewer,
     Splitpanes,
     Teleport
   },
