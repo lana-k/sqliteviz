@@ -18,7 +18,11 @@
         ref="table-container"
         @scroll="onScrollTable"
       >
-      <table ref="table" class="sqliteviz-table">
+      <table
+        ref="table"
+        class="sqliteviz-table"
+        @keydown="onTableKeydown"
+      >
         <thead>
           <tr>
             <th v-for="(th, index) in columns" :key="index" ref="th">
@@ -28,7 +32,13 @@
         </thead>
         <tbody>
           <tr v-for="rowIndex in currentPageData.count" :key="rowIndex">
-            <td v-for="(col, colIndex) in columns" :key="colIndex">
+            <td
+              v-for="(col, colIndex) in columns"
+              :data-col="colIndex"
+              :data-row="rowIndex - 1"
+              :key="colIndex"
+              tabindex="0"
+            >
               <div class="cell-data" :style="cellStyle">
                 {{ dataSet.values[col][rowIndex - 1 + currentPageData.start] }}
               </div>
@@ -110,6 +120,55 @@ export default {
     },
     onScrollTable () {
       this.$refs['header-container'].scrollLeft = this.$refs['table-container'].scrollLeft
+    },
+    onTableKeydown (e) {
+      const keyCodeMap = {
+        37: 'left',
+        39: 'right',
+        38: 'up',
+        40: 'down'
+      }
+
+      if (!Object.keys(keyCodeMap).includes(e.keyCode.toString())) {
+        return
+      }
+
+      this.moveFocusInTable(e.target, keyCodeMap[e.keyCode])
+    },
+    moveFocusInTable (initialCell, direction) {
+      const currentRowIndex = +initialCell.dataset.row
+      const currentColIndex = +initialCell.dataset.col
+      let newRowIndex, newColIndex
+
+      if (direction === 'right') {
+        if (currentColIndex === this.columns.length - 1) {
+          newRowIndex = currentRowIndex + 1
+          newColIndex = 0
+        } else {
+          newRowIndex = currentRowIndex
+          newColIndex = currentColIndex + 1
+        }
+      } else if (direction === 'left') {
+        if (currentColIndex === 0) {
+          newRowIndex = currentRowIndex - 1
+          newColIndex = this.columns.length - 1
+        } else {
+          newRowIndex = currentRowIndex
+          newColIndex = currentColIndex - 1
+        }
+      } else if (direction === 'up') {
+        newRowIndex = currentRowIndex - 1
+        newColIndex = currentColIndex
+      } else if (direction === 'down') {
+        newRowIndex = currentRowIndex + 1
+        newColIndex = currentColIndex
+      }
+
+      const newCell = this.$refs.table
+        .querySelector(`td[data-col="${newColIndex}"][data-row="${newRowIndex}"]`)
+      if (newCell) {
+        newCell.focus()
+      }
     }
   },
   mounted () {
