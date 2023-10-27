@@ -21,6 +21,7 @@
       <table
         ref="table"
         class="sqliteviz-table"
+        tabindex="0"
         @keydown="onTableKeydown"
       >
         <thead>
@@ -37,7 +38,8 @@
               :data-col="colIndex"
               :data-row="rowIndex - 1"
               :key="colIndex"
-              tabindex="0"
+              :aria-selected="false"
+              @click="selectCell($event.target)"
             >
               <div class="cell-data" :style="cellStyle">
                 {{ dataSet.values[col][rowIndex - 1 + currentPageData.start] }}
@@ -79,7 +81,8 @@ export default {
       header: null,
       tableWidth: null,
       currentPage: 1,
-      resizeObserver: null
+      resizeObserver: null,
+      selectedCellElement: null
     }
   },
   computed: {
@@ -133,7 +136,15 @@ export default {
         return
       }
 
-      this.moveFocusInTable(e.target, keyCodeMap[e.keyCode])
+      this.moveFocusInTable(this.selectedCellElement, keyCodeMap[e.keyCode])
+    },
+    selectCell (cell) {
+      if (this.selectedCellElement) {
+        this.selectedCellElement.ariaSelected = false
+      }
+      cell.ariaSelected = true
+      this.selectedCellElement = cell
+      this.$emit('updateSelectedCell', cell)
     },
     moveFocusInTable (initialCell, direction) {
       const currentRowIndex = +initialCell.dataset.row
@@ -167,7 +178,7 @@ export default {
       const newCell = this.$refs.table
         .querySelector(`td[data-col="${newColIndex}"][data-row="${newRowIndex}"]`)
       if (newCell) {
-        newCell.focus()
+        this.selectCell(newCell)
       }
     }
   },
@@ -189,4 +200,13 @@ export default {
 </script>
 
 <style scoped>
+table.sqliteviz-table:focus {
+  outline: none;
+}
+.sqliteviz-table tbody td:hover {
+  background-color: var(--color-bg-light-3);
+}
+.sqliteviz-table tbody td[aria-selected="true"] {
+  box-shadow:inset 0 0 0 1px var(--color-accent);
+}
 </style>

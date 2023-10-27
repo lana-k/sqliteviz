@@ -12,7 +12,9 @@
       </template>
       <div :id="'run-result-result-set-'+tab.id" class="result-set-container"/>
       <template #right-pane v-if="viewValuePanelVisible">
-        <div><value-viewer :cellValue="testCell"/></div>
+        <div class="value-viewer-container">
+          <value-viewer v-show="selectedCell" :cellValue="selectedCellValue"/>
+        </div>
       </template>
     </component>
 
@@ -81,6 +83,7 @@
               :time="time"
               :pageSize="pageSize"
               class="straight"
+              @updateSelectedCell="onUpdateSelectedCell"
             />
           </div>
     </teleport>
@@ -121,11 +124,8 @@ export default {
       preparingCopy: false,
       dataToCopy: null,
       viewValuePanelVisible: false,
-      testCell: JSON.stringify(
-        JSON.parse('{"x": 1, "y": 2, "vector": [1,2,3]}'),
-        null,
-        4
-      )
+      selectedCell: null,
+      selectedCellValue: ''
     }
   },
   components: {
@@ -227,6 +227,11 @@ export default {
 
     toggleViewValuePanel () {
       this.viewValuePanelVisible = !this.viewValuePanelVisible
+    },
+
+    onUpdateSelectedCell (e) {
+      this.selectedCell = e
+      this.selectedCellValue = this.selectedCell?.innerText
     }
   }
 }
@@ -250,6 +255,11 @@ export default {
   height: 100%;
   width: 100%;
   box-sizing: border-box;
+}
+.value-viewer-container {
+  height: 100%;
+  width: 100%;
+  background-color: var(--color-white);
 }
 
 .table-preview {
