@@ -39,7 +39,7 @@
               :data-row="rowIndex - 1"
               :key="colIndex"
               :aria-selected="false"
-              @click="selectCell($event.target)"
+              @click="onCellClick"
             >
               <div class="cell-data" :style="cellStyle">
                 {{ dataSet.values[col][rowIndex - 1 + currentPageData.start] }}
@@ -135,16 +135,26 @@ export default {
       if (!Object.keys(keyCodeMap).includes(e.keyCode.toString())) {
         return
       }
+      e.preventDefault()
 
       this.moveFocusInTable(this.selectedCellElement, keyCodeMap[e.keyCode])
     },
+    onCellClick (e) {
+      this.selectCell(e.target.closest('td'))
+    },
     selectCell (cell) {
-      if (this.selectedCellElement) {
-        this.selectedCellElement.ariaSelected = false
+      if (!cell.ariaSelected || cell.ariaSelected === 'false') {
+        if (this.selectedCellElement) {
+          this.selectedCellElement.ariaSelected = 'false'
+        }
+        cell.ariaSelected = 'true'
+        this.selectedCellElement = cell
+      } else {
+        cell.ariaSelected = 'false'
+        this.selectedCellElement = null
       }
-      cell.ariaSelected = true
-      this.selectedCellElement = cell
-      this.$emit('updateSelectedCell', cell)
+
+      this.$emit('updateSelectedCell', this.selectedCellElement)
     },
     moveFocusInTable (initialCell, direction) {
       const currentRowIndex = +initialCell.dataset.row
