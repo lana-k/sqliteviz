@@ -39,6 +39,15 @@
 
       <icon-button
         :disabled="!result"
+        tooltip="View record"
+        tooltip-position="top-left"
+        @click="toggleViewRecord"
+      >
+        <export-to-csv-icon/>
+      </icon-button>
+
+      <icon-button
+        :disabled="!result"
         tooltip="View value"
         tooltip-position="top-left"
         @click="toggleViewValuePanel"
@@ -78,7 +87,16 @@
             </div>
             <logs v-if="error" :messages="[error]"/>
             <sql-table
-              v-if="result"
+              v-if="result && !viewRecord"
+              :data-set="result"
+              :time="time"
+              :pageSize="pageSize"
+              class="straight"
+              @updateSelectedCell="onUpdateSelectedCell"
+            />
+
+            <record
+              v-if="result && viewRecord"
               :data-set="result"
               :time="time"
               :pageSize="pageSize"
@@ -107,6 +125,7 @@ import loadingDialog from '@/components/LoadingDialog'
 import events from '@/lib/utils/events'
 import Teleport from 'vue2-teleport'
 import ValueViewer from './ValueViewer'
+import Record from './Record/index.vue'
 
 export default {
   name: 'RunResult',
@@ -125,7 +144,8 @@ export default {
       dataToCopy: null,
       viewValuePanelVisible: false,
       selectedCell: null,
-      selectedCellValue: ''
+      selectedCellValue: '',
+      viewRecord: false
     }
   },
   components: {
@@ -138,6 +158,7 @@ export default {
     ClipboardIcon,
     loadingDialog,
     ValueViewer,
+    Record,
     Splitpanes,
     Teleport
   },
@@ -227,6 +248,10 @@ export default {
 
     toggleViewValuePanel () {
       this.viewValuePanelVisible = !this.viewValuePanelVisible
+    },
+
+    toggleViewRecord () {
+      this.viewRecord = !this.viewRecord
     },
 
     onUpdateSelectedCell (e) {
