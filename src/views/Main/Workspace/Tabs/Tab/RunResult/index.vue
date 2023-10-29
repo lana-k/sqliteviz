@@ -1,5 +1,5 @@
 <template>
-  <div class="run-result-panel">
+  <div class="run-result-panel" ref="runResultPanel">
    <component
       :is="viewValuePanelVisible ? 'splitpanes':'div'"
       :before="{ size: 50, max: 100 }"
@@ -8,7 +8,7 @@
       class="run-result-panel-content"
     >
       <template  #left-pane>
-      <div :id="'run-result-left-pane-'+tab.id" class="result-set-container"/>
+        <div :id="'run-result-left-pane-'+tab.id" class="result-set-container"/>
       </template>
       <div :id="'run-result-result-set-'+tab.id" class="result-set-container"/>
       <template #right-pane v-if="viewValuePanelVisible">
@@ -68,7 +68,7 @@
     />
 
     <teleport :to="resultSetTeleportTarget">
-      <div ref="runResultPanel">
+      <div>
             <div
               v-show="result === null && !isGettingResults && !error"
               class="table-preview result-before"
@@ -91,16 +91,19 @@
               :data-set="result"
               :time="time"
               :pageSize="pageSize"
+              :page="defaultPage"
+              :selected-cell-coordinates="defaultSelectedCell"
               class="straight"
               @updateSelectedCell="onUpdateSelectedCell"
             />
 
             <record
+              ref="recordView"
               v-if="result && viewRecord"
               :data-set="result"
               :time="time"
-              :pageSize="pageSize"
-              class="straight"
+              :selected-column-index="selectedCell ? +selectedCell.dataset.col : 0"
+              :rowIndex="selectedCell ? +selectedCell.dataset.record : 0"
               @updateSelectedCell="onUpdateSelectedCell"
             />
           </div>
@@ -145,7 +148,9 @@ export default {
       viewValuePanelVisible: false,
       selectedCell: null,
       selectedCellValue: '',
-      viewRecord: false
+      viewRecord: false,
+      defaultPage: 1,
+      defaultSelectedCell: null
     }
   },
   components: {
@@ -251,6 +256,16 @@ export default {
     },
 
     toggleViewRecord () {
+      if (this.viewRecord) {
+        this.defaultSelectedCell = {
+          row: (this.$refs.recordView.currentRowIndex + this.pageSize) % this.pageSize,
+          col: this.selectedCell ? +this.selectedCell.dataset.row : 0
+        }
+        this.defaultPage = Math.ceil(
+          (this.$refs.recordView.currentRowIndex + 1) / this.pageSize
+        )
+      }
+
       this.viewRecord = !this.viewRecord
     },
 
@@ -275,7 +290,8 @@ export default {
   width: 0;
 }
 
-.result-set-container {
+.result-set-container,
+.result-set-container > div {
   position: relative;
   height: 100%;
   width: 100%;

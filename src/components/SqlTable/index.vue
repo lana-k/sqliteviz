@@ -37,6 +37,7 @@
               v-for="(col, colIndex) in columns"
               :data-col="colIndex"
               :data-row="rowIndex - 1"
+              :data-record="pageSize * (currentPage - 1) + rowIndex - 1"
               :key="colIndex"
               :aria-selected="false"
               @click="onCellClick"
@@ -74,13 +75,18 @@ export default {
       type: Number,
       default: 20
     },
-    preview: Boolean
+    page: {
+      type: Number,
+      default: 1
+    },
+    preview: Boolean,
+    selectedCellCoordinates: Object
   },
   data () {
     return {
       header: null,
       tableWidth: null,
-      currentPage: 1,
+      currentPage: this.page,
       resizeObserver: null,
       selectedCellElement: null
     }
@@ -112,6 +118,20 @@ export default {
       }
     }
   },
+  mounted () {
+    this.resizeObserver = new ResizeObserver(this.calculateHeadersWidth)
+    this.resizeObserver.observe(this.$refs.table)
+    this.calculateHeadersWidth()
+
+    if (this.selectedCellCoordinates) {
+      const { row, col } = this.selectedCellCoordinates
+      const cell = this.$refs.table
+        .querySelector(`td[data-col="${col}"][data-row="${row}"]`)
+      if (cell) {
+        this.selectCell(cell)
+      }
+    }
+  },
   methods: {
     calculateHeadersWidth () {
       this.tableWidth = this.$refs['table-container'].offsetWidth
@@ -132,7 +152,10 @@ export default {
         40: 'down'
       }
 
-      if (!Object.keys(keyCodeMap).includes(e.keyCode.toString())) {
+      if (
+        !this.selectedCellElement ||
+        !Object.keys(keyCodeMap).includes(e.keyCode.toString())
+      ) {
         return
       }
       e.preventDefault()
@@ -191,11 +214,6 @@ export default {
         this.selectCell(newCell)
       }
     }
-  },
-  mounted () {
-    this.resizeObserver = new ResizeObserver(this.calculateHeadersWidth)
-    this.resizeObserver.observe(this.$refs.table)
-    this.calculateHeadersWidth()
   },
   beforeDestroy () {
     this.resizeObserver.unobserve(this.$refs.table)

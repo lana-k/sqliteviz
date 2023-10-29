@@ -54,15 +54,11 @@ export default {
   props: {
     dataSet: Object,
     time: String,
-    pageSize: {
-      type: Number,
-      default: 20
-    },
-    rowIndex: { type: Number, default: 0 }
+    rowIndex: { type: Number, default: 0 },
+    selectedColumnIndex: Number
   },
   data () {
     return {
-      currentPage: 1,
       selectedCellElement: null,
       currentRowIndex: this.rowIndex
     }
@@ -73,21 +69,13 @@ export default {
     },
     rowCount () {
       return this.dataSet.values[this.columns[0]].length
-    },
-    pageCount () {
-      return Math.ceil(this.rowCount / this.pageSize)
-    },
-    currentPageData () {
-      const start = (this.currentPage - 1) * this.pageSize
-      let end = start + this.pageSize
-      if (end > this.rowCount - 1) {
-        end = this.rowCount - 1
-      }
-      return {
-        start,
-        end,
-        count: end - start + 1
-      }
+    }
+  },
+  mounted () {
+    const cell = this.$refs.table
+      .querySelector(`td[data-col="1"][data-row="${this.selectedColumnIndex}"]`)
+    if (cell) {
+      this.selectCell(cell)
     }
   },
   methods: {
@@ -97,7 +85,10 @@ export default {
         40: 'down'
       }
 
-      if (!Object.keys(keyCodeMap).includes(e.keyCode.toString())) {
+      if (
+        !this.selectedCellElement ||
+        !Object.keys(keyCodeMap).includes(e.keyCode.toString())
+      ) {
         return
       }
       e.preventDefault()
@@ -133,11 +124,6 @@ export default {
         this.selectCell(newCell)
       }
     }
-  },
-  watch: {
-    dataSet () {
-      this.currentPage = 1
-    }
   }
 }
 </script>
@@ -168,5 +154,9 @@ table.sqliteviz-table {
   border-bottom: 1px solid var(--color-border-light);
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.table-footer {
+  align-items: center;
 }
 </style>
