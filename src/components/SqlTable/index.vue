@@ -163,10 +163,15 @@ export default {
       this.moveFocusInTable(this.selectedCellElement, keyCodeMap[e.keyCode])
     },
     onCellClick (e) {
-      this.selectCell(e.target.closest('td'))
+      this.selectCell(e.target.closest('td'), false)
     },
-    selectCell (cell) {
-      if (!cell.ariaSelected || cell.ariaSelected === 'false') {
+    selectCell (cell, scrollTo = true) {
+      if (!cell) {
+        if (this.selectedCellElement) {
+          this.selectedCellElement.ariaSelected = 'false'
+        }
+        this.selectedCellElement = cell
+      } else if (!cell.ariaSelected || cell.ariaSelected === 'false') {
         if (this.selectedCellElement) {
           this.selectedCellElement.ariaSelected = 'false'
         }
@@ -175,6 +180,10 @@ export default {
       } else {
         cell.ariaSelected = 'false'
         this.selectedCellElement = null
+      }
+
+      if (this.selectedCellElement && scrollTo) {
+        this.selectedCellElement.scrollIntoView()
       }
 
       this.$emit('updateSelectedCell', this.selectedCellElement)
@@ -219,7 +228,10 @@ export default {
     this.resizeObserver.unobserve(this.$refs.table)
   },
   watch: {
-    currentPageData: 'calculateHeadersWidth',
+    currentPageData () {
+      this.calculateHeadersWidth()
+      this.selectCell(null)
+    },
     dataSet () {
       this.currentPage = 1
     }

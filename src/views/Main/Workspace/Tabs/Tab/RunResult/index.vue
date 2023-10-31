@@ -185,6 +185,13 @@ export default {
   beforeDestroy () {
     this.resizeObserver.unobserve(this.$refs.runResultPanel)
   },
+  watch: {
+    result () {
+      this.defaultSelectedCell = null
+      this.selectedCell = null
+      this.selectedCellValue = ''
+    }
+  },
   methods: {
     handleResize () {
       this.calculatePageSize()
