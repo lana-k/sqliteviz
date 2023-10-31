@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="record-view">
     <div class="table-container">
       <table
         ref="table"
@@ -136,7 +136,7 @@ table.sqliteviz-table:focus {
   background-color: var(--color-bg-light-3);
 }
 .sqliteviz-table tbody td[aria-selected="true"] {
-  box-shadow:inset 0 0 0 1px var(--color-accent);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
 }
 
 table.sqliteviz-table {
@@ -152,11 +152,23 @@ table.sqliteviz-table {
   background-color: var(--color-bg-dark);
   color: var(--color-text-light);
   border-bottom: 1px solid var(--color-border-light);
+  border-right: 1px solid var(--color-border-light);
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: left;
 }
 
 .table-footer {
   align-items: center;
+}
+.record-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.table-container {
+  flex-grow: 1;
+  overflow: auto;
 }
 </style>
