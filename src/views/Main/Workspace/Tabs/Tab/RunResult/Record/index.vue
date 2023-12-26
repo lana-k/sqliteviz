@@ -78,6 +78,15 @@ export default {
       this.selectCell(cell)
     }
   },
+  watch: {
+    currentRowIndex () {
+      if (this.selectedCellElement) {
+        const previouslySelected = this.selectedCellElement
+        this.selectCell(null)
+        this.selectCell(previouslySelected)
+      }
+    }
+  },
   methods: {
     onTableKeydown (e) {
       const keyCodeMap = {

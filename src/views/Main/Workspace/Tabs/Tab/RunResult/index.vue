@@ -13,7 +13,10 @@
       <div :id="'run-result-result-set-'+tab.id" class="result-set-container"/>
       <template #right-pane v-if="viewValuePanelVisible">
         <div class="value-viewer-container">
-          <value-viewer v-show="selectedCell" :cellValue="selectedCellValue"/>
+          <value-viewer
+            v-show="selectedCell"
+            :cellValue="selectedCell ? selectedCell.innerText : ''"
+          />
         </div>
       </template>
     </component>
@@ -41,6 +44,7 @@
         :disabled="!result"
         tooltip="View record"
         tooltip-position="top-left"
+        :active="viewRecord"
         @click="toggleViewRecord"
       >
         <export-to-csv-icon/>
@@ -50,6 +54,7 @@
         :disabled="!result"
         tooltip="View value"
         tooltip-position="top-left"
+        :active="viewValuePanelVisible"
         @click="toggleViewValuePanel"
       >
         <clipboard-icon/>
@@ -147,7 +152,6 @@ export default {
       dataToCopy: null,
       viewValuePanelVisible: false,
       selectedCell: null,
-      selectedCellValue: '',
       viewRecord: false,
       defaultPage: 1,
       defaultSelectedCell: null
@@ -189,7 +193,6 @@ export default {
     result () {
       this.defaultSelectedCell = null
       this.selectedCell = null
-      this.selectedCellValue = ''
     }
   },
   methods: {
@@ -278,7 +281,6 @@ export default {
 
     onUpdateSelectedCell (e) {
       this.selectedCell = e
-      this.selectedCellValue = this.selectedCell?.innerText
     }
   }
 }
