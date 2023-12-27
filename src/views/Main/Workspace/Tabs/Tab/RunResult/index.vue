@@ -17,6 +17,9 @@
             v-show="selectedCell"
             :cellValue="selectedCell ? selectedCell.innerText : ''"
           />
+          <div v-show="!selectedCell" class="table-preview">
+            No cell selected to view
+          </div>
         </div>
       </template>
     </component>
@@ -314,6 +317,7 @@ export default {
   height: 100%;
   width: 100%;
   background-color: var(--color-white);
+  position: relative;
 }
 
 .table-preview {
@@ -323,6 +327,7 @@ export default {
   transform: translate(-50%, -50%);
   color: var(--color-text-base);
   font-size: 13px;
+  text-align: center;
 }
 
 .result-in-progress {

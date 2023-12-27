@@ -20,13 +20,18 @@
     </div>
     <div class="value-body">
       <codemirror
-        v-if="currentFormat === 'json'"
+        v-if="currentFormat === 'json' && formattedJson"
         :value="formattedJson"
         :options="cmOptions"
       />
-      <div v-else class="text-value">
+      <div v-if="currentFormat === 'text'" class="text-value">
         {{ cellValue }}
       </div>
+      <logs
+        v-if="messages && messages.length > 0"
+        :messages="messages"
+        class="messages"
+      />
     </div>
   </div>
 </template>
@@ -41,10 +46,12 @@ import 'codemirror/addon/fold/foldgutter.css'
 import 'codemirror/addon/fold/brace-fold.js'
 import 'codemirror/theme/neo.css'
 import cIo from '@/lib/utils/clipboardIo'
+import Logs from '@/components/Logs'
 
 export default {
   components: {
-    codemirror
+    codemirror,
+    Logs
   },
   props: {
     cellValue: [String, Number]
@@ -66,7 +73,8 @@ export default {
         gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
         readOnly: true
       },
-      formattedJson: ''
+      formattedJson: '',
+      messages: []
     }
   },
   watch: {
@@ -84,12 +92,17 @@ export default {
   },
   methods: {
     formatJson (jsonStr) {
+      this.messages = []
       try {
         this.formattedJson = JSON.stringify(
           JSON.parse(jsonStr), null, 4
         )
       } catch {
         this.formattedJson = ''
+        this.messages = [{
+          type: 'error',
+          message: 'Can\'t parse JSON.'
+        }]
       }
     },
     copyToClipboard () {
@@ -121,6 +134,10 @@ export default {
 .text-value {
   padding: 8px 8px;
   color: var(--color-text-base);
+}
+
+.messages {
+  margin: 8px;
 }
 
 .value-viewer-toolbar button {
