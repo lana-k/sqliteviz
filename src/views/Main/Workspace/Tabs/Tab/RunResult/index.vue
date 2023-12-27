@@ -47,7 +47,7 @@
         :active="viewRecord"
         @click="toggleViewRecord"
       >
-        <export-to-csv-icon/>
+        <row-icon/>
       </icon-button>
 
       <icon-button
@@ -57,7 +57,7 @@
         :active="viewValuePanelVisible"
         @click="toggleViewValuePanel"
       >
-        <clipboard-icon/>
+        <view-cell-value-icon/>
       </icon-button>
     </side-tool-bar>
 
@@ -124,6 +124,8 @@ import SideToolBar from '../SideToolBar'
 import Splitpanes from '@/components/Splitpanes'
 import ExportToCsvIcon from '@/components/svg/exportToCsv'
 import ClipboardIcon from '@/components/svg/clipboard'
+import ViewCellValueIcon from '@/components/svg/viewCellValue'
+import RowIcon from '@/components/svg/row'
 import IconButton from '@/components/IconButton'
 import csv from '@/lib/csv'
 import fIo from '@/lib/utils/fileIo'
@@ -165,6 +167,8 @@ export default {
     ExportToCsvIcon,
     IconButton,
     ClipboardIcon,
+    ViewCellValueIcon,
+    RowIcon,
     loadingDialog,
     ValueViewer,
     Record,
