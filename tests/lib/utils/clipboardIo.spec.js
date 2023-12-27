@@ -7,9 +7,9 @@ describe('clipboardIo.js', async () => {
     sinon.restore()
   })
 
-  it('copyCsv', async () => {
+  it('copyText', async () => {
     sinon.stub(navigator.clipboard, 'writeText').resolves(true)
-    await cIo.copyCsv('id\tname\r\n1\t2')
+    await cIo.copyText('id\tname\r\n1\t2')
     expect(navigator.clipboard.writeText.calledOnceWith('id\tname\r\n1\t2'))
   })
 

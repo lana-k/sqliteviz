@@ -256,7 +256,7 @@ export default {
     },
 
     copyToClipboard () {
-      cIo.copyCsv(this.dataToCopy)
+      cIo.copyText(this.dataToCopy, 'CSV copied to clipboard successfully')
       this.$modal.hide('prepareCSVCopy')
     },
 

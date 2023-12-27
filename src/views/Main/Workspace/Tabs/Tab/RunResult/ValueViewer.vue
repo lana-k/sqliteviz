@@ -10,8 +10,16 @@
       >
         {{ format.text }}
       </button>
+
+      <button
+        type="button"
+        @click="copyToClipboard"
+      >
+        Copy
+      </button>
     </div>
-    <codemirror
+    <div class="value-body">
+      <codemirror
         v-if="currentFormat === 'json'"
         :value="formattedJson"
         :options="cmOptions"
@@ -19,6 +27,7 @@
       <div v-else class="text-value">
         {{ cellValue }}
       </div>
+    </div>
   </div>
 </template>
 
@@ -31,6 +40,7 @@ import 'codemirror/addon/fold/foldgutter.js'
 import 'codemirror/addon/fold/foldgutter.css'
 import 'codemirror/addon/fold/brace-fold.js'
 import 'codemirror/theme/neo.css'
+import cIo from '@/lib/utils/clipboardIo'
 
 export default {
   components: {
@@ -43,7 +53,7 @@ export default {
     return {
       formats: [
         { text: 'JSON', value: 'json' },
-        { text: 'TEXT', value: 'text' }
+        { text: 'Text', value: 'text' }
       ],
       currentFormat: 'text',
       cmOptions: {
@@ -81,6 +91,13 @@ export default {
       } catch {
         this.formattedJson = ''
       }
+    },
+    copyToClipboard () {
+      cIo.copyText(this.currentFormat === 'json'
+        ? this.formattedJson
+        : this.cellValue,
+      'The value is copied to clipboard.'
+      )
     }
   }
 }
@@ -89,13 +106,20 @@ export default {
 <style scoped>
 .value-viewer {
   background-color: var(--color-white);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .value-viewer-toolbar {
   display: flex;
   justify-content: end;
 }
+.value-body {
+  flex-grow: 1;
+  overflow: auto;
+}
 .text-value {
-  padding: 2px 8px;
+  padding: 8px 8px;
   color: var(--color-text-base);
 }
 
@@ -115,5 +139,18 @@ export default {
 
 .value-viewer-toolbar button[aria-selected="true"] {
   color: var(--color-accent);
+}
+
+>>> .vue-codemirror {
+  height: 100%;
+  max-height: 100%;
+}
+>>> .CodeMirror {
+  height: 100%;
+  max-height: 100%;
+}
+>>> .CodeMirror-cursor {
+  width: 1px;
+  background: var(--color-text-base);
 }
 </style>

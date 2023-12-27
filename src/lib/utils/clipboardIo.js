@@ -2,9 +2,11 @@ import Lib from 'plotly.js/src/lib'
 import dataUrlToBlob from 'dataurl-to-blob'
 
 export default {
-  async copyCsv (str) {
+  async copyText (str, notifyMessage) {
     await navigator.clipboard.writeText(str)
-    Lib.notifier('CSV copied to clipboard successfully', 'long')
+    if (notifyMessage) {
+      Lib.notifier(notifyMessage, 'long')
+    }
   },
 
   async copyImage (source) {
