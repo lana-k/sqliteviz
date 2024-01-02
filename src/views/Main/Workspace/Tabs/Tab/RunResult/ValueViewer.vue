@@ -79,6 +79,7 @@ export default {
   },
   watch: {
     currentFormat () {
+      this.messages = []
       this.formattedJson = ''
       if (this.currentFormat === 'json') {
         this.formatJson(this.cellValue)
@@ -92,7 +93,6 @@ export default {
   },
   methods: {
     formatJson (jsonStr) {
-      this.messages = []
       try {
         this.formattedJson = JSON.stringify(
           JSON.parse(jsonStr), null, 4
