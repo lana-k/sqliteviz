@@ -97,7 +97,8 @@ export default {
         this.formattedJson = JSON.stringify(
           JSON.parse(jsonStr), null, 4
         )
-      } catch {
+      } catch (e) {
+        console.error(e)
         this.formattedJson = ''
         this.messages = [{
           type: 'error',

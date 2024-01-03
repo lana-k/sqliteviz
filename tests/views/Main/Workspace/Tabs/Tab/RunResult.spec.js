@@ -15,6 +15,7 @@ describe('RunResult.vue', () => {
     sinon.spy(window, 'alert')
     const wrapper = mount(RunResult, {
       propsData: {
+        tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
           values: {
@@ -44,6 +45,7 @@ describe('RunResult.vue', () => {
     const clock = sinon.useFakeTimers()
     const wrapper = mount(RunResult, {
       propsData: {
+        tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
           values: {
@@ -89,6 +91,7 @@ describe('RunResult.vue', () => {
     const clock = sinon.useFakeTimers()
     const wrapper = mount(RunResult, {
       propsData: {
+        tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
           values: {
@@ -122,6 +125,7 @@ describe('RunResult.vue', () => {
     const clock = sinon.useFakeTimers()
     const wrapper = mount(RunResult, {
       propsData: {
+        tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
           values: {
