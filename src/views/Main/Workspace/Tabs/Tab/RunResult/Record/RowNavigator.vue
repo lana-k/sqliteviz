@@ -4,6 +4,7 @@
             :disabled="value === 0"
             tooltip="First row"
             tooltip-position="top-left"
+            class="first"
             @click="$emit('input', 0)"
         >
             <edge-arrow-icon :disabled="false" />
@@ -12,6 +13,7 @@
             :disabled="value === 0"
             tooltip="Previous row"
             tooltip-position="top-left"
+            class="prev"
             @click="$emit('input', value - 1)"
         >
             <arrow-icon :disabled="false" />
@@ -20,7 +22,7 @@
             :disabled="value === total - 1"
             tooltip="Next row"
             tooltip-position="top-left"
-            class="next-last"
+            class="next"
             @click="$emit('input', value + 1)"
         >
             <arrow-icon :disabled="false" />
@@ -29,7 +31,7 @@
             :disabled="value === total - 1"
             tooltip="Last row"
             tooltip-position="top-left"
-            class="next-last"
+            class="last"
             @click="$emit('input', total - 1)"
         >
             <edge-arrow-icon :disabled="false" />
@@ -60,7 +62,8 @@ export default {
     display: flex;
 }
 
-.record-navigator .next-last {
+.record-navigator .next,
+.record-navigator .last {
   transform: rotate(180deg);
 }
 </style>

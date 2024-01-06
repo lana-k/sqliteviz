@@ -6,6 +6,7 @@
         :key="format.value"
         type="button"
         :aria-selected="currentFormat === format.value"
+        :class="format.value"
         @click="currentFormat = format.value"
       >
         {{ format.text }}
@@ -13,6 +14,7 @@
 
       <button
         type="button"
+        class="copy"
         @click="copyToClipboard"
       >
         Copy

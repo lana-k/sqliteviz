@@ -79,7 +79,8 @@ export default {
     }
   },
   watch: {
-    currentRowIndex () {
+    async currentRowIndex () {
+      await this.$nextTick()
       if (this.selectedCellElement) {
         const previouslySelected = this.selectedCellElement
         this.selectCell(null)
