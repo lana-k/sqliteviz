@@ -41,7 +41,6 @@
       >
         <png-icon />
       </icon-button>
-
       <icon-button
         :disabled="!importToSvgEnabled"
         tooltip="Save as SVG"

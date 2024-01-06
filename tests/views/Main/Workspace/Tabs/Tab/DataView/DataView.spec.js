@@ -54,6 +54,10 @@ describe('DataView.vue', () => {
     const pivot = wrapper.findComponent({ name: 'pivot' }).vm
     sinon.spy(pivot, 'saveAsSvg')
 
+    // Switch to Custom Chart renderer
+    pivot.pivotOptions.rendererName = 'Custom chart'
+    await pivot.$nextTick()
+
     // Export to svg
     await svgBtn.trigger('click')
     expect(pivot.saveAsSvg.calledOnce).to.equal(true)

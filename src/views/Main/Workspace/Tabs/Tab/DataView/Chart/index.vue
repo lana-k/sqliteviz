@@ -77,6 +77,7 @@ export default {
       },
       { deep: true }
     )
+    this.$emit('update:importToSvgEnabled', true)
   },
   mounted () {
     this.resizeObserver = new ResizeObserver(this.handleResize)

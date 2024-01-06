@@ -1,6 +1,7 @@
 <template>
-  <div
-    :class="['icon-btn', { active }, { disabled }]"
+  <button
+    :class="['icon-btn', { active }]"
+    :disabled="disabled"
     @click="onClick"
     @mouseenter="showTooltip($event, tooltipPosition)"
     @mouseleave="hideTooltip"
@@ -12,7 +13,7 @@
     <span v-if="tooltip" class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
       {{ tooltip }}
     </span>
-  </div>
+  </button>
 </template>
 
 <script>
@@ -38,11 +39,12 @@ export default {
   box-sizing: border-box;
   width: 26px;
   height: 26px;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  background-color: transparent;
+  border: none;
 }
 .icon-btn:hover {
   border: 1px solid var(--color-border);
@@ -56,12 +58,12 @@ export default {
   fill: var(--color-accent);
 }
 
-.disabled.icon-btn  .icon >>> path,
-.disabled.icon-btn  .icon >>> circle {
+.icon-btn:disabled  .icon >>> path,
+.icon-btn:disabled  .icon >>> circle {
   fill: var(--color-border);
 }
 
-.disabled.icon-btn {
+.icon-btn:disabled {
   cursor: default;
   pointer-events: none;
 }
