@@ -26,12 +26,10 @@
         :value="formattedJson"
         :options="cmOptions"
       />
-      <div
+      <pre
         v-if="currentFormat === 'text'"
         :class="['text-value', { 'meta-value': isNull || isBlob }]"
-      >
-        {{ cellValue }}
-      </div>
+      >{{ cellText }}</pre>
       <logs
         v-if="messages && messages.length > 0"
         :messages="messages"
@@ -59,9 +57,7 @@ export default {
     Logs
   },
   props: {
-    cellValue: [String, Number],
-    isNull: Boolean,
-    isBlob: Boolean
+    cellValue: [String, Number, Uint8Array]
   },
   data () {
     return {
@@ -84,17 +80,35 @@ export default {
       messages: []
     }
   },
+  computed: {
+    isBlob () {
+      return this.cellValue && ArrayBuffer.isView(this.cellValue)
+    },
+    isNull () {
+      return this.cellValue === null
+    },
+    cellText () {
+      const value = this.cellValue
+      if (this.isNull) {
+        return 'NULL'
+      }
+      if (this.isBlob) {
+        return 'BLOB'
+      }
+      return value
+    }
+  },
   watch: {
     currentFormat () {
       this.messages = []
       this.formattedJson = ''
       if (this.currentFormat === 'json') {
-        this.formatJson(this.isNull ? null : this.cellValue)
+        this.formatJson(this.cellValue)
       }
     },
     cellValue () {
       if (this.currentFormat === 'json') {
-        this.formatJson(this.isNull ? null : this.cellValue)
+        this.formatJson(this.cellValue)
       }
     }
   },

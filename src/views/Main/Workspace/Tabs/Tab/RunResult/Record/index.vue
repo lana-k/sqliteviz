@@ -21,8 +21,8 @@
           <tr v-for="(col, index) in columns" :key="index">
             <th>{{ col }}</th>
             <td
-              :data-col="1"
-              :data-row="index"
+              :data-col="index"
+              :data-row="currentRowIndex"
               :data-isNull="isNull(getCellValue(col))"
               :data-isBlob="isBlob(getCellValue(col))"
               :key="index"
@@ -75,7 +75,7 @@ export default {
   },
   mounted () {
     const cell = this.$refs.table
-      .querySelector(`td[data-col="1"][data-row="${this.selectedColumnIndex}"]`)
+      .querySelector(`td[data-col="${this.selectedColumnIndex}"][data-row="${this.currentRowIndex}"]`)
     if (cell) {
       this.selectCell(cell)
     }
@@ -153,13 +153,13 @@ export default {
       this.$emit('updateSelectedCell', this.selectedCellElement)
     },
     moveFocusInTable (initialCell, direction) {
-      const currentRowIndex = +initialCell.dataset.row
-      const newRowIndex = direction === 'up'
-        ? currentRowIndex - 1
-        : currentRowIndex + 1
+      const currentColIndex = +initialCell.dataset.col
+      const newColIndex = direction === 'up'
+        ? currentColIndex - 1
+        : currentColIndex + 1
 
       const newCell = this.$refs.table
-        .querySelector(`td[data-col="1"][data-row="${newRowIndex}"]`)
+        .querySelector(`td[data-col="${newColIndex}"][data-row="${this.currentRowIndex}"]`)
       if (newCell) {
         this.selectCell(newCell)
       }

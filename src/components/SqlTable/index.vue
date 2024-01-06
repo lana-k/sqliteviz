@@ -36,8 +36,7 @@
             <td
               v-for="(col, colIndex) in columns"
               :data-col="colIndex"
-              :data-row="rowIndex - 1"
-              :data-record="pageSize * (currentPage - 1) + rowIndex - 1"
+              :data-row="pageSize * (currentPage - 1) + rowIndex - 1"
               :data-isNull="isNull(getCellValue(col, rowIndex))"
               :data-isBlob="isBlob(getCellValue(col, rowIndex))"
               :key="colIndex"

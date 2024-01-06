@@ -15,9 +15,9 @@
         <div class="value-viewer-container">
           <value-viewer
             v-show="selectedCell"
-            :cellValue="selectedCell ? selectedCell.innerText : ''"
-            :is-null="selectedCell && selectedCell.dataset.isnull === 'true'"
-            :is-blob="selectedCell && selectedCell.dataset.isblob === 'true'"
+            :cellValue="selectedCell
+              ? result.values[result.columns[selectedCell.dataset.col]][selectedCell.dataset.row]
+              : ''"
           />
           <div v-show="!selectedCell" class="table-preview">
             No cell selected to view
@@ -113,7 +113,7 @@
               :data-set="result"
               :time="time"
               :selected-column-index="selectedCell ? +selectedCell.dataset.col : 0"
-              :rowIndex="selectedCell ? +selectedCell.dataset.record : 0"
+              :rowIndex="selectedCell ? +selectedCell.dataset.row : 0"
               @updateSelectedCell="onUpdateSelectedCell"
             />
           </div>
@@ -277,8 +277,8 @@ export default {
     toggleViewRecord () {
       if (this.viewRecord) {
         this.defaultSelectedCell = {
-          row: (this.$refs.recordView.currentRowIndex + this.pageSize) % this.pageSize,
-          col: this.selectedCell ? +this.selectedCell.dataset.row : 0
+          row: this.$refs.recordView.currentRowIndex,
+          col: this.selectedCell ? +this.selectedCell.dataset.col : 0
         }
         this.defaultPage = Math.ceil(
           (this.$refs.recordView.currentRowIndex + 1) / this.pageSize
