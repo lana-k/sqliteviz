@@ -148,6 +148,7 @@ export default {
 
       if (this.selectedCellElement && scrollTo) {
         this.selectedCellElement.scrollIntoView()
+        this.selectedCellElement.closest('.table-container').scrollTo({ left: 0 })
       }
 
       this.$emit('updateSelectedCell', this.selectedCellElement)
