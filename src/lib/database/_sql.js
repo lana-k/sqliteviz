@@ -8,11 +8,11 @@ function _getDataSourcesFromSqlResult (sqlResult) {
   if (!sqlResult) {
     return {}
   }
-  const dataSorces = {}
+  const dataSources = {}
   sqlResult.columns.forEach((column, index) => {
-    dataSorces[column] = sqlResult.values.map(row => row[index])
+    dataSources[column] = sqlResult.values.map(row => row[index])
   })
-  return dataSorces
+  return dataSources
 }
 
 export default class Sql {

@@ -26,7 +26,10 @@
         :value="formattedJson"
         :options="cmOptions"
       />
-      <div v-if="currentFormat === 'text'" class="text-value">
+      <div
+        v-if="currentFormat === 'text'"
+        :class="['text-value', { 'meta-value': isNull || isBlob }]"
+      >
         {{ cellValue }}
       </div>
       <logs
@@ -56,7 +59,9 @@ export default {
     Logs
   },
   props: {
-    cellValue: [String, Number]
+    cellValue: [String, Number],
+    isNull: Boolean,
+    isBlob: Boolean
   },
   data () {
     return {
@@ -84,12 +89,12 @@ export default {
       this.messages = []
       this.formattedJson = ''
       if (this.currentFormat === 'json') {
-        this.formatJson(this.cellValue)
+        this.formatJson(this.isNull ? null : this.cellValue)
       }
     },
     cellValue () {
       if (this.currentFormat === 'json') {
-        this.formatJson(this.cellValue)
+        this.formatJson(this.isNull ? null : this.cellValue)
       }
     }
   },
@@ -137,6 +142,11 @@ export default {
 .text-value {
   padding: 8px 8px;
   color: var(--color-text-base);
+}
+
+.text-value.meta-value {
+  font-style: italic;
+  color: var(--color-text-light-2);
 }
 
 .messages {

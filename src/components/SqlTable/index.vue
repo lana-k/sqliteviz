@@ -38,12 +38,14 @@
               :data-col="colIndex"
               :data-row="rowIndex - 1"
               :data-record="pageSize * (currentPage - 1) + rowIndex - 1"
+              :data-isNull="isNull(getCellValue(col, rowIndex))"
+              :data-isBlob="isBlob(getCellValue(col, rowIndex))"
               :key="colIndex"
               :aria-selected="false"
               @click="onCellClick"
             >
               <div class="cell-data" :style="cellStyle">
-                {{ dataSet.values[col][rowIndex - 1 + currentPageData.start] }}
+                {{ getCellText(col, rowIndex) }}
               </div>
             </td>
           </tr>
@@ -57,7 +59,11 @@
         <span v-if="preview">for preview</span>
         <span v-if="time">in {{ time }}</span>
       </div>
-      <pager v-show="pageCount > 1" :page-count="pageCount" v-model="currentPage" />
+      <pager
+        v-show="pageCount > 1"
+        :page-count="pageCount"
+        v-model="currentPage"
+      />
     </div>
   </div>
 </template>
@@ -133,6 +139,25 @@ export default {
     }
   },
   methods: {
+    isBlob (value) {
+      return value && ArrayBuffer.isView(value)
+    },
+    isNull (value) {
+      return value === null
+    },
+    getCellValue (col, rowIndex) {
+      return this.dataSet.values[col][rowIndex - 1 + this.currentPageData.start]
+    },
+    getCellText (col, rowIndex) {
+      const value = this.getCellValue(col, rowIndex)
+      if (this.isNull(value)) {
+        return 'NULL'
+      }
+      if (this.isBlob(value)) {
+        return 'BLOB'
+      }
+      return value
+    },
     calculateHeadersWidth () {
       this.tableWidth = this.$refs['table-container'].offsetWidth
       this.$nextTick(() => {

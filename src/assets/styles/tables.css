@@ -107,3 +107,9 @@ table.sqliteviz-table {
   font-size: 11px;
   color: var(--color-text-base);
 }
+
+.sqliteviz-table tbody td[data-isNull="true"],
+.sqliteviz-table tbody td[data-isBlob="true"] {
+  color: var(--color-text-light-2);
+  font-style: italic;
+}

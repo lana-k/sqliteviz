@@ -23,12 +23,14 @@
             <td
               :data-col="1"
               :data-row="index"
+              :data-isNull="isNull(getCellValue(col))"
+              :data-isBlob="isBlob(getCellValue(col))"
               :key="index"
               :aria-selected="false"
               @click="onCellClick"
             >
               <div class="cell-data">
-                {{ dataSet.values[col][currentRowIndex] }}
+                {{ getCellText(col) }}
               </div>
             </td>
           </tr>
@@ -89,6 +91,25 @@ export default {
     }
   },
   methods: {
+    isBlob (value) {
+      return value && ArrayBuffer.isView(value)
+    },
+    isNull (value) {
+      return value === null
+    },
+    getCellValue (col) {
+      return this.dataSet.values[col][this.currentRowIndex]
+    },
+    getCellText (col) {
+      const value = this.getCellValue(col)
+      if (this.isNull(value)) {
+        return 'NULL'
+      }
+      if (this.isBlob(value)) {
+        return 'BLOB'
+      }
+      return value
+    },
     onTableKeydown (e) {
       const keyCodeMap = {
         38: 'up',

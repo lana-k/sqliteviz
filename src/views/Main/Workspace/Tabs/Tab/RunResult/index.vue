@@ -16,6 +16,8 @@
           <value-viewer
             v-show="selectedCell"
             :cellValue="selectedCell ? selectedCell.innerText : ''"
+            :is-null="selectedCell && selectedCell.dataset.isnull === 'true'"
+            :is-blob="selectedCell && selectedCell.dataset.isblob === 'true'"
           />
           <div v-show="!selectedCell" class="table-preview">
             No cell selected to view
