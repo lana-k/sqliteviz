@@ -19,7 +19,7 @@
         </thead>
         <tbody>
           <tr v-for="(col, index) in columns" :key="index">
-            <th>{{ col }}</th>
+            <th class="column-cell">{{ col }}</th>
             <td
               :data-col="index"
               :data-row="currentRowIndex"
@@ -211,5 +211,9 @@ table.sqliteviz-table {
 .table-container {
   flex-grow: 1;
   overflow: auto;
+}
+
+.column-cell {
+  max-width: 0;
 }
 </style>
