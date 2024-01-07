@@ -74,8 +74,10 @@ export default {
     }
   },
   mounted () {
+    const col = this.selectedColumnIndex
+    const row = this.currentRowIndex
     const cell = this.$refs.table
-      .querySelector(`td[data-col="${this.selectedColumnIndex}"][data-row="${this.currentRowIndex}"]`)
+      .querySelector(`td[data-col="${col}"][data-row="${row}"]`)
     if (cell) {
       this.selectCell(cell)
     }
