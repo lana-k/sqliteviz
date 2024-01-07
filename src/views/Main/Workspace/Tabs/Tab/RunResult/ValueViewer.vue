@@ -25,6 +25,7 @@
         v-if="currentFormat === 'json' && formattedJson"
         :value="formattedJson"
         :options="cmOptions"
+        class="json-value"
       />
       <pre
         v-if="currentFormat === 'text'"
@@ -62,8 +63,8 @@ export default {
   data () {
     return {
       formats: [
-        { text: 'JSON', value: 'json' },
-        { text: 'Text', value: 'text' }
+        { text: 'Text', value: 'text' },
+        { text: 'JSON', value: 'json' }
       ],
       currentFormat: 'text',
       cmOptions: {
@@ -107,6 +108,7 @@ export default {
       }
     },
     cellValue () {
+      this.messages = []
       if (this.currentFormat === 'json') {
         this.formatJson(this.cellValue)
       }
@@ -154,8 +156,13 @@ export default {
   overflow: auto;
 }
 .text-value {
-  padding: 8px 8px;
+  padding: 0 8px;
+  margin: 0;
   color: var(--color-text-base);
+}
+
+.json-value {
+  margin-top: -4px;
 }
 
 .text-value.meta-value {
@@ -164,7 +171,7 @@ export default {
 }
 
 .messages {
-  margin: 8px;
+  margin: 0 8px;
 }
 
 .value-viewer-toolbar button {
