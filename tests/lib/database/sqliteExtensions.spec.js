@@ -455,4 +455,85 @@ describe('SQLite extensions', function () {
       xx: [1], xy: [0], xz: [1], yx: [0], yy: [1], yz: [1], zx: [1], zy: [1], zz: [1]
     })
   })
+
+  it('supports simple Lua functions', async function () {
+    const actual = await db.execute(`
+      INSERT INTO
+        luafunctions(name, src)
+      VALUES
+        ('lua_inline', 'return {"arg"}, {"rv"}, "simple", function(arg) return arg + 1 end'),
+        ('lua_full', '
+        local input = {"arg"}
+        local output = {"rv"}
+
+        local function func(x)
+          return math.sin(math.pi) + x
+        end
+
+        return input, output, "simple", func
+        ');
+
+      SELECT lua_inline(1), lua_full(1) - 1 < 0.000001;
+    `)
+    expect(actual.values).to.eql({ 'lua_inline(1)': [2], 'lua_full(1) - 1 < 0.000001': [1] })
+  })
+
+  it('supports aggregate Lua functions', async function () {
+    const actual = await db.execute(`
+      INSERT INTO
+        luafunctions(name, src)
+      VALUES
+        ('lua_sum', '
+        local inputs = {"item"}
+        local outputs = {"sum"}
+
+        local function func(item)
+          if aggregate_now(item) then
+            return item
+          end
+
+          local sum = 0
+          while true do
+            if aggregate_now(item) then
+              break
+            end
+            sum = sum + item
+            item = coroutine.yield()
+          end
+
+          return sum
+        end
+
+        return inputs, outputs, "aggregate", func
+      ');
+
+      SELECT SUM(value), lua_sum(value) FROM generate_series(1, 10);
+    `)
+    expect(actual.values).to.eql({ 'SUM(value)': [55], 'lua_sum(value)': [55] })
+  })
+
+  it('supports table-valued Lua functions', async function () {
+    const actual = await db.execute(`
+      INSERT INTO
+        luafunctions(name, src)
+      VALUES
+        ('lua_match', '
+        local inputs = {"pattern", "s"}
+        local outputs = {"idx", "elm"}
+
+        local function func(pattern, s)
+          local i = 1
+          for k in s:gmatch(pattern) do
+            coroutine.yield(i, k)
+            i = i + 1
+          end
+        end
+
+        return inputs, outputs, "table", func
+      ');
+
+      SELECT * FROM lua_match('%w+', 'hello world from Lua');
+    `)
+    expect(actual.values).to.eql({ idx: [1, 2, 3, 4], elm: ['hello', 'world', 'from', 'Lua'] })
+  })
 })

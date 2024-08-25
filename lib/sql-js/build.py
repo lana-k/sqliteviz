@@ -24,6 +24,7 @@ cflags = (
     # Compile-time optimisation
     '-Os',  # reduces the code size about in half comparing to -O2
     '-flto',
+    '-Isrc', '-Isrc/lua',
 )
 emflags = (
     # Base
@@ -61,6 +62,15 @@ def build(src: Path, dst: Path):
         '-c', src / 'extension-functions.c',
         '-o', out / 'extension-functions.o',
     ])
+    logging.info('Building LLVM bitcode for SQLite Lua extension')
+    subprocess.check_call([
+        'emcc',
+        *cflags,
+        '-shared',
+        *(src / 'lua').glob('*.c'),
+        *(src / 'sqlitelua').glob('*.c'),
+        '-o', out / 'sqlitelua.o',
+    ])
 
     logging.info('Building WASM from bitcode')
     subprocess.check_call([
@@ -68,6 +78,7 @@ def build(src: Path, dst: Path):
         *emflags,
         out / 'sqlite3.o',
         out / 'extension-functions.o',
+        out / 'sqlitelua.o',
         '-o', out / 'sql-wasm.js',
     ])
 

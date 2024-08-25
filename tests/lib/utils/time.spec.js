@@ -29,12 +29,12 @@ describe('time.js', () => {
   })
 
   it('sleep resolves after n ms', async () => {
-    let before = Date.now()
+    let before = performance.now()
     await time.sleep(10)
-    expect(Date.now() - before).to.be.least(10)
+    expect(performance.now() - before).to.be.least(10)
 
-    before = Date.now()
+    before = performance.now()
     await time.sleep(30)
-    expect(Date.now() - before).to.be.least(30)
+    expect(performance.now() - before).to.be.least(30)
   })
 })
