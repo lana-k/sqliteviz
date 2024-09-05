@@ -45,6 +45,8 @@ SQLite 3rd party extensions included:
 1. [pivot_vtab][5] -- a pivot virtual table
 2. `pearson` correlation coefficient function extension from [sqlean][21]
    (which is part of [squib][20])
+3. [sqlitelua][22] -- a virtual table `luafunctions` which allows to define custom scalar,
+   aggregate and table-valued functions in Lua
 
 To ease the step to have working clone locally, the build is committed into
 the repository.
@@ -103,3 +105,4 @@ described in [this message from SQLite Forum][12]:
 [19]: https://github.com/lana-k/sqliteviz/blob/master/tests/lib/database/sqliteExtensions.spec.js
 [20]: https://github.com/mrwilson/squib/blob/master/pearson.c
 [21]: https://github.com/nalgeon/sqlean/blob/incubator/src/pearson.c
+[22]: https://github.com/kev82/sqlitelua

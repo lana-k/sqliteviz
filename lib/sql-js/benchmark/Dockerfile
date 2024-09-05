@@ -1,10 +1,8 @@
-FROM node:14-bullseye
+FROM node:20.14-bookworm
 
 RUN set -ex; \
-    echo 'deb http://deb.debian.org/debian unstable main' \
-        > /etc/apt/sources.list.d/unstable.list; \
     apt-get update; \
-    apt-get install -y -t unstable firefox; \
+    apt-get install -y firefox-esr; \
     apt-get install -y chromium
 
 WORKDIR /tmp/build

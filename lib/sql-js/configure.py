@@ -1,7 +1,9 @@
 import logging
+import re
 import shutil
 import subprocess
 import sys
+import tarfile
 import zipfile
 from io import BytesIO
 from pathlib import Path
@@ -30,7 +32,13 @@ extension_urls = (
     # =====================
     ('https://github.com/jakethaw/pivot_vtab/raw/9323ef93/pivot_vtab.c', 'sqlite3_pivotvtab_init'),
     ('https://github.com/nalgeon/sqlean/raw/95e8d21a/src/pearson.c', 'sqlite3_pearson_init'),
+    # Third-party extension with own dependencies
+    # ===========================================
+    ('https://github.com/kev82/sqlitelua/raw/db479510/src/main.c', 'sqlite3_luafunctions_init'),
 )
+
+lua_url = 'http://www.lua.org/ftp/lua-5.3.5.tar.gz'
+sqlitelua_url = 'https://github.com/kev82/sqlitelua/archive/db479510.zip'
 
 sqljs_url = 'https://github.com/sql-js/sql.js/archive/refs/tags/v1.7.0.zip'
 
@@ -59,6 +67,38 @@ def _get_amalgamation(tgt: Path):
             shutil.copyfileobj(fr, fw)
 
 
+def _get_lua(tgt: Path):
+    # Library definitions from lua/Makefile
+    lib_str = '''
+        CORE_O=    lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o \
+            lmem.o lobject.o lopcodes.o lparser.o lstate.o lstring.o ltable.o \
+            ltm.o lundump.o lvm.o lzio.o
+        LIB_O=    lauxlib.o lbaselib.o lbitlib.o lcorolib.o ldblib.o liolib.o \
+            lmathlib.o loslib.o lstrlib.o ltablib.o lutf8lib.o loadlib.o linit.o
+        LUA_O=    lua.o
+    '''
+    header_only_files = {'lprefix', 'luaconf', 'llimits', 'lualib'}
+    lib_names = set(re.findall(r'(\w+)\.o', lib_str)) | header_only_files
+
+    logging.info('Downloading and extracting Lua %s', lua_url)
+    archive = tarfile.open(fileobj=BytesIO(request.urlopen(lua_url).read()))
+    (tgt / 'lua').mkdir()
+    for tarinfo in archive:
+        tarpath = Path(tarinfo.name)
+        if tarpath.match('src/*') and tarpath.stem in lib_names:
+            with (tgt / 'lua' / tarpath.name).open('wb') as fw:
+                shutil.copyfileobj(archive.extractfile(tarinfo), fw)
+
+    logging.info('Downloading and extracting SQLite Lua extension %s', sqlitelua_url)
+    archive = zipfile.ZipFile(BytesIO(request.urlopen(sqlitelua_url).read()))
+    archive_root_dir = zipfile.Path(archive, archive.namelist()[0])
+    (tgt / 'sqlitelua').mkdir()
+    for zpath in (archive_root_dir / 'src').iterdir():
+        if zpath.name != 'main.c':
+            with zpath.open() as fr, (tgt / 'sqlitelua' / zpath.name).open('wb') as fw:
+                shutil.copyfileobj(fr, fw)
+
+
 def _get_contrib_functions(tgt: Path):
     request.urlretrieve(contrib_functions_url, tgt / 'extension-functions.c')
 
@@ -70,6 +110,7 @@ def _get_extensions(tgt: Path):
         for url, init_fn in extension_urls:
             logging.info('Downloading and appending to amalgamation %s', url)
             with request.urlopen(url) as resp:
+                f.write(b'\n')
                 shutil.copyfileobj(resp, f)
             init_functions.append(init_fn)
 
@@ -90,6 +131,7 @@ def _get_sqljs(tgt: Path):
 def configure(tgt: Path):
     _get_amalgamation(tgt)
     _get_contrib_functions(tgt)
+    _get_lua(tgt)
     _get_extensions(tgt)
     _get_sqljs(tgt)
 
