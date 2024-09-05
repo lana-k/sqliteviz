@@ -152,20 +152,20 @@ describe('Schema.vue', () => {
 
     const store = new Vuex.Store({ state, actions, mutations })
     const wrapper = mount(Schema, { store, localVue })
-    sinon.spy(wrapper.vm.$refs.addCsv, 'previewCsv')
-    sinon.spy(wrapper.vm, 'addCsv')
-    sinon.spy(wrapper.vm.$refs.addCsv, 'loadFromCsv')
+    sinon.spy(wrapper.vm.$refs.addCsvJson, 'preview')
+    sinon.spy(wrapper.vm, 'addCsvJson')
+    sinon.spy(wrapper.vm.$refs.addCsvJson, 'loadToDb')
 
     await wrapper.findComponent({ name: 'add-table-icon' }).find('svg').trigger('click')
-    await wrapper.vm.$refs.addCsv.previewCsv.returnValues[0]
-    await wrapper.vm.addCsv.returnValues[0]
+    await wrapper.vm.$refs.addCsvJson.preview.returnValues[0]
+    await wrapper.vm.addCsvJson.returnValues[0]
     await wrapper.vm.$nextTick()
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('[data-modal="addCsv"]').exists()).to.equal(true)
-    await wrapper.find('#csv-import').trigger('click')
-    await wrapper.vm.$refs.addCsv.loadFromCsv.returnValues[0]
-    await wrapper.find('#csv-finish').trigger('click')
-    expect(wrapper.find('[data-modal="addCsv"]').exists()).to.equal(false)
+    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(true)
+    await wrapper.find('#import-start').trigger('click')
+    await wrapper.vm.$refs.addCsvJson.loadToDb.returnValues[0]
+    await wrapper.find('#import-finish').trigger('click')
+    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(false)
     await state.db.refreshSchema.returnValues[0]
 
     expect(wrapper.vm.$store.state.db.schema).to.eql([

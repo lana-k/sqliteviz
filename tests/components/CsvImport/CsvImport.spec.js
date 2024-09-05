@@ -2,10 +2,10 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import Vuex from 'vuex'
 import { mount } from '@vue/test-utils'
-import CsvImport from '@/components/CsvImport'
+import CsvJsonImport from '@/components/CsvJsonImport'
 import csv from '@/lib/csv'
 
-describe('CsvImport.vue', () => {
+describe('CsvJsonImport.vue', () => {
   let state = {}
   let actions = {}
   let mutations = {}
@@ -40,11 +40,11 @@ describe('CsvImport.vue', () => {
     }
 
     // mount the component
-    wrapper = mount(CsvImport, {
+    wrapper = mount(CsvJsonImport, {
       store,
       propsData: {
         file,
-        dialogName: 'addCsv',
+        dialogName: 'addCsvJson',
         db
       }
     })
@@ -74,11 +74,11 @@ describe('CsvImport.vue', () => {
       }]
     })
 
-    wrapper.vm.previewCsv()
+    wrapper.vm.preview()
     await wrapper.vm.open()
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('[data-modal="addCsv"]').exists()).to.equal(true)
-    expect(wrapper.find('#csv-table-name input').element.value).to.equal('my_data')
+    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(true)
+    expect(wrapper.find('#csv-json-table-name input').element.value).to.equal('my_data')
     expect(wrapper.findComponent({ name: 'delimiter-selector' }).vm.value).to.equal('|')
     expect(wrapper.find('#quote-char input').element.value).to.equal('"')
     expect(wrapper.find('#escape-char input').element.value).to.equal('"')
@@ -93,8 +93,8 @@ describe('CsvImport.vue', () => {
       .to.include('Information about row 0. Comma was used as a standart delimiter.')
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.include('Preview parsing is completed in')
-    expect(wrapper.find('#csv-finish').isVisible()).to.equal(false)
-    expect(wrapper.find('#csv-import').isVisible()).to.equal(true)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
   })
 
   it('reparses when parameters changes', async () => {
@@ -111,7 +111,7 @@ describe('CsvImport.vue', () => {
       rowCount: 1
     })
 
-    wrapper.vm.previewCsv()
+    wrapper.vm.preview()
     wrapper.vm.open()
     await csv.parse.returnValues[0]
     await wrapper.vm.$nextTick()
@@ -234,7 +234,7 @@ describe('CsvImport.vue', () => {
       rowCount: 1
     })
 
-    wrapper.vm.previewCsv()
+    wrapper.vm.preview()
     wrapper.vm.open()
     await wrapper.vm.$nextTick()
 
@@ -243,8 +243,8 @@ describe('CsvImport.vue', () => {
       resolveParsing = resolve
     }))
 
-    await wrapper.find('#csv-table-name input').setValue('foo')
-    await wrapper.find('#csv-import').trigger('click')
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
     await wrapper.vm.$nextTick()
 
     // "Parsing CSV..." in the logs
@@ -262,11 +262,11 @@ describe('CsvImport.vue', () => {
     expect(wrapper.find('#quote-char input').element.disabled).to.equal(true)
     expect(wrapper.find('#escape-char input').element.disabled).to.equal(true)
     expect(wrapper.findComponent({ name: 'check-box' }).vm.disabled).to.equal(true)
-    expect(wrapper.find('#csv-cancel').element.disabled).to.equal(true)
-    expect(wrapper.find('#csv-finish').element.disabled).to.equal(true)
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
     expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(true)
-    expect(wrapper.find('#csv-finish').isVisible()).to.equal(false)
-    expect(wrapper.find('#csv-import').isVisible()).to.equal(true)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
     await resolveParsing()
     await parse.returnValues[1]
 
@@ -306,7 +306,7 @@ describe('CsvImport.vue', () => {
       messages: []
     })
 
-    wrapper.vm.previewCsv()
+    wrapper.vm.preview()
     wrapper.vm.open()
     await wrapper.vm.$nextTick()
 
@@ -315,8 +315,8 @@ describe('CsvImport.vue', () => {
       resolveImport = resolve
     }))
 
-    await wrapper.find('#csv-table-name input').setValue('foo')
-    await wrapper.find('#csv-import').trigger('click')
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
     await wrapper.vm.$nextTick()
 
@@ -329,11 +329,11 @@ describe('CsvImport.vue', () => {
     expect(wrapper.find('#quote-char input').element.disabled).to.equal(true)
     expect(wrapper.find('#escape-char input').element.disabled).to.equal(true)
     expect(wrapper.findComponent({ name: 'check-box' }).vm.disabled).to.equal(true)
-    expect(wrapper.find('#csv-cancel').element.disabled).to.equal(true)
-    expect(wrapper.find('#csv-finish').element.disabled).to.equal(true)
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
     expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(true)
-    expect(wrapper.find('#csv-finish').isVisible()).to.equal(false)
-    expect(wrapper.find('#csv-import').isVisible()).to.equal(true)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
     await resolveImport()
   })
 
@@ -377,12 +377,12 @@ describe('CsvImport.vue', () => {
       resolveImport = resolve
     }))
 
-    wrapper.vm.previewCsv()
+    wrapper.vm.preview()
     wrapper.vm.open()
     await wrapper.vm.$nextTick()
 
-    await wrapper.find('#csv-table-name input').setValue('foo')
-    await wrapper.find('#csv-import').trigger('click')
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
     await wrapper.vm.$nextTick()
 
@@ -397,11 +397,11 @@ describe('CsvImport.vue', () => {
     expect(wrapper.find('#quote-char input').element.disabled).to.equal(true)
     expect(wrapper.find('#escape-char input').element.disabled).to.equal(true)
     expect(wrapper.findComponent({ name: 'check-box' }).vm.disabled).to.equal(true)
-    expect(wrapper.find('#csv-cancel').element.disabled).to.equal(true)
-    expect(wrapper.find('#csv-finish').element.disabled).to.equal(true)
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
     expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(true)
-    expect(wrapper.find('#csv-finish').isVisible()).to.equal(false)
-    expect(wrapper.find('#csv-import').isVisible()).to.equal(true)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
     await resolveImport()
   })
 
@@ -440,12 +440,12 @@ describe('CsvImport.vue', () => {
       }]
     })
 
-    wrapper.vm.previewCsv()
+    wrapper.vm.preview()
     wrapper.vm.open()
     await wrapper.vm.$nextTick()
 
-    await wrapper.find('#csv-table-name input').setValue('foo')
-    await wrapper.find('#csv-import').trigger('click')
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
     await wrapper.vm.$nextTick()
 
@@ -460,11 +460,11 @@ describe('CsvImport.vue', () => {
     expect(wrapper.find('#quote-char input').element.disabled).to.equal(false)
     expect(wrapper.find('#escape-char input').element.disabled).to.equal(false)
     expect(wrapper.findComponent({ name: 'check-box' }).vm.disabled).to.equal(false)
-    expect(wrapper.find('#csv-cancel').element.disabled).to.equal(false)
-    expect(wrapper.find('#csv-finish').element.disabled).to.equal(false)
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(false)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(false)
     expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(false)
-    expect(wrapper.find('#csv-finish').isVisible()).to.equal(false)
-    expect(wrapper.find('#csv-import').isVisible()).to.equal(true)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
   })
 
   it('has proper state before import is completed', async () => {
@@ -501,12 +501,12 @@ describe('CsvImport.vue', () => {
     wrapper.vm.db.addTableFromCsv = sinon.stub()
       .resolves(new Promise(resolve => { resolveImport = resolve }))
 
-    wrapper.vm.previewCsv()
+    wrapper.vm.preview()
     wrapper.vm.open()
     await wrapper.vm.$nextTick()
 
-    await wrapper.find('#csv-table-name input').setValue('foo')
-    await wrapper.find('#csv-import').trigger('click')
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
     await wrapper.vm.$nextTick()
 
@@ -525,11 +525,11 @@ describe('CsvImport.vue', () => {
     expect(wrapper.find('#quote-char input').element.disabled).to.equal(true)
     expect(wrapper.find('#escape-char input').element.disabled).to.equal(true)
     expect(wrapper.findComponent({ name: 'check-box' }).vm.disabled).to.equal(true)
-    expect(wrapper.find('#csv-cancel').element.disabled).to.equal(true)
-    expect(wrapper.find('#csv-finish').element.disabled).to.equal(true)
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
     expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(true)
-    expect(wrapper.find('#csv-finish').isVisible()).to.equal(false)
-    expect(wrapper.find('#csv-import').isVisible()).to.equal(true)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
     expect(wrapper.vm.db.addTableFromCsv.getCall(0).args[0]).to.equal('foo') // table name
 
     // After resolving - loading indicator is not shown
@@ -570,12 +570,12 @@ describe('CsvImport.vue', () => {
       messages: []
     })
 
-    wrapper.vm.previewCsv()
+    wrapper.vm.preview()
     wrapper.vm.open()
     await wrapper.vm.$nextTick()
 
-    await wrapper.find('#csv-table-name input').setValue('foo')
-    await wrapper.find('#csv-import').trigger('click')
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
     await wrapper.vm.$nextTick()
 
@@ -589,10 +589,10 @@ describe('CsvImport.vue', () => {
     expect(wrapper.find('#quote-char input').element.disabled).to.equal(false)
     expect(wrapper.find('#escape-char input').element.disabled).to.equal(false)
     expect(wrapper.findComponent({ name: 'check-box' }).vm.disabled).to.equal(false)
-    expect(wrapper.find('#csv-cancel').element.disabled).to.equal(false)
-    expect(wrapper.find('#csv-finish').element.disabled).to.equal(false)
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(false)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(false)
     expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(false)
-    expect(wrapper.find('#csv-finish').isVisible()).to.equal(true)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(true)
   })
 
   it('import fails', async () => {
@@ -627,12 +627,12 @@ describe('CsvImport.vue', () => {
 
     wrapper.vm.db.addTableFromCsv = sinon.stub().rejects(new Error('fail'))
 
-    wrapper.vm.previewCsv()
+    wrapper.vm.preview()
     wrapper.vm.open()
     await wrapper.vm.$nextTick()
 
-    await wrapper.find('#csv-table-name input').setValue('foo')
-    await wrapper.find('#csv-import').trigger('click')
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
     await wrapper.vm.$nextTick()
 
@@ -647,10 +647,10 @@ describe('CsvImport.vue', () => {
     expect(wrapper.find('#quote-char input').element.disabled).to.equal(false)
     expect(wrapper.find('#escape-char input').element.disabled).to.equal(false)
     expect(wrapper.findComponent({ name: 'check-box' }).vm.disabled).to.equal(false)
-    expect(wrapper.find('#csv-cancel').element.disabled).to.equal(false)
-    expect(wrapper.find('#csv-finish').element.disabled).to.equal(false)
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(false)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(false)
     expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(false)
-    expect(wrapper.find('#csv-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
   })
 
   it('import finish', async () => {
@@ -668,19 +668,19 @@ describe('CsvImport.vue', () => {
       messages: []
     })
 
-    wrapper.vm.previewCsv()
+    wrapper.vm.preview()
     wrapper.vm.open()
     await wrapper.vm.$nextTick()
 
-    await wrapper.find('#csv-import').trigger('click')
+    await wrapper.find('#import-start').trigger('click')
     await wrapper.vm.$nextTick()
 
-    await wrapper.find('#csv-finish').trigger('click')
+    await wrapper.find('#import-finish').trigger('click')
 
     expect(actions.addTab.calledOnce).to.equal(true)
     await actions.addTab.returnValues[0]
     expect(mutations.setCurrentTabId.calledOnceWith(state, newTabId)).to.equal(true)
-    expect(wrapper.find('[data-modal="addCsv"]').exists()).to.equal(false)
+    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(false)
     expect(wrapper.emitted('finish')).to.have.lengthOf(1)
   })
 
@@ -699,16 +699,16 @@ describe('CsvImport.vue', () => {
       messages: []
     })
 
-    await wrapper.vm.previewCsv()
+    await wrapper.vm.preview()
     await wrapper.vm.open()
     await wrapper.vm.$nextTick()
 
-    await wrapper.find('#csv-import').trigger('click')
+    await wrapper.find('#import-start').trigger('click')
     await wrapper.vm.$nextTick()
 
-    await wrapper.find('#csv-cancel').trigger('click')
+    await wrapper.find('#import-cancel').trigger('click')
 
-    expect(wrapper.find('[data-modal="addCsv"]').exists()).to.equal(false)
+    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(false)
     expect(wrapper.vm.db.execute.calledOnceWith('DROP TABLE "my_data"')).to.equal(true)
     expect(wrapper.vm.db.refreshSchema.calledOnce).to.equal(true)
     expect(wrapper.emitted('cancel')).to.have.lengthOf(1)
@@ -716,29 +716,29 @@ describe('CsvImport.vue', () => {
 
   it('checks table name', async () => {
     sinon.stub(csv, 'parse').resolves()
-    await wrapper.vm.previewCsv()
+    await wrapper.vm.preview()
     await wrapper.vm.open()
     await wrapper.vm.$nextTick()
 
-    await wrapper.find('#csv-table-name input').setValue('foo')
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
     await clock.tick(400)
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('#csv-table-name .text-field-error').text()).to.equal('')
+    expect(wrapper.find('#csv-json-table-name .text-field-error').text()).to.equal('')
 
     wrapper.vm.db.validateTableName = sinon.stub().rejects(new Error('this is a bad table name'))
-    await wrapper.find('#csv-table-name input').setValue('bar')
+    await wrapper.find('#csv-json-table-name input').setValue('bar')
     await clock.tick(400)
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('#csv-table-name .text-field-error').text())
+    expect(wrapper.find('#csv-json-table-name .text-field-error').text())
       .to.equal('this is a bad table name. Try another table name.')
 
-    await wrapper.find('#csv-table-name input').setValue('')
+    await wrapper.find('#csv-json-table-name input').setValue('')
     await clock.tick(400)
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('#csv-table-name .text-field-error').text()).to.equal('')
+    expect(wrapper.find('#csv-json-table-name .text-field-error').text()).to.equal('')
 
-    await wrapper.find('#csv-import').trigger('click')
-    expect(wrapper.find('#csv-table-name .text-field-error').text())
+    await wrapper.find('#import-start').trigger('click')
+    expect(wrapper.find('#csv-json-table-name .text-field-error').text())
       .to.equal("Table name can't be empty")
     expect(wrapper.vm.db.addTableFromCsv.called).to.equal(false)
   })

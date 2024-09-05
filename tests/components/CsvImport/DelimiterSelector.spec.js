@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { mount, shallowMount } from '@vue/test-utils'
-import DelimiterSelector from '@/components/CsvImport/DelimiterSelector'
+import DelimiterSelector from '@/components/CsvJsonImport/DelimiterSelector'
 
 describe('DelimiterSelector', async () => {
   it('shows the name of value', async () => {

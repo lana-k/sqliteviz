@@ -1,7 +1,7 @@
 <template>
   <div>
     <main-menu />
-    <keep-alive include="Workspace">
+    <keep-alive include="Workspace,Inquiries">
       <router-view id="main-view" />
     </keep-alive>
   </div>

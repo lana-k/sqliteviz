@@ -10,7 +10,7 @@
       </div>
       <db-uploader id="db-edit" type="small" />
       <export-icon tooltip="Export database" @click="exportToFile"/>
-      <add-table-icon @click="addCsv"/>
+      <add-table-icon @click="addCsvJson"/>
     </div>
     <div v-show="schemaVisible" class="schema">
       <table-description
@@ -21,12 +21,12 @@
       />
     </div>
 
-    <!--Parse csv dialog  -->
-    <csv-import
-      ref="addCsv"
+    <!--Parse csv or json dialog  -->
+    <csv-json-import
+      ref="addCsvJson"
       :file="file"
       :db="$store.state.db"
-      dialog-name="addCsv"
+      dialog-name="addCsvJson"
     />
   </div>
 </template>
@@ -40,7 +40,7 @@ import TreeChevron from '@/components/svg/treeChevron'
 import DbUploader from '@/components/DbUploader'
 import ExportIcon from '@/components/svg/export'
 import AddTableIcon from '@/components/svg/addTable'
-import CsvImport from '@/components/CsvImport'
+import CsvJsonImport from '@/components/CsvJsonImport'
 
 export default {
   name: 'Schema',
@@ -51,7 +51,7 @@ export default {
     DbUploader,
     ExportIcon,
     AddTableIcon,
-    CsvImport
+    CsvJsonImport
   },
   data () {
     return {
@@ -80,16 +80,17 @@ export default {
     exportToFile () {
       this.$store.state.db.export(`${this.dbName}.sqlite`)
     },
-    async addCsv () {
-      this.file = await fIo.getFileFromUser('.csv')
+    async addCsvJson () {
+      this.file = await fIo.getFileFromUser('.csv,.json,.ndjson')
       await this.$nextTick()
-      const csvImport = this.$refs.addCsv
-      csvImport.reset()
-      await csvImport.previewCsv()
-      csvImport.open()
+      const csvJsonImportModal = this.$refs.addCsvJson
+      csvJsonImportModal.reset()
+      await csvJsonImportModal.preview()
+      csvJsonImportModal.open()
 
+      const isJson = fIo.isJSON(this.file) || fIo.isNDJSON(this.file)
       events.send('database.import', this.file.size, {
-        from: 'csv',
+        from: isJson ? 'json' : 'csv',
         new_db: false
       })
     }

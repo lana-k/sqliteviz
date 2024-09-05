@@ -41,13 +41,13 @@
     </div>
     <div id="error" class="error"></div>
 
-    <!--Parse csv dialog  -->
-    <csv-import
-      ref="addCsv"
+    <!--Parse csv or json dialog  -->
+    <csv-json-import
+      ref="addCsvJson"
       :file="file"
       :db="newDb"
-      dialog-name="importFromCsv"
-      @cancel="cancelCsvImport"
+      dialog-name="importFromCsvJson"
+      @cancel="cancelImport"
       @finish="finish"
     />
   </div>
@@ -57,7 +57,7 @@
 import fIo from '@/lib/utils/fileIo'
 import ChangeDbIcon from '@/components/svg/changeDb'
 import database from '@/lib/database'
-import CsvImport from '@/components/CsvImport'
+import CsvJsonImport from '@/components/CsvJsonImport'
 import events from '@/lib/utils/events'
 
 export default {
@@ -79,7 +79,7 @@ export default {
   },
   components: {
     ChangeDbIcon,
-    CsvImport
+    CsvJsonImport
   },
   data () {
     return {
@@ -102,7 +102,7 @@ export default {
     }
   },
   methods: {
-    cancelCsvImport () {
+    cancelImport () {
       if (this.newDb) {
         this.newDb.shutDown()
         this.newDb = null
@@ -128,21 +128,22 @@ export default {
       if (fIo.isDatabase(file)) {
         this.loadDb(file)
       } else {
+        const isJson = fIo.isJSON(file) || fIo.isNDJSON(file)
         events.send('database.import', file.size, {
-          from: 'csv',
+          from: isJson ? 'json' : 'csv',
           new_db: true
         })
 
         this.file = file
         await this.$nextTick()
-        const csvImport = this.$refs.addCsv
-        csvImport.reset()
-        return Promise.all([csvImport.previewCsv(), this.animationPromise])
-          .then(csvImport.open)
+        const csvJsonImportModal = this.$refs.addCsvJson
+        csvJsonImportModal.reset()
+        return Promise.all([csvJsonImportModal.preview(), this.animationPromise])
+          .then(csvJsonImportModal.open)
       }
     },
     browse () {
-      fIo.getFileFromUser('.db,.sqlite,.sqlite3,.csv')
+      fIo.getFileFromUser('.db,.sqlite,.sqlite3,.csv,.json,.ndjson')
         .then(this.checkFile)
     },
 

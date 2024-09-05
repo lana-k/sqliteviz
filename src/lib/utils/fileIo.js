@@ -1,4 +1,10 @@
 export default {
+  isJSON (file) {
+    return file && file.type === 'application/json'
+  },
+  isNDJSON (file) {
+    return file && file.name.endsWith('.ndjson')
+  },
   isDatabase (file) {
     const dbTypes = ['application/vnd.sqlite3', 'application/x-sqlite3']
     return file.type
@@ -51,17 +57,18 @@ export default {
   },
 
   importFile () {
-    const reader = new FileReader()
-
     return this.getFileFromUser('.json')
       .then(file => {
-        return new Promise((resolve, reject) => {
-          reader.onload = e => {
-            resolve(e.target.result)
-          }
-          reader.readAsText(file)
-        })
+        return this.getFileContent(file)
       })
+  },
+
+  getFileContent (file) {
+    const reader = new FileReader()
+    return new Promise(resolve => {
+      reader.onload = e => resolve(e.target.result)
+      reader.readAsText(file)
+    })
   },
 
   readFile (path) {

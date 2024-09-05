@@ -8,8 +8,8 @@
     :clickToClose="false"
   >
     <div class="dialog-header">
-      CSV import
-      <close-icon @click="cancelCsvImport" :disabled="disableDialog"/>
+      {{ typeName }} import
+      <close-icon @click="cancelImport" :disabled="disableDialog"/>
     </div>
     <div class="dialog-body">
       <text-field
@@ -18,15 +18,15 @@
         width="484px"
         :disabled="disableDialog"
         :error-msg="tableNameError"
-        id="csv-table-name"
+        id="csv-json-table-name"
       />
-      <div class="chars">
+      <div v-if="!isJson && !isNdJson" class="chars">
         <delimiter-selector
           v-model="delimiter"
           width="210px"
           class="char-input"
-          @input="previewCsv"
           :disabled="disableDialog"
+          @input="preview"
         />
         <text-field
           label="Quote char"
@@ -36,6 +36,7 @@
           :disabled="disableDialog"
           class="char-input"
           id="quote-char"
+          @input="preview"
         />
         <text-field
           label="Escape char"
@@ -49,52 +50,52 @@
           :disabled="disableDialog"
           class="char-input"
           id="escape-char"
+          @input="preview"
         />
       </div>
       <check-box
-        @click="header = $event"
-        :init="true"
+        v-if="!isJson && !isNdJson"
+        :init="header"
         label="Use first row as column headers"
         :disabled="disableDialog"
+        @click="changeHeaderDisplaying"
       />
       <sql-table
-        v-if="previewData
-          && (previewData.rowCount > 0 || Object.keys(previewData).length > 0)
-        "
+        v-if="previewData && previewData.rowCount > 0"
         :data-set="previewData"
-        class="preview-table"
         :preview="true"
+        class="preview-table"
       />
       <div v-else class="no-data">No data</div>
       <logs
-        class="import-csv-errors"
-        :messages="importCsvMessages"
+        class="import-errors"
+        :messages="importMessages"
       />
     </div>
     <div class="dialog-buttons-container">
       <button
         class="secondary"
         :disabled="disableDialog"
-        @click="cancelCsvImport"
-        id="csv-cancel"
+        @click="cancelImport"
+        id="import-cancel"
       >
         Cancel
       </button>
       <button
-        v-show="!importCsvCompleted"
+        v-show="!importCompleted"
         class="primary"
-        :disabled="disableDialog"
-        @click="loadFromCsv(file)"
-        id="csv-import"
+        :disabled="disableDialog || disableImport"
+        @click="loadToDb(file)"
+        id="import-start"
       >
         Import
       </button>
       <button
-        v-show="importCsvCompleted"
+        v-show="importCompleted"
         class="primary"
         :disabled="disableDialog"
         @click="finish"
-        id="csv-finish"
+        id="import-finish"
       >
         Finish
       </button>
@@ -115,7 +116,7 @@ import fIo from '@/lib/utils/fileIo'
 import events from '@/lib/utils/events'
 
 export default {
-  name: 'CsvImport',
+  name: 'CsvJsonImport',
   components: {
     CloseIcon,
     TextField,
@@ -124,33 +125,50 @@ export default {
     SqlTable,
     Logs
   },
-  props: ['file', 'db', 'dialogName'],
+  props: {
+    file: File,
+    db: Object,
+    dialogName: String
+  },
   data () {
     return {
       disableDialog: false,
+      disableImport: false,
       tableName: '',
       delimiter: '',
       quoteChar: '"',
       escapeChar: '"',
       header: true,
-      importCsvCompleted: false,
-      importCsvMessages: [],
+      importCompleted: false,
+      importMessages: [],
       previewData: null,
       addedTable: null,
       tableNameError: ''
     }
   },
+  computed: {
+    isJson () {
+      return fIo.isJSON(this.file)
+    },
+    isNdJson () {
+      return fIo.isNDJSON(this.file)
+    },
+    typeName () {
+      return this.isJson || this.isNdJson ? 'JSON' : 'CSV'
+    }
+  },
   watch: {
-    quoteChar () {
-      this.previewCsv()
+    isJson () {
+      if (this.isJson) {
+        this.delimiter = '\u001E'
+        this.header = false
+      }
     },
-
-    escapeChar () {
-      this.previewCsv()
-    },
-
-    header () {
-      this.previewCsv()
+    isNdJson () {
+      if (this.isNdJson) {
+        this.delimiter = '\u001E'
+        this.header = false
+      }
     },
     tableName: time.debounce(function () {
       this.tableNameError = ''
@@ -164,7 +182,11 @@ export default {
     }, 400)
   },
   methods: {
-    cancelCsvImport () {
+    changeHeaderDisplaying (e) {
+      this.header = e
+      this.preview()
+    },
+    cancelImport () {
       if (!this.disableDialog) {
         if (this.addedTable) {
           this.db.execute(`DROP TABLE "${this.addedTable}"`)
@@ -175,14 +197,15 @@ export default {
       }
     },
     reset () {
-      this.header = true
+      this.header = !this.isJson && !this.isNdJson
       this.quoteChar = '"'
       this.escapeChar = '"'
-      this.delimiter = ''
+      this.delimiter = !this.isJson && !this.isNdJson ? '' : '\u001E'
       this.tableName = ''
       this.disableDialog = false
-      this.importCsvCompleted = false
-      this.importCsvMessages = []
+      this.disableImport = false
+      this.importCompleted = false
+      this.importMessages = []
       this.previewData = null
       this.addedTable = null
       this.tableNameError = ''
@@ -191,39 +214,69 @@ export default {
       this.tableName = this.db.sanitizeTableName(fIo.getFileName(this.file))
       this.$modal.show(this.dialogName)
     },
-    async previewCsv () {
-      this.importCsvCompleted = false
+    async preview () {
+      this.disableImport = false
+      if (!this.file) {
+        return
+      }
+      this.importCompleted = false
       const config = {
         preview: 3,
         quoteChar: this.quoteChar || '"',
         escapeChar: this.escapeChar,
         header: this.header,
-        delimiter: this.delimiter
+        delimiter: this.delimiter,
+        columns: !this.isJson && !this.isNdJson ? null : ['doc']
       }
       try {
         const start = new Date()
-        const parseResult = await csv.parse(this.file, config)
+        const parseResult = this.isJson
+          ? await this.getJsonParseResult(this.file)
+          : await csv.parse(this.file, config)
         const end = new Date()
         this.previewData = parseResult.data
+        this.previewData.rowCount = parseResult.rowCount
         this.delimiter = parseResult.delimiter
 
         // In parseResult.messages we can get parse errors
-        this.importCsvMessages = parseResult.messages || []
+        this.importMessages = parseResult.messages || []
+
+        if (this.previewData.rowCount === 0) {
+          this.disableImport = true
+          this.importMessages.push({
+            type: 'info',
+            message: 'No rows to import.'
+          })
+        }
 
         if (!parseResult.hasErrors) {
-          this.importCsvMessages.push({
+          this.importMessages.push({
             message: `Preview parsing is completed in ${time.getPeriod(start, end)}.`,
             type: 'success'
           })
         }
       } catch (err) {
-        this.importCsvMessages = [{
+        console.error(err)
+        this.importMessages = [{
           message: err,
           type: 'error'
         }]
       }
     },
-    async loadFromCsv (file) {
+    async getJsonParseResult (file) {
+      const jsonContent = await fIo.getFileContent(file)
+      const isEmpty = !jsonContent.trim()
+      return {
+        data: {
+          columns: ['doc'],
+          values: { doc: !isEmpty ? [jsonContent] : [] }
+        },
+        hasErrors: false,
+        messages: [],
+        rowCount: +(!isEmpty)
+      }
+    },
+    async loadToDb (file) {
       if (!this.tableName) {
         this.tableNameError = "Table name can't be empty"
         return
@@ -234,17 +287,18 @@ export default {
         quoteChar: this.quoteChar || '"',
         escapeChar: this.escapeChar,
         header: this.header,
-        delimiter: this.delimiter
+        delimiter: this.delimiter,
+        columns: !this.isJson && !this.isNdJson ? null : ['doc']
       }
-      const parseCsvMsg = {
-        message: 'Parsing CSV...',
+      const parsingMsg = {
+        message: `Parsing ${this.typeName}...`,
         type: 'info'
       }
-      this.importCsvMessages.push(parseCsvMsg)
-      const parseCsvLoadingIndicator = setTimeout(() => { parseCsvMsg.type = 'loading' }, 1000)
+      this.importMessages.push(parsingMsg)
+      const parsingLoadingIndicator = setTimeout(() => { parsingMsg.type = 'loading' }, 1000)
 
       const importMsg = {
-        message: 'Importing CSV into a SQLite database...',
+        message: `Importing ${this.typeName} into a SQLite database...`,
         type: 'info'
       }
       let importLoadingIndicator = null
@@ -256,27 +310,30 @@ export default {
 
       try {
         let start = new Date()
-        const parseResult = await csv.parse(this.file, config)
+        const parseResult = this.isJson
+          ? await this.getJsonParseResult(file)
+          : await csv.parse(this.file, config)
+
         let end = new Date()
 
         if (!parseResult.hasErrors) {
           const rowCount = parseResult.rowCount
           let period = time.getPeriod(start, end)
-          parseCsvMsg.type = 'success'
+          parsingMsg.type = 'success'
 
           if (parseResult.messages.length > 0) {
-            this.importCsvMessages = this.importCsvMessages.concat(parseResult.messages)
-            parseCsvMsg.message = `${rowCount} rows are parsed in ${period}.`
+            this.importMessages = this.importMessages.concat(parseResult.messages)
+            parsingMsg.message = `${rowCount} rows are parsed in ${period}.`
           } else {
-            // Inform about csv parsing success
-            parseCsvMsg.message = `${rowCount} rows are parsed successfully in ${period}.`
+            // Inform about parsing success
+            parsingMsg.message = `${rowCount} rows are parsed successfully in ${period}.`
           }
 
-          // Loading indicator for csv parsing is not needed anymore
-          clearTimeout(parseCsvLoadingIndicator)
+          // Loading indicator for parsing is not needed anymore
+          clearTimeout(parsingLoadingIndicator)
 
           // Add info about import start
-          this.importCsvMessages.push(importMsg)
+          this.importMessages.push(importMsg)
 
           // Show import progress after 1 second
           importLoadingIndicator = setTimeout(() => {
@@ -291,52 +348,105 @@ export default {
           this.addedTable = this.tableName
           // Inform about import success
           period = time.getPeriod(start, end)
-          importMsg.message = `Importing CSV into a SQLite database is completed in ${period}.`
+          importMsg.message = `Importing ${this.typeName} into a SQLite database is completed in ${period}.`
           importMsg.type = 'success'
 
           // Loading indicator for import is not needed anymore
           clearTimeout(importLoadingIndicator)
 
-          this.importCsvCompleted = true
+          this.importCompleted = true
         } else {
-          parseCsvMsg.message = 'Parsing ended with errors.'
-          parseCsvMsg.type = 'info'
-          this.importCsvMessages = this.importCsvMessages.concat(parseResult.messages)
+          parsingMsg.message = 'Parsing ended with errors.'
+          parsingMsg.type = 'info'
+          this.importMessages = this.importMessages.concat(parseResult.messages)
         }
       } catch (err) {
-        if (parseCsvMsg.type === 'loading') {
-          parseCsvMsg.type = 'info'
+        console.error(err)
+        if (parsingMsg.type === 'loading') {
+          parsingMsg.type = 'info'
         }
 
         if (importMsg.type === 'loading') {
           importMsg.type = 'info'
         }
 
-        this.importCsvMessages.push({
+        this.importMessages.push({
           message: err,
           type: 'error'
         })
       }
 
-      clearTimeout(parseCsvLoadingIndicator)
+      clearTimeout(parsingLoadingIndicator)
       clearTimeout(importLoadingIndicator)
       this.db.deleteProgressCounter(progressCounterId)
       this.disableDialog = false
     },
     async finish () {
       this.$modal.hide(this.dialogName)
-      const stmt = [
-        '/*',
+      const stmt = this.getQueryExample()
+      const tabId = await this.$store.dispatch('addTab', { query: stmt })
+      this.$store.commit('setCurrentTabId', tabId)
+      this.importCompleted = false
+      this.$emit('finish')
+      events.send('inquiry.create', null, { auto: true })
+    },
+    getQueryExample () {
+      return this.isNdJson ? this.getNdJsonQueryExample()
+        : this.isJson ? this.getJsonQueryExample()
+          : [
+            '/*',
         ` * Your CSV file has been imported into ${this.addedTable} table.`,
         ' * You can run this SQL query to make all CSV records available for charting.',
         ' */',
         `SELECT * FROM "${this.addedTable}"`
-      ].join('\n')
-      const tabId = await this.$store.dispatch('addTab', { query: stmt })
-      this.$store.commit('setCurrentTabId', tabId)
-      this.importCsvCompleted = false
-      this.$emit('finish')
-      events.send('inquiry.create', null, { auto: true })
+          ].join('\n')
+    },
+    getNdJsonQueryExample () {
+      try {
+        const firstRowJson = JSON.parse(this.previewData.values.doc[0])
+        const firstKey = Object.keys(firstRowJson)[0]
+        return [
+          '/*',
+          ` * Your NDJSON file has been imported into ${this.addedTable} table.`,
+          ` * Run this SQL query to get values of property ${firstKey} and make them available for charting.`,
+          ' */',
+          `SELECT doc->>'${firstKey}'`,
+          `FROM "${this.addedTable}"`
+        ].join('\n')
+      } catch (err) {
+        console.error(err)
+        return [
+          '/*',
+          ` * Your NDJSON file has been imported into ${this.addedTable} table.`,
+          ' */',
+          'SELECT *',
+          `FROM "${this.addedTable}"`
+        ].join('\n')
+      }
+    },
+    getJsonQueryExample () {
+      try {
+        const firstRowJson = JSON.parse(this.previewData.values.doc[0])
+        const firstKey = Object.keys(firstRowJson)[0]
+        return [
+          '/*',
+          ` * Your JSON file has been imported into ${this.addedTable} table.`,
+          ` * Run this SQL query to get values of property ${firstKey} and make them available for charting.`,
+          ' */',
+          'SELECT *',
+          `FROM "${this.addedTable}"`,
+          `JOIN json_each(doc, '$.${firstKey}')`
+        ].join('\n')
+      } catch (err) {
+        console.error(err)
+        return [
+          '/*',
+          ` * Your NDJSON file has been imported into ${this.addedTable} table.`,
+          ' */',
+          'SELECT *',
+          `FROM "${this.addedTable}"`
+        ].join('\n')
+      }
     }
   }
 }
@@ -347,10 +457,14 @@ export default {
   padding-bottom: 0;
 }
 
+#csv-json-table-name {
+margin-bottom: 24px;
+}
+
 .chars {
   display: flex;
   align-items: flex-end;
-  margin: 24px 0 20px;
+  margin: 0 0 20px;
 }
 .char-input {
   margin-right: 44px;
@@ -359,7 +473,7 @@ export default {
   margin-top: 18px;
 }
 
-.import-csv-errors {
+.import-errors {
   height: 136px;
   margin-top: 8px;
 }

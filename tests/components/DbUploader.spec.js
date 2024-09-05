@@ -153,16 +153,16 @@ describe('DbUploader.vue', () => {
       }
     })
 
-    const CsvImport = wrapper.vm.$refs.addCsv
+    const CsvImport = wrapper.vm.$refs.addCsvJson
     sinon.stub(CsvImport, 'reset')
-    sinon.stub(CsvImport, 'previewCsv').resolves()
+    sinon.stub(CsvImport, 'preview').resolves()
     sinon.stub(CsvImport, 'open')
 
     await wrapper.find('.drop-area').trigger('click')
     await wrapper.vm.$nextTick()
     expect(CsvImport.reset.calledOnce).to.equal(true)
     await wrapper.vm.animationPromise
-    expect(CsvImport.previewCsv.calledOnce).to.equal(true)
+    expect(CsvImport.preview.calledOnce).to.equal(true)
     await wrapper.vm.$nextTick()
     expect(CsvImport.open.calledOnce).to.equal(true)
     wrapper.destroy()
@@ -186,9 +186,9 @@ describe('DbUploader.vue', () => {
       }
     })
 
-    const CsvImport = wrapper.vm.$refs.addCsv
+    const CsvImport = wrapper.vm.$refs.addCsvJson
     sinon.stub(CsvImport, 'reset')
-    sinon.stub(CsvImport, 'previewCsv').resolves()
+    sinon.stub(CsvImport, 'preview').resolves()
     sinon.stub(CsvImport, 'open')
 
     await wrapper.find('.drop-area').trigger('click')

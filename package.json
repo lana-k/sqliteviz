@@ -1,6 +1,6 @@
 {
   "name": "sqliteviz",
-  "version": "0.24.1",
+  "version": "0.25.0",
   "license": "Apache-2.0",
   "private": true,
   "scripts": {

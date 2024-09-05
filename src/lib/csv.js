@@ -7,9 +7,9 @@ const hintsByCode = {
 }
 
 export default {
-  getResult (source) {
+  getResult (source, columns) {
     const result = {
-      columns: []
+      columns: columns || []
     }
     const values = {}
     if (source.meta.fields) {
@@ -24,8 +24,18 @@ export default {
           return value
         })
       })
+    } else if (columns) {
+      columns.forEach((col, i) => {
+        values[col] = source.data.map(row => {
+          let value = row[i]
+          if (value instanceof Date) {
+            value = value.toISOString()
+          }
+          return value
+        })
+      })
     } else {
-      for (let i = 0; i <= source.data[0].length - 1; i++) {
+      for (let i = 0; source.data[0] && i <= source.data[0].length - 1; i++) {
         const colName = `col${i + 1}`
         result.columns.push(colName)
         values[colName] = source.data.map(row => {
@@ -76,7 +86,7 @@ export default {
           let res
           try {
             res = {
-              data: this.getResult(results),
+              data: this.getResult(results, config.columns),
               delimiter: results.meta.delimiter,
               hasErrors: false,
               rowCount: results.data.length
