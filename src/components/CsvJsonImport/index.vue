@@ -348,7 +348,8 @@ export default {
           this.addedTable = this.tableName
           // Inform about import success
           period = time.getPeriod(start, end)
-          importMsg.message = `Importing ${this.typeName} into a SQLite database is completed in ${period}.`
+          importMsg.message = `Importing ${this.typeName} ` +
+          `into a SQLite database is completed in ${period}.`
           importMsg.type = 'success'
 
           // Loading indicator for import is not needed anymore
@@ -408,7 +409,8 @@ export default {
         return [
           '/*',
           ` * Your NDJSON file has been imported into ${this.addedTable} table.`,
-          ` * Run this SQL query to get values of property ${firstKey} and make them available for charting.`,
+          ` * Run this SQL query to get values of property ${firstKey} ` +
+          'and make them available for charting.',
           ' */',
           `SELECT doc->>'${firstKey}'`,
           `FROM "${this.addedTable}"`
@@ -431,7 +433,8 @@ export default {
         return [
           '/*',
           ` * Your JSON file has been imported into ${this.addedTable} table.`,
-          ` * Run this SQL query to get values of property ${firstKey} and make them available for charting.`,
+          ` * Run this SQL query to get values of property ${firstKey} ` +
+          'and make them available for charting.',
           ' */',
           'SELECT *',
           `FROM "${this.addedTable}"`,
