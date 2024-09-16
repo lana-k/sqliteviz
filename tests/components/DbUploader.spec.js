@@ -31,7 +31,7 @@ describe('DbUploader.vue', () => {
 
   it('loads db on click and redirects to /workspace', async () => {
     // mock getting a file from user
-    const file = { name: 'test.db' }
+    const file = new File([], 'test.db')
     sinon.stub(fu, 'getFileFromUser').resolves(file)
 
     // mock db loading
@@ -85,7 +85,7 @@ describe('DbUploader.vue', () => {
     })
 
     // mock a file dropped by a user
-    const file = { name: 'test.db' }
+    const file = new File([], 'test.db')
     const dropData = { dataTransfer: new DataTransfer() }
     Object.defineProperty(dropData.dataTransfer, 'files', {
       value: [file],
@@ -103,7 +103,7 @@ describe('DbUploader.vue', () => {
 
   it("doesn't redirect if already on /workspace", async () => {
     // mock getting a file from user
-    const file = { name: 'test.db' }
+    const file = new File([], 'test.db')
     sinon.stub(fu, 'getFileFromUser').resolves(file)
 
     // mock db loading
@@ -136,7 +136,7 @@ describe('DbUploader.vue', () => {
 
   it('shows parse dialog if gets csv file', async () => {
     // mock getting a file from user
-    const file = { name: 'test.csv' }
+    const file = new File([], 'test.csv')
     sinon.stub(fu, 'getFileFromUser').resolves(file)
 
     // mock router
@@ -168,9 +168,77 @@ describe('DbUploader.vue', () => {
     wrapper.destroy()
   })
 
-  it('deletes temporary db if CSV import is canceled', async () => {
+  it('shows parse dialog if gets json file', async () => {
     // mock getting a file from user
-    const file = { name: 'test.csv' }
+    const file = new File([], 'test.json', { type: 'application/json' })
+    sinon.stub(fu, 'getFileFromUser').resolves(file)
+
+    // mock router
+    const $router = { push: sinon.stub() }
+    const $route = { path: '/workspace' }
+
+    // mount the component
+    const wrapper = mount(DbUploader, {
+      attachTo: place,
+      store,
+      mocks: { $router, $route },
+      propsData: {
+        type: 'illustrated'
+      }
+    })
+
+    const JsonImport = wrapper.vm.$refs.addCsvJson
+    sinon.stub(JsonImport, 'reset')
+    sinon.stub(JsonImport, 'preview').resolves()
+    sinon.stub(JsonImport, 'open')
+
+    await wrapper.find('.drop-area').trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(JsonImport.reset.calledOnce).to.equal(true)
+    await wrapper.vm.animationPromise
+    expect(JsonImport.preview.calledOnce).to.equal(true)
+    await wrapper.vm.$nextTick()
+    expect(JsonImport.open.calledOnce).to.equal(true)
+    wrapper.destroy()
+  })
+
+  it('shows parse dialog if gets ndjson file', async () => {
+    // mock getting a file from user
+    const file = new File([], 'test.ndjson')
+    sinon.stub(fu, 'getFileFromUser').resolves(file)
+
+    // mock router
+    const $router = { push: sinon.stub() }
+    const $route = { path: '/workspace' }
+
+    // mount the component
+    const wrapper = mount(DbUploader, {
+      attachTo: place,
+      store,
+      mocks: { $router, $route },
+      propsData: {
+        type: 'illustrated'
+      }
+    })
+
+    const JsonImport = wrapper.vm.$refs.addCsvJson
+    sinon.stub(JsonImport, 'reset')
+    sinon.stub(JsonImport, 'preview').resolves()
+    sinon.stub(JsonImport, 'open')
+
+    await wrapper.find('.drop-area').trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(JsonImport.reset.calledOnce).to.equal(true)
+    await wrapper.vm.animationPromise
+    expect(JsonImport.preview.calledOnce).to.equal(true)
+    await wrapper.vm.$nextTick()
+    expect(JsonImport.open.calledOnce).to.equal(true)
+    wrapper.destroy()
+  })
+
+  it('deletes temporary db if import is canceled', async () => {
+    // mock getting a file from user
+    const file = new File([], 'test.csv')
     sinon.stub(fu, 'getFileFromUser').resolves(file)
 
     // mock router

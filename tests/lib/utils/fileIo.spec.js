@@ -106,9 +106,64 @@ describe('fileIo.js', () => {
     await expect(fIo.readAsArrayBuffer(blob)).to.be.rejectedWith('Problem parsing input file.')
   })
 
+  it('isJSON', () => {
+    let file = { type: 'application/json' }
+    expect(fIo.isJSON(file)).to.equal(true)
+
+    file = { type: 'application/x-sqlite3' }
+    expect(fIo.isJSON(file)).to.equal(false)
+
+    file = { type: '', name: 'test.db' }
+    expect(fIo.isJSON(file)).to.equal(false)
+
+    file = { type: '', name: 'test.sqlite' }
+    expect(fIo.isJSON(file)).to.equal(false)
+
+    file = { type: '', name: 'test.sqlite3' }
+    expect(fIo.isJSON(file)).to.equal(false)
+
+    file = { type: '', name: 'test.csv' }
+    expect(fIo.isJSON(file)).to.equal(false)
+
+    file = { type: '', name: 'test.ndjson' }
+    expect(fIo.isJSON(file)).to.equal(false)
+
+    file = { type: 'text', name: 'test.db' }
+    expect(fIo.isJSON(file)).to.equal(false)
+  })
+
+  it('isNDJSON', () => {
+    let file = { type: 'application/json', name: 'test.json' }
+    expect(fIo.isNDJSON(file)).to.equal(false)
+
+    file = { type: 'application/x-sqlite3', name: 'test.sqlite3' }
+    expect(fIo.isNDJSON(file)).to.equal(false)
+
+    file = { type: '', name: 'test.db' }
+    expect(fIo.isNDJSON(file)).to.equal(false)
+
+    file = { type: '', name: 'test.sqlite' }
+    expect(fIo.isNDJSON(file)).to.equal(false)
+
+    file = { type: '', name: 'test.sqlite3' }
+    expect(fIo.isNDJSON(file)).to.equal(false)
+
+    file = { type: '', name: 'test.csv' }
+    expect(fIo.isNDJSON(file)).to.equal(false)
+
+    file = { type: '', name: 'test.ndjson' }
+    expect(fIo.isNDJSON(file)).to.equal(true)
+
+    file = { type: 'text', name: 'test.db' }
+    expect(fIo.isNDJSON(file)).to.equal(false)
+  })
+
   it('isDatabase', () => {
     let file = { type: 'application/vnd.sqlite3' }
     expect(fIo.isDatabase(file)).to.equal(true)
+
+    file = { type: 'application/json' }
+    expect(fIo.isDatabase(file)).to.equal(false)
 
     file = { type: 'application/x-sqlite3' }
     expect(fIo.isDatabase(file)).to.equal(true)
@@ -123,6 +178,9 @@ describe('fileIo.js', () => {
     expect(fIo.isDatabase(file)).to.equal(true)
 
     file = { type: '', name: 'test.csv' }
+    expect(fIo.isDatabase(file)).to.equal(false)
+
+    file = { type: '', name: 'test.ndjson' }
     expect(fIo.isDatabase(file)).to.equal(false)
 
     file = { type: 'text', name: 'test.db' }

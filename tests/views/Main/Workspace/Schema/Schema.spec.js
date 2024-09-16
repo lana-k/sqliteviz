@@ -125,7 +125,7 @@ describe('Schema.vue', () => {
   })
 
   it('adds table', async () => {
-    const file = { name: 'test.csv' }
+    const file = new File([], 'test.csv')
     sinon.stub(fIo, 'getFileFromUser').resolves(file)
 
     sinon.stub(csv, 'parse').resolves({

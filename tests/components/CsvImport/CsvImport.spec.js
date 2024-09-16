@@ -13,7 +13,7 @@ describe('CsvJsonImport.vue', () => {
   let clock
   let wrapper
   const newTabId = 1
-  const file = { name: 'my data.csv' }
+  const file = new File([], 'my data.csv')
 
   beforeEach(() => {
     clock = sinon.useFakeTimers()
@@ -78,6 +78,7 @@ describe('CsvJsonImport.vue', () => {
     await wrapper.vm.open()
     await wrapper.vm.$nextTick()
     expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(true)
+    expect(wrapper.find('.dialog-header').text()).to.equal('CSV import')
     expect(wrapper.find('#csv-json-table-name input').element.value).to.equal('my_data')
     expect(wrapper.findComponent({ name: 'delimiter-selector' }).vm.value).to.equal('|')
     expect(wrapper.find('#quote-char input').element.value).to.equal('"')
@@ -95,6 +96,34 @@ describe('CsvJsonImport.vue', () => {
       .to.include('Preview parsing is completed in')
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#import-start').isVisible()).to.equal(true)
+    expect(wrapper.find('#import-start').attributes().disabled).to.equal(undefined)
+  })
+
+  it('disables import if no rows found', async () => {
+    sinon.stub(csv, 'parse').resolves({
+      delimiter: '|',
+      data: {
+        columns: ['col2', 'col1'],
+        values: {
+          col1: [],
+          col2: []
+        }
+      },
+      rowCount: 0,
+      messages: []
+    })
+
+    await wrapper.vm.preview()
+    await wrapper.vm.open()
+    await wrapper.vm.$nextTick()
+    const rows = wrapper.findAll('tbody tr')
+    expect(rows).to.have.lengthOf(0)
+    expect(wrapper.findComponent({ name: 'logs' }).text())
+      .to.include('No rows to import.')
+    expect(wrapper.find('.no-data').isVisible()).to.equal(true)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
+    expect(wrapper.find('#import-start').attributes().disabled).to.equal('disabled')
   })
 
   it('reparses when parameters changes', async () => {
@@ -231,7 +260,8 @@ describe('CsvJsonImport.vue', () => {
           col2: ['foo']
         }
       },
-      rowCount: 1
+      rowCount: 1,
+      messages: []
     })
 
     wrapper.vm.preview()
@@ -240,7 +270,18 @@ describe('CsvJsonImport.vue', () => {
 
     let resolveParsing
     parse.onCall(1).returns(new Promise(resolve => {
-      resolveParsing = resolve
+      resolveParsing = () => resolve({
+        delimiter: '|',
+        data: {
+          columns: ['col1', 'col2'],
+          values: {
+            col1: [1],
+            col2: ['foo']
+          }
+        },
+        rowCount: 1,
+        messages: []
+      })
     }))
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
@@ -715,7 +756,11 @@ describe('CsvJsonImport.vue', () => {
   })
 
   it('checks table name', async () => {
-    sinon.stub(csv, 'parse').resolves()
+    sinon.stub(csv, 'parse').resolves({
+      data: {},
+      hasErrors: false,
+      messages: []
+    })
     await wrapper.vm.preview()
     await wrapper.vm.open()
     await wrapper.vm.$nextTick()
@@ -741,5 +786,479 @@ describe('CsvJsonImport.vue', () => {
     expect(wrapper.find('#csv-json-table-name .text-field-error').text())
       .to.equal("Table name can't be empty")
     expect(wrapper.vm.db.addTableFromCsv.called).to.equal(false)
+  })
+})
+
+describe('CsvJsonImport.vue - json', () => {
+  let state = {}
+  let actions = {}
+  let mutations = {}
+  let store = {}
+  let clock
+  let wrapper
+  const newTabId = 1
+  const file = new File(
+    [new Blob(
+      [JSON.stringify({ foo: [1, 2, 3] }, null, 2)],
+      { type: 'application/json' }
+    )],
+    'my data.json',
+    { type: 'application/json' })
+
+  beforeEach(() => {
+    clock = sinon.useFakeTimers()
+
+    // mock store state and mutations
+    state = {}
+    mutations = {
+      setDb: sinon.stub(),
+      setCurrentTabId: sinon.stub()
+    }
+    actions = {
+      addTab: sinon.stub().resolves(newTabId)
+    }
+    store = new Vuex.Store({ state, mutations, actions })
+
+    const db = {
+      sanitizeTableName: sinon.stub().returns('my_data'),
+      addTableFromCsv: sinon.stub().resolves(),
+      createProgressCounter: sinon.stub().returns(1),
+      deleteProgressCounter: sinon.stub(),
+      validateTableName: sinon.stub().resolves(),
+      execute: sinon.stub().resolves(),
+      refreshSchema: sinon.stub().resolves()
+    }
+
+    // mount the component
+    wrapper = mount(CsvJsonImport, {
+      store,
+      propsData: {
+        file,
+        dialogName: 'addCsvJson',
+        db
+      }
+    })
+  })
+
+  afterEach(() => {
+    sinon.restore()
+  })
+
+  it('previews', async () => {
+    await wrapper.vm.preview()
+    await wrapper.vm.open()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(true)
+    expect(wrapper.find('.dialog-header').text()).to.equal('JSON import')
+    expect(wrapper.find('#csv-json-table-name input').element.value).to.equal('my_data')
+    expect(wrapper.findComponent({ name: 'delimiter-selector' }).exists()).to.equal(false)
+    expect(wrapper.find('#quote-char input').exists()).to.equal(false)
+    expect(wrapper.find('#escape-char input').exists()).to.equal(false)
+    expect(wrapper.findComponent({ name: 'check-box' }).exists()).to.equal(false)
+    const rows = wrapper.findAll('tbody tr')
+    expect(rows).to.have.lengthOf(1)
+    expect(rows.at(0).findAll('td').at(0).text()).to.equal([
+      '{',
+      '  "foo": [',
+      '    1,',
+      '    2,',
+      '    3',
+      '  ]',
+      '}'
+    ].join('\n')
+    )
+    expect(wrapper.findComponent({ name: 'logs' }).text())
+      .to.include('Preview parsing is completed in')
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
+  })
+
+  it('has proper state before parsing is complete', async () => {
+    const getJsonParseResult = sinon.stub(wrapper.vm, 'getJsonParseResult')
+    getJsonParseResult.onCall(0).returns({
+      delimiter: '|',
+      data: {
+        columns: ['doc'],
+        values: {
+          doc: ['{ "foo": [ 1, 2, 3 ] }']
+        }
+      },
+      rowCount: 1,
+      hasErrors: false,
+      messages: []
+    })
+
+    let resolveParsing
+    getJsonParseResult.onCall(1).returns(new Promise(resolve => {
+      resolveParsing = () => resolve({
+        delimiter: '|',
+        data: {
+          columns: ['doc'],
+          values: {
+            doc: ['{ "foo": [ 1, 2, 3 ] }']
+          }
+        },
+        rowCount: 1,
+        hasErrors: false,
+        messages: []
+      })
+    }))
+
+    await wrapper.vm.preview()
+    await wrapper.vm.open()
+    await wrapper.vm.$nextTick()
+
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
+    await wrapper.vm.$nextTick()
+
+    // "Parsing JSON..." in the logs
+    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg').at(1).text())
+      .to.equal('Parsing JSON...')
+
+    // After 1 second - loading indicator is shown
+    await clock.tick(1000)
+    expect(
+      wrapper.findComponent({ name: 'logs' }).findComponent({ name: 'LoadingIndicator' }).exists()
+    ).to.equal(true)
+
+    // All the dialog controls are disabled
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
+    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(true)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
+    await resolveParsing()
+    await getJsonParseResult.returnValues[1]
+
+    // Loading indicator is not shown when parsing is compete
+    expect(
+      wrapper.findComponent({ name: 'logs' }).findComponent({ name: 'LoadingIndicator' }).exists()
+    ).to.equal(false)
+  })
+
+  it('has proper state before import is completed', async () => {
+    const getJsonParseResult = sinon.spy(wrapper.vm, 'getJsonParseResult')
+
+    let resolveImport = sinon.stub()
+    wrapper.vm.db.addTableFromCsv = sinon.stub()
+      .resolves(new Promise(resolve => { resolveImport = resolve }))
+
+    await wrapper.vm.preview()
+    await wrapper.vm.open()
+    await wrapper.vm.$nextTick()
+
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
+    await getJsonParseResult.returnValues[1]
+    await wrapper.vm.$nextTick()
+
+    // Parsing success in the logs
+    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg').at(2).text())
+      .to.equal('Importing JSON into a SQLite database...')
+
+    // After 1 second - loading indicator is shown
+    await clock.tick(1000)
+    expect(
+      wrapper.findComponent({ name: 'logs' }).findComponent({ name: 'LoadingIndicator' }).exists()
+    ).to.equal(true)
+
+    // All the dialog controls are disabled
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
+    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(true)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
+    expect(wrapper.vm.db.addTableFromCsv.getCall(0).args[0]).to.equal('foo') // table name
+
+    // After resolving - loading indicator is not shown
+    await resolveImport()
+    await wrapper.vm.db.addTableFromCsv.returnValues[0]
+    expect(
+      wrapper.findComponent({ name: 'logs' }).findComponent({ name: 'LoadingIndicator' }).exists()
+    ).to.equal(false)
+  })
+
+  it('import success', async () => {
+    const getJsonParseResult = sinon.spy(wrapper.vm, 'getJsonParseResult')
+
+    await wrapper.vm.preview()
+    await wrapper.vm.open()
+    await wrapper.vm.$nextTick()
+
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
+    await getJsonParseResult.returnValues[1]
+    await wrapper.vm.$nextTick()
+
+    // Import success in the logs
+    const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
+    expect(logs).to.have.lengthOf(3)
+    expect(logs.at(2).text()).to.contain('Importing JSON into a SQLite database is completed in')
+
+    // All the dialog controls are enabled
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(false)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(false)
+    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(false)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(true)
+  })
+})
+
+describe('CsvJsonImport.vue - ndjson', () => {
+  let state = {}
+  let actions = {}
+  let mutations = {}
+  let store = {}
+  let clock
+  let wrapper
+  const newTabId = 1
+  const file = new File([], 'my data.ndjson')
+
+  beforeEach(() => {
+    clock = sinon.useFakeTimers()
+
+    // mock store state and mutations
+    state = {}
+    mutations = {
+      setDb: sinon.stub(),
+      setCurrentTabId: sinon.stub()
+    }
+    actions = {
+      addTab: sinon.stub().resolves(newTabId)
+    }
+    store = new Vuex.Store({ state, mutations, actions })
+
+    const db = {
+      sanitizeTableName: sinon.stub().returns('my_data'),
+      addTableFromCsv: sinon.stub().resolves(),
+      createProgressCounter: sinon.stub().returns(1),
+      deleteProgressCounter: sinon.stub(),
+      validateTableName: sinon.stub().resolves(),
+      execute: sinon.stub().resolves(),
+      refreshSchema: sinon.stub().resolves()
+    }
+
+    // mount the component
+    wrapper = mount(CsvJsonImport, {
+      store,
+      propsData: {
+        file,
+        dialogName: 'addCsvJson',
+        db
+      }
+    })
+  })
+
+  afterEach(() => {
+    sinon.restore()
+  })
+
+  it('previews', async () => {
+    sinon.stub(csv, 'parse').resolves({
+      delimiter: '|',
+      data: {
+        columns: ['doc'],
+        values: {
+          doc: ['{ "foo": [ 1, 2, 3 ] }']
+        }
+      },
+      rowCount: 1,
+      messages: []
+    })
+
+    wrapper.vm.preview()
+    await wrapper.vm.open()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(true)
+    expect(wrapper.find('.dialog-header').text()).to.equal('JSON import')
+    expect(wrapper.find('#csv-json-table-name input').element.value).to.equal('my_data')
+    expect(wrapper.findComponent({ name: 'delimiter-selector' }).exists()).to.equal(false)
+    expect(wrapper.find('#quote-char input').exists()).to.equal(false)
+    expect(wrapper.find('#escape-char input').exists()).to.equal(false)
+    expect(wrapper.findComponent({ name: 'check-box' }).exists()).to.equal(false)
+    const rows = wrapper.findAll('tbody tr')
+    expect(rows).to.have.lengthOf(1)
+    expect(rows.at(0).findAll('td').at(0).text()).to.equal('{ "foo": [ 1, 2, 3 ] }')
+    expect(wrapper.findComponent({ name: 'logs' }).text())
+      .to.include('Preview parsing is completed in')
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
+  })
+
+  it('has proper state before parsing is complete', async () => {
+    const parse = sinon.stub(csv, 'parse')
+    parse.onCall(0).resolves({
+      delimiter: '|',
+      data: {
+        columns: ['doc'],
+        values: {
+          doc: ['{ "foo": [ 1, 2, 3 ] }']
+        }
+      },
+      rowCount: 1
+    })
+
+    wrapper.vm.preview()
+    wrapper.vm.open()
+    await wrapper.vm.$nextTick()
+
+    let resolveParsing
+    parse.onCall(1).returns(new Promise(resolve => {
+      resolveParsing = () => resolve({
+        delimiter: '|',
+        data: {
+          columns: ['doc'],
+          values: {
+            doc: ['{ "foo": [ 1, 2, 3 ] }']
+          }
+        },
+        rowCount: 1,
+        messages: []
+      })
+    }))
+
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
+    await wrapper.vm.$nextTick()
+
+    // "Parsing JSON..." in the logs
+    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg').at(1).text())
+      .to.equal('Parsing JSON...')
+
+    // After 1 second - loading indicator is shown
+    await clock.tick(1000)
+    expect(
+      wrapper.findComponent({ name: 'logs' }).findComponent({ name: 'LoadingIndicator' }).exists()
+    ).to.equal(true)
+
+    // All the dialog controls are disabled
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
+    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(true)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
+    await resolveParsing()
+    await parse.returnValues[1]
+
+    // Loading indicator is not shown when parsing is compete
+    expect(
+      wrapper.findComponent({ name: 'logs' }).findComponent({ name: 'LoadingIndicator' }).exists()
+    ).to.equal(false)
+  })
+
+  it('has proper state before import is completed', async () => {
+    const parse = sinon.stub(csv, 'parse')
+    parse.onCall(0).resolves({
+      delimiter: '|',
+      data: {
+        columns: ['doc'],
+        values: {
+          doc: ['{ "foo": [ 1, 2, 3 ] }']
+        }
+      },
+      rowCount: 1,
+      hasErrors: false,
+      messages: []
+    })
+
+    parse.onCall(1).resolves({
+      delimiter: '|',
+      data: {
+        columns: ['doc'],
+        values: {
+          doc: ['{ "foo": [ 1, 2, 3 ] }']
+        }
+      },
+      rowCount: 1,
+      hasErrors: false,
+      messages: []
+    })
+
+    let resolveImport = sinon.stub()
+    wrapper.vm.db.addTableFromCsv = sinon.stub()
+      .resolves(new Promise(resolve => { resolveImport = resolve }))
+
+    wrapper.vm.preview()
+    wrapper.vm.open()
+    await wrapper.vm.$nextTick()
+
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
+    await csv.parse.returnValues[1]
+    await wrapper.vm.$nextTick()
+
+    // Parsing success in the logs
+    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg').at(2).text())
+      .to.equal('Importing JSON into a SQLite database...')
+
+    // After 1 second - loading indicator is shown
+    await clock.tick(1000)
+    expect(
+      wrapper.findComponent({ name: 'logs' }).findComponent({ name: 'LoadingIndicator' }).exists()
+    ).to.equal(true)
+
+    // All the dialog controls are disabled
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
+    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(true)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
+    expect(wrapper.find('#import-start').isVisible()).to.equal(true)
+    expect(wrapper.vm.db.addTableFromCsv.getCall(0).args[0]).to.equal('foo') // table name
+
+    // After resolving - loading indicator is not shown
+    await resolveImport()
+    await wrapper.vm.db.addTableFromCsv.returnValues[0]
+    expect(
+      wrapper.findComponent({ name: 'logs' }).findComponent({ name: 'LoadingIndicator' }).exists()
+    ).to.equal(false)
+  })
+
+  it('import success', async () => {
+    const parse = sinon.stub(csv, 'parse')
+    parse.onCall(0).resolves({
+      delimiter: '|',
+      data: {
+        columns: ['doc'],
+        values: {
+          doc: ['{ "foo": [ 1, 2, 3 ] }']
+        }
+      },
+      rowCount: 1,
+      hasErrors: false,
+      messages: []
+    })
+    // we need to separate calles because messages will mutate
+    parse.onCall(1).resolves({
+      delimiter: '|',
+      data: {
+        columns: ['doc'],
+        values: {
+          doc: ['{ "foo": [ 1, 2, 3 ] }']
+        }
+      },
+      rowCount: 2,
+      hasErrors: false,
+      messages: []
+    })
+
+    wrapper.vm.preview()
+    wrapper.vm.open()
+    await wrapper.vm.$nextTick()
+
+    await wrapper.find('#csv-json-table-name input').setValue('foo')
+    await wrapper.find('#import-start').trigger('click')
+    await csv.parse.returnValues[1]
+    await wrapper.vm.$nextTick()
+
+    // Import success in the logs
+    const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
+    expect(logs).to.have.lengthOf(3)
+    expect(logs.at(2).text()).to.contain('Importing JSON into a SQLite database is completed in')
+
+    // All the dialog controls are enabled
+    expect(wrapper.find('#import-cancel').element.disabled).to.equal(false)
+    expect(wrapper.find('#import-finish').element.disabled).to.equal(false)
+    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(false)
+    expect(wrapper.find('#import-finish').isVisible()).to.equal(true)
   })
 })

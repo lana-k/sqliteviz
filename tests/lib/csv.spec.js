@@ -28,7 +28,26 @@ describe('csv.js', () => {
     })
   })
 
-  it('getResult without fields', () => {
+  it('getResult without fields but with columns', () => {
+    const source = {
+      data: [
+        [1, 'foo', new Date('2021-06-30T14:10:24.717Z')],
+        [2, 'bar', new Date('2021-07-30T14:10:15.717Z')]
+      ],
+      meta: {}
+    }
+    const columns = ['id', 'name', 'date']
+    expect(csv.getResult(source, columns)).to.eql({
+      columns: ['id', 'name', 'date'],
+      values: {
+        id: [1, 2],
+        name: ['foo', 'bar'],
+        date: ['2021-06-30T14:10:24.717Z', '2021-07-30T14:10:15.717Z']
+      }
+    })
+  })
+
+  it('getResult without fields and columns', () => {
     const source = {
       data: [
         [1, 'foo', new Date('2021-06-30T14:10:24.717Z')],

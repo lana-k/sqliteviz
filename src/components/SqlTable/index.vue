@@ -75,7 +75,7 @@ export default {
   components: { Pager },
   props: {
     dataSet: Object,
-    time: String,
+    time: [String, Number],
     pageSize: {
       type: Number,
       default: 20
