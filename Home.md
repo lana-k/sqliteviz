@@ -3,7 +3,7 @@ Welcome to the sqliteviz wiki!
 # For users
 1. [Installation][0]
 2. [Basic usage][1]
-3. [Multiple CSV file import][9]
+3. [Multiple file import][9]
 4. [Manage inquiries][2]
 5. [Export current database][4]
 6. [Pivot table][3]
