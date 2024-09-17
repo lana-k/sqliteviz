@@ -1,21 +1,22 @@
 # Basic usage
 
-## Choose SQLite database or CSV file
+## Choose SQLite database, CSV file, JSON or NDJSON file
 
-You can choose a database or a CSV file right on the welcom page (fig. 1). The
-supported file extentions: `.csv`, `.db`,`.sqlite` and `.sqlite3`.
+You can choose a database, a CSV file, a JSON or NDJSON file right on the welcom page (fig. 1). The
+supported file extentions: `.csv`, `.json`, `.ndjson`, `.db`,`.sqlite` and `.sqlite3`.
 
 ![Fig. 1: Welcome page](./img/Screenshot_welcome.png)
 
 
-If you choose a CSV file it will be parsed. Then sqliteviz creates a new
-database with data from the CSV. You can change parsing settings and table name
-in the dialog which is shown automatically if you choose a CSV file (fig. 2).
+If you choose a CSV, JSON or NDJSON file it will be parsed. Then sqliteviz creates a new
+database with data from the file. You can change table name
+in the dialog which is shown automatically if you choose a CSV, JSON or NDJSON file. 
+For CSV you can also change parsing settings (fig. 2).
 
 ![Fig. 2: CSV import dialog](./img/Screenshot_csv.png)
 
 
-If you don't have a database or CSV press `Create empty database` button and
+If you don't have a database or CSV or JSON/NDJSON press `Create empty database` button and
 then fill an empty database using DDL and DML statements. A tab with an example
 of how to do it will be opened automatically (fig. 3).
 
