@@ -34,7 +34,7 @@
       </defs>
     </svg>
     <span class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
-      Add new table from CSV
+      Add new table from CSV, JSON or NDJSON
     </span>
   </span>
 </template>

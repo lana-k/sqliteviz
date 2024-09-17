@@ -10,7 +10,8 @@
         @click="browse"
       >
         <div class="text">
-          Drop the database or CSV file here or click to choose a file from your computer.
+          Drop the database, CSV, JSON or NDJSON file here
+          or click to choose a file from your computer.
         </div>
       </div>
     </div>

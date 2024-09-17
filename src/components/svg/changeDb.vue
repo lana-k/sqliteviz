@@ -22,7 +22,7 @@
     />
   </svg>
   <span class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
-    Load another database or CSV
+    Load another database, CSV, JSON or NDJSON
   </span>
 </div>
 </template>
