@@ -17,7 +17,7 @@ jobs:
     - name: Use Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: 10.x
+        node-version: 16.x
     - name: Install browsers
       run: |
         export DEBIAN_FRONTEND=noninteractive
@@ -25,7 +25,7 @@ jobs:
         sudo apt-get install -y chromium-browser firefox
 
     - name: Update npm
-      run: npm install -g npm@7
+      run: npm install -g npm@8
 
     - name: Install the project
       run: npm install

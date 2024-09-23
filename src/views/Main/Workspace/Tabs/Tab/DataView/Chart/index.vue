@@ -25,7 +25,7 @@
 
 <script>
 import plotly from 'plotly.js'
-import 'react-chart-editor/lib/react-chart-editor.min.css'
+import 'react-chart-editor/lib/react-chart-editor.css'
 
 import PlotlyEditor from 'react-chart-editor'
 import chartHelper from '@/lib/chartHelper'
