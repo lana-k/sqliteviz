@@ -16,13 +16,13 @@
           open-direction="bottom"
           placeholder=""
         >
-          <template slot="maxElements">
+          <template #maxElements>
             <span class="no-results">No Results</span>
           </template>
 
-          <template slot="placeholder">Choose columns</template>
+          <template #placeholder>Choose columns</template>
 
-          <template slot="noResult">
+          <template #noResult>
             <span class="no-results">No Results</span>
           </template>
         </multiselect>
@@ -45,13 +45,13 @@
           open-direction="bottom"
           placeholder=""
         >
-          <template slot="maxElements">
+          <template #maxElements>
             <span class="no-results">No Results</span>
           </template>
 
-          <template slot="placeholder">Choose rows</template>
+          <template #placeholder>Choose rows</template>
 
-          <template slot="noResult">
+          <template #noResult>
             <span class="no-results">No Results</span>
           </template>
         </multiselect>
@@ -73,7 +73,7 @@
           open-direction="bottom"
           placeholder="Choose a function"
         >
-          <template slot="noResult">
+          <template #noResult>
             <span class="no-results">No Results</span>
           </template>
         </multiselect>
@@ -123,7 +123,7 @@
           open-direction="bottom"
           placeholder="Choose a view"
         >
-          <template slot="noResult">
+          <template #noResult>
             <span class="no-results">No Results</span>
           </template>
         </multiselect>
