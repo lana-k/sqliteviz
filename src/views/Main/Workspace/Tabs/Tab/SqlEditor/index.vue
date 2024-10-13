@@ -1,11 +1,12 @@
 <template>
   <div class="sql-editor-panel">
-    <div class="codemirror-container">
+    <div class="codemirror-container original-style">
       <codemirror
         ref="cm"
-        v-model="query"
+        v-model:value="query"
         :options="cmOptions"
-        @changes="onChange"
+        :original-style="true"
+        @change="onChange"
       />
     </div>
     <side-tool-bar panel="sqlEditor" @switchTo="$emit('switchTo', $event)">
@@ -25,7 +26,7 @@
 <script>
 import showHint, { showHintOnDemand } from './hint'
 import time from '@/lib/utils/time'
-import { codemirror } from 'vue-codemirror'
+import Codemirror from 'codemirror-editor-vue3'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/sql/sql.js'
 import 'codemirror/theme/neo.css'
@@ -37,16 +38,17 @@ import RunIcon from '@/components/svg/run'
 
 export default {
   name: 'SqlEditor',
-  props: ['value', 'isGettingResults'],
+  props: ['modelValue', 'isGettingResults'],
+  emits: ['update:modelValue', 'run', 'switchTo'],
   components: {
-    codemirror,
+    Codemirror,
     SideToolBar,
     IconButton,
     RunIcon
   },
   data () {
     return {
-      query: this.value,
+      query: this.modelValue,
       cmOptions: {
         tabSize: 4,
         mode: 'text/x-mysql',
@@ -54,6 +56,7 @@ export default {
         lineNumbers: true,
         line: true,
         autoRefresh: true,
+        styleActiveLine: false,
         extraKeys: { 'Ctrl-Space': showHintOnDemand }
       }
     }
@@ -65,13 +68,13 @@ export default {
   },
   watch: {
     query () {
-      this.$emit('input', this.query)
+      this.$emit('update:modelValue', this.query)
     }
   },
   methods: {
     onChange: time.debounce(showHint, 400),
     focus () {
-      this.$refs.cm.codemirror.focus()
+      this.$refs.cm.cminstance.focus()
     }
   }
 }
@@ -92,15 +95,15 @@ export default {
   overflow: auto;
 }
 
->>> .vue-codemirror {
+:deep(.vue-codemirror) {
   height: 100%;
   max-height: 100%;
 }
->>> .CodeMirror {
+:deep(.CodeMirror) {
   height: 100%;
   max-height: 100%;
 }
->>> .CodeMirror-cursor {
+:deep(.CodeMirror-cursor) {
   width: 1px;
   background: var(--color-text-base);
 }

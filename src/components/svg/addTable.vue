@@ -46,6 +46,7 @@ export default {
   name: 'AddTableIcon',
   mixins: [tooltipMixin],
   props: ['tooltip'],
+  emits: ['click'],
   methods: {
     onClick () {
       this.hideTooltip()

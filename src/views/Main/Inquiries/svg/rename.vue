@@ -29,6 +29,7 @@ import tooltipMixin from '@/tooltipMixin'
 
 export default {
   name: 'RenameIcon',
+  emits: ['click'],
   mixins: [tooltipMixin],
   methods: {
     onClick () {

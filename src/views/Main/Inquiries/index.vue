@@ -2,7 +2,7 @@
   <div id="my-inquiries-container">
     <div id="start-guide" v-if="allInquiries.length === 0">
       You don't have saved inquiries so far.
-      <span class="link" @click="$root.$emit('createNewInquiry')">Create</span>
+      <span class="link" @click="emitCreateTabEvent">Create</span>
       the one from scratch or
       <span @click="importInquiries" class="link">import</span> from a file.
     </div>
@@ -89,7 +89,9 @@
               </td>
               <td>
                 <div class="second-column">
-                  <div class="date-container">{{ inquiry.createdAt | date }}</div>
+                  <div class="date-container">
+                    {{ createdAtFormatted(inquiry.createdAt) }}
+                  </div>
                   <div class="icons-container">
                     <rename-icon
                       v-if="!inquiry.isPredefined"
@@ -116,7 +118,7 @@
   </div>
 
   <!--Rename Inquiry dialog  -->
-  <modal name="rename" classes="dialog" height="auto">
+  <modal modal-id="rename" class="dialog">
     <div class="dialog-header">
       Rename inquiry
       <close-icon @click="$modal.hide('rename')"/>
@@ -136,7 +138,7 @@
   </modal>
 
   <!--Delete Inquiry dialog  -->
-  <modal name="delete" classes="dialog" height="auto">
+  <modal modal-id="delete" class="dialog">
     <div class="dialog-header">
       Delete {{ deleteGroup ? 'inquiries' : 'inquiry' }}
       <close-icon @click="$modal.hide('delete')"/>
@@ -167,6 +169,7 @@ import CheckBox from '@/components/CheckBox'
 import LoadingIndicator from '@/components/LoadingIndicator'
 import tooltipMixin from '@/tooltipMixin'
 import storedInquiries from '@/lib/storedInquiries'
+import eventBus from '@/lib/eventBus'
 
 export default {
   name: 'Inquiries',
@@ -242,19 +245,24 @@ export default {
     }
   },
   watch: {
-    showedInquiries () {
-      this.selectedInquiriesIds = new Set(this.showedInquiries
-        .filter(inquiry => this.selectedInquiriesIds.has(inquiry.id))
-        .map(inquiry => inquiry.id)
-      )
-      this.selectedInquiriesCount = this.selectedInquiriesIds.size
-      this.selectedNotPredefinedCount = ([...this.selectedInquiriesIds]
-        .filter(id => !this.predefinedInquiriesIds.has(id))).length
+    showedInquiries: {
+      handler () {
+        this.selectedInquiriesIds = new Set(this.showedInquiries
+          .filter(inquiry => this.selectedInquiriesIds.has(inquiry.id))
+          .map(inquiry => inquiry.id)
+        )
+        this.selectedInquiriesCount = this.selectedInquiriesIds.size
+        this.selectedNotPredefinedCount = ([...this.selectedInquiriesIds]
+          .filter(id => !this.predefinedInquiriesIds.has(id))).length
 
-      if (this.selectedInquiriesIds.size < this.showedInquiries.length) {
-        this.$refs.mainCheckBox.checked = false
-        this.selectAll = false
-      }
+        if (this.selectedInquiriesIds.size < this.showedInquiries.length) {
+          if (this.$refs.mainCheckBox) {
+            this.$refs.mainCheckBox.checked = false
+          }
+          this.selectAll = false
+        }
+      },
+      deep: true
     }
   },
   async created () {
@@ -282,12 +290,15 @@ export default {
     this.calcNameWidth()
     this.calcMaxTableHeight()
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.resizeObserver.unobserve(this.$refs['my-inquiries-content'])
     this.tableResizeObserver.unobserve(this.$refs.table)
   },
-  filters: {
-    date (value) {
+  methods: {
+    emitCreateTabEvent () {
+      eventBus.$emit('createNewInquiry')
+    },
+    createdAtFormatted (value) {
       if (!value) {
         return ''
       }
@@ -299,9 +310,7 @@ export default {
       }
       return new Date(value).toLocaleDateString('en-GB', dateOptions) + ' ' +
              new Date(value).toLocaleTimeString('en-GB', timeOptions)
-    }
-  },
-  methods: {
+    },
     calcNameWidth () {
       const nameWidth = this.$refs['name-td'] && this.$refs['name-td'][0]
         ? this.$refs['name-td'][0].getBoundingClientRect().width
@@ -314,9 +323,11 @@ export default {
     },
     openInquiry (index) {
       const tab = this.showedInquiries[index]
-      this.$store.dispatch('addTab', tab).then(id => {
-        this.$store.commit('setCurrentTabId', id)
-        this.$router.push('/workspace')
+      setTimeout(() => {
+        this.$store.dispatch('addTab', tab).then(id => {
+          this.$store.commit('setCurrentTabId', id)
+          this.$router.push('/workspace')
+        })
       })
     },
     showRenameDialog (id) {
@@ -332,7 +343,7 @@ export default {
       }
       const processedInquiry = this.inquiries[this.processedInquiryIndex]
       processedInquiry.name = this.newName
-      this.$set(this.inquiries, this.processedInquiryIndex, processedInquiry)
+      this.inquiries[this.processedInquiryIndex] = processedInquiry
 
       // update inquiries in local storage
       storedInquiries.updateStorage(this.inquiries)
@@ -430,7 +441,7 @@ export default {
       this.selectedInquiriesCount = this.selectedInquiriesIds.size
       this.selectedNotPredefinedCount = checked
         ? ([...this.selectedInquiriesIds].filter(id => !this.predefinedInquiriesIds.has(id)))
-          .length
+            .length
         : 0
     },
 

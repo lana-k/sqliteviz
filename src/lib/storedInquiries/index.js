@@ -48,11 +48,13 @@ export default {
     // Get inquiries from local storage
     const myInquiries = this.getStoredInquiries()
 
+    let inquiryIndex
     // Set createdAt
     if (newName) {
       value.createdAt = new Date()
     } else {
-      var inquiryIndex = myInquiries.findIndex(oldInquiry => oldInquiry.id === inquiryTab.id)
+      inquiryIndex = myInquiries
+        .findIndex(oldInquiry => oldInquiry.id === inquiryTab.id)
       value.createdAt = myInquiries[inquiryIndex].createdAt
     }
 

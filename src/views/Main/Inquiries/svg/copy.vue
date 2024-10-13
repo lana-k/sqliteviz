@@ -31,6 +31,7 @@ import tooltipMixin from '@/tooltipMixin'
 
 export default {
   name: 'CopyIcon',
+  emits: ['click'],
   mixins: [tooltipMixin],
   methods: {
     onClick () {

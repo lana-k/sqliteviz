@@ -9,9 +9,9 @@
       :placeholder="placeholder"
       :class="{ error: errorMsg }"
       :style="{ width: width }"
-      :value="value"
+      :value="modelValue"
       :disabled="disabled"
-      @input="$emit('input', $event.target.value)"
+      @input="$emit('update:modelValue', $event.target.value)"
     />
     <div v-show="errorMsg" class="text-field-error">{{ errorMsg }}</div>
   </div>
@@ -21,7 +21,16 @@
 import HintIcon from '@/components/svg/hint'
 export default {
   name: 'textField',
-  props: ['placeholder', 'label', 'errorMsg', 'value', 'width', 'hint', 'maxHintWidth', 'disabled'],
+  props: [
+    'placeholder',
+    'label',
+    'errorMsg',
+    'modelValue',
+    'width',
+    'hint',
+    'maxHintWidth',
+    'disabled'
+  ],
   components: { HintIcon }
 }
 </script>

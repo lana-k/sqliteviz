@@ -1,8 +1,17 @@
 <template>
   <div id="app">
     <router-view/>
+    <modals-container/>
   </div>
 </template>
+
+<script>
+import { ModalsContainer } from 'vue-final-modal'
+
+export default {
+  components: { ModalsContainer }
+}
+</script>
 
 <style>
 @font-face {
@@ -48,10 +57,12 @@
 }
 
 #app,
+.dialog,
 input,
 label,
 button,
-.plotly_editor * {
+.plotly_editor *,
+.CodeMirror pre.CodeMirror-line {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

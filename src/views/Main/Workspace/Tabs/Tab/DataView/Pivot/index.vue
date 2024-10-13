@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { createApp } from 'vue'
 import fIo from '@/lib/utils/fileIo'
 import $ from 'jquery'
 import 'pivottable'
@@ -22,13 +23,17 @@ import PivotUi from './PivotUi'
 import pivotHelper from './pivotHelper'
 import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart'
 import chartHelper from '@/lib/chartHelper'
-import Vue from 'vue'
 import events from '@/lib/utils/events'
-const ChartClass = Vue.extend(Chart)
 
 export default {
   name: 'pivot',
   props: ['dataSources', 'initOptions', 'importToPngEnabled', 'importToSvgEnabled'],
+  emits: [
+    'loadingImageCompleted',
+    'update',
+    'update:importToSvgEnabled',
+    'update:importToPngEnabled'
+  ],
   components: {
     PivotUi
   },
@@ -37,35 +42,38 @@ export default {
       resizeObserver: null,
       pivotOptions: !this.initOptions
         ? {
-          rows: [],
-          cols: [],
-          colOrder: 'key_a_to_z',
-          rowOrder: 'key_a_to_z',
-          aggregatorName: 'Count',
-          aggregator: $.pivotUtilities.aggregators.Count(),
-          vals: [],
-          rendererName: 'Table',
-          renderer: $.pivotUtilities.renderers.Table,
-          rendererOptions: undefined
-        }
-        : {
-          rows: this.initOptions.rows,
-          cols: this.initOptions.cols,
-          colOrder: this.initOptions.colOrder,
-          rowOrder: this.initOptions.rowOrder,
-          aggregatorName: this.initOptions.aggregatorName,
-          aggregator: $.pivotUtilities.aggregators[
-            this.initOptions.aggregatorName
-          ](this.initOptions.vals),
-          vals: this.initOptions.vals,
-          rendererName: this.initOptions.rendererName,
-          renderer: $.pivotUtilities.renderers[this.initOptions.rendererName],
-          rendererOptions: !this.initOptions.rendererOptions ? undefined : {
-            customChartComponent: new ChartClass({
-              propsData: { initOptions: this.initOptions.rendererOptions.customChartOptions }
-            })
+            rows: [],
+            cols: [],
+            colOrder: 'key_a_to_z',
+            rowOrder: 'key_a_to_z',
+            aggregatorName: 'Count',
+            aggregator: $.pivotUtilities.aggregators.Count(),
+            vals: [],
+            rendererName: 'Table',
+            renderer: $.pivotUtilities.renderers.Table,
+            rendererOptions: undefined
           }
-        }
+        : {
+            rows: this.initOptions.rows,
+            cols: this.initOptions.cols,
+            colOrder: this.initOptions.colOrder,
+            rowOrder: this.initOptions.rowOrder,
+            aggregatorName: this.initOptions.aggregatorName,
+            aggregator: $.pivotUtilities.aggregators[
+              this.initOptions.aggregatorName
+            ](this.initOptions.vals),
+            vals: this.initOptions.vals,
+            rendererName: this.initOptions.rendererName,
+            renderer: $.pivotUtilities.renderers[this.initOptions.rendererName],
+            rendererOptions: !this.initOptions.rendererOptions
+              ? undefined
+              : {
+                  customChartComponent: createApp(Chart, {
+                    initOptions: this.initOptions
+                      .rendererOptions.customChartOptions
+                  })
+                }
+          }
     }
   },
   computed: {
@@ -112,7 +120,7 @@ export default {
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.pivotOutput)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.resizeObserver.unobserve(this.$refs.pivotOutput)
   },
   methods: {
@@ -249,26 +257,26 @@ export default {
   line-height: 40px;
   box-sizing: border-box;
 }
->>> .pvtTable {
+:deep(.pvtTable) {
   min-width: 100%;
 }
 
->>> table.pvtTable tbody tr td,
->>> table.pvtTable thead tr th,
->>> table.pvtTable tbody tr th {
+:deep(table.pvtTable tbody tr td),
+:deep(table.pvtTable thead tr th),
+:deep(table.pvtTable tbody tr th) {
   border-color: var(--color-border-light);
 }
->>> table.pvtTable thead tr th,
->>> table.pvtTable tbody tr th {
+:deep(table.pvtTable thead tr th),
+:deep(table.pvtTable tbody tr th) {
   background-color: var(--color-bg-dark);
   color: var(--color-text-light);
 }
 
->>> table.pvtTable tbody tr td {
+:deep(table.pvtTable tbody tr td) {
   color: var(--color-text-base);
 }
 
-.pivot-output >>> textarea {
+.pivot-output :deep(textarea) {
   color: var(--color-text-base);
   min-width: 100%;
   height: 100% !important;
@@ -277,7 +285,7 @@ export default {
   border-width: 0;
 }
 
-.pivot-output >>> textarea:focus-visible {
+.pivot-output :deep(textarea:focus-visible) {
   outline: none;
 }
 </style>

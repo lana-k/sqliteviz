@@ -30,7 +30,8 @@ export default {
       required: false,
       default: false
     }
-  }
+  },
+  emits: ['click']
 }
 </script>
 

@@ -30,6 +30,7 @@ export default {
   name: 'ExportIcon',
   mixins: [tooltipMixin],
   props: ['tooltip', 'tooltipPosition'],
+  emits: ['click'],
   methods: {
     onClick () {
       this.hideTooltip()

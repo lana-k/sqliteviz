@@ -77,7 +77,11 @@
       @cancel="cancelCopy"
     />
 
-    <teleport :to="resultSetTeleportTarget">
+    <teleport
+      defer
+      :to="resultSetTeleportTarget"
+      :disabled="!enableTeleport"
+    >
       <div>
             <div
               v-show="result === null && !isGettingResults && !error"
@@ -138,7 +142,6 @@ import cIo from '@/lib/utils/clipboardIo'
 import time from '@/lib/utils/time'
 import loadingDialog from '@/components/LoadingDialog'
 import events from '@/lib/utils/events'
-import Teleport from 'vue2-teleport'
 import ValueViewer from './ValueViewer'
 import Record from './Record/index.vue'
 
@@ -151,6 +154,7 @@ export default {
     error: Object,
     time: [String, Number]
   },
+  emits: ['switchTo'],
   data () {
     return {
       resizeObserver: null,
@@ -161,7 +165,8 @@ export default {
       selectedCell: null,
       viewRecord: false,
       defaultPage: 1,
-      defaultSelectedCell: null
+      defaultSelectedCell: null,
+      enableTeleport: false
     }
   },
   components: {
@@ -177,11 +182,13 @@ export default {
     loadingDialog,
     ValueViewer,
     Record,
-    Splitpanes,
-    Teleport
+    Splitpanes
   },
   computed: {
     resultSetTeleportTarget () {
+      if (!this.enableTeleport) {
+        return undefined
+      }
       const base = `#${this.viewValuePanelVisible
         ? 'run-result-left-pane'
         : 'run-result-result-set'
@@ -190,12 +197,21 @@ export default {
       return base + tabIdPostfix
     }
   },
+  activated () {
+    this.enableTeleport = true
+  },
+  deactivated () {
+    this.enableTeleport = false
+  },
   mounted () {
+    if (this.$store.state.isWorkspaceVisible) {
+      this.enableTeleport = true
+    }
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.runResultPanel)
     this.calculatePageSize()
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.resizeObserver.unobserve(this.$refs.runResultPanel)
   },
   watch: {
@@ -361,7 +377,7 @@ export default {
   }
 }
 
->>>.vm--container {
+:deep(.vm--container) {
   animation: show-modal 1s linear 0s 1;
 }
 

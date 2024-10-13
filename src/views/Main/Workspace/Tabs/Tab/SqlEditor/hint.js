@@ -43,7 +43,7 @@ export function showHintOnDemand (editor) {
   CM.showHint(editor, getHints, hintOptions)
 }
 
-export default function showHint (editor) {
+export default function showHint (value, editor) {
   // Don't show autocomplete after a space or semicolon or in string literals
   const token = editor.getTokenAt(editor.getCursor())
   const ch = token.string.slice(-1)

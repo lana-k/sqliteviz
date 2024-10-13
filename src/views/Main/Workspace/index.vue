@@ -59,6 +59,12 @@ export default {
 
       events.send('inquiry.create', null, { auto: true })
     }
+  },
+  activated () {
+    this.$store.commit('setIsWorkspaceVisible', true)
+  },
+  deactivated () {
+    this.$store.commit('setIsWorkspaceVisible', false)
   }
 }
 </script>

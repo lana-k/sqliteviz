@@ -11,23 +11,24 @@
       :dataSources="dataSources"
       :dataSourceOptions="dataSourceOptions"
       :plotly="plotly"
-      @onUpdate="update"
-      @onRender="onRender"
-      :useResizeHandler="true"
+      :useResizeHandler="useResizeHandler"
       :debug="true"
       :advancedTraceTypeSelector="true"
       class="chart"
       ref="plotlyEditor"
       :style="{ height: !dataSources ? 'calc(100% - 40px)' : '100%' }"
+      @update="update"
+      @render="onRender"
     />
 </div>
 </template>
 
 <script>
+import { applyPureReactInVue } from 'veaury'
 import plotly from 'plotly.js'
 import 'react-chart-editor/lib/react-chart-editor.css'
 
-import PlotlyEditor from 'react-chart-editor'
+import ReactPlotlyEditor from 'react-chart-editor'
 import chartHelper from '@/lib/chartHelper'
 import dereference from 'react-chart-editor/lib/lib/dereference'
 import fIo from '@/lib/utils/fileIo'
@@ -40,19 +41,21 @@ export default {
     'importToPngEnabled', 'importToSvgEnabled',
     'forPivot'
   ],
+  emits: ['update:importToSvgEnabled', 'update', 'loadingImageCompleted'],
   components: {
-    PlotlyEditor
+    PlotlyEditor: applyPureReactInVue(ReactPlotlyEditor)
   },
   data () {
     return {
-      plotly: plotly,
+      plotly,
       state: this.initOptions || {
         data: [],
         layout: {},
         frames: []
       },
       visible: true,
-      resizeObserver: null
+      resizeObserver: null,
+      useResizeHandler: false
     }
   },
   computed: {
@@ -83,7 +86,13 @@ export default {
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.chartContainer)
   },
-  beforeDestroy () {
+  activated () {
+    this.useResizeHandler = true
+  },
+  deactivated () {
+    this.useResizeHandler = false
+  },
+  beforeUnmount () {
     this.resizeObserver.unobserve(this.$refs.chartContainer)
   },
   watch: {
@@ -153,7 +162,7 @@ export default {
   min-height: 242px;
 }
 
->>> .editor_controls .sidebar__item:before {
+:deep(.editor_controls .sidebar__item:before) {
   width: 0;
 }
 </style>

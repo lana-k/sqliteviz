@@ -1,8 +1,7 @@
 <template>
   <modal
-    :name="name"
-    classes="dialog"
-    height="auto"
+    :modal-id="name"
+    class="dialog"
     :clickToClose="false"
   >
     <div class="dialog-header">
@@ -52,6 +51,7 @@ export default {
     title: String,
     loading: Boolean
   },
+  emits: ['cancel', 'action'],
   watch: {
     loading () {
       if (this.loading) {

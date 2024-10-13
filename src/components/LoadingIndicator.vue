@@ -31,6 +31,7 @@ export default {
       default: 20
     }
   },
+  emits: [],
   computed: {
     circleProgress () {
       const circle = this.radius * 3.14 * 2

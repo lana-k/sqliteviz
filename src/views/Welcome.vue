@@ -39,14 +39,14 @@ export default {
   margin-top: 42px;
 }
 
->>>.drop-area {
+:deep(.drop-area) {
   width: 706px;
   height: 482px;
   padding: 0 150px;
   position: relative;
 }
 
->>>.drop-area .text {
+:deep(.drop-area .text) {
   position: absolute;
   bottom: 42px;
   max-width: 300px;

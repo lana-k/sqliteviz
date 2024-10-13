@@ -16,6 +16,7 @@ import LoadingIndicator from '@/components/LoadingIndicator'
 export default {
   name: 'logs',
   props: ['messages'],
+  emits: [],
   components: { LoadingIndicator },
   watch: {
     'messages.length': 'scrollToBottom'

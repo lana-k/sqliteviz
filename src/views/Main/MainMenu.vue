@@ -29,7 +29,7 @@
     </div>
 
     <!--Save Inquiry dialog  -->
-    <modal name="save" classes="dialog" height="auto">
+    <modal modal-id="save" class="dialog">
       <div class="dialog-header">
         Save inquiry
         <close-icon @click="cancelSave"/>
@@ -61,6 +61,7 @@ import CloseIcon from '@/components/svg/close'
 import storedInquiries from '@/lib/storedInquiries'
 import AppDiagnosticInfo from './AppDiagnosticInfo'
 import events from '@/lib/utils/events'
+import eventBus from '@/lib/eventBus'
 
 export default {
   name: 'MainMenu',
@@ -90,11 +91,11 @@ export default {
     }
   },
   created () {
-    this.$root.$on('createNewInquiry', this.createNewInquiry)
-    this.$root.$on('saveInquiry', this.checkInquiryBeforeSave)
+    eventBus.$on('createNewInquiry', this.createNewInquiry)
+    eventBus.$on('saveInquiry', this.checkInquiryBeforeSave)
     document.addEventListener('keydown', this._keyListener)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     document.removeEventListener('keydown', this._keyListener)
   },
   methods: {
@@ -110,7 +111,7 @@ export default {
     },
     cancelSave () {
       this.$modal.hide('save')
-      this.$root.$off('inquirySaved')
+      eventBus.$off('inquirySaved')
     },
     checkInquiryBeforeSave () {
       this.errorMsg = null
@@ -161,7 +162,7 @@ export default {
       this.$modal.hide('save')
 
       // Signal about saving
-      this.$root.$emit('inquirySaved')
+      eventBus.$emit('inquirySaved')
       events.send('inquiry.save')
     },
     _keyListener (e) {

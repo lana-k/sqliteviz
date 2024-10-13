@@ -46,6 +46,7 @@ export default {
       default: false
     }
   },
+  emits: ['click'],
   data () {
     return {
       checked: this.init

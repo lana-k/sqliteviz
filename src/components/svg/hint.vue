@@ -45,6 +45,7 @@ import tooltipMixin from '@/tooltipMixin'
 export default {
   name: 'HintIcon',
   props: ['hint', 'maxWidth'],
+  emits: ['click'],
   mixins: [tooltipMixin],
   methods: {
     onClick () {

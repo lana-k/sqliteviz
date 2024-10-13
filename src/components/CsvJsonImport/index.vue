@@ -1,9 +1,8 @@
 <template>
   <modal
-    :name="dialogName"
-    classes="dialog"
-    height="auto"
-    width="80%"
+    :modal-id="dialogName"
+    class="dialog"
+    content-class="import-modal"
     scrollable
     :clickToClose="false"
   >
@@ -130,6 +129,7 @@ export default {
     db: Object,
     dialogName: String
   },
+  emits: ['cancel', 'finish'],
   data () {
     return {
       disableDialog: false,
@@ -304,7 +304,7 @@ export default {
       let importLoadingIndicator = null
 
       const updateProgress = progress => {
-        this.$set(importMsg, 'progress', progress)
+        importMsg.progress = progress
       }
       const progressCounterId = this.db.createProgressCounter(updateProgress)
 
@@ -392,15 +392,17 @@ export default {
       events.send('inquiry.create', null, { auto: true })
     },
     getQueryExample () {
-      return this.isNdJson ? this.getNdJsonQueryExample()
-        : this.isJson ? this.getJsonQueryExample()
+      return this.isNdJson
+        ? this.getNdJsonQueryExample()
+        : this.isJson
+          ? this.getJsonQueryExample()
           : [
-            '/*',
+              '/*',
         ` * Your CSV file has been imported into ${this.addedTable} table.`,
         ' * You can run this SQL query to make all CSV records available for charting.',
         ' */',
         `SELECT * FROM "${this.addedTable}"`
-          ].join('\n')
+            ].join('\n')
     },
     getNdJsonQueryExample () {
       try {
@@ -455,6 +457,15 @@ export default {
 }
 </script>
 
+<style>
+.import-modal {
+  width: 80%;
+  max-width: 1152px;
+  margin: auto;
+  left: 0 !important;
+}
+</style>
+
 <style scoped>
 .dialog-body {
   padding-bottom: 0;
@@ -495,10 +506,4 @@ margin-bottom: 24px;
   align-items: center;
 }
 
-/* https://github.com/euvl/vue-js-modal/issues/623 */
->>> .vm--modal {
-  max-width: 1152px;
-  margin: auto;
-  left: 0 !important;
-}
 </style>

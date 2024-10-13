@@ -86,15 +86,18 @@ export default {
       }
     }
   },
+  emits: [],
   data () {
     return {
       container: null,
       paneBefore: this.before,
       paneAfter: this.after,
-      beforeMinimising: !this.after.size || !this.before.size ? this.default : {
-        before: this.before.size,
-        after: this.after.size
-      },
+      beforeMinimising: !this.after.size || !this.before.size
+        ? this.default
+        : {
+            before: this.before.size,
+            after: this.after.size
+          },
       dragging: false,
       movableSplitter: {
         top: 0,

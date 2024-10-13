@@ -1,10 +1,10 @@
 <template>
   <div :class="['pivot-sort-btn', direction] " @click="changeSorting">
-  {{ value.includes('key') ? 'key' : 'value' }}
+  {{ modelValue.includes('key') ? 'key' : 'value' }}
   <sort-icon
     class="sort-icon"
     :horizontal="direction === 'col'"
-    :asc="value.includes('a_to_z')"
+    :asc="modelValue.includes('a_to_z')"
   />
   </div>
 </template>
@@ -14,18 +14,18 @@ import SortIcon from '@/components/svg/sort'
 
 export default {
   name: 'PivotSortBtn',
-  props: ['direction', 'value'],
+  props: ['direction', 'modelValue'],
   components: {
     SortIcon
   },
   methods: {
     changeSorting () {
-      if (this.value === 'key_a_to_z') {
-        this.$emit('input', 'value_a_to_z')
-      } else if (this.value === 'value_a_to_z') {
-        this.$emit('input', 'value_z_to_a')
+      if (this.modelValue === 'key_a_to_z') {
+        this.$emit('update:modelValue', 'value_a_to_z')
+      } else if (this.modelValue === 'value_a_to_z') {
+        this.$emit('update:modelValue', 'value_z_to_a')
       } else {
-        this.$emit('input', 'key_a_to_z')
+        this.$emit('update:modelValue', 'key_a_to_z')
       }
     }
   }
@@ -52,7 +52,7 @@ export default {
   color: var(--color-text-active);
   border-color: var(--color-border-dark);
 }
-.pivot-sort-btn:hover >>> .sort-icon path {
+.pivot-sort-btn:hover deep(.sort-icon path) {
   fill: var(--color-text-active);
 }
 

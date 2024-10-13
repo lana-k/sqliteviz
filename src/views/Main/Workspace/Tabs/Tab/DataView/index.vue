@@ -5,8 +5,8 @@
         :is="mode"
         :init-options="mode === initMode ? initOptions : undefined"
         :data-sources="dataSource"
-        :import-to-png-enabled.sync="importToPngEnabled"
-        :import-to-svg-enabled.sync="importToSvgEnabled"
+        v-model:import-to-png-enabled="importToPngEnabled"
+        v-model:import-to-svg-enabled="importToSvgEnabled"
         @loadingImageCompleted="loadingImage = false"
         ref="viewComponent"
         @update="$emit('update')"
@@ -99,6 +99,7 @@ import events from '@/lib/utils/events'
 export default {
   name: 'DataView',
   props: ['dataSource', 'initOptions', 'initMode'],
+  emits: ['update', 'switchTo'],
   components: {
     Chart,
     Pivot,
@@ -233,7 +234,7 @@ export default {
   height: 100%;
   overflow: auto;
 }
->>>.vm--container {
+:deep(.vm--container) {
   animation: show-modal 1s linear 0s 1;
 }
 

@@ -11,7 +11,7 @@ describe('MainMenu.vue', () => {
   afterEach(() => {
     sinon.restore()
 
-    // We need explicitly destroy the component, so that beforeDestroy hook was called
+    // We need explicitly destroy the component, so that beforeUnmount hook was called
     // It's important because in this hook MainMenu component removes keydown event listener.
     wrapper.destroy()
   })
@@ -497,7 +497,7 @@ describe('MainMenu.vue', () => {
 
     // check that the tab was updated
     expect(mutations.updateTab.calledOnceWith(state, sinon.match({
-      tab: tab,
+      tab,
       newValues: {
         name: 'foo',
         id: 1,

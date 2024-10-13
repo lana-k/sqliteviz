@@ -50,6 +50,7 @@
 
 <script>
 import RowNavigator from './RowNavigator.vue'
+import { nextTick } from 'vue'
 
 export default {
   components: { RowNavigator },
@@ -59,6 +60,7 @@ export default {
     rowIndex: { type: Number, default: 0 },
     selectedColumnIndex: Number
   },
+  emits: ['updateSelectedCell'],
   data () {
     return {
       selectedCellElement: null,
@@ -84,7 +86,7 @@ export default {
   },
   watch: {
     async currentRowIndex () {
-      await this.$nextTick()
+      await nextTick()
       if (this.selectedCellElement) {
         const previouslySelected = this.selectedCellElement
         this.selectCell(null)

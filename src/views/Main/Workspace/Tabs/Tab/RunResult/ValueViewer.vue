@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { codemirror } from 'vue-codemirror'
+import Codemirror from 'codemirror-editor-vue3'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/addon/fold/foldcode.js'
@@ -54,7 +54,7 @@ import Logs from '@/components/Logs'
 
 export default {
   components: {
-    codemirror,
+    Codemirror,
     Logs
   },
   props: {
@@ -192,15 +192,15 @@ export default {
   color: var(--color-accent);
 }
 
->>> .vue-codemirror {
+:deep(.vue-codemirror) {
   height: 100%;
   max-height: 100%;
 }
->>> .CodeMirror {
+:deep(.CodeMirror) {
   height: 100%;
   max-height: 100%;
 }
->>> .CodeMirror-cursor {
+:deep(.CodeMirror-cursor) {
   width: 1px;
   background: var(--color-text-base);
 }

@@ -53,9 +53,11 @@ function customChartRenderer (data, options) {
   options.customChartComponent.dataSources = _getDataSources(data)
   options.customChartComponent.forPivot = true
 
-  options.customChartComponent.$mount()
+  const container = document.createElement('div')
 
-  return $(options.customChartComponent.$el)
+  options.customChartComponent.mount(container)
+
+  return $(container)
 }
 
 $.extend(

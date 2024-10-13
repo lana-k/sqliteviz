@@ -6,5 +6,6 @@ export default {
   predefinedInquiries: [],
   loadingPredefinedInquiries: false,
   predefinedInquiriesLoaded: false,
-  db: null
+  db: null,
+  isWorkspaceVisible: false
 }

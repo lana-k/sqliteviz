@@ -4,7 +4,7 @@
       :active="panel === 'sqlEditor'"
       tooltip="Switch panel to SQL editor"
       tooltip-position="top-left"
-      @click.native="$emit('switchTo', 'sqlEditor')"
+      @click="$emit('switchTo', 'sqlEditor')"
     >
       <sql-editor-icon />
     </icon-button>
@@ -13,7 +13,7 @@
       :active="panel === 'table'"
       tooltip="Switch panel to result set"
       tooltip-position="top-left"
-      @click.native="$emit('switchTo', 'table')"
+      @click="$emit('switchTo', 'table')"
     >
       <table-icon/>
     </icon-button>
@@ -22,7 +22,7 @@
       :active="panel === 'dataView'"
       tooltip="Switch panel to data view"
       tooltip-position="top-left"
-      @click.native="$emit('switchTo', 'dataView')"
+      @click="$emit('switchTo', 'dataView')"
     >
       <data-view-icon />
     </icon-button>
@@ -42,6 +42,7 @@ import DataViewIcon from '@/components/svg/dataView'
 export default {
   name: 'SideToolBar',
   props: ['panel'],
+  emits: ['switchTo'],
   components: {
     IconButton,
     SqlEditorIcon,

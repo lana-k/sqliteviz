@@ -87,6 +87,7 @@ export default {
     preview: Boolean,
     selectedCellCoordinates: Object
   },
+  emits: ['updateSelectedCell'],
   data () {
     return {
       header: null,
@@ -248,7 +249,7 @@ export default {
       }
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.resizeObserver.unobserve(this.$refs.table)
   },
   watch: {

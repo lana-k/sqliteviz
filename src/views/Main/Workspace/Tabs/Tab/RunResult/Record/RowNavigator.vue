@@ -1,38 +1,38 @@
 <template>
     <div class="record-navigator">
         <icon-button
-            :disabled="value === 0"
+            :disabled="modelValue === 0"
             tooltip="First row"
             tooltip-position="top-left"
             class="first"
-            @click="$emit('input', 0)"
+            @click="$emit('update:modelValue', 0)"
         >
             <edge-arrow-icon :disabled="false" />
         </icon-button>
         <icon-button
-            :disabled="value === 0"
+            :disabled="modelValue === 0"
             tooltip="Previous row"
             tooltip-position="top-left"
             class="prev"
-            @click="$emit('input', value - 1)"
+            @click="$emit('update:modelValue', modelValue - 1)"
         >
             <arrow-icon :disabled="false" />
         </icon-button>
         <icon-button
-            :disabled="value === total - 1"
+            :disabled="modelValue === total - 1"
             tooltip="Next row"
             tooltip-position="top-left"
             class="next"
-            @click="$emit('input', value + 1)"
+            @click="$emit('update:modelValue', modelValue + 1)"
         >
             <arrow-icon :disabled="false" />
         </icon-button>
         <icon-button
-            :disabled="value === total - 1"
+            :disabled="modelValue === total - 1"
             tooltip="Last row"
             tooltip-position="top-left"
             class="last"
-            @click="$emit('input', total - 1)"
+            @click="$emit('update:modelValue', total - 1)"
         >
             <edge-arrow-icon :disabled="false" />
         </icon-button>
@@ -51,7 +51,7 @@ export default {
     EdgeArrowIcon
   },
   props: {
-    value: Number,
+    modelValue: Number,
     total: Number
   }
 }

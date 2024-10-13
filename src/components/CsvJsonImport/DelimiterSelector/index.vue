@@ -16,13 +16,13 @@
           @click.stop
           :disabled="disabled"
         />
-        <div class="name">{{ getSymbolName(value) }}</div>
+        <div class="name">{{ getSymbolName(modelValue) }}</div>
       </div>
       <div class="controls" @click.stop>
-        <clear-icon @click.native="clear" :disabled="disabled"/>
+        <clear-icon @click="clear" :disabled="disabled"/>
         <drop-down-chevron
           :disabled="disabled"
-          @click.native="!disabled && (showOptions = !showOptions)"
+          @click="!disabled && (showOptions = !showOptions)"
         />
       </div>
     </div>
@@ -46,7 +46,7 @@ import ClearIcon from '@/components/svg/clear'
 
 export default {
   name: 'DelimiterSelector',
-  props: ['value', 'width', 'disabled'],
+  props: ['modelValue', 'width', 'disabled'],
   components: { DropDownChevron, ClearIcon },
   data () {
     return {
@@ -60,8 +60,8 @@ export default {
     inputValue () {
       if (this.inputValue) {
         this.filled = true
-        if (this.inputValue !== this.value) {
-          this.$emit('input', this.inputValue)
+        if (this.inputValue !== this.modelValue) {
+          this.$emit('update:modelValue', this.inputValue)
         }
       } else {
         this.filled = false
@@ -69,7 +69,7 @@ export default {
     }
   },
   created () {
-    this.inputValue = this.value
+    this.inputValue = this.modelValue
   },
   methods: {
     getSymbolName (str) {

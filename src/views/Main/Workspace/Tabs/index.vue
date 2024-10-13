@@ -23,13 +23,13 @@
       :tab="tab"
     />
     <div v-show="tabs.length === 0" id="start-guide">
-      <span class="link" @click="$root.$emit('createNewInquiry')">Create</span>
+      <span class="link" @click="emitCreateTabEvent">Create</span>
       new inquiry from scratch or open one from
       <router-link class="link" to="/inquiries">Inquiries</router-link>
     </div>
 
     <!--Close tab warning dialog  -->
-    <modal name="close-warn" classes="dialog" height="auto">
+    <modal modal-id="close-warn" class="dialog">
       <div class="dialog-header">
         Close tab {{
           closingTab !== null
@@ -59,8 +59,10 @@
 <script>
 import Tab from './Tab'
 import CloseIcon from '@/components/svg/close'
+import eventBus from '@/lib/eventBus'
 
 export default {
+  emits: [],
   components: {
     Tab,
     CloseIcon
@@ -82,6 +84,9 @@ export default {
     window.addEventListener('beforeunload', this.leavingSqliteviz)
   },
   methods: {
+    emitCreateTabEvent () {
+      eventBus.$emit('createNewInquiry')
+    },
     leavingSqliteviz (event) {
       if (this.tabs.some(tab => !tab.isSaved)) {
         event.preventDefault()
@@ -104,14 +109,14 @@ export default {
       this.$store.commit('deleteTab', tab)
     },
     saveAndClose (tab) {
-      this.$root.$on('inquirySaved', () => {
+      eventBus.$on('inquirySaved', () => {
         this.closeTab(tab)
-        this.$root.$off('inquirySaved')
+        eventBus.$off('inquirySaved')
       })
       this.selectTab(tab.id)
       this.$modal.hide('close-warn')
       this.$nextTick(() => {
-        this.$root.$emit('saveInquiry')
+        eventBus.$emit('saveInquiry')
       })
     }
   }

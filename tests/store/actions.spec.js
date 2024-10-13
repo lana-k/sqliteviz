@@ -12,7 +12,7 @@ describe('actions', () => {
 
     let id = await addTab({ state })
     expect(state.tabs[0]).to.include({
-      id: id,
+      id,
       name: null,
       tempName: 'Untitled',
       viewType: 'chart',
@@ -23,7 +23,7 @@ describe('actions', () => {
 
     id = await addTab({ state })
     expect(state.tabs[1]).to.include({
-      id: id,
+      id,
       name: null,
       tempName: 'Untitled 1',
       viewType: 'chart',

@@ -33,6 +33,7 @@ import tooltipMixin from '@/tooltipMixin'
 export default {
   name: 'changeDbIcon',
   mixins: [tooltipMixin],
+  emits: ['click'],
   methods: {
     onClick () {
       this.hideTooltip()

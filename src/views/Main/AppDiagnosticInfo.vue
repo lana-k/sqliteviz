@@ -5,7 +5,11 @@
       :src="require('@/assets/images/info.svg')"
       @click="$modal.show('app-info')"
     />
-    <modal name="app-info" classes="dialog" height="auto" width="400px">
+    <modal
+      modal-id="app-info"
+      class="dialog"
+      content-class="app-info-modal"
+    >
       <div class="dialog-header">
         App info
         <close-icon @click="$modal.hide('app-info')"/>
@@ -58,6 +62,12 @@ export default {
   }
 }
 </script>
+
+<style>
+.app-info-modal {
+  width: 400px;
+}
+</style>
 
 <style scoped>
 #app-info-icon {

@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import Workspace from '@/views/Main/Workspace'
 import Inquiries from '@/views/Main/Inquiries'
 import Welcome from '@/views/Welcome'
@@ -7,8 +6,6 @@ import Main from '@/views/Main'
 import LoadView from '@/views/LoadView'
 import store from '@/store'
 import database from '@/lib/database'
-
-Vue.use(VueRouter)
 
 const routes = [
   {
@@ -40,7 +37,8 @@ const routes = [
   }
 ]
 
-const router = new VueRouter({
+const router = createRouter({
+  history: createWebHashHistory(),
   routes
 })
 

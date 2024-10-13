@@ -21,7 +21,7 @@ describe('tab.js', () => {
       error: null,
       time: 0,
       isSaved: false,
-      state: state
+      state
     })
     expect(newTab.layout).to.include({
       sqlEditor: 'above',
@@ -59,7 +59,7 @@ describe('tab.js', () => {
       error: null,
       time: 0,
       isSaved: true,
-      state: state
+      state
     })
     expect(newTab.layout).to.include({
       sqlEditor: 'above',

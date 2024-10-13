@@ -78,6 +78,7 @@ export default {
       default: 'unset'
     }
   },
+  emits: [],
   components: {
     ChangeDbIcon,
     CsvJsonImport

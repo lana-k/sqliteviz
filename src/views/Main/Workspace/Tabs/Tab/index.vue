@@ -17,7 +17,11 @@
 
     <div :id="'hidden-'+ tab.id" class="hidden-part" />
 
-    <teleport :to="`#${tab.layout.sqlEditor}-${tab.id}`">
+    <teleport
+      defer
+      :to="enableTeleport ? `#${tab.layout.sqlEditor}-${tab.id}`: undefined"
+      :disabled="!enableTeleport"
+    >
       <sql-editor
         ref="sqlEditor"
         v-model="tab.query"
@@ -27,7 +31,11 @@
       />
     </teleport>
 
-    <teleport :to="`#${tab.layout.table}-${tab.id}`">
+    <teleport
+      defer
+      :to="enableTeleport ? `#${tab.layout.table}-${tab.id}`: undefined"
+      :disabled="!enableTeleport"
+    >
       <run-result
         :tab="tab"
         :result="tab.result"
@@ -38,7 +46,11 @@
       />
     </teleport>
 
-    <teleport :to="`#${tab.layout.dataView}-${tab.id}`">
+    <teleport
+      defer
+      :to="enableTeleport ? `#${tab.layout.dataView}-${tab.id}` : undefined"
+      :disabled="!enableTeleport"
+    >
       <data-view
         :data-source="(tab.result && tab.result.values) || null"
         :init-options="tab.viewOptions"
@@ -56,8 +68,8 @@ import Splitpanes from '@/components/Splitpanes'
 import SqlEditor from './SqlEditor'
 import DataView from './DataView'
 import RunResult from './RunResult'
+import { nextTick } from 'vue'
 
-import Teleport from 'vue2-teleport'
 import events from '@/lib/utils/events'
 
 export default {
@@ -65,18 +77,19 @@ export default {
   props: {
     tab: Object
   },
+  emits: [],
   components: {
     SqlEditor,
     DataView,
     RunResult,
-    Splitpanes,
-    Teleport
+    Splitpanes
   },
   data () {
     return {
       topPaneSize: this.tab.maximize
         ? this.tab.layout[this.tab.maximize] === 'above' ? 100 : 0
-        : 50
+        : 50,
+      enableTeleport: false
     }
   },
   computed: {
@@ -89,7 +102,7 @@ export default {
       immediate: true,
       async handler () {
         if (this.isActive) {
-          await this.$nextTick()
+          await nextTick()
           this.$refs.sqlEditor.focus()
         }
       }
@@ -101,7 +114,16 @@ export default {
       })
     }
   },
+  activated () {
+    this.enableTeleport = true
+  },
+  deactivated () {
+    this.enableTeleport = false
+  },
   mounted () {
+    if (this.$store.state.isWorkspaceVisible) {
+      this.enableTeleport = true
+    }
     this.tab.dataView = this.$refs.dataView
   },
   methods: {

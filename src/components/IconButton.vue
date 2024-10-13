@@ -23,6 +23,7 @@ import LoadingIndicator from '@/components/LoadingIndicator'
 export default {
   name: 'SideBarButton',
   props: ['active', 'disabled', 'tooltip', 'tooltipPosition', 'loading'],
+  emits: ['click'],
   components: { LoadingIndicator },
   mixins: [tooltipMixin],
   methods: {
@@ -51,15 +52,15 @@ export default {
   border-radius: var(--border-radius-medium-2);
 }
 
-.icon-btn:hover .icon >>> path,
-.icon-btn.active .icon >>> path,
-.icon-btn:hover .icon >>> circle,
-.icon-btn.active .icon >>> circle {
+.icon-btn:hover .icon :deep(path),
+.icon-btn.active .icon :deep(path),
+.icon-btn:hover .icon :deep(circle),
+.icon-btn.active .icon :deep(circle) {
   fill: var(--color-accent);
 }
 
-.icon-btn:disabled  .icon >>> path,
-.icon-btn:disabled  .icon >>> circle {
+.icon-btn:disabled  .icon :deep(path),
+.icon-btn:disabled  .icon :deep(circle) {
   fill: var(--color-border);
 }
 
@@ -68,7 +69,7 @@ export default {
   pointer-events: none;
 }
 
-.disabled.icon-btn:hover .icon >>> path {
+.disabled.icon-btn:hover .icon :deep(path) {
   fill: var(--color-border);
 }
 

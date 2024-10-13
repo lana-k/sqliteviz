@@ -18,15 +18,16 @@
 </template>
 
 <script>
-import Paginate from 'vuejs-paginate'
+import Paginate from 'vuejs-paginate-next'
 
 export default {
   name: 'Pager',
   components: { Paginate },
-  props: ['pageCount', 'value'],
+  props: ['pageCount', 'modelValue'],
+  emits: ['update:modelValue'],
   data () {
     return {
-      page: this.value,
+      page: this.modelValue,
       chevron: `
         <svg width="9" height="9" viewBox="0 0 8 12" fill="none">
         <path
@@ -39,10 +40,10 @@ export default {
   },
   watch: {
     page () {
-      this.$emit('input', this.page)
+      this.$emit('update:modelValue', this.page)
     },
-    value () {
-      this.page = this.value
+    modelValue () {
+      this.page = this.modelValue
     }
   }
 }
@@ -54,48 +55,48 @@ export default {
   align-items: center;
   line-height: 10px;
 }
->>> .paginator-page-link {
+:deep(.paginator-page-link) {
   padding: 2px 3px;
   margin: 0 5px;
   display: block;
   color: var(--color-text-base);
   font-size: 11px;
 }
->>> .paginator-page-link:hover {
+:deep(.paginator-page-link:hover) {
   color: var(--color-text-active);
 }
->>> .paginator-page-link:active,
->>> .paginator-page-link:visited,
->>> .paginator-page-link:focus,
->>> .paginator-next:active,
->>> .paginator-next:visited,
->>> .paginator-next:focus,
->>> .paginator-prev:active,
->>> .paginator-prev:visited,
->>> .paginator-prev:focus {
+:deep(.paginator-page-link:active),
+:deep(.paginator-page-link:visited),
+:deep(.paginator-page-link:focus),
+:deep(.paginator-next:active),
+:deep(.paginator-next:visited),
+:deep(.paginator-next:focus),
+:deep(.paginator-prev:active),
+:deep(.paginator-prev:visited),
+:deep(.paginator-prev:focus) {
   outline: none;
 }
 
->>> .paginator-active-page,
->>> .paginator-active-page:hover {
+:deep(.paginator-active-page),
+:deep(.paginator-active-page:hover) {
   color: var(--color-accent);
 }
 
->>> .paginator-break:hover,
->>> .paginator-disabled:hover {
+:deep(.paginator-break:hover),
+:deep(.paginator-disabled:hover) {
   cursor: default;
 }
 
->>> .paginator-prev svg {
+:deep(.paginator-prev svg) {
   transform: rotate(180deg);
 }
 
->>> .paginator-next:hover path,
->>> .paginator-prev:hover path {
+:deep(.paginator-next:hover path),
+:deep(.paginator-prev:hover path) {
    fill: var(--color-text-active);
 }
->>> .paginator-disabled path,
->>> .paginator-disabled:hover path {
+:deep(.paginator-disabled path),
+:deep(.paginator-disabled:hover path) {
   fill: var(--color-text-light-2);
 }
 </style>

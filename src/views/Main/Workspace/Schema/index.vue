@@ -141,7 +141,7 @@ export default {
 }
 
 .db-name:hover .chevron-icon path,
->>> .table-name:hover .chevron-icon path {
+:deep(.table-name:hover .chevron-icon path) {
   fill: var(--color-gray-dark);
 }
 </style>
