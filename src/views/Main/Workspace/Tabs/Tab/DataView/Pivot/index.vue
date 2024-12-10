@@ -7,14 +7,24 @@
     :key-names="columns"
     v-model="pivotOptions"
     @update="$emit('update')"
-    @loadingCustomChartImageCompleted="$emit('loadingImageCompleted')"
   />
   <div ref="pivotOutput" class="pivot-output"/>
+  <div
+    ref="customChartOutput"
+    v-show="viewCustomChart"
+    class="custom-chart-output"
+  >
+    <chart
+      ref="customChart"
+      v-bind="customChartComponentProps"
+      @update="$emit('update')"
+      @onLoadingImageCompleted="$emit('loadingImageCompleted')"
+    />
+  </div>
 </div>
 </template>
 
 <script>
-import { createApp } from 'vue'
 import fIo from '@/lib/utils/fileIo'
 import $ from 'jquery'
 import 'pivottable'
@@ -35,7 +45,8 @@ export default {
     'update:importToPngEnabled'
   ],
   components: {
-    PivotUi
+    PivotUi,
+    Chart
   },
   data () {
     return {
@@ -50,8 +61,7 @@ export default {
             aggregator: $.pivotUtilities.aggregators.Count(),
             vals: [],
             rendererName: 'Table',
-            renderer: $.pivotUtilities.renderers.Table,
-            rendererOptions: undefined
+            renderer: $.pivotUtilities.renderers.Table
           }
         : {
             rows: this.initOptions.rows,
@@ -64,16 +74,12 @@ export default {
             ](this.initOptions.vals),
             vals: this.initOptions.vals,
             rendererName: this.initOptions.rendererName,
-            renderer: $.pivotUtilities.renderers[this.initOptions.rendererName],
-            rendererOptions: !this.initOptions.rendererOptions
-              ? undefined
-              : {
-                  customChartComponent: createApp(Chart, {
-                    initOptions: this.initOptions
-                      .rendererOptions.customChartOptions
-                  })
-                }
-          }
+            renderer: $.pivotUtilities.renderers[this.initOptions.rendererName]
+          },
+      customChartComponentProps: {
+        initOptions: this.initOptions?.rendererOptions?.customChartOptions,
+        forPivot: true
+      }
     }
   },
   computed: {
@@ -115,13 +121,13 @@ export default {
   },
   mounted () {
     this.show()
-    // We need to detect resizing because plotly doesn't resize when resixe its container
+    // We need to detect resizing because plotly doesn't resize when resize its container
     // but it resize on window.resize (we will trigger it manualy in order to make plotly resize)
     this.resizeObserver = new ResizeObserver(this.handleResize)
-    this.resizeObserver.observe(this.$refs.pivotOutput)
+    this.resizeObserver.observe(this.$refs.customChartOutput)
   },
   beforeUnmount () {
-    this.resizeObserver.unobserve(this.$refs.pivotOutput)
+    this.resizeObserver.unobserve(this.$refs.customChartOutput)
   },
   methods: {
     handleResize () {
@@ -149,6 +155,12 @@ export default {
         }
       }
 
+      if (this.viewCustomChart) {
+        options.rendererOptions = {
+          getCustomComponentsProps: () => this.customChartComponentProps
+        }
+      }
+
       $(this.$refs.pivotOutput).pivot(
         function (callback) {
           const rowCount = !this.dataSources ? 0 : this.dataSources[this.columns[0]].length
@@ -172,7 +184,7 @@ export default {
     getOptionsForSave () {
       const options = { ...this.pivotOptions }
       if (options.rendererOptions) {
-        const chartComponent = this.pivotOptions.rendererOptions.customChartComponent
+        const chartComponent = this.$refs.customChart
         options.rendererOptions = {
           customChartOptions: chartComponent.getOptionsForSave()
         }
@@ -183,7 +195,7 @@ export default {
 
     async saveAsPng () {
       if (this.viewCustomChart) {
-        this.pivotOptions.rendererOptions.customChartComponent.saveAsPng()
+        this.$refs.customChart.saveAsPng()
       } else {
         const source = this.viewStandartChart
           ? await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
@@ -196,7 +208,7 @@ export default {
 
     async prepareCopy () {
       if (this.viewCustomChart) {
-        return await this.pivotOptions.rendererOptions.customChartComponent.prepareCopy()
+        return await this.$refs.customChart.prepareCopy()
       }
       if (this.viewStandartChart) {
         return await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
@@ -206,7 +218,7 @@ export default {
 
     async saveAsSvg () {
       if (this.viewCustomChart) {
-        this.pivotOptions.rendererOptions.customChartComponent.saveAsSvg()
+        this.$refs.customChart.saveAsSvg()
       } else if (this.viewStandartChart) {
         const url = await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'svg')
         fIo.downloadFromUrl(url, 'pivot')
@@ -215,7 +227,7 @@ export default {
 
     saveAsHtml () {
       if (this.viewCustomChart) {
-        this.pivotOptions.rendererOptions.customChartComponent.saveAsHtml()
+        this.$refs.customChart.saveAsHtml()
         return
       }
 
@@ -246,7 +258,8 @@ export default {
   background-color: var(--color-white);
 }
 
-.pivot-output {
+.pivot-output,
+.custom-chart-output {
   flex-grow: 1;
   width: 100%;
   overflow: auto;
@@ -287,5 +300,8 @@ export default {
 
 .pivot-output :deep(textarea:focus-visible) {
   outline: none;
+}
+.pivot-output:empty {
+  flex-grow: 0;
 }
 </style>

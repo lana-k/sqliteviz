@@ -3,23 +3,24 @@
     <div class="warning chart-warning" v-show="!dataSources && visible">
       There is no data to build a chart. Run your SQL query and make sure the result is not empty.
     </div>
-    <PlotlyEditor
-      :data="state.data"
-      :layout="state.layout"
-      :frames="state.frames"
-      :config="{ editable: true, displaylogo: false, modeBarButtonsToRemove: ['toImage'] }"
-      :dataSources="dataSources"
-      :dataSourceOptions="dataSourceOptions"
-      :plotly="plotly"
-      :useResizeHandler="useResizeHandler"
-      :debug="true"
-      :advancedTraceTypeSelector="true"
-      class="chart"
-      ref="plotlyEditor"
-      :style="{ height: !dataSources ? 'calc(100% - 40px)' : '100%' }"
-      @update="update"
-      @render="onRender"
-    />
+    <div class="chart" :style="{ height: !dataSources ? 'calc(100% - 40px)' : '100%' }">
+      <PlotlyEditor
+         v-show="visible"
+        :data="state.data"
+        :layout="state.layout"
+        :frames="state.frames"
+        :config="{ editable: true, displaylogo: false, modeBarButtonsToRemove: ['toImage'] }"
+        :dataSources="dataSources"
+        :dataSourceOptions="dataSourceOptions"
+        :plotly="plotly"
+        :useResizeHandler="useResizeHandler"
+        :debug="true"
+        :advancedTraceTypeSelector="true"
+        ref="plotlyEditor"
+        @update="update"
+        @render="onRender"
+      />
+    </div>
 </div>
 </template>
 
@@ -105,11 +106,10 @@ export default {
     }
   },
   methods: {
-    handleResize () {
+    async handleResize () {
       this.visible = false
-      this.$nextTick(() => {
-        this.visible = true
-      })
+      await this.$nextTick()
+      this.visible = true
     },
     onRender (data, layout, frames) {
       // TODO: check changes and enable Save button if needed

@@ -140,13 +140,11 @@ import $ from 'jquery'
 import Multiselect from 'vue-multiselect'
 import PivotSortBtn from './PivotSortBtn'
 import { renderers, aggregators, zeroValAggregators, twoValAggregators } from '../pivotHelper'
-import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart'
-import { createApp } from 'vue'
 
 export default {
   name: 'pivotUi',
   props: ['keyNames', 'modelValue'],
-  emits: ['loadingCustomChartImageCompleted', 'update:modelValue', 'update'],
+  emits: ['update:modelValue', 'update'],
   components: {
     Multiselect,
     PivotSortBtn
@@ -163,13 +161,7 @@ export default {
       val1: (this.modelValue && this.modelValue.vals && this.modelValue.vals[0]) || '',
       val2: (this.modelValue && this.modelValue.vals && this.modelValue.vals[1]) || '',
       colOrder: (this.modelValue && this.modelValue.colOrder) || 'key_a_to_z',
-      rowOrder: (this.modelValue && this.modelValue.rowOrder) || 'key_a_to_z',
-      customChartComponent:
-        (
-          this.modelValue &&
-          this.modelValue.rendererOptions &&
-          this.modelValue.rendererOptions.customChartComponent
-        ) || createApp(Chart)
+      rowOrder: (this.modelValue && this.modelValue.rowOrder) || 'key_a_to_z'
     }
   },
   computed: {
@@ -223,12 +215,6 @@ export default {
       this.returnValue()
     }
   },
-  created () {
-    this.customChartComponent.onUpdate = () => { this.$emit('update') }
-    this.customChartComponent.onLoadingImageCompleted = () => {
-      this.$emit('loadingCustomChartImageCompleted')
-    }
-  },
   methods: {
     returnValue () {
       const vals = []
@@ -245,11 +231,6 @@ export default {
         aggregatorName: this.aggregator.name,
         renderer: this.renderer.fun,
         rendererName: this.renderer.name,
-        rendererOptions: this.renderer.name !== 'Custom chart'
-          ? undefined
-          : {
-              customChartComponent: this.customChartComponent
-            },
         vals
       })
     }

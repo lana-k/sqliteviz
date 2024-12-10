@@ -50,14 +50,9 @@ export function _getDataSources (pivotData) {
 }
 
 function customChartRenderer (data, options) {
-  options.customChartComponent.dataSources = _getDataSources(data)
-  options.customChartComponent.forPivot = true
-
-  const container = document.createElement('div')
-
-  options.customChartComponent.mount(container)
-
-  return $(container)
+  const propsRef = options.getCustomComponentsProps()
+  propsRef.dataSources = _getDataSources(data)
+  return null
 }
 
 $.extend(
