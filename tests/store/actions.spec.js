@@ -1,7 +1,12 @@
 import { expect } from 'chai'
 import actions from '@/store/actions'
 
-const { addTab } = actions
+const { 
+  addTab, 
+  addInquiry,
+  deleteInquiries,
+  renameInquiry 
+} = actions
 
 describe('actions', () => {
   it('addTab adds new blank tab', async () => {
@@ -80,5 +85,51 @@ describe('actions', () => {
     await addTab({ state }, tab1)
     expect(state.tabs).to.have.lengthOf(2)
     expect(state.untitledLastIndex).to.equal(0)
+  })
+
+  it('addInquiry', async () => {
+    const state = {
+      inquiries: [1,2,3]
+    }
+
+    await addInquiry({ state }, 4)
+    expect(state.inquiries).to.eql([1,2,3,4])
+  })
+
+  it('deleteInquiries', async () => {
+    const state = {
+      inquiries: [{ id: 1 }, { id: 2 }, { id: 3 }],
+      tabs: [{ id: 3 }, { id: 2 }]
+    }
+    const commit = sinon.spy()
+
+    await deleteInquiries({ state, commit }, new Set().add(2))
+    expect(state.inquiries).to.eql([{ id: 1 }, { id: 3 }])
+    expect(commit.calledWith('deleteTab', { id: 2 })).to.equal(true)
+  })
+
+  it('renameInquiry', async () => {
+    const state = {
+      inquiries: [
+        { id: 1, name: 'foo'}, 
+        { id: 2, name: 'bar' }, 
+        { id: 3, name: 'baz' }, 
+      ],
+      tabs: [{ id: 1, name: 'foo'}, { id: 2, name: 'bar' }]
+    }
+    const commit = sinon.spy()
+
+    await renameInquiry({ state, commit }, {inquiryId: 2, newName: 'new name'})
+    expect(state.inquiries).to.eql([
+      { id: 1, name: 'foo'}, 
+      { id: 2, name: 'new name' }, 
+      { id: 3, name: 'baz' }, 
+    ])
+    expect(commit.calledWith('updateTab', {
+      tab: { id: 2, name: 'bar' },
+      newValues: {
+        name: 'new name'
+      }
+    })).to.equal(true)
   })
 })

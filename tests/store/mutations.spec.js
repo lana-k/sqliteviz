@@ -8,7 +8,8 @@ const {
   updatePredefinedInquiries,
   setDb,
   setLoadingPredefinedInquiries,
-  setPredefinedInquiriesLoaded
+  setPredefinedInquiriesLoaded,
+  setInquiries
 } = mutations
 
 describe('mutations', () => {
@@ -359,5 +360,14 @@ describe('mutations', () => {
 
     setPredefinedInquiriesLoaded(state, true)
     expect(state.predefinedInquiriesLoaded).to.equal(true)
+  })
+
+  it('setInquiries', () => {
+    const state = {
+      inquiries: []
+    }
+
+    setInquiries(state, [1,2,3])
+    expect(state.inquiries).to.eql([1,2,3])
   })
 })

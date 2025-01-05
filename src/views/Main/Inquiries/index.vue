@@ -331,7 +331,7 @@ export default {
         this.errorMsg = "Inquiry name can't be empty"
         return
       }
-      this.$store.commit('renameInquiry', {
+      this.$store.dispatch('renameInquiry', {
         inquiryId: this.processedInquiryId, 
         newName: this.newName
       })
@@ -341,7 +341,7 @@ export default {
     },
     duplicateInquiry (index) {
       const newInquiry = storedInquiries.duplicateInquiry(this.showedInquiries[index])
-      this.$store.commit('addInquiry', newInquiry)
+      this.$store.dispatch('addInquiry', newInquiry)
     },
     showDeleteDialog (idsSet) {
       this.deleteGroup = idsSet.size > 1
@@ -353,14 +353,14 @@ export default {
     deleteInquiry () {
       this.$modal.hide('delete')
       if (!this.deleteGroup) {
-        this.$store.commit('deleteInquiries', new Set().add(this.processedInquiryId))
+        this.$store.dispatch('deleteInquiries', new Set().add(this.processedInquiryId))
 
         // Clear checkbox
         if (this.selectedInquiriesIds.has(this.processedInquiryId)) {
           this.selectedInquiriesIds.delete(this.processedInquiryId)
         }
       } else {
-        this.$store.commit('deleteInquiries', this.selectedInquiriesIds)
+        this.$store.dispatch('deleteInquiries', this.selectedInquiriesIds)
 
         // Clear checkboxes
         this.selectedInquiriesIds.clear()

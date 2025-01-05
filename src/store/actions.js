@@ -42,5 +42,40 @@ export default {
     }
 
     return value
+  },
+  addInquiry ({ state }, newInquiry) {
+    state.inquiries.push(newInquiry)
+  },
+  deleteInquiries ({ state, commit }, inquiryIdSet) {
+    state.inquiries = state.inquiries.filter(
+      inquiry => !inquiryIdSet.has(inquiry.id)
+    )
+
+     // Close deleted inquiries if it was opened
+     const tabs = state.tabs
+     let i = tabs.length - 1
+     while (i > -1) {
+       if (inquiryIdSet.has(tabs[i].id)) {
+         commit('deleteTab', tabs[i])
+       }
+       i--
+     }
+  },
+  renameInquiry ({ state, commit }, {inquiryId, newName}) {
+    const renamingInquiry = state.inquiries
+    .find(inquiry => inquiry.id === inquiryId)
+
+    renamingInquiry.name = newName
+
+    // update tab, if renamed inquiry is opened
+    const tab = state.tabs.find(tab => tab.id === renamingInquiry.id)
+    if (tab) {
+      commit('updateTab', {
+        tab,
+        newValues: {
+          name: newName
+        }
+      })
+    }
   }
 }
