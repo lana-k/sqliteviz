@@ -59,8 +59,10 @@ describe('LoadView.vue', () => {
 
     const wrapper = mount(LoadView, {
       store,
-      mocks: { $route, $router },
-      stubs: ['router-link']
+      global: {
+        mocks: { $route, $router },
+        stubs: ['router-link']
+      }
     })
 
     await flushPromises()
@@ -135,8 +137,10 @@ describe('LoadView.vue', () => {
 
     const wrapper = mount(LoadView, {
       store,
-      mocks: { $route, $router },
-      stubs: ['router-link']
+      global: {
+        mocks: { $route, $router },
+        stubs: ['router-link']
+      }
     })
 
     await flushPromises()

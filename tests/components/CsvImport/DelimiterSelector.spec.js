@@ -5,19 +5,19 @@ import DelimiterSelector from '@/components/CsvJsonImport/DelimiterSelector'
 describe('DelimiterSelector', async () => {
   it('shows the name of value', async () => {
     let wrapper = shallowMount(DelimiterSelector, {
-      propsData: { value: ',' }
+      props: { value: ',' }
     })
     expect(wrapper.find('input').element.value).to.equal(',')
     expect(wrapper.find('.name').text()).to.equal('comma')
 
     wrapper = shallowMount(DelimiterSelector, {
-      propsData: { value: '\t' }
+      props: { value: '\t' }
     })
     expect(wrapper.find('input').element.value).to.equal('\t')
     expect(wrapper.find('.name').text()).to.equal('horizontal tab')
 
     wrapper = shallowMount(DelimiterSelector, {
-      propsData: { value: '' }
+      props: { value: '' }
     })
     expect(wrapper.find('input').element.value).to.equal('')
     expect(wrapper.find('.name').text()).to.equal('')
@@ -25,7 +25,7 @@ describe('DelimiterSelector', async () => {
 
   it('clears the field', async () => {
     const wrapper = mount(DelimiterSelector, {
-      propsData: { value: ',' }
+      props: { value: ',' }
     })
 
     await wrapper.findComponent({ name: 'clear-icon' }).trigger('click')
@@ -36,7 +36,7 @@ describe('DelimiterSelector', async () => {
 
   it('changes value by typing', async () => {
     const wrapper = shallowMount(DelimiterSelector, {
-      propsData: { value: ',' }
+      props: { value: ',' }
     })
 
     await wrapper.find('input').setValue(';')
@@ -46,7 +46,7 @@ describe('DelimiterSelector', async () => {
 
   it('changes value by selection from the list', async () => {
     const wrapper = mount(DelimiterSelector, {
-      propsData: { value: '|' }
+      props: { value: '|' }
     })
 
     await wrapper.findComponent({ name: 'drop-down-chevron' }).trigger('click')
@@ -59,7 +59,7 @@ describe('DelimiterSelector', async () => {
 
   it("doesn't change value when becomes empty", async () => {
     const wrapper = mount(DelimiterSelector, {
-      propsData: { value: '|' }
+      props: { value: '|' }
     })
 
     await wrapper.find('input').setValue('')
@@ -72,18 +72,18 @@ describe('DelimiterSelector', async () => {
 
     const wrapper = mount(DelimiterSelector, {
       attachTo: place,
-      propsData: { value: '|' }
+      props: { value: '|' }
     })
 
     await wrapper.find('.name').trigger('click')
     expect(wrapper.find('input').element).to.equal(document.activeElement)
     place.remove()
-    wrapper.destroy()
+    wrapper.unmount()
   })
 
   it('disabled', async () => {
     const wrapper = mount(DelimiterSelector, {
-      propsData: { value: '|', disabled: true }
+      props: { value: '|', disabled: true }
     })
 
     await wrapper.findComponent({ name: 'clear-icon' }).trigger('click')
@@ -97,7 +97,7 @@ describe('DelimiterSelector', async () => {
 
   it('has filled class when input is not empty', async () => {
     const wrapper = shallowMount(DelimiterSelector, {
-      propsData: { value: ',' }
+      props: { value: ',' }
     })
     await wrapper.vm.$nextTick()
     expect(wrapper.find('input').classes()).to.include('filled')

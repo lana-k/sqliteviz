@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { mount, createLocalVue } from '@vue/test-utils'
-import Vuex from 'vuex'
+import { mount } from '@vue/test-utils'
+import { createStore } from 'vuex'
 import actions from '@/store/actions'
 import mutations from '@/store/mutations'
 import Schema from '@/views/Main/Workspace/Schema'
@@ -9,9 +9,6 @@ import TableDescription from '@/views/Main/Workspace/Schema/TableDescription'
 import database from '@/lib/database'
 import fIo from '@/lib/utils/fileIo'
 import csv from '@/lib/csv'
-
-const localVue = createLocalVue()
-localVue.use(Vuex)
 
 describe('Schema.vue', () => {
   afterEach(() => {
@@ -25,10 +22,14 @@ describe('Schema.vue', () => {
         dbName: 'fooDB'
       }
     }
-    const store = new Vuex.Store({ state })
+    const store = createStore({ state })
 
     // mout the component
-    const wrapper = mount(Schema, { store, localVue })
+    const wrapper = mount(Schema, {
+      global: {
+        plugins: [store]
+      }
+    })
 
     // check DB name and schema visibility
     expect(wrapper.find('.db-name').text()).to.equal('fooDB')
@@ -42,10 +43,14 @@ describe('Schema.vue', () => {
         dbName: 'fooDB'
       }
     }
-    const store = new Vuex.Store({ state })
+    const store = createStore({ state })
 
     // mout the component
-    const wrapper = mount(Schema, { store, localVue })
+    const wrapper = mount(Schema, {
+      global: {
+        plugins: [store]
+      }
+    })
 
     // click and check visibility
     await wrapper.find('.db-name').trigger('click')
@@ -84,30 +89,34 @@ describe('Schema.vue', () => {
         ]
       }
     }
-    const store = new Vuex.Store({ state })
+    const store = createStore({ state })
 
     // mount the component
-    const wrapper = mount(Schema, { store, localVue })
+    const wrapper = mount(Schema, {
+      global: {
+        plugins: [store]
+      }
+    })
 
     // apply filters and check the list of tables
     await wrapper.find('#schema-filter input').setValue('foo')
     let tables = wrapper.findAllComponents(TableDescription)
     expect(tables).to.have.lengthOf(2)
-    expect(tables.at(0).vm.name).to.equal('foo')
-    expect(tables.at(1).vm.name).to.equal('foobar')
+    expect(tables[0].vm.name).to.equal('foo')
+    expect(tables[1].vm.name).to.equal('foobar')
 
     await wrapper.find('#schema-filter input').setValue('bar')
     tables = wrapper.findAllComponents(TableDescription)
     expect(tables).to.have.lengthOf(2)
-    expect(tables.at(0).vm.name).to.equal('bar')
-    expect(tables.at(1).vm.name).to.equal('foobar')
+    expect(tables[0].vm.name).to.equal('bar')
+    expect(tables[1].vm.name).to.equal('foobar')
 
     await wrapper.find('#schema-filter input').setValue('')
     tables = wrapper.findAllComponents(TableDescription)
     expect(tables).to.have.lengthOf(3)
-    expect(tables.at(0).vm.name).to.equal('foo')
-    expect(tables.at(1).vm.name).to.equal('bar')
-    expect(tables.at(2).vm.name).to.equal('foobar')
+    expect(tables[0].vm.name).to.equal('foo')
+    expect(tables[1].vm.name).to.equal('bar')
+    expect(tables[2].vm.name).to.equal('foobar')
   })
 
   it('exports db', async () => {
@@ -117,8 +126,12 @@ describe('Schema.vue', () => {
         export: sinon.stub().resolves()
       }
     }
-    const store = new Vuex.Store({ state })
-    const wrapper = mount(Schema, { store, localVue })
+    const store = createStore({ state })
+    const wrapper = mount(Schema, {
+      global: {
+        plugins: [store]
+      }
+    })
 
     await wrapper.findComponent({ name: 'export-icon' }).find('svg').trigger('click')
     expect(state.db.export.calledOnceWith('fooDB'))
@@ -150,8 +163,12 @@ describe('Schema.vue', () => {
     state.db.refreshSchema()
     sinon.spy(state.db, 'refreshSchema')
 
-    const store = new Vuex.Store({ state, actions, mutations })
-    const wrapper = mount(Schema, { store, localVue })
+    const store = createStore({ state, actions, mutations })
+    const wrapper = mount(Schema, {
+      global: {
+        plugins: [store]
+      }
+    })
     sinon.spy(wrapper.vm.$refs.addCsvJson, 'preview')
     sinon.spy(wrapper.vm, 'addCsvJson')
     sinon.spy(wrapper.vm.$refs.addCsvJson, 'loadToDb')

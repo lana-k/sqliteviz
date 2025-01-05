@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { mount, shallowMount, createWrapper } from '@vue/test-utils'
+import { mount, shallowMount, DOMWrapper } from '@vue/test-utils'
 import Vuex from 'vuex'
 import MainMenu from '@/views/Main/MainMenu'
 import storedInquiries from '@/lib/storedInquiries'
@@ -13,7 +13,7 @@ describe('MainMenu.vue', () => {
 
     // We need explicitly destroy the component, so that beforeUnmount hook was called
     // It's important because in this hook MainMenu component removes keydown event listener.
-    wrapper.destroy()
+    wrapper.unmount()
   })
 
   it('Create and Save are visible only on /workspace page', async () => {
@@ -27,8 +27,10 @@ describe('MainMenu.vue', () => {
     // mount the component
     wrapper = shallowMount(MainMenu, {
       store,
-      mocks: { $route },
-      stubs: ['router-link']
+      global: {
+        mocks: { $route },
+        stubs: ['router-link']
+      }
     })
     expect(wrapper.find('#save-btn').exists()).to.equal(true)
     expect(wrapper.find('#save-btn').isVisible()).to.equal(true)
@@ -52,8 +54,10 @@ describe('MainMenu.vue', () => {
     const $route = { path: '/workspace' }
     wrapper = shallowMount(MainMenu, {
       store,
-      mocks: { $route },
-      stubs: ['router-link']
+      global: {
+        mocks: { $route },
+        stubs: ['router-link']
+      }
     })
     expect(wrapper.find('#save-btn').exists()).to.equal(true)
     expect(wrapper.find('#save-btn').isVisible()).to.equal(false)
@@ -78,8 +82,10 @@ describe('MainMenu.vue', () => {
 
     wrapper = shallowMount(MainMenu, {
       store,
-      mocks: { $route },
-      stubs: ['router-link']
+      global: {
+        mocks: { $route },
+        stubs: ['router-link']
+      }
     })
     const vm = wrapper.vm
     expect(wrapper.find('#save-btn').element.disabled).to.equal(false)
@@ -113,8 +119,10 @@ describe('MainMenu.vue', () => {
 
     wrapper = shallowMount(MainMenu, {
       store,
-      mocks: { $route, $router },
-      stubs: ['router-link']
+      global: {
+        mocks: { $route, $router },
+        stubs: ['router-link']
+      }
     })
 
     await wrapper.find('#create-btn').trigger('click')
@@ -148,8 +156,10 @@ describe('MainMenu.vue', () => {
 
     wrapper = shallowMount(MainMenu, {
       store,
-      mocks: { $route, $router },
-      stubs: ['router-link']
+      global: {
+        mocks: { $route, $router },
+        stubs: ['router-link']
+      }
     })
 
     await wrapper.find('#create-btn').trigger('click')
@@ -177,8 +187,10 @@ describe('MainMenu.vue', () => {
 
       wrapper = shallowMount(MainMenu, {
         store,
-        mocks: { $route, $router },
-        stubs: ['router-link']
+        global: {
+          mocks: { $route, $router },
+          stubs: ['router-link']
+        }
       })
 
       const ctrlR = new KeyboardEvent('keydown', { key: 'r', ctrlKey: true })
@@ -223,8 +235,10 @@ describe('MainMenu.vue', () => {
 
       wrapper = shallowMount(MainMenu, {
         store,
-        mocks: { $route, $router },
-        stubs: ['router-link']
+        global: {
+          mocks: { $route, $router },
+          stubs: ['router-link']
+        }
       })
 
       const ctrlEnter = new KeyboardEvent('keydown', { key: 'Enter', ctrlKey: true })
@@ -267,8 +281,10 @@ describe('MainMenu.vue', () => {
 
     wrapper = shallowMount(MainMenu, {
       store,
-      mocks: { $route },
-      stubs: ['router-link']
+      global: {
+        mocks: { $route },
+        stubs: ['router-link']
+      }
     })
     sinon.stub(wrapper.vm, 'createNewInquiry')
 
@@ -303,8 +319,10 @@ describe('MainMenu.vue', () => {
 
       wrapper = shallowMount(MainMenu, {
         store,
-        mocks: { $route },
-        stubs: ['router-link']
+        global: {
+          mocks: { $route },
+          stubs: ['router-link']
+        }
       })
       sinon.stub(wrapper.vm, 'checkInquiryBeforeSave')
 
@@ -362,8 +380,10 @@ describe('MainMenu.vue', () => {
 
       wrapper = mount(MainMenu, {
         store,
-        mocks: { $route },
-        stubs: ['router-link', 'app-diagnostic-info']
+        global: {
+          mocks: { $route },
+          stubs: ['router-link', 'app-diagnostic-info']
+        }
       })
 
       await wrapper.find('#save-btn').trigger('click')
@@ -388,7 +408,7 @@ describe('MainMenu.vue', () => {
       }))).to.equal(true)
 
       // check that 'inquirySaved' event was triggered on $root
-      expect(createWrapper(wrapper.vm.$root).emitted('inquirySaved')).to.have.lengthOf(1)
+      expect(new DOMWrapper(wrapper.vm.$root).emitted('inquirySaved')).to.have.lengthOf(1)
     })
 
   it('Shows en error when the new name is needed but not specifyied', async () => {
@@ -421,8 +441,10 @@ describe('MainMenu.vue', () => {
 
     wrapper = mount(MainMenu, {
       store,
-      mocks: { $route },
-      stubs: ['router-link', 'app-diagnostic-info']
+      global: {
+        mocks: { $route },
+        stubs: ['router-link', 'app-diagnostic-info']
+      }
     })
 
     await wrapper.find('#save-btn').trigger('click')
@@ -471,8 +493,10 @@ describe('MainMenu.vue', () => {
 
     wrapper = mount(MainMenu, {
       store,
-      mocks: { $route },
-      stubs: ['router-link', 'app-diagnostic-info']
+      global: {
+        mocks: { $route },
+        stubs: ['router-link', 'app-diagnostic-info']
+      }
     })
 
     await wrapper.find('#save-btn').trigger('click')
@@ -509,7 +533,7 @@ describe('MainMenu.vue', () => {
     }))).to.equal(true)
 
     // check that 'inquirySaved' event was triggered on $root
-    expect(createWrapper(wrapper.vm.$root).emitted('inquirySaved')).to.have.lengthOf(1)
+    expect(new DOMWrapper(wrapper.vm.$root).emitted('inquirySaved')).to.have.lengthOf(1)
   })
 
   it('Saves a predefined inquiry with a new name', async () => {
@@ -551,8 +575,10 @@ describe('MainMenu.vue', () => {
 
     wrapper = mount(MainMenu, {
       store,
-      mocks: { $route },
-      stubs: ['router-link', 'app-diagnostic-info']
+      global: {
+        mocks: { $route },
+        stubs: ['router-link', 'app-diagnostic-info']
+      }
     })
 
     await wrapper.find('#save-btn').trigger('click')
@@ -592,7 +618,7 @@ describe('MainMenu.vue', () => {
     }))).to.equal(true)
 
     // check that 'inquirySaved' event was triggered on $root
-    expect(createWrapper(wrapper.vm.$root).emitted('inquirySaved')).to.have.lengthOf(1)
+    expect(new DOMWrapper(wrapper.vm.$root).emitted('inquirySaved')).to.have.lengthOf(1)
 
     // We saved predefined inquiry, so the tab will be created again
     // (because of new id) and it will be without sql result and has default view - table.
@@ -637,8 +663,10 @@ describe('MainMenu.vue', () => {
 
     wrapper = mount(MainMenu, {
       store,
-      mocks: { $route },
-      stubs: ['router-link', 'app-diagnostic-info']
+      global: {
+        mocks: { $route },
+        stubs: ['router-link', 'app-diagnostic-info']
+      }
     })
 
     await wrapper.find('#save-btn').trigger('click')

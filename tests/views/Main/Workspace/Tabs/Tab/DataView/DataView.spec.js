@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { mount, createWrapper } from '@vue/test-utils'
+import { mount, DOMWrapper } from '@vue/test-utils'
 import DataView from '@/views/Main/Workspace/Tabs/Tab/DataView'
 import sinon from 'sinon'
 
@@ -11,7 +11,7 @@ describe('DataView.vue', () => {
   it('emits update on mode changing', async () => {
     const wrapper = mount(DataView)
 
-    const pivotBtn = createWrapper(wrapper.findComponent({ name: 'pivotIcon' }).vm.$parent)
+    const pivotBtn = new DOMWrapper(wrapper.findComponent({ name: 'pivotIcon' }).vm.$parent)
     await pivotBtn.trigger('click')
 
     expect(wrapper.emitted('update')).to.have.lengthOf(1)
@@ -25,7 +25,7 @@ describe('DataView.vue', () => {
 
     expect(wrapper.vm.getOptionsForSave()).to.eql({ here_are: 'chart_settings' })
 
-    const pivotBtn = createWrapper(wrapper.findComponent({ name: 'pivotIcon' }).vm.$parent)
+    const pivotBtn = new DOMWrapper(wrapper.findComponent({ name: 'pivotIcon' }).vm.$parent)
     await pivotBtn.trigger('click')
 
     const pivot = wrapper.findComponent({ name: 'pivot' }).vm
@@ -42,12 +42,12 @@ describe('DataView.vue', () => {
     sinon.spy(chart, 'saveAsSvg')
 
     // Export to svg
-    const svgBtn = createWrapper(wrapper.findComponent({ name: 'exportToSvgIcon' }).vm.$parent)
+    const svgBtn = new DOMWrapper(wrapper.findComponent({ name: 'exportToSvgIcon' }).vm.$parent)
     await svgBtn.trigger('click')
     expect(chart.saveAsSvg.calledOnce).to.equal(true)
 
     // Switch to pivot
-    const pivotBtn = createWrapper(wrapper.findComponent({ name: 'pivotIcon' }).vm.$parent)
+    const pivotBtn = new DOMWrapper(wrapper.findComponent({ name: 'pivotIcon' }).vm.$parent)
     await pivotBtn.trigger('click')
 
     // Find pivot and spy the method
@@ -71,12 +71,12 @@ describe('DataView.vue', () => {
     sinon.spy(chart, 'saveAsHtml')
 
     // Export to html
-    const htmlBtn = createWrapper(wrapper.findComponent({ name: 'htmlIcon' }).vm.$parent)
+    const htmlBtn = new DOMWrapper(wrapper.findComponent({ name: 'htmlIcon' }).vm.$parent)
     await htmlBtn.trigger('click')
     expect(chart.saveAsHtml.calledOnce).to.equal(true)
 
     // Switch to pivot
-    const pivotBtn = createWrapper(wrapper.findComponent({ name: 'pivotIcon' }).vm.$parent)
+    const pivotBtn = new DOMWrapper(wrapper.findComponent({ name: 'pivotIcon' }).vm.$parent)
     await pivotBtn.trigger('click')
 
     // Find pivot and spy the method
@@ -94,7 +94,7 @@ describe('DataView.vue', () => {
     sinon.spy(window, 'alert')
     const wrapper = mount(DataView)
 
-    const copyBtn = createWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
+    const copyBtn = new DOMWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
     await copyBtn.trigger('click')
 
     expect(
@@ -117,7 +117,7 @@ describe('DataView.vue', () => {
     })
 
     // Click copy to clipboard
-    const copyBtn = createWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
+    const copyBtn = new DOMWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
     await copyBtn.trigger('click')
 
     // The dialog is shown...
@@ -156,7 +156,7 @@ describe('DataView.vue', () => {
     })
 
     // Click copy to clipboard
-    const copyBtn = createWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
+    const copyBtn = new DOMWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
     await copyBtn.trigger('click')
 
     // Switch to microtasks (let prepareCopy run)
@@ -181,7 +181,7 @@ describe('DataView.vue', () => {
     })
 
     // Click copy to clipboard
-    const copyBtn = createWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
+    const copyBtn = new DOMWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
     await copyBtn.trigger('click')
 
     // Switch to microtasks (let prepareCopy run)

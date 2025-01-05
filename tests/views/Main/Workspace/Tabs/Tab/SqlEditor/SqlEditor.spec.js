@@ -23,7 +23,7 @@ describe('SqlEditor.vue', () => {
     }
     const store = new Vuex.Store({ state })
 
-    const wrapper = mount(SqlEditor, { store, propsData: { isGettingResults: false } })
+    const wrapper = mount(SqlEditor, { store, props: { isGettingResults: false } })
     await wrapper.findComponent({ name: 'codemirror' }).vm.$emit('input', 'SELECT * FROM foo')
     const runButton = wrapper.findComponent({ name: 'RunIcon' }).vm.$parent
 

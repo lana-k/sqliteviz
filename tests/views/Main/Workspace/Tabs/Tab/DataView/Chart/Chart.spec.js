@@ -37,7 +37,7 @@ describe('Chart.vue', () => {
 
     // mount the component
     const wrapper = shallowMount(Chart, {
-      propsData: { dataSources }
+      props: { dataSources }
     })
 
     const newDataSources = {
@@ -58,7 +58,7 @@ describe('Chart.vue', () => {
 
     // mount the component
     const wrapper = shallowMount(Chart, {
-      propsData: { dataSources }
+      props: { dataSources }
     })
 
     await wrapper.setProps({ dataSources: null })
@@ -73,7 +73,7 @@ describe('Chart.vue', () => {
     }
 
     const wrapper = mount(Chart, {
-      propsData: { dataSources }
+      props: { dataSources }
     })
     sinon.spy(wrapper.vm, 'prepareCopy')
 

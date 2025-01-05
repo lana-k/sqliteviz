@@ -5,7 +5,7 @@ import LoadingIndicator from '@/components/LoadingIndicator'
 describe('LoadingIndicator.vue', () => {
   it('Calculates animation class', async () => {
     const wrapper = shallowMount(LoadingIndicator, {
-      propsData: { progress: 0 }
+      props: { progress: 0 }
     })
     expect(wrapper.find('svg').classes()).to.contain('progress')
     await wrapper.setProps({ progress: undefined })
@@ -15,7 +15,7 @@ describe('LoadingIndicator.vue', () => {
 
   it('Calculates arc', async () => {
     const wrapper = shallowMount(LoadingIndicator, {
-      propsData: { progress: 50 }
+      props: { progress: 50 }
     })
     // The lendth of circle in the component is 50.24. If progress is 50% then resulting arc
     // should be 25.12

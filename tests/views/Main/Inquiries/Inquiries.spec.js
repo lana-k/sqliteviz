@@ -75,12 +75,12 @@ describe('Inquiries.vue', () => {
 
     const rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(3)
-    expect(rows.at(0).findAll('td').at(0).text()).to.contains('hello_world')
-    expect(rows.at(0).findAll('td').at(1).text()).to.equals('8 March 2020 20:57')
-    expect(rows.at(1).findAll('td').at(0).text()).to.equals('foo')
-    expect(rows.at(1).findAll('td').at(1).text()).to.equals('3 November 2020 20:57')
-    expect(rows.at(2).findAll('td').at(0).text()).to.equals('bar')
-    expect(rows.at(2).findAll('td').at(1).text()).to.equals('4 December 2020 19:53')
+    expect(rows[0].findAll('td')[0].text()).to.contains('hello_world')
+    expect(rows[0].findAll('td')[1].text()).to.equals('8 March 2020 20:57')
+    expect(rows[1].findAll('td')[0].text()).to.equals('foo')
+    expect(rows[1].findAll('td')[1].text()).to.equals('3 November 2020 20:57')
+    expect(rows[2].findAll('td')[0].text()).to.equals('bar')
+    expect(rows[2].findAll('td')[1].text()).to.equals('4 December 2020 19:53')
   })
 
   it('Filters the list of inquiries', async () => {
@@ -123,8 +123,8 @@ describe('Inquiries.vue', () => {
 
     const rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(1)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equals('foo')
-    expect(rows.at(0).findAll('td').at(1).text()).to.contains('3 November 2020 20:57')
+    expect(rows[0].findAll('td')[0].text()).to.equals('foo')
+    expect(rows[0].findAll('td')[1].text()).to.contains('3 November 2020 20:57')
   })
 
   it('Shows No found message when filter returns nothing', async () => {
@@ -202,8 +202,8 @@ describe('Inquiries.vue', () => {
     await wrapper.vm.$nextTick()
 
     const rows = wrapper.findAll('tbody tr')
-    expect(rows.at(0).find('td .badge').exists()).to.equals(true)
-    expect(rows.at(1).find('td .badge').exists()).to.equals(false)
+    expect(rows[0].find('td .badge').exists()).to.equals(true)
+    expect(rows[1].find('td .badge').exists()).to.equals(false)
   })
 
   it('Exports one inquiry', async () => {
@@ -269,8 +269,8 @@ describe('Inquiries.vue', () => {
 
     const rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(2)
-    expect(rows.at(1).findAll('td').at(0).text()).to.equals('foo copy')
-    expect(rows.at(1).findAll('td').at(1).text()).to.contains('3 December 2020 20:57')
+    expect(rows[1].findAll('td')[0].text()).to.equals('foo copy')
+    expect(rows[1].findAll('td')[1].text()).to.contains('3 December 2020 20:57')
     expect(
       storedInquiries.updateStorage.calledOnceWith(sinon.match([inquiryInStorage, newInquiry]))
     ).to.equals(true)
@@ -311,9 +311,9 @@ describe('Inquiries.vue', () => {
         .trigger('click')
       await wrapper.findComponent({ name: 'CopyIcon' }).find('svg').trigger('click')
 
-      const checkboxes = wrapper.findAllComponents({ ref: 'rowCheckBox' })
-      expect(checkboxes.at(0).vm.checked).to.equals(true)
-      expect(checkboxes.at(1).vm.checked).to.equals(false)
+      const checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
+      expect(checkboxes[0].vm.checked).to.equals(true)
+      expect(checkboxes[1].vm.checked).to.equals(false)
     })
 
   it('Opens an inquiry', async () => {
@@ -339,7 +339,9 @@ describe('Inquiries.vue', () => {
 
     const wrapper = shallowMount(Inquiries, {
       store,
-      mocks: { $router }
+      global: {
+        mocks: { $router }
+      }
     })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await storedInquiries.getStoredInquiries.returnValues[0]
@@ -518,8 +520,8 @@ describe('Inquiries.vue', () => {
 
     const rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(2)
-    expect(rows.at(1).findAll('td').at(0).text()).to.equals('bar')
-    expect(rows.at(1).findAll('td').at(1).text()).to.equals('3 December 2020 20:57')
+    expect(rows[1].findAll('td')[0].text()).to.equals('bar')
+    expect(rows[1].findAll('td')[1].text()).to.equals('3 December 2020 20:57')
     expect(storedInquiries.updateStorage.calledOnceWith(
       sinon.match([inquiryInStorage, importedInquiry])
     )).to.equals(true)
@@ -563,10 +565,10 @@ describe('Inquiries.vue', () => {
     // click Import
     await wrapper.find('#toolbar-btns-import').trigger('click')
 
-    const checkboxes = wrapper.findAllComponents({ ref: 'rowCheckBox' })
+    const checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
     expect(wrapper.findComponent({ ref: 'mainCheckBox' }).vm.checked).to.equals(false)
-    expect(checkboxes.at(0).vm.checked).to.equals(true)
-    expect(checkboxes.at(1).vm.checked).to.equals(false)
+    expect(checkboxes[0].vm.checked).to.equals(true)
+    expect(checkboxes[1].vm.checked).to.equals(false)
   })
 
   it('Deletion is not available for predefined inquiries', async () => {
@@ -642,7 +644,7 @@ describe('Inquiries.vue', () => {
 
     // check the rows in the grid
     expect(wrapper.findAll('tbody tr')).to.have.lengthOf(1)
-    expect(wrapper.findAll('tbody tr').at(0).find('td').text()).to.equals('bar')
+    expect(wrapper.findAll('tbody tr')[0].find('td').text()).to.equals('bar')
 
     // check that deleted inquiry was also deleted from tabs
     expect(state.tabs).to.have.lengthOf(1)
@@ -693,17 +695,17 @@ describe('Inquiries.vue', () => {
     const rows = wrapper.findAll('tbody tr')
 
     // Select a predefined inquiry
-    await rows.at(0).find('.checkbox-container').trigger('click')
+    await rows[0].find('.checkbox-container').trigger('click')
     expect(wrapper.find('#toolbar-btns-export').isVisible()).to.equal(true)
     expect(wrapper.find('#toolbar-btns-delete').isVisible()).to.equal(false)
 
     // Select also not predefined inquiry
-    await rows.at(1).find('.checkbox-container').trigger('click')
+    await rows[1].find('.checkbox-container').trigger('click')
     expect(wrapper.find('#toolbar-btns-export').isVisible()).to.equal(true)
     expect(wrapper.find('#toolbar-btns-delete').isVisible()).to.equal(true)
 
     // Uncheck a predefined inquiry
-    await rows.at(0).find('.checkbox-container').trigger('click')
+    await rows[0].find('.checkbox-container').trigger('click')
     expect(wrapper.find('#toolbar-btns-export').isVisible()).to.equal(true)
     expect(wrapper.find('#toolbar-btns-delete').isVisible()).to.equal(true)
   })
@@ -751,8 +753,8 @@ describe('Inquiries.vue', () => {
     const rows = wrapper.findAll('tbody tr')
 
     // Select inquiries
-    await rows.at(0).find('.checkbox-container').trigger('click')
-    await rows.at(1).find('.checkbox-container').trigger('click')
+    await rows[0].find('.checkbox-container').trigger('click')
+    await rows[1].find('.checkbox-container').trigger('click')
 
     await wrapper.find('#toolbar-btns-export').trigger('click')
 
@@ -864,8 +866,8 @@ describe('Inquiries.vue', () => {
     const rows = wrapper.findAll('tbody tr')
 
     // Select inquiries (don't select predefined inquiries)
-    await rows.at(1).find('.checkbox-container').trigger('click')
-    await rows.at(2).find('.checkbox-container').trigger('click')
+    await rows[1].find('.checkbox-container').trigger('click')
+    await rows[2].find('.checkbox-container').trigger('click')
 
     await wrapper.find('#toolbar-btns-delete').trigger('click')
 
@@ -884,8 +886,8 @@ describe('Inquiries.vue', () => {
 
     // check the rows in the grid
     expect(wrapper.findAll('tbody tr')).to.have.lengthOf(2)
-    expect(wrapper.findAll('tbody tr').at(0).find('td').text()).to.contains('hello_world')
-    expect(wrapper.findAll('tbody tr').at(1).find('td').text()).to.equals('baz')
+    expect(wrapper.findAll('tbody tr')[0].find('td').text()).to.contains('hello_world')
+    expect(wrapper.findAll('tbody tr')[1].find('td').text()).to.equals('baz')
 
     // check that deleted inquiry was also deleted from tabs
     expect(state.tabs).to.have.lengthOf(2)
@@ -942,8 +944,8 @@ describe('Inquiries.vue', () => {
     const rows = wrapper.findAll('tbody tr')
 
     // Select inquiries (select also predefined inquiries)
-    await rows.at(0).find('.checkbox-container').trigger('click')
-    await rows.at(1).find('.checkbox-container').trigger('click')
+    await rows[0].find('.checkbox-container').trigger('click')
+    await rows[1].find('.checkbox-container').trigger('click')
 
     await wrapper.find('#toolbar-btns-delete').trigger('click')
 
@@ -964,8 +966,8 @@ describe('Inquiries.vue', () => {
 
     // check the rows in the grid
     expect(wrapper.findAll('tbody tr')).to.have.lengthOf(2)
-    expect(wrapper.findAll('tbody tr').at(0).find('td').text()).to.contains('hello_world')
-    expect(wrapper.findAll('tbody tr').at(1).find('td').text()).to.equals('bar')
+    expect(wrapper.findAll('tbody tr')[0].find('td').text()).to.contains('hello_world')
+    expect(wrapper.findAll('tbody tr')[1].find('td').text()).to.equals('bar')
 
     // check that storage is updated
     expect(storedInquiries.updateStorage.calledOnceWith(sinon.match([bar]))).to.equals(true)
@@ -1036,7 +1038,7 @@ describe('Inquiries.vue', () => {
 
     // check the rows in the grid
     expect(wrapper.findAll('tbody tr')).to.have.lengthOf(1)
-    expect(wrapper.findAll('tbody tr').at(0).find('td').text()).to.contains('hello_world')
+    expect(wrapper.findAll('tbody tr')[0].find('td').text()).to.contains('hello_world')
 
     // check that storage is updated
     expect(storedInquiries.updateStorage.calledOnceWith(sinon.match([]))).to.equals(true)
@@ -1079,9 +1081,9 @@ describe('Inquiries.vue', () => {
     // Select all with main checkbox
     await mainCheckBox.find('.checkbox-container').trigger('click')
 
-    const checkboxes = wrapper.findAllComponents({ ref: 'rowCheckBox' })
-    expect(checkboxes.at(0).vm.checked).to.equals(true)
-    expect(checkboxes.at(1).vm.checked).to.equals(true)
+    const checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
+    expect(checkboxes[0].vm.checked).to.equals(true)
+    expect(checkboxes[1].vm.checked).to.equals(true)
 
     // Uncheck first row - main checkbox bocomes not checked
     await wrapper.find('tbody tr .checkbox-container').trigger('click')
@@ -1091,8 +1093,8 @@ describe('Inquiries.vue', () => {
     await mainCheckBox.find('.checkbox-container').trigger('click')
     // ... and uncheck all
     await mainCheckBox.find('.checkbox-container').trigger('click')
-    expect(checkboxes.at(0).vm.checked).to.equals(false)
-    expect(checkboxes.at(0).vm.checked).to.equals(false)
+    expect(checkboxes[0].vm.checked).to.equals(false)
+    expect(checkboxes[0].vm.checked).to.equals(false)
   })
 
   it('Selection and filter', async () => {
@@ -1139,18 +1141,18 @@ describe('Inquiries.vue', () => {
     await mainCheckBox.find('.checkbox-container').trigger('click')
     expect([...wrapper.vm.selectedInquiriesIds]).to.eql([0, 1, 2])
     expect(wrapper.vm.selectedNotPredefinedCount).to.eql(2)
-    let checkboxes = wrapper.findAllComponents({ ref: 'rowCheckBox' })
-    expect(checkboxes.at(0).vm.checked).to.equals(true)
-    expect(checkboxes.at(1).vm.checked).to.equals(true)
-    expect(checkboxes.at(2).vm.checked).to.equals(true)
+    let checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
+    expect(checkboxes[0].vm.checked).to.equals(true)
+    expect(checkboxes[1].vm.checked).to.equals(true)
+    expect(checkboxes[2].vm.checked).to.equals(true)
 
     // Filter
     await wrapper.find('#toolbar-search input').setValue('foo')
     await wrapper.vm.$nextTick()
     expect([...wrapper.vm.selectedInquiriesIds]).to.eql([1])
     expect(wrapper.vm.selectedNotPredefinedCount).to.eql(1)
-    checkboxes = wrapper.findAllComponents({ ref: 'rowCheckBox' })
-    expect(checkboxes.at(0).vm.checked).to.equals(true)
+    checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
+    expect(checkboxes[0].vm.checked).to.equals(true)
 
     // Clear filter
     await wrapper.find('#toolbar-search input').setValue('')
@@ -1158,9 +1160,9 @@ describe('Inquiries.vue', () => {
     expect([...wrapper.vm.selectedInquiriesIds]).to.eql([1])
     expect(wrapper.vm.selectedNotPredefinedCount).to.eql(1)
     checkboxes = wrapper.findAll('tr .checkbox-container')
-    expect(checkboxes.at(0).classes()).to.not.include('checked')
-    expect(checkboxes.at(1).classes()).to.include('checked')
-    expect(checkboxes.at(2).classes()).to.not.include('checked')
+    expect(checkboxes[0].classes()).to.not.include('checked')
+    expect(checkboxes[1].classes()).to.include('checked')
+    expect(checkboxes[2].classes()).to.not.include('checked')
 
     // Select also first inquiry
     wrapper.find('tbody tr .checkbox-container').trigger('click')
@@ -1172,8 +1174,8 @@ describe('Inquiries.vue', () => {
     await wrapper.vm.$nextTick()
     expect([...wrapper.vm.selectedInquiriesIds]).to.eql([0])
     expect(wrapper.vm.selectedNotPredefinedCount).to.eql(0)
-    checkboxes = wrapper.findAllComponents({ ref: 'rowCheckBox' })
-    expect(checkboxes.at(0).vm.checked).to.equals(true)
+    checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
+    expect(checkboxes[0].vm.checked).to.equals(true)
 
     // Select all with main checkbox
     await mainCheckBox.find('.checkbox-container').trigger('click')

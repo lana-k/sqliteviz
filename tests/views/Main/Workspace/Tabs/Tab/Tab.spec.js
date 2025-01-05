@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { mount, createWrapper } from '@vue/test-utils'
+import { mount, DOMWrapper } from '@vue/test-utils'
 import mutations from '@/store/mutations'
 import Vuex from 'vuex'
 import Tab from '@/views/Main/Workspace/Tabs/Tab'
@@ -29,8 +29,10 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       store,
-      stubs: ['chart'],
-      propsData: {
+      global: {
+        stubs: ['chart']
+      },
+      props: {
         tab: {
           id: 1,
           name: 'foo',
@@ -68,8 +70,10 @@ describe('Tab.vue', () => {
     // mount the component
     const wrapper = mount(Tab, {
       store,
-      stubs: ['chart'],
-      propsData: {
+      global: {
+        stubs: ['chart']
+      },
+      props: {
         tab: {
           id: 1,
           name: 'foo',
@@ -103,8 +107,10 @@ describe('Tab.vue', () => {
     // mount the component
     const wrapper = mount(Tab, {
       store,
-      stubs: ['chart'],
-      propsData: {
+      global: {
+        stubs: ['chart']
+      },
+      props: {
         tab: {
           id: 1,
           name: 'foo',
@@ -159,8 +165,10 @@ describe('Tab.vue', () => {
     // mount the component
     const wrapper = mount(Tab, {
       store,
-      stubs: ['chart'],
-      propsData: {
+      global: {
+        stubs: ['chart']
+      },
+      props: {
         tab: state.tabs[0]
       }
     })
@@ -199,8 +207,10 @@ describe('Tab.vue', () => {
     // mount the component
     const wrapper = mount(Tab, {
       store,
-      stubs: ['chart'],
-      propsData: {
+      global: {
+        stubs: ['chart']
+      },
+      props: {
         tab: state.tabs[0]
       }
     })
@@ -236,8 +246,10 @@ describe('Tab.vue', () => {
     }
     const wrapper = mount(Tab, {
       store,
-      stubs: ['chart'],
-      propsData: {
+      global: {
+        stubs: ['chart']
+      },
+      props: {
         tab
       }
     })
@@ -275,8 +287,10 @@ describe('Tab.vue', () => {
     // mount the component
     const wrapper = mount(Tab, {
       store,
-      stubs: ['chart'],
-      propsData: {
+      global: {
+        stubs: ['chart']
+      },
+      props: {
         tab
       }
     })
@@ -329,8 +343,10 @@ describe('Tab.vue', () => {
     // mount the component
     const wrapper = mount(Tab, {
       store,
-      stubs: ['chart'],
-      propsData: {
+      global: {
+        stubs: ['chart']
+      },
+      props: {
         tab
       }
     })
@@ -372,34 +388,36 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       store,
-      stubs: ['chart'],
-      propsData: {
+      global: {
+        stubs: ['chart']
+      },
+      props: {
         tab
       }
     })
 
-    let tableBtn = createWrapper(wrapper.find('.above .side-tool-bar')
+    let tableBtn = new DOMWrapper(wrapper.find('.above .side-tool-bar')
       .findComponent({ name: 'tableIcon' }).vm.$parent)
     await tableBtn.trigger('click')
 
     expect(wrapper.find('.bottomPane .sql-editor-panel').exists()).to.equal(true)
     expect(wrapper.find('.above .run-result-panel').exists()).to.equal(true)
 
-    const dataViewBtn = createWrapper(wrapper.find('.above .side-tool-bar')
+    const dataViewBtn = new DOMWrapper(wrapper.find('.above .side-tool-bar')
       .findComponent({ name: 'dataViewIcon' }).vm.$parent)
     await dataViewBtn.trigger('click')
 
     expect(wrapper.find('.bottomPane .sql-editor-panel').exists()).to.equal(true)
     expect(wrapper.find('.above .data-view-panel').exists()).to.equal(true)
 
-    const sqlEditorBtn = createWrapper(wrapper.find('.above .side-tool-bar')
+    const sqlEditorBtn = new DOMWrapper(wrapper.find('.above .side-tool-bar')
       .findComponent({ name: 'sqlEditorIcon' }).vm.$parent)
     await sqlEditorBtn.trigger('click')
 
     expect(wrapper.find('.above .sql-editor-panel').exists()).to.equal(true)
     expect(wrapper.find('.bottomPane .data-view-panel').exists()).to.equal(true)
 
-    tableBtn = createWrapper(wrapper.find('.bottomPane .side-tool-bar')
+    tableBtn = new DOMWrapper(wrapper.find('.bottomPane .side-tool-bar')
       .findComponent({ name: 'tableIcon' }).vm.$parent)
     await tableBtn.trigger('click')
 
@@ -435,8 +453,10 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       store,
-      stubs: ['chart'],
-      propsData: {
+      global: {
+        stubs: ['chart']
+      },
+      props: {
         tab
       }
     })
@@ -473,8 +493,10 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       store,
-      stubs: ['chart'],
-      propsData: {
+      global: {
+        stubs: ['chart']
+      },
+      props: {
         tab
       }
     })
@@ -510,8 +532,10 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       store,
-      stubs: ['chart'],
-      propsData: {
+      global: {
+        stubs: ['chart']
+      },
+      props: {
         tab
       }
     })

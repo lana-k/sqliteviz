@@ -5,7 +5,7 @@ import Record from '@/views/Main/Workspace/Tabs/Tab/RunResult/Record'
 describe('Record.vue', () => {
   it('shows record with selected cell', async () => {
     const wrapper = mount(Record, {
-      propsData: {
+      props: {
         dataSet: {
           columns: ['id', 'name'],
           values: {
@@ -20,10 +20,10 @@ describe('Record.vue', () => {
 
     const rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(2)
-    expect(rows.at(0).findAll('th').at(0).text()).to.equals('id')
-    expect(rows.at(0).findAll('td').at(0).text()).to.equals('2')
-    expect(rows.at(1).findAll('th').at(0).text()).to.equals('name')
-    expect(rows.at(1).findAll('td').at(0).text()).to.equals('bar')
+    expect(rows[0].findAll('th')[0].text()).to.equals('id')
+    expect(rows[0].findAll('td')[0].text()).to.equals('2')
+    expect(rows[1].findAll('th')[0].text()).to.equals('name')
+    expect(rows[1].findAll('td')[0].text()).to.equals('bar')
 
     const selectedCell = wrapper
       .find('.sqliteviz-table tbody td[aria-selected="true"]')
@@ -32,7 +32,7 @@ describe('Record.vue', () => {
 
   it('switches to the next or previous row', async () => {
     const wrapper = mount(Record, {
-      propsData: {
+      props: {
         dataSet: {
           columns: ['id', 'name'],
           values: {
@@ -47,8 +47,8 @@ describe('Record.vue', () => {
 
     let rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(2)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equals('1')
-    expect(rows.at(1).findAll('td').at(0).text()).to.equals('foo')
+    expect(rows[0].findAll('td')[0].text()).to.equals('1')
+    expect(rows[1].findAll('td')[0].text()).to.equals('foo')
     let selectedCell = wrapper
       .find('.sqliteviz-table tbody td[aria-selected="true"]')
     expect(selectedCell.text()).to.equals('1')
@@ -56,8 +56,8 @@ describe('Record.vue', () => {
     await wrapper.find('.next').trigger('click')
 
     rows = wrapper.findAll('tbody tr')
-    expect(rows.at(0).findAll('td').at(0).text()).to.equals('2')
-    expect(rows.at(1).findAll('td').at(0).text()).to.equals('bar')
+    expect(rows[0].findAll('td')[0].text()).to.equals('2')
+    expect(rows[1].findAll('td')[0].text()).to.equals('bar')
     selectedCell = wrapper
       .find('.sqliteviz-table tbody td[aria-selected="true"]')
     expect(selectedCell.text()).to.equals('2')
@@ -65,8 +65,8 @@ describe('Record.vue', () => {
     await wrapper.find('.prev').trigger('click')
 
     rows = wrapper.findAll('tbody tr')
-    expect(rows.at(0).findAll('td').at(0).text()).to.equals('1')
-    expect(rows.at(1).findAll('td').at(0).text()).to.equals('foo')
+    expect(rows[0].findAll('td')[0].text()).to.equals('1')
+    expect(rows[1].findAll('td')[0].text()).to.equals('foo')
     selectedCell = wrapper
       .find('.sqliteviz-table tbody td[aria-selected="true"]')
     expect(selectedCell.text()).to.equals('1')
@@ -74,8 +74,8 @@ describe('Record.vue', () => {
     await wrapper.find('.last').trigger('click')
 
     rows = wrapper.findAll('tbody tr')
-    expect(rows.at(0).findAll('td').at(0).text()).to.equals('3')
-    expect(rows.at(1).findAll('td').at(0).text()).to.equals('baz')
+    expect(rows[0].findAll('td')[0].text()).to.equals('3')
+    expect(rows[1].findAll('td')[0].text()).to.equals('baz')
     selectedCell = wrapper
       .find('.sqliteviz-table tbody td[aria-selected="true"]')
     expect(selectedCell.text()).to.equals('3')
@@ -83,8 +83,8 @@ describe('Record.vue', () => {
     await wrapper.find('.first').trigger('click')
 
     rows = wrapper.findAll('tbody tr')
-    expect(rows.at(0).findAll('td').at(0).text()).to.equals('1')
-    expect(rows.at(1).findAll('td').at(0).text()).to.equals('foo')
+    expect(rows[0].findAll('td')[0].text()).to.equals('1')
+    expect(rows[1].findAll('td')[0].text()).to.equals('foo')
     selectedCell = wrapper
       .find('.sqliteviz-table tbody td[aria-selected="true"]')
     expect(selectedCell.text()).to.equals('1')
@@ -92,7 +92,7 @@ describe('Record.vue', () => {
 
   it('removes selection when click on selected cell', async () => {
     const wrapper = mount(Record, {
-      propsData: {
+      props: {
         dataSet: {
           columns: ['id', 'name'],
           values: {

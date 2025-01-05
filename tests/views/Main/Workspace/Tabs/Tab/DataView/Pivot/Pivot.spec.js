@@ -22,7 +22,7 @@ describe('Pivot.vue', () => {
 
   it('renders pivot table', () => {
     const wrapper = mount(Pivot, {
-      propsData: {
+      props: {
         dataSources: {
           item: ['foo', 'bar', 'bar', 'bar'],
           year: [2021, 2021, 2020, 2020]
@@ -39,25 +39,25 @@ describe('Pivot.vue', () => {
       }
     })
     const colLabels = wrapper.findAll('.pivot-output thead th.pvtColLabel')
-    expect(colLabels.at(0).text()).to.equal('2020')
-    expect(colLabels.at(1).text()).to.equal('2021')
+    expect(colLabels[0].text()).to.equal('2020')
+    expect(colLabels[1].text()).to.equal('2021')
     const rows = wrapper.findAll('.pivot-output tbody tr')
     // row0: bar - 2 - 1
-    expect(rows.at(0).find('th').text()).to.equal('bar')
-    expect(rows.at(0).find('td.col0').text()).to.equal('2')
-    expect(rows.at(0).find('td.col1').text()).to.equal('1')
-    expect(rows.at(0).find('td.rowTotal').text()).to.equal('3')
+    expect(rows[0].find('th').text()).to.equal('bar')
+    expect(rows[0].find('td.col0').text()).to.equal('2')
+    expect(rows[0].find('td.col1').text()).to.equal('1')
+    expect(rows[0].find('td.rowTotal').text()).to.equal('3')
 
     // row1: foo -  - 2
-    expect(rows.at(1).find('th').text()).to.equal('foo')
-    expect(rows.at(1).find('td.col0').text()).to.equal('')
-    expect(rows.at(1).find('td.col1').text()).to.equal('1')
-    expect(rows.at(1).find('td.rowTotal').text()).to.equal('1')
+    expect(rows[1].find('th').text()).to.equal('foo')
+    expect(rows[1].find('td.col0').text()).to.equal('')
+    expect(rows[1].find('td.col1').text()).to.equal('1')
+    expect(rows[1].find('td.rowTotal').text()).to.equal('1')
   })
 
   it('updates when dataSource changes', async () => {
     const wrapper = mount(Pivot, {
-      propsData: {
+      props: {
         dataSources: {
           item: ['foo', 'bar', 'bar', 'bar'],
           year: [2021, 2021, 2020, 2020]
@@ -82,31 +82,31 @@ describe('Pivot.vue', () => {
     })
 
     const colLabels = wrapper.findAll('.pivot-output thead th.pvtColLabel')
-    expect(colLabels.at(0).text()).to.equal('2020')
-    expect(colLabels.at(1).text()).to.equal('2021')
+    expect(colLabels[0].text()).to.equal('2020')
+    expect(colLabels[1].text()).to.equal('2021')
     const rows = wrapper.findAll('.pivot-output tbody tr')
     // row0: bar - 2 - 1
-    expect(rows.at(0).find('th').text()).to.equal('bar')
-    expect(rows.at(0).find('td.col0').text()).to.equal('2')
-    expect(rows.at(0).find('td.col1').text()).to.equal('1')
-    expect(rows.at(0).find('td.rowTotal').text()).to.equal('3')
+    expect(rows[0].find('th').text()).to.equal('bar')
+    expect(rows[0].find('td.col0').text()).to.equal('2')
+    expect(rows[0].find('td.col1').text()).to.equal('1')
+    expect(rows[0].find('td.rowTotal').text()).to.equal('3')
 
     // row1: baz - 1 -
-    expect(rows.at(1).find('th').text()).to.equal('baz')
-    expect(rows.at(1).find('td.col0').text()).to.equal('1')
-    expect(rows.at(1).find('td.col1').text()).to.equal('')
-    expect(rows.at(1).find('td.rowTotal').text()).to.equal('1')
+    expect(rows[1].find('th').text()).to.equal('baz')
+    expect(rows[1].find('td.col0').text()).to.equal('1')
+    expect(rows[1].find('td.col1').text()).to.equal('')
+    expect(rows[1].find('td.rowTotal').text()).to.equal('1')
 
     // row2: foo -  - 2
-    expect(rows.at(2).find('th').text()).to.equal('foo')
-    expect(rows.at(2).find('td.col0').text()).to.equal('')
-    expect(rows.at(2).find('td.col1').text()).to.equal('2')
-    expect(rows.at(2).find('td.rowTotal').text()).to.equal('2')
+    expect(rows[2].find('th').text()).to.equal('foo')
+    expect(rows[2].find('td.col0').text()).to.equal('')
+    expect(rows[2].find('td.col1').text()).to.equal('2')
+    expect(rows[2].find('td.rowTotal').text()).to.equal('2')
   })
 
   it('returns options for save', async () => {
     const wrapper = mount(Pivot, {
-      propsData: {
+      props: {
         dataSources: {
           item: ['foo', 'bar', 'bar', 'bar'],
           year: [2021, 2021, 2020, 2020]
@@ -182,7 +182,7 @@ describe('Pivot.vue', () => {
 
   it('prepareCopy returns canvas for tables and url for plotly charts', async () => {
     const wrapper = mount(Pivot, {
-      propsData: {
+      props: {
         dataSources: {
           item: ['foo', 'bar', 'bar', 'bar'],
           year: [2021, 2021, 2020, 2020]
@@ -239,7 +239,7 @@ describe('Pivot.vue', () => {
 
   it('saveAsSvg calls chart method if renderer is Custom Chart', async () => {
     const wrapper = mount(Pivot, {
-      propsData: {
+      props: {
         dataSources: {
           item: ['foo', 'bar', 'bar', 'bar'],
           year: [2021, 2021, 2020, 2020]
@@ -274,7 +274,7 @@ describe('Pivot.vue', () => {
 
   it('saveAsHtml calls chart method if renderer is Custom Chart', async () => {
     const wrapper = mount(Pivot, {
-      propsData: {
+      props: {
         dataSources: {
           item: ['foo', 'bar', 'bar', 'bar'],
           year: [2021, 2021, 2020, 2020]
@@ -309,7 +309,7 @@ describe('Pivot.vue', () => {
 
   it('saveAsPng calls chart method if renderer is Custom Chart', async () => {
     const wrapper = mount(Pivot, {
-      propsData: {
+      props: {
         dataSources: {
           item: ['foo', 'bar', 'bar', 'bar'],
           year: [2021, 2021, 2020, 2020]
@@ -346,7 +346,7 @@ describe('Pivot.vue', () => {
     sinon.spy(chartHelper, 'getImageDataUrl')
 
     const wrapper = mount(Pivot, {
-      propsData: {
+      props: {
         dataSources: {
           item: ['foo', 'bar', 'bar', 'bar'],
           year: [2021, 2021, 2020, 2020]
@@ -374,7 +374,7 @@ describe('Pivot.vue', () => {
     sinon.spy(chartHelper, 'getHtml')
 
     const wrapper = mount(Pivot, {
-      propsData: {
+      props: {
         dataSources: {
           item: ['foo', 'bar', 'bar', 'bar'],
           year: [2021, 2021, 2020, 2020]
@@ -404,7 +404,7 @@ describe('Pivot.vue', () => {
     sinon.stub(fIo, 'exportToFile')
 
     const wrapper = mount(Pivot, {
-      propsData: {
+      props: {
         dataSources: {
           item: ['foo', 'bar', 'bar', 'bar'],
           year: [2021, 2021, 2020, 2020]
@@ -434,7 +434,7 @@ describe('Pivot.vue', () => {
     sinon.stub(fIo, 'downloadFromUrl')
 
     const wrapper = mount(Pivot, {
-      propsData: {
+      props: {
         dataSources: {
           item: ['foo', 'bar', 'bar', 'bar'],
           year: [2021, 2021, 2020, 2020]
@@ -466,7 +466,7 @@ describe('Pivot.vue', () => {
     sinon.stub(fIo, 'downloadFromUrl')
 
     const wrapper = mount(Pivot, {
-      propsData: {
+      props: {
         dataSources: {
           item: ['foo', 'bar', 'bar', 'bar'],
           year: [2021, 2021, 2020, 2020]

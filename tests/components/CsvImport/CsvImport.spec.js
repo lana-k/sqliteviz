@@ -42,7 +42,7 @@ describe('CsvJsonImport.vue', () => {
     // mount the component
     wrapper = mount(CsvJsonImport, {
       store,
-      propsData: {
+      props: {
         file,
         dialogName: 'addCsvJson',
         db
@@ -86,10 +86,10 @@ describe('CsvJsonImport.vue', () => {
     expect(wrapper.findComponent({ name: 'check-box' }).vm.checked).to.equal(true)
     const rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(2)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equal('foo')
-    expect(rows.at(0).findAll('td').at(1).text()).to.equal('1')
-    expect(rows.at(1).findAll('td').at(0).text()).to.equal('bar')
-    expect(rows.at(1).findAll('td').at(1).text()).to.equal('2')
+    expect(rows[0].findAll('td')[0].text()).to.equal('foo')
+    expect(rows[0].findAll('td')[1].text()).to.equal('1')
+    expect(rows[1].findAll('td')[0].text()).to.equal('bar')
+    expect(rows[1].findAll('td')[1].text()).to.equal('2')
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.include('Information about row 0. Comma was used as a standart delimiter.')
     expect(wrapper.findComponent({ name: 'logs' }).text())
@@ -163,8 +163,8 @@ describe('CsvJsonImport.vue', () => {
 
     let rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(1)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equal('bar')
-    expect(rows.at(0).findAll('td').at(1).text()).to.equal('2')
+    expect(rows[0].findAll('td')[0].text()).to.equal('bar')
+    expect(rows[0].findAll('td')[1].text()).to.equal('2')
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.include('Preview parsing is completed in')
 
@@ -193,8 +193,8 @@ describe('CsvJsonImport.vue', () => {
     await csv.parse.returnValues[2]
     rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(1)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equal('baz')
-    expect(rows.at(0).findAll('td').at(1).text()).to.equal('3')
+    expect(rows[0].findAll('td')[0].text()).to.equal('baz')
+    expect(rows[0].findAll('td')[1].text()).to.equal('3')
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.contain(
         'Error in row 0. Quote is missed. ' +
@@ -220,8 +220,8 @@ describe('CsvJsonImport.vue', () => {
     await csv.parse.returnValues[3]
     rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(1)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equal('qux')
-    expect(rows.at(0).findAll('td').at(1).text()).to.equal('4')
+    expect(rows[0].findAll('td')[0].text()).to.equal('qux')
+    expect(rows[0].findAll('td')[1].text()).to.equal('4')
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.contain('Preview parsing is completed in')
 
@@ -242,8 +242,8 @@ describe('CsvJsonImport.vue', () => {
     await csv.parse.returnValues[4]
     rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(1)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equal('corge')
-    expect(rows.at(0).findAll('td').at(1).text()).to.equal('5')
+    expect(rows[0].findAll('td')[0].text()).to.equal('corge')
+    expect(rows[0].findAll('td')[1].text()).to.equal('5')
 
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.include('Preview parsing is completed in')
@@ -289,7 +289,7 @@ describe('CsvJsonImport.vue', () => {
     await wrapper.vm.$nextTick()
 
     // "Parsing CSV..." in the logs
-    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg').at(1).text())
+    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[1].text())
       .to.equal('Parsing CSV...')
 
     // After 1 second - loading indicator is shown
@@ -362,7 +362,7 @@ describe('CsvJsonImport.vue', () => {
     await wrapper.vm.$nextTick()
 
     // Parsing success in the logs
-    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg').at(1).text())
+    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[1].text())
       .to.include('2 rows are parsed successfully in')
 
     // All the dialog controls are disabled
@@ -430,8 +430,8 @@ describe('CsvJsonImport.vue', () => {
     // Parsing success in the logs
     const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
     expect(logs).to.have.lengthOf(4)
-    expect(logs.at(1).text()).to.include('2 rows are parsed in')
-    expect(logs.at(2).text()).to.equals('Comma was used as a standart delimiter.')
+    expect(logs[1].text()).to.include('2 rows are parsed in')
+    expect(logs[2].text()).to.equals('Comma was used as a standart delimiter.')
 
     // All the dialog controls are disabled
     expect(wrapper.findComponent({ name: 'delimiter-selector' }).vm.disabled).to.equal(true)
@@ -493,8 +493,8 @@ describe('CsvJsonImport.vue', () => {
     // Parsing success in the logs
     const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
     expect(logs).to.have.lengthOf(3)
-    expect(logs.at(1).text()).to.include('Parsing ended with errors.')
-    expect(logs.at(2).text()).to.equals('Something is wrong.')
+    expect(logs[1].text()).to.include('Parsing ended with errors.')
+    expect(logs[2].text()).to.equals('Something is wrong.')
 
     // All the dialog controls are enabled
     expect(wrapper.findComponent({ name: 'delimiter-selector' }).vm.disabled).to.equal(false)
@@ -552,7 +552,7 @@ describe('CsvJsonImport.vue', () => {
     await wrapper.vm.$nextTick()
 
     // Parsing success in the logs
-    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg').at(2).text())
+    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[2].text())
       .to.equal('Importing CSV into a SQLite database...')
 
     // After 1 second - loading indicator is shown
@@ -623,7 +623,7 @@ describe('CsvJsonImport.vue', () => {
     // Import success in the logs
     const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
     expect(logs).to.have.lengthOf(3)
-    expect(logs.at(2).text()).to.contain('Importing CSV into a SQLite database is completed in')
+    expect(logs[2].text()).to.contain('Importing CSV into a SQLite database is completed in')
 
     // All the dialog controls are enabled
     expect(wrapper.findComponent({ name: 'delimiter-selector' }).vm.disabled).to.equal(false)
@@ -680,8 +680,8 @@ describe('CsvJsonImport.vue', () => {
     // Import success in the logs
     const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
     expect(logs).to.have.lengthOf(4)
-    expect(logs.at(2).text()).to.contain('Importing CSV into a SQLite database...')
-    expect(logs.at(3).text()).to.equal('Error: fail.')
+    expect(logs[2].text()).to.contain('Importing CSV into a SQLite database...')
+    expect(logs[3].text()).to.equal('Error: fail.')
 
     // All the dialog controls are enabled
     expect(wrapper.findComponent({ name: 'delimiter-selector' }).vm.disabled).to.equal(false)
@@ -832,7 +832,7 @@ describe('CsvJsonImport.vue - json', () => {
     // mount the component
     wrapper = mount(CsvJsonImport, {
       store,
-      propsData: {
+      props: {
         file,
         dialogName: 'addCsvJson',
         db
@@ -857,7 +857,7 @@ describe('CsvJsonImport.vue - json', () => {
     expect(wrapper.findComponent({ name: 'check-box' }).exists()).to.equal(false)
     const rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(1)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equal([
+    expect(rows[0].findAll('td')[0].text()).to.equal([
       '{',
       '  "foo": [',
       '    1,',
@@ -913,7 +913,7 @@ describe('CsvJsonImport.vue - json', () => {
     await wrapper.vm.$nextTick()
 
     // "Parsing JSON..." in the logs
-    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg').at(1).text())
+    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[1].text())
       .to.equal('Parsing JSON...')
 
     // After 1 second - loading indicator is shown
@@ -954,7 +954,7 @@ describe('CsvJsonImport.vue - json', () => {
     await wrapper.vm.$nextTick()
 
     // Parsing success in the logs
-    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg').at(2).text())
+    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[2].text())
       .to.equal('Importing JSON into a SQLite database...')
 
     // After 1 second - loading indicator is shown
@@ -994,7 +994,7 @@ describe('CsvJsonImport.vue - json', () => {
     // Import success in the logs
     const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
     expect(logs).to.have.lengthOf(3)
-    expect(logs.at(2).text()).to.contain('Importing JSON into a SQLite database is completed in')
+    expect(logs[2].text()).to.contain('Importing JSON into a SQLite database is completed in')
 
     // All the dialog controls are enabled
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(false)
@@ -1041,7 +1041,7 @@ describe('CsvJsonImport.vue - ndjson', () => {
     // mount the component
     wrapper = mount(CsvJsonImport, {
       store,
-      propsData: {
+      props: {
         file,
         dialogName: 'addCsvJson',
         db
@@ -1078,7 +1078,7 @@ describe('CsvJsonImport.vue - ndjson', () => {
     expect(wrapper.findComponent({ name: 'check-box' }).exists()).to.equal(false)
     const rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(1)
-    expect(rows.at(0).findAll('td').at(0).text()).to.equal('{ "foo": [ 1, 2, 3 ] }')
+    expect(rows[0].findAll('td')[0].text()).to.equal('{ "foo": [ 1, 2, 3 ] }')
     expect(wrapper.findComponent({ name: 'logs' }).text())
       .to.include('Preview parsing is completed in')
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
@@ -1122,7 +1122,7 @@ describe('CsvJsonImport.vue - ndjson', () => {
     await wrapper.vm.$nextTick()
 
     // "Parsing JSON..." in the logs
-    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg').at(1).text())
+    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[1].text())
       .to.equal('Parsing JSON...')
 
     // After 1 second - loading indicator is shown
@@ -1188,7 +1188,7 @@ describe('CsvJsonImport.vue - ndjson', () => {
     await wrapper.vm.$nextTick()
 
     // Parsing success in the logs
-    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg').at(2).text())
+    expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[2].text())
       .to.equal('Importing JSON into a SQLite database...')
 
     // After 1 second - loading indicator is shown
@@ -1253,7 +1253,7 @@ describe('CsvJsonImport.vue - ndjson', () => {
     // Import success in the logs
     const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
     expect(logs).to.have.lengthOf(3)
-    expect(logs.at(2).text()).to.contain('Importing JSON into a SQLite database is completed in')
+    expect(logs[2].text()).to.contain('Importing JSON into a SQLite database is completed in')
 
     // All the dialog controls are enabled
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(false)

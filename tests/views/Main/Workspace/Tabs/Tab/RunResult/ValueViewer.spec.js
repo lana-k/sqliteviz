@@ -10,7 +10,7 @@ describe('ValueViewer.vue', () => {
 
   it('shows value in text mode', async () => {
     const wrapper = mount(ValueViewer, {
-      propsData: {
+      props: {
         cellValue: 'foo'
       }
     })
@@ -20,7 +20,7 @@ describe('ValueViewer.vue', () => {
 
   it('shows error in json mode if the value is not json', async () => {
     const wrapper = mount(ValueViewer, {
-      propsData: {
+      props: {
         cellValue: 'foo'
       }
     })
@@ -31,7 +31,7 @@ describe('ValueViewer.vue', () => {
   it('copy to clipboard', async () => {
     sinon.stub(window.navigator.clipboard, 'writeText').resolves()
     const wrapper = mount(ValueViewer, {
-      propsData: {
+      props: {
         cellValue: 'foo'
       }
     })

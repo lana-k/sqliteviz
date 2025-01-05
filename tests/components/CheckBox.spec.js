@@ -5,18 +5,18 @@ import CheckBox from '@/components/CheckBox'
 describe('CheckBox', () => {
   it('unchecked by default', () => {
     const wrapper = shallowMount(CheckBox, {
-      propsData: { init: false }
+      props: { init: false }
     })
     expect(wrapper.find('img').isVisible()).to.equal(false)
   })
 
   it('gets init state according to passed props', () => {
     const wrapperChecked = shallowMount(CheckBox, {
-      propsData: { init: true }
+      props: { init: true }
     })
     expect(wrapperChecked.find('img').isVisible()).to.equal(true)
     const wrapperUnchecked = shallowMount(CheckBox, {
-      propsData: { init: false }
+      props: { init: false }
     })
     expect(wrapperUnchecked.find('img').isVisible()).to.equal(false)
   })
@@ -39,7 +39,7 @@ describe('CheckBox', () => {
 
   it('disabled', async () => {
     const wrapper = shallowMount(CheckBox, {
-      propsData: { disabled: true }
+      props: { disabled: true }
     })
     expect(wrapper.find('.checkbox-container').classes()).to.include('disabled')
     expect(wrapper.find('.checkbox-container').classes()).to.not.include('checked')

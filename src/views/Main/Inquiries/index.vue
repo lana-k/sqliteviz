@@ -70,6 +70,7 @@
                     <check-box
                       ref="rowCheckBox"
                       :init="selectAll || selectedInquiriesIds.has(inquiry.id)"
+                      data-test="rowCheckBox"
                       @click="toggleRow($event, inquiry.id)"
                     />
                     <div class="name">{{ inquiry.name }}</div>

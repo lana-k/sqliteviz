@@ -48,8 +48,10 @@ describe('DbUploader.vue', () => {
     const wrapper = shallowMount(DbUploader, {
       attachTo: place,
       store,
-      mocks: { $router, $route },
-      propsData: {
+      global: {
+        mocks: { $router, $route }
+      },
+      props: {
         type: 'illustrated'
       }
     })
@@ -60,7 +62,7 @@ describe('DbUploader.vue', () => {
     await wrapper.vm.animationPromise
     await wrapper.vm.$nextTick()
     expect($router.push.calledOnceWith('/workspace')).to.equal(true)
-    wrapper.destroy()
+    wrapper.unmount()
   })
 
   it('loads db on drop and redirects to /workspace', async () => {
@@ -78,8 +80,10 @@ describe('DbUploader.vue', () => {
     const wrapper = shallowMount(DbUploader, {
       attachTo: place,
       store,
-      mocks: { $router, $route },
-      propsData: {
+      global: {
+        mocks: { $router, $route }
+      },
+      props: {
         type: 'illustrated'
       }
     })
@@ -98,7 +102,7 @@ describe('DbUploader.vue', () => {
     await wrapper.vm.animationPromise
     await wrapper.vm.$nextTick()
     expect($router.push.calledOnceWith('/workspace')).to.equal(true)
-    wrapper.destroy()
+    wrapper.unmount()
   })
 
   it("doesn't redirect if already on /workspace", async () => {
@@ -120,8 +124,10 @@ describe('DbUploader.vue', () => {
     const wrapper = shallowMount(DbUploader, {
       attachTo: place,
       store,
-      mocks: { $router, $route },
-      propsData: {
+      global: {
+        mocks: { $router, $route }
+      },
+      props: {
         type: 'illustrated'
       }
     })
@@ -131,7 +137,7 @@ describe('DbUploader.vue', () => {
     await wrapper.vm.animationPromise
     await wrapper.vm.$nextTick()
     expect($router.push.called).to.equal(false)
-    wrapper.destroy()
+    wrapper.unmount()
   })
 
   it('shows parse dialog if gets csv file', async () => {
@@ -147,8 +153,10 @@ describe('DbUploader.vue', () => {
     const wrapper = mount(DbUploader, {
       attachTo: place,
       store,
-      mocks: { $router, $route },
-      propsData: {
+      global: {
+        mocks: { $router, $route }
+      },
+      props: {
         type: 'illustrated'
       }
     })
@@ -165,7 +173,7 @@ describe('DbUploader.vue', () => {
     expect(CsvImport.preview.calledOnce).to.equal(true)
     await wrapper.vm.$nextTick()
     expect(CsvImport.open.calledOnce).to.equal(true)
-    wrapper.destroy()
+    wrapper.unmount()
   })
 
   it('shows parse dialog if gets json file', async () => {
@@ -181,8 +189,10 @@ describe('DbUploader.vue', () => {
     const wrapper = mount(DbUploader, {
       attachTo: place,
       store,
-      mocks: { $router, $route },
-      propsData: {
+      global: {
+        mocks: { $router, $route }
+      },
+      props: {
         type: 'illustrated'
       }
     })
@@ -199,7 +209,7 @@ describe('DbUploader.vue', () => {
     expect(JsonImport.preview.calledOnce).to.equal(true)
     await wrapper.vm.$nextTick()
     expect(JsonImport.open.calledOnce).to.equal(true)
-    wrapper.destroy()
+    wrapper.unmount()
   })
 
   it('shows parse dialog if gets ndjson file', async () => {
@@ -215,8 +225,10 @@ describe('DbUploader.vue', () => {
     const wrapper = mount(DbUploader, {
       attachTo: place,
       store,
-      mocks: { $router, $route },
-      propsData: {
+      global: {
+        mocks: { $router, $route }
+      },
+      props: {
         type: 'illustrated'
       }
     })
@@ -233,7 +245,7 @@ describe('DbUploader.vue', () => {
     expect(JsonImport.preview.calledOnce).to.equal(true)
     await wrapper.vm.$nextTick()
     expect(JsonImport.open.calledOnce).to.equal(true)
-    wrapper.destroy()
+    wrapper.unmount()
   })
 
   it('deletes temporary db if import is canceled', async () => {
@@ -248,8 +260,10 @@ describe('DbUploader.vue', () => {
     // mount the component
     const wrapper = mount(DbUploader, {
       store,
-      mocks: { $router, $route },
-      propsData: {
+      global: {
+        mocks: { $router, $route }
+      },
+      props: {
         type: 'illustrated'
       }
     })

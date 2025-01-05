@@ -5,13 +5,13 @@ import PivotUi from '@/views/Main/Workspace/Tabs/Tab/DataView/Pivot/PivotUi'
 describe('PivotUi.vue', () => {
   it('returns value when settings changed', async () => {
     const wrapper = mount(PivotUi, {
-      propsData: {
+      props: {
         keyNames: ['foo', 'bar']
       }
     })
 
     // choose columns
-    await wrapper.findAll('.sqliteviz-select.cols .multiselect__element > span').at(0)
+    await wrapper.findAll('.sqliteviz-select.cols .multiselect__element > span')[0]
       .trigger('click')
 
     expect(wrapper.emitted().update.length).to.equal(1)
@@ -25,7 +25,7 @@ describe('PivotUi.vue', () => {
     expect(wrapper.emitted().input[0][0].vals).to.eql([])
 
     // choose rows
-    await wrapper.findAll('.sqliteviz-select.rows .multiselect__element > span').at(0)
+    await wrapper.findAll('.sqliteviz-select.rows .multiselect__element > span')[0]
       .trigger('click')
 
     expect(wrapper.emitted().update.length).to.equal(2)
@@ -65,7 +65,7 @@ describe('PivotUi.vue', () => {
     expect(wrapper.emitted().input[3][0].vals).to.eql([])
 
     // change aggregator
-    await wrapper.findAll('.sqliteviz-select.aggregator .multiselect__element > span').at(12)
+    await wrapper.findAll('.sqliteviz-select.aggregator .multiselect__element > span')[12]
       .trigger('click')
 
     expect(wrapper.emitted().update.length).to.equal(5)
@@ -80,8 +80,8 @@ describe('PivotUi.vue', () => {
 
     // set first aggregator argument
     await wrapper
-      .findAll('.sqliteviz-select.aggr-arg').at(0)
-      .findAll('.multiselect__element > span').at(0)
+      .findAll('.sqliteviz-select.aggr-arg')[0]
+      .findAll('.multiselect__element > span')[0]
       .trigger('click')
 
     expect(wrapper.emitted().update.length).to.equal(6)
@@ -96,8 +96,8 @@ describe('PivotUi.vue', () => {
 
     // set second aggregator argument
     await wrapper
-      .findAll('.sqliteviz-select.aggr-arg').at(1)
-      .findAll('.multiselect__element > span').at(1)
+      .findAll('.sqliteviz-select.aggr-arg')[1]
+      .findAll('.multiselect__element > span')[1]
       .trigger('click')
 
     expect(wrapper.emitted().update.length).to.equal(7)
@@ -111,7 +111,7 @@ describe('PivotUi.vue', () => {
     expect(wrapper.emitted().input[6][0].vals).to.eql(['foo', 'bar'])
 
     // change renderer
-    await wrapper.findAll('.sqliteviz-select.renderer .multiselect__element > span').at(13)
+    await wrapper.findAll('.sqliteviz-select.renderer .multiselect__element > span')[13]
       .trigger('click')
 
     expect(wrapper.emitted().update.length).to.equal(8)
@@ -126,7 +126,7 @@ describe('PivotUi.vue', () => {
     expect(wrapper.emitted().input[7][0].vals).to.eql(['foo', 'bar'])
 
     // change aggregator again
-    await wrapper.findAll('.sqliteviz-select.aggregator .multiselect__element > span').at(3)
+    await wrapper.findAll('.sqliteviz-select.aggregator .multiselect__element > span')[3]
       .trigger('click')
 
     expect(wrapper.emitted().update.length).to.equal(9)

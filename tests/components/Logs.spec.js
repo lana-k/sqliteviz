@@ -26,14 +26,14 @@ describe('Logs.vue', () => {
     const viewHeight = containerHeight - 2 * borderWidth
     const wrapper = shallowMount(Logs, {
       attachTo: place,
-      propsData: { messages, style: `height: ${containerHeight}px` }
+      props: { messages, style: `height: ${containerHeight}px` }
     })
 
     await wrapper.vm.$nextTick()
     const height = wrapper.find('.logs-container').element.scrollHeight
     expect(wrapper.find('.logs-container').element.scrollTop)
       .to.equal(height - viewHeight)
-    wrapper.destroy()
+    wrapper.unmount()
   })
 
   it('Scrolled to bottom when a message added', async () => {
@@ -49,7 +49,7 @@ describe('Logs.vue', () => {
     const viewHeight = containerHeight - 2 * borderWidth
     const wrapper = shallowMount(Logs, {
       attachTo: place,
-      propsData: { messages, style: `height: ${containerHeight}px` }
+      props: { messages, style: `height: ${containerHeight}px` }
     })
 
     await wrapper.vm.$nextTick()
@@ -60,7 +60,7 @@ describe('Logs.vue', () => {
     const height = wrapper.find('.logs-container').element.scrollHeight
     expect(wrapper.find('.logs-container').element.scrollTop)
       .to.equal(height - viewHeight)
-    wrapper.destroy()
+    wrapper.unmount()
   })
 
   it('Serializes messages', async () => {
@@ -72,13 +72,13 @@ describe('Logs.vue', () => {
     ]
 
     const wrapper = shallowMount(Logs, {
-      propsData: { messages }
+      props: { messages }
     })
 
     const logs = wrapper.findAll('.msg')
-    expect(logs.at(0).text()).to.equal('Error in row 0. msg 1. Try again later.')
-    expect(logs.at(1).text()).to.equal('Error in row 2. msg 2!')
-    expect(logs.at(2).text()).to.equal('msg 3? Be happy!')
-    expect(logs.at(3).text()).to.equal('msg 4.')
+    expect(logs[0].text()).to.equal('Error in row 0. msg 1. Try again later.')
+    expect(logs[1].text()).to.equal('Error in row 2. msg 2!')
+    expect(logs[2].text()).to.equal('msg 3? Be happy!')
+    expect(logs[3].text()).to.equal('msg 4.')
   })
 })

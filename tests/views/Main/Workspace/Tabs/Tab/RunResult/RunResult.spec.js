@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { mount, createWrapper } from '@vue/test-utils'
+import { mount, DOMWrapper } from '@vue/test-utils'
 import RunResult from '@/views/Main/Workspace/Tabs/Tab/RunResult'
 import csv from '@/lib/csv'
 import sinon from 'sinon'
@@ -14,7 +14,7 @@ describe('RunResult.vue', () => {
     delete window.ClipboardItem
     sinon.spy(window, 'alert')
     const wrapper = mount(RunResult, {
-      propsData: {
+      props: {
         tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
@@ -26,7 +26,7 @@ describe('RunResult.vue', () => {
       }
     })
 
-    const copyBtn = createWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
+    const copyBtn = new DOMWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
     await copyBtn.trigger('click')
 
     expect(
@@ -44,7 +44,7 @@ describe('RunResult.vue', () => {
     sinon.stub(window.navigator.clipboard, 'writeText').resolves()
     const clock = sinon.useFakeTimers()
     const wrapper = mount(RunResult, {
-      propsData: {
+      props: {
         tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
@@ -60,7 +60,7 @@ describe('RunResult.vue', () => {
     })
 
     // Click copy to clipboard
-    const copyBtn = createWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
+    const copyBtn = new DOMWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
     await copyBtn.trigger('click')
 
     // The dialog is shown...
@@ -90,7 +90,7 @@ describe('RunResult.vue', () => {
     sinon.stub(window.navigator.clipboard, 'writeText').resolves()
     const clock = sinon.useFakeTimers()
     const wrapper = mount(RunResult, {
-      propsData: {
+      props: {
         tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
@@ -107,7 +107,7 @@ describe('RunResult.vue', () => {
     })
 
     // Click copy to clipboard
-    const copyBtn = createWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
+    const copyBtn = new DOMWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
     await copyBtn.trigger('click')
 
     // Switch to microtasks (let serialize run)
@@ -124,7 +124,7 @@ describe('RunResult.vue', () => {
     sinon.stub(window.navigator.clipboard, 'writeText').resolves()
     const clock = sinon.useFakeTimers()
     const wrapper = mount(RunResult, {
-      propsData: {
+      props: {
         tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
@@ -141,7 +141,7 @@ describe('RunResult.vue', () => {
     })
 
     // Click copy to clipboard
-    const copyBtn = createWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
+    const copyBtn = new DOMWrapper(wrapper.findComponent({ name: 'clipboardIcon' }).vm.$parent)
     await copyBtn.trigger('click')
 
     // Switch to microtasks (let serialize run)
@@ -159,7 +159,7 @@ describe('RunResult.vue', () => {
 
   it('shows value of selected cell - result set', async () => {
     const wrapper = mount(RunResult, {
-      propsData: {
+      props: {
         tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
@@ -172,7 +172,7 @@ describe('RunResult.vue', () => {
     })
 
     // Open cell value panel
-    const viewValueBtn = createWrapper(
+    const viewValueBtn = new DOMWrapper(
       wrapper.findComponent({ name: 'viewCellValueIcon' }).vm.$parent
     )
     await viewValueBtn.trigger('click')
@@ -186,7 +186,7 @@ describe('RunResult.vue', () => {
 
     // Click on '1' cell
     const rows = wrapper.findAll('table tbody tr')
-    await rows.at(0).findAll('td').at(0).trigger('click')
+    await rows[0].findAll('td')[0].trigger('click')
 
     expect(wrapper.find('.value-body').text()).to.equals('1')
 
@@ -207,12 +207,12 @@ describe('RunResult.vue', () => {
     expect(wrapper.find('.value-body').text()).to.equals('1')
 
     // Click on 'bar' cell
-    await rows.at(1).findAll('td').at(1).trigger('click')
+    await rows[1].findAll('td')[1].trigger('click')
 
     expect(wrapper.find('.value-body').text()).to.equals('bar')
 
     // Click on 'bar' cell again
-    await rows.at(1).findAll('td').at(1).trigger('click')
+    await rows[1].findAll('td')[1].trigger('click')
 
     expect(wrapper.find('.value-viewer-container .table-preview').text())
       .to.equals('No cell selected to view')
@@ -220,7 +220,7 @@ describe('RunResult.vue', () => {
 
   it('shows value of selected cell - record view', async () => {
     const wrapper = mount(RunResult, {
-      propsData: {
+      props: {
         tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
@@ -233,13 +233,13 @@ describe('RunResult.vue', () => {
     })
 
     // Open cell value panel
-    const viewValueBtn = createWrapper(
+    const viewValueBtn = new DOMWrapper(
       wrapper.findComponent({ name: 'viewCellValueIcon' }).vm.$parent
     )
     await viewValueBtn.trigger('click')
 
     // Go to record view
-    const vierRecordBtn = createWrapper(
+    const vierRecordBtn = new DOMWrapper(
       wrapper.findComponent({ name: 'rowIcon' }).vm.$parent
     )
     await vierRecordBtn.trigger('click')
@@ -280,18 +280,18 @@ describe('RunResult.vue', () => {
 
     // Click on 'foo' cell
     const rows = wrapper.findAll('table tbody tr')
-    await rows.at(1).find('td').trigger('click')
+    await rows[1].find('td').trigger('click')
     expect(wrapper.find('.value-body').text()).to.equals('foo')
 
     // Click on 'foo' cell again
-    await rows.at(1).find('td').trigger('click')
+    await rows[1].find('td').trigger('click')
     expect(wrapper.find('.value-viewer-container .table-preview').text())
       .to.equals('No cell selected to view')
   })
 
   it('keeps selected cell when switch between record and regular view', async () => {
     const wrapper = mount(RunResult, {
-      propsData: {
+      props: {
         tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
@@ -304,19 +304,19 @@ describe('RunResult.vue', () => {
     })
 
     // Open cell value panel
-    const viewValueBtn = createWrapper(
+    const viewValueBtn = new DOMWrapper(
       wrapper.findComponent({ name: 'viewCellValueIcon' }).vm.$parent
     )
     await viewValueBtn.trigger('click')
 
     // Click on 'name-1' cell
     const rows = wrapper.findAll('table tbody tr')
-    await rows.at(1).findAll('td').at(1).trigger('click')
+    await rows[1].findAll('td')[1].trigger('click')
 
     expect(wrapper.find('.value-body').text()).to.equals('name-1')
 
     // Go to record view
-    const vierRecordBtn = createWrapper(
+    const vierRecordBtn = new DOMWrapper(
       wrapper.findComponent({ name: 'rowIcon' }).vm.$parent
     )
     await vierRecordBtn.trigger('click')
