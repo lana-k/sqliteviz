@@ -183,7 +183,6 @@ export default {
   mixins: [tooltipMixin],
   data () {
     return {
-      inquiries: [],
       filter: null,
       newName: null,
       processedInquiryId: null,
@@ -198,6 +197,9 @@ export default {
     }
   },
   computed: {
+    inquiries () {
+      return this.$store.state.inquiries || []
+    },
     predefinedInquiries () {
       return this.$store.state.predefinedInquiries.map(inquiry => {
         inquiry.isPredefined = true
@@ -258,7 +260,6 @@ export default {
     }
   },
   async created () {
-    this.inquiries = storedInquiries.getStoredInquiries()
     const loadingPredefinedInquiries = this.$store.state.loadingPredefinedInquiries
     const predefinedInquiriesLoaded = this.$store.state.predefinedInquiriesLoaded
     if (!predefinedInquiriesLoaded && !loadingPredefinedInquiries) {
@@ -330,31 +331,17 @@ export default {
         this.errorMsg = "Inquiry name can't be empty"
         return
       }
-      const processedInquiry = this.inquiries[this.processedInquiryIndex]
-      processedInquiry.name = this.newName
-      this.$set(this.inquiries, this.processedInquiryIndex, processedInquiry)
+      this.$store.commit('renameInquiry', {
+        inquiryId: this.processedInquiryId, 
+        newName: this.newName
+      })
 
-      // update inquiries in local storage
-      storedInquiries.updateStorage(this.inquiries)
-
-      // update tab, if renamed inquiry is opened
-      const tab = this.$store.state.tabs
-        .find(tab => tab.id === processedInquiry.id)
-      if (tab) {
-        this.$store.commit('updateTab', {
-          tab,
-          newValues: {
-            name: this.newName
-          }
-        })
-      }
       // hide dialog
       this.$modal.hide('rename')
     },
     duplicateInquiry (index) {
       const newInquiry = storedInquiries.duplicateInquiry(this.showedInquiries[index])
-      this.inquiries.push(newInquiry)
-      storedInquiries.updateStorage(this.inquiries)
+      this.$store.commit('addInquiry', newInquiry)
     },
     showDeleteDialog (idsSet) {
       this.deleteGroup = idsSet.size > 1
@@ -366,39 +353,19 @@ export default {
     deleteInquiry () {
       this.$modal.hide('delete')
       if (!this.deleteGroup) {
-        this.inquiries.splice(this.processedInquiryIndex, 1)
-
-        // Close deleted inquiry tab if it was opened
-        const tab = this.$store.state.tabs
-          .find(tab => tab.id === this.processedInquiryId)
-        if (tab) {
-          this.$store.commit('deleteTab', tab)
-        }
+        this.$store.commit('deleteInquiries', new Set().add(this.processedInquiryId))
 
         // Clear checkbox
         if (this.selectedInquiriesIds.has(this.processedInquiryId)) {
           this.selectedInquiriesIds.delete(this.processedInquiryId)
         }
       } else {
-        this.inquiries = this.inquiries.filter(
-          inquiry => !this.selectedInquiriesIds.has(inquiry.id)
-        )
-
-        // Close deleted inquiries if it was opened
-        const tabs = this.$store.state.tabs
-        let i = tabs.length - 1
-        while (i > -1) {
-          if (this.selectedInquiriesIds.has(tabs[i].id)) {
-            this.$store.commit('deleteTab', tabs[i])
-          }
-          i--
-        }
+        this.$store.commit('deleteInquiries', this.selectedInquiriesIds)
 
         // Clear checkboxes
         this.selectedInquiriesIds.clear()
       }
       this.selectedInquiriesCount = this.selectedInquiriesIds.size
-      storedInquiries.updateStorage(this.inquiries)
     },
     exportToFile (inquiryList, fileName) {
       storedInquiries.export(inquiryList, fileName)
@@ -414,8 +381,7 @@ export default {
     importInquiries () {
       storedInquiries.importInquiries()
         .then(importedInquiries => {
-          this.inquiries = this.inquiries.concat(importedInquiries)
-          storedInquiries.updateStorage(this.inquiries)
+          this.$store.commit('setInquiries', this.inquiries.concat(importedInquiries))
         })
     },
 

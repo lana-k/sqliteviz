@@ -4,6 +4,29 @@
   </div>
 </template>
 
+<script>
+import storedInquiries from '@/lib/storedInquiries'
+
+export default {
+  created () {
+    this.$store.commit('setInquiries', storedInquiries.getStoredInquiries())
+  },
+  computed: {
+    inquiries () {
+      return this.$store.state.inquiries
+    }
+  },
+  watch: {
+    inquiries: {
+      deep: true,
+      handler () {
+        storedInquiries.updateStorage(this.inquiries)
+      }
+    } 
+  }
+}
+</script>
+
 <style>
 @font-face {
   font-family: "Open Sans";
