@@ -198,7 +198,7 @@ export default {
   },
   computed: {
     inquiries () {
-      return this.$store.state.inquiries || []
+      return this.$store.state.inquiries
     },
     predefinedInquiries () {
       return this.$store.state.predefinedInquiries.map(inquiry => {

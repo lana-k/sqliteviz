@@ -1,4 +1,5 @@
 import Tab from '@/lib/tab'
+import { nanoid } from 'nanoid'
 
 export default {
   async addTab ({ state }, inquiry = {}) {
