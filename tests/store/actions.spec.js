@@ -1,8 +1,9 @@
 import { expect } from 'chai'
 import actions from '@/store/actions'
+import sinon from 'sinon'
 
-const { 
-  addTab, 
+const {
+  addTab,
   addInquiry,
   deleteInquiries,
   renameInquiry,
@@ -90,11 +91,11 @@ describe('actions', () => {
 
   it('addInquiry', async () => {
     const state = {
-      inquiries: [1,2,3]
+      inquiries: [1, 2, 3]
     }
 
     await addInquiry({ state }, 4)
-    expect(state.inquiries).to.eql([1,2,3,4])
+    expect(state.inquiries).to.eql([1, 2, 3, 4])
   })
 
   it('deleteInquiries', async () => {
@@ -112,19 +113,19 @@ describe('actions', () => {
   it('renameInquiry', async () => {
     const state = {
       inquiries: [
-        { id: 1, name: 'foo'}, 
-        { id: 2, name: 'bar' }, 
-        { id: 3, name: 'baz' }, 
+        { id: 1, name: 'foo' },
+        { id: 2, name: 'bar' },
+        { id: 3, name: 'baz' }
       ],
-      tabs: [{ id: 1, name: 'foo'}, { id: 2, name: 'bar' }]
+      tabs: [{ id: 1, name: 'foo' }, { id: 2, name: 'bar' }]
     }
     const commit = sinon.spy()
 
-    await renameInquiry({ state, commit }, {inquiryId: 2, newName: 'new name'})
+    await renameInquiry({ state, commit }, { inquiryId: 2, newName: 'new name' })
     expect(state.inquiries).to.eql([
-      { id: 1, name: 'foo'}, 
-      { id: 2, name: 'new name' }, 
-      { id: 3, name: 'baz' }, 
+      { id: 1, name: 'foo' },
+      { id: 2, name: 'new name' },
+      { id: 3, name: 'baz' }
     ])
     expect(commit.calledWith('updateTab', {
       tab: { id: 2, name: 'bar' },
@@ -137,7 +138,7 @@ describe('actions', () => {
   it('saveInquiry adds new inquiry in the storage', async () => {
     const now = new Date()
     const nowPlusMinute = new Date(now.getTime() + 60 * 1000)
-    
+
     const tab = {
       id: 1,
       query: 'select * from foo',
@@ -152,12 +153,12 @@ describe('actions', () => {
     }
     const state = {
       inquiries: [],
-      tabs: [tab],
+      tabs: [tab]
     }
 
-    const value = await saveInquiry({ state }, { 
-      inquiryTab: tab, 
-      newName: 'foo' 
+    const value = await saveInquiry({ state }, {
+      inquiryTab: tab,
+      newName: 'foo'
     })
     expect(value.id).to.equal(tab.id)
     expect(value.name).to.equal('foo')
@@ -183,12 +184,12 @@ describe('actions', () => {
 
     const state = {
       inquiries: [],
-      tabs: [tab],
+      tabs: [tab]
     }
 
-    const first = await saveInquiry({ state }, { 
-      inquiryTab: tab, 
-      newName: 'foo' 
+    const first = await saveInquiry({ state }, {
+      inquiryTab: tab,
+      newName: 'foo'
     })
 
     tab.name = 'foo'
@@ -223,12 +224,12 @@ describe('actions', () => {
 
     const state = {
       inquiries: [],
-      tabs: [tab],
+      tabs: [tab]
     }
 
-    await saveInquiry({ state }, { 
-      inquiryTab: tab, 
-      newName: 'foo' 
+    await saveInquiry({ state }, {
+      inquiryTab: tab,
+      newName: 'foo'
     })
 
     const inquiries = state.inquiries

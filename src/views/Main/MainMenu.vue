@@ -133,8 +133,8 @@ export default {
 
       // Save inquiry
       const value = await this.$store.dispatch('saveInquiry', {
-        inquiryTab:this.currentInquiry, 
-        newName:this.name
+        inquiryTab: this.currentInquiry,
+        newName: this.name
       })
 
       // Update tab in store

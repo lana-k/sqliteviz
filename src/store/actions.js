@@ -52,19 +52,19 @@ export default {
       inquiry => !inquiryIdSet.has(inquiry.id)
     )
 
-     // Close deleted inquiries if it was opened
-     const tabs = state.tabs
-     let i = tabs.length - 1
-     while (i > -1) {
-       if (inquiryIdSet.has(tabs[i].id)) {
-         commit('deleteTab', tabs[i])
-       }
-       i--
-     }
+    // Close deleted inquiries if it was opened
+    const tabs = state.tabs
+    let i = tabs.length - 1
+    while (i > -1) {
+      if (inquiryIdSet.has(tabs[i].id)) {
+        commit('deleteTab', tabs[i])
+      }
+      i--
+    }
   },
-  renameInquiry ({ state, commit }, {inquiryId, newName}) {
+  renameInquiry ({ state, commit }, { inquiryId, newName }) {
     const renamingInquiry = state.inquiries
-    .find(inquiry => inquiry.id === inquiryId)
+      .find(inquiry => inquiry.id === inquiryId)
 
     renamingInquiry.name = newName
 

@@ -332,7 +332,7 @@ export default {
         return
       }
       this.$store.dispatch('renameInquiry', {
-        inquiryId: this.processedInquiryId, 
+        inquiryId: this.processedInquiryId,
         newName: this.newName
       })
 

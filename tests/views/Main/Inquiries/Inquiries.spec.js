@@ -95,7 +95,7 @@ describe('Inquiries.vue', () => {
         createdAt: '2020-03-08T19:57:56.299Z'
       }
     ])
-    
+
     const state = {
       predefinedInquiries: [],
       inquiries: [
@@ -140,7 +140,7 @@ describe('Inquiries.vue', () => {
         createdAt: '2020-03-08T19:57:56.299Z'
       }
     ])
-    
+
     const state = {
       predefinedInquiries: [],
       inquiries: [
@@ -184,7 +184,7 @@ describe('Inquiries.vue', () => {
         createdAt: '2020-03-08T19:57:56.299Z'
       }
     ])
-    
+
     const state = {
       predefinedInquiries: [],
       inquiries: [
@@ -775,7 +775,7 @@ describe('Inquiries.vue', () => {
 
     const state = {
       predefinedInquiries: [],
-      inquiries: [inquiryInStore] 
+      inquiries: [inquiryInStore]
     }
     const store = new Vuex.Store({ state, mutations, actions })
 

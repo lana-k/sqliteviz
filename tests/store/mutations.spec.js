@@ -367,7 +367,7 @@ describe('mutations', () => {
       inquiries: []
     }
 
-    setInquiries(state, [1,2,3])
-    expect(state.inquiries).to.eql([1,2,3])
+    setInquiries(state, [1, 2, 3])
+    expect(state.inquiries).to.eql([1, 2, 3])
   })
 })

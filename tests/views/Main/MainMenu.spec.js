@@ -361,7 +361,6 @@ describe('MainMenu.vue', () => {
       const store = new Vuex.Store({ state, mutations, actions })
       const $route = { path: '/workspace' }
       sinon.stub(storedInquiries, 'isTabNeedName').returns(false)
-      
 
       wrapper = mount(MainMenu, {
         store,
@@ -376,8 +375,8 @@ describe('MainMenu.vue', () => {
 
       // check that the inquiry was saved via saveInquiry (newName='')
       expect(actions.saveInquiry.calledOnce).to.equal(true)
-      expect(actions.saveInquiry.args[0][1]).to.eql({ 
-        inquiryTab:state.currentTab, newName: '' 
+      expect(actions.saveInquiry.args[0][1]).to.eql({
+        inquiryTab: state.currentTab, newName: ''
       })
 
       // check that the tab was updated
@@ -499,7 +498,7 @@ describe('MainMenu.vue', () => {
       .find(button => button.text() === 'Save')
       .trigger('click')
 
-    await wrapper.vm.$nextTick() 
+    await wrapper.vm.$nextTick()
 
     // check that the dialog is closed
     expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
@@ -507,8 +506,8 @@ describe('MainMenu.vue', () => {
     // check that the inquiry was saved via saveInquiry (newName='foo')
     expect(actions.saveInquiry.calledOnce).to.equal(true)
     expect(actions.saveInquiry.args[0][1]).to.eql({
-      inquiryTab:state.currentTab, 
-      newName:'foo'
+      inquiryTab: state.currentTab,
+      newName: 'foo'
     })
 
     // check that the tab was updated
@@ -590,16 +589,16 @@ describe('MainMenu.vue', () => {
       .find(button => button.text() === 'Save')
       .trigger('click')
 
-    await wrapper.vm.$nextTick()  
+    await wrapper.vm.$nextTick()
 
     // check that the dialog is closed
     expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
 
     // check that the inquiry was saved via saveInquiry (newName='bar')
     expect(actions.saveInquiry.calledOnce).to.equal(true)
-    expect(actions.saveInquiry.args[0][1]).to.eql({ 
-      inquiryTab:state.currentTab, 
-      newName: 'bar' 
+    expect(actions.saveInquiry.args[0][1]).to.eql({
+      inquiryTab: state.currentTab,
+      newName: 'bar'
     })
 
     // check that the tab was updated

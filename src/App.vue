@@ -22,7 +22,7 @@ export default {
       handler () {
         storedInquiries.updateStorage(this.inquiries)
       }
-    } 
+    }
   }
 }
 </script>
