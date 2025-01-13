@@ -61,6 +61,9 @@ export default {
   setPredefinedInquiriesLoaded (state, value) {
     state.predefinedInquiriesLoaded = value
   },
+  setInquiries (state, value) {
+    state.inquiries = value
+  },
   setIsWorkspaceVisible (state, value) {
     state.isWorkspaceVisible = value
   }

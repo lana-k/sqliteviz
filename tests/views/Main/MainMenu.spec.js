@@ -367,16 +367,18 @@ describe('MainMenu.vue', () => {
       const mutations = {
         updateTab: sinon.stub()
       }
-      const store = new Vuex.Store({ state, mutations })
+      const actions = {
+        saveInquiry: sinon.stub().returns({
+          name: 'foo',
+          id: 1,
+          query: 'SELECT * FROM foo',
+          viewType: 'chart',
+          viewOptions: []
+        })
+      }
+      const store = new Vuex.Store({ state, mutations, actions })
       const $route = { path: '/workspace' }
       sinon.stub(storedInquiries, 'isTabNeedName').returns(false)
-      sinon.stub(storedInquiries, 'save').returns({
-        name: 'foo',
-        id: 1,
-        query: 'SELECT * FROM foo',
-        viewType: 'chart',
-        viewOptions: []
-      })
 
       wrapper = mount(MainMenu, {
         store,
@@ -391,8 +393,11 @@ describe('MainMenu.vue', () => {
       // check that the dialog is closed
       expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
 
-      // check that the inquiry was saved via storedInquiries.save (newName='')
-      expect(storedInquiries.save.calledOnceWith(state.currentTab, '')).to.equal(true)
+      // check that the inquiry was saved via saveInquiry (newName='')
+      expect(actions.saveInquiry.calledOnce).to.equal(true)
+      expect(actions.saveInquiry.args[0][1]).to.eql({
+        inquiryTab: state.currentTab, newName: ''
+      })
 
       // check that the tab was updated
       expect(mutations.updateTab.calledOnceWith(state, sinon.match({
@@ -428,16 +433,18 @@ describe('MainMenu.vue', () => {
     const mutations = {
       updateTab: sinon.stub()
     }
-    const store = new Vuex.Store({ state, mutations })
+    const actions = {
+      saveInquiry: sinon.stub().returns({
+        name: 'foo',
+        id: 1,
+        query: 'SELECT * FROM foo',
+        viewType: 'chart',
+        viewOptions: []
+      })
+    }
+    const store = new Vuex.Store({ state, mutations, actions })
     const $route = { path: '/workspace' }
     sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
-    sinon.stub(storedInquiries, 'save').returns({
-      name: 'foo',
-      id: 1,
-      query: 'SELECT * FROM foo',
-      viewType: 'chart',
-      viewOptions: []
-    })
 
     wrapper = mount(MainMenu, {
       store,
@@ -480,16 +487,18 @@ describe('MainMenu.vue', () => {
     const mutations = {
       updateTab: sinon.stub()
     }
-    const store = new Vuex.Store({ state, mutations })
+    const actions = {
+      saveInquiry: sinon.stub().returns({
+        name: 'foo',
+        id: 1,
+        query: 'SELECT * FROM foo',
+        viewType: 'chart',
+        viewOptions: []
+      })
+    }
+    const store = new Vuex.Store({ state, mutations, actions })
     const $route = { path: '/workspace' }
     sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
-    sinon.stub(storedInquiries, 'save').returns({
-      name: 'foo',
-      id: 1,
-      query: 'SELECT * FROM foo',
-      viewType: 'chart',
-      viewOptions: []
-    })
 
     wrapper = mount(MainMenu, {
       store,
@@ -513,11 +522,17 @@ describe('MainMenu.vue', () => {
       .find(button => button.text() === 'Save')
       .trigger('click')
 
+    await wrapper.vm.$nextTick()
+
     // check that the dialog is closed
     expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
 
-    // check that the inquiry was saved via storedInquiries.save (newName='foo')
-    expect(storedInquiries.save.calledOnceWith(state.currentTab, 'foo')).to.equal(true)
+    // check that the inquiry was saved via saveInquiry (newName='foo')
+    expect(actions.saveInquiry.calledOnce).to.equal(true)
+    expect(actions.saveInquiry.args[0][1]).to.eql({
+      inquiryTab: state.currentTab,
+      newName: 'foo'
+    })
 
     // check that the tab was updated
     expect(mutations.updateTab.calledOnceWith(state, sinon.match({
@@ -562,16 +577,18 @@ describe('MainMenu.vue', () => {
     const mutations = {
       updateTab: sinon.stub()
     }
-    const store = new Vuex.Store({ state, mutations })
+    const actions = {
+      saveInquiry: sinon.stub().returns({
+        name: 'bar',
+        id: 2,
+        query: 'SELECT * FROM foo',
+        viewType: 'chart',
+        viewOptions: []
+      })
+    }
+    const store = new Vuex.Store({ state, mutations, actions })
     const $route = { path: '/workspace' }
     sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
-    sinon.stub(storedInquiries, 'save').returns({
-      name: 'bar',
-      id: 2,
-      query: 'SELECT * FROM foo',
-      viewType: 'chart',
-      viewOptions: []
-    })
 
     wrapper = mount(MainMenu, {
       store,
@@ -598,11 +615,17 @@ describe('MainMenu.vue', () => {
       .find(button => button.text() === 'Save')
       .trigger('click')
 
+    await wrapper.vm.$nextTick()
+
     // check that the dialog is closed
     expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
 
-    // check that the inquiry was saved via storedInquiries.save (newName='bar')
-    expect(storedInquiries.save.calledOnceWith(state.currentTab, 'bar')).to.equal(true)
+    // check that the inquiry was saved via saveInquiry (newName='bar')
+    expect(actions.saveInquiry.calledOnce).to.equal(true)
+    expect(actions.saveInquiry.args[0][1]).to.eql({
+      inquiryTab: state.currentTab,
+      newName: 'bar'
+    })
 
     // check that the tab was updated
     expect(mutations.updateTab.calledOnceWith(state, sinon.match({
@@ -651,15 +674,17 @@ describe('MainMenu.vue', () => {
     const mutations = {
       updateTab: sinon.stub()
     }
-    const store = new Vuex.Store({ state, mutations })
+    const actions = {
+      saveInquiry: sinon.stub().returns({
+        name: 'bar',
+        id: 2,
+        query: 'SELECT * FROM foo',
+        chart: []
+      })
+    }
+    const store = new Vuex.Store({ state, mutations, actions })
     const $route = { path: '/workspace' }
     sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
-    sinon.stub(storedInquiries, 'save').returns({
-      name: 'bar',
-      id: 2,
-      query: 'SELECT * FROM foo',
-      chart: []
-    })
 
     wrapper = mount(MainMenu, {
       store,
@@ -684,7 +709,7 @@ describe('MainMenu.vue', () => {
     expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
 
     // check that the inquiry was not saved via storedInquiries.save
-    expect(storedInquiries.save.called).to.equal(false)
+    expect(actions.saveInquiry.called).to.equal(false)
 
     // check that the tab was not updated
     expect(mutations.updateTab.called).to.equal(false)

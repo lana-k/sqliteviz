@@ -6,10 +6,27 @@
 </template>
 
 <script>
+import storedInquiries from '@/lib/storedInquiries'
 import { ModalsContainer } from 'vue-final-modal'
 
 export default {
-  components: { ModalsContainer }
+  components: { ModalsContainer },
+  created () {
+    this.$store.commit('setInquiries', storedInquiries.getStoredInquiries())
+  },
+  computed: {
+    inquiries () {
+      return this.$store.state.inquiries
+    }
+  },
+  watch: {
+    inquiries: {
+      deep: true,
+      handler () {
+        storedInquiries.updateStorage(this.inquiries)
+      }
+    }
+  }
 }
 </script>
 

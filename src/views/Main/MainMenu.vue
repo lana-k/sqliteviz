@@ -123,7 +123,7 @@ export default {
         this.saveInquiry()
       }
     },
-    saveInquiry () {
+    async saveInquiry () {
       const isNeedName = storedInquiries.isTabNeedName(this.currentInquiry)
       if (isNeedName && !this.name) {
         this.errorMsg = 'Inquiry name can\'t be empty'
@@ -133,7 +133,10 @@ export default {
       const tabView = this.currentInquiry.view
 
       // Save inquiry
-      const value = storedInquiries.save(this.currentInquiry, this.name)
+      const value = await this.$store.dispatch('saveInquiry', {
+        inquiryTab: this.currentInquiry,
+        newName: this.name
+      })
 
       // Update tab in store
       this.$store.commit('updateTab', {

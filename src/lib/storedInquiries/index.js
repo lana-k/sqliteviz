@@ -36,40 +36,6 @@ export default {
     return inquiryTab.isPredefined || !inquiryTab.name
   },
 
-  save (inquiryTab, newName) {
-    const value = {
-      id: inquiryTab.isPredefined ? nanoid() : inquiryTab.id,
-      query: inquiryTab.query,
-      viewType: inquiryTab.dataView.mode,
-      viewOptions: inquiryTab.dataView.getOptionsForSave(),
-      name: newName || inquiryTab.name
-    }
-
-    // Get inquiries from local storage
-    const myInquiries = this.getStoredInquiries()
-
-    let inquiryIndex
-    // Set createdAt
-    if (newName) {
-      value.createdAt = new Date()
-    } else {
-      inquiryIndex = myInquiries
-        .findIndex(oldInquiry => oldInquiry.id === inquiryTab.id)
-      value.createdAt = myInquiries[inquiryIndex].createdAt
-    }
-
-    // Insert in inquiries list
-    if (newName) {
-      myInquiries.push(value)
-    } else {
-      myInquiries[inquiryIndex] = value
-    }
-
-    // Save to local storage
-    this.updateStorage(myInquiries)
-    return value
-  },
-
   updateStorage (inquiries) {
     localStorage.setItem('myInquiries', JSON.stringify({ version: this.version, inquiries }))
   },

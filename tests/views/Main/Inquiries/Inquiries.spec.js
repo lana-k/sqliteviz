@@ -5,6 +5,7 @@ import Vuex from 'vuex'
 import Inquiries from '@/views/Main/Inquiries'
 import storedInquiries from '@/lib/storedInquiries'
 import mutations from '@/store/mutations'
+import actions from '@/store/actions'
 import fu from '@/lib/utils/fileIo'
 
 describe('Inquiries.vue', () => {
@@ -14,16 +15,16 @@ describe('Inquiries.vue', () => {
 
   it('Shows start-guide message if there are no saved and predefined inquiries', () => {
     sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([])
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([])
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: []
     }
     const mutations = {
       setPredefinedInquiriesLoaded: sinon.stub(),
       updatePredefinedInquiries: sinon.stub(),
       setLoadingPredefinedInquiries: sinon.stub()
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
     const wrapper = shallowMount(Inquiries, { store })
 
     expect(wrapper.find('#start-guide').exists()).to.equal(true)
@@ -40,32 +41,32 @@ describe('Inquiries.vue', () => {
         createdAt: '2020-03-08T19:57:56.299Z'
       }
     ])
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([
-      {
-        id: 1,
-        name: 'foo',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-11-03T19:57:56.299Z'
-      },
-      {
-        id: 2,
-        name: 'bar',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-12-04T18:53:56.299Z'
-      }
-    ])
+
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: '',
+          viewType: 'chart',
+          viewOptions: [],
+          createdAt: '2020-11-03T19:57:56.299Z'
+        },
+        {
+          id: 2,
+          name: 'bar',
+          query: '',
+          viewType: 'chart',
+          viewOptions: [],
+          createdAt: '2020-12-04T18:53:56.299Z'
+        }
+      ]
     }
 
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
     const wrapper = shallowMount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     expect(wrapper.find('#start-guide').exists()).to.equal(false)
@@ -94,29 +95,30 @@ describe('Inquiries.vue', () => {
         createdAt: '2020-03-08T19:57:56.299Z'
       }
     ])
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([
-      {
-        id: 1,
-        name: 'foo',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-11-03T19:57:56.299Z'
-      },
-      {
-        id: 2,
-        name: 'bar',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-12-04T18:53:56.299Z'
-      }
-    ])
+
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: '',
+          viewType: 'chart',
+          viewOptions: [],
+          createdAt: '2020-11-03T19:57:56.299Z'
+        },
+        {
+          id: 2,
+          name: 'bar',
+          query: '',
+          viewType: 'chart',
+          viewOptions: [],
+          createdAt: '2020-12-04T18:53:56.299Z'
+        }
+      ]
     }
 
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
     const wrapper = mount(Inquiries, { store })
     await wrapper.find('#toolbar-search input').setValue('OO')
     await wrapper.vm.$nextTick()
@@ -138,29 +140,30 @@ describe('Inquiries.vue', () => {
         createdAt: '2020-03-08T19:57:56.299Z'
       }
     ])
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([
-      {
-        id: 1,
-        name: 'foo',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-11-03T19:57:56.299Z'
-      },
-      {
-        id: 2,
-        name: 'bar',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-12-04T18:53:56.299Z'
-      }
-    ])
+
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: '',
+          viewType: 'chart',
+          viewOptions: [],
+          createdAt: '2020-11-03T19:57:56.299Z'
+        },
+        {
+          id: 2,
+          name: 'bar',
+          query: '',
+          viewType: 'chart',
+          viewOptions: [],
+          createdAt: '2020-12-04T18:53:56.299Z'
+        }
+      ]
     }
 
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
     const wrapper = mount(Inquiries, { store })
     await wrapper.find('#toolbar-search input').setValue('baz')
     await wrapper.vm.$nextTick()
@@ -181,24 +184,24 @@ describe('Inquiries.vue', () => {
         createdAt: '2020-03-08T19:57:56.299Z'
       }
     ])
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([
-      {
-        id: 1,
-        name: 'foo',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-11-03T19:57:56.299Z'
-      }
-    ])
+
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: '',
+          viewType: 'chart',
+          viewOptions: [],
+          createdAt: '2020-11-03T19:57:56.299Z'
+        }
+      ]
     }
 
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
     const wrapper = shallowMount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     const rows = wrapper.findAll('tbody tr')
@@ -208,26 +211,25 @@ describe('Inquiries.vue', () => {
 
   it('Exports one inquiry', async () => {
     sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([])
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([
-      {
-        id: 1,
-        name: 'foo',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-11-03T19:57:56.299Z'
-      }
-    ])
     sinon.stub(storedInquiries, 'serialiseInquiries').returns('I am a serialized inquiry')
     sinon.stub(fu, 'exportToFile')
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: '',
+          viewType: 'chart',
+          viewOptions: [],
+          createdAt: '2020-11-03T19:57:56.299Z'
+        }
+      ]
     }
 
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
     await wrapper.findComponent({ name: 'ExportIcon' }).find('svg').trigger('click')
     expect(fu.exportToFile.calledOnceWith('I am a serialized inquiry', 'foo.json')).to.equals(true)
@@ -243,7 +245,6 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-11-03T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([inquiryInStorage])
     sinon.stub(storedInquiries, 'updateStorage')
     const newInquiry = {
       id: 2,
@@ -255,13 +256,13 @@ describe('Inquiries.vue', () => {
     }
     sinon.stub(storedInquiries, 'duplicateInquiry').returns(newInquiry)
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [inquiryInStorage]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
     await wrapper.findComponent({ name: 'CopyIcon' }).find('svg').trigger('click')
 
@@ -271,9 +272,7 @@ describe('Inquiries.vue', () => {
     expect(rows).to.have.lengthOf(2)
     expect(rows[1].findAll('td')[0].text()).to.equals('foo copy')
     expect(rows[1].findAll('td')[1].text()).to.contains('3 December 2020 20:57')
-    expect(
-      storedInquiries.updateStorage.calledOnceWith(sinon.match([inquiryInStorage, newInquiry]))
-    ).to.equals(true)
+    expect(state.inquiries).to.eql([inquiryInStorage, newInquiry])
   })
 
   it('The copy of the inquiry is not selected if all inquiries were selected before duplication',
@@ -287,8 +286,6 @@ describe('Inquiries.vue', () => {
         viewOptions: [],
         createdAt: '2020-11-03T19:57:56.299Z'
       }
-      sinon.stub(storedInquiries, 'getStoredInquiries').returns([inquiryInStorage])
-      sinon.stub(storedInquiries, 'updateStorage')
       const newInquiry = {
         id: 2,
         name: 'foo copy',
@@ -299,13 +296,13 @@ describe('Inquiries.vue', () => {
       }
       sinon.stub(storedInquiries, 'duplicateInquiry').returns(newInquiry)
       const state = {
-        predefinedInquiries: []
+        predefinedInquiries: [],
+        inquiries: [inquiryInStorage]
       }
-      const store = new Vuex.Store({ state, mutations })
+      const store = new Vuex.Store({ state, mutations, actions })
 
       const wrapper = mount(Inquiries, { store })
       await storedInquiries.readPredefinedInquiries.returnValues[0]
-      await storedInquiries.getStoredInquiries.returnValues[0]
       await wrapper.vm.$nextTick()
       await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
         .trigger('click')
@@ -326,11 +323,11 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-11-03T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([inquiryInStorage])
 
     const state = {
       tabs: [],
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [inquiryInStorage]
     }
     const actions = { addTab: sinon.stub().resolves(1) }
     sinon.spy(mutations, 'setCurrentTabId')
@@ -344,7 +341,6 @@ describe('Inquiries.vue', () => {
       }
     })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
     await wrapper.find('tbody tr').trigger('click')
 
@@ -366,42 +362,40 @@ describe('Inquiries.vue', () => {
         createdAt: '2020-03-08T19:57:56.299Z'
       }
     ])
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([])
 
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: []
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
     expect(wrapper.findComponent({ name: 'RenameIcon' }).exists()).to.equals(false)
   })
 
   it('Renames an inquiry', async () => {
     sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([])
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([
-      {
-        id: 1,
-        name: 'foo',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-11-03T19:57:56.299Z'
-      }
-    ])
     sinon.stub(storedInquiries, 'updateStorage')
     const state = {
       tabs: [{ id: 1, name: 'foo' }],
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: '',
+          viewType: 'chart',
+          viewOptions: [],
+          createdAt: '2020-11-03T19:57:56.299Z'
+        }
+      ]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     // click Rename icon in the grid
@@ -421,19 +415,20 @@ describe('Inquiries.vue', () => {
       .findAll('.dialog-buttons-container button').wrappers
       .find(button => button.text() === 'Rename')
       .trigger('click')
+    await wrapper.vm.$nextTick()
 
     // check that the name in the grid is changed
     expect(wrapper.find('tbody tr td').text()).to.equals('bar')
 
     // check that storage is updated
-    expect(storedInquiries.updateStorage.calledOnceWith(sinon.match([{
+    expect(state.inquiries).to.eql([{
       id: 1,
       name: 'bar',
       query: '',
       viewType: 'chart',
       viewOptions: [],
       createdAt: '2020-11-03T19:57:56.299Z'
-    }]))).to.equals(true)
+    }])
 
     // check that coresponding tab also changed the name
     expect(state.tabs[0].name).to.equals('bar')
@@ -444,26 +439,25 @@ describe('Inquiries.vue', () => {
 
   it('Shows an error if try to rename to empty string', async () => {
     sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([])
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([
-      {
-        id: 1,
-        name: 'foo',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-11-03T19:57:56.299Z'
-      }
-    ])
     sinon.stub(storedInquiries, 'updateStorage')
     const state = {
       tabs: [{ id: 1, name: 'foo' }],
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: '',
+          viewType: 'chart',
+          viewOptions: [],
+          createdAt: '2020-11-03T19:57:56.299Z'
+        }
+      ]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     // click Rename icon in the grid
@@ -494,7 +488,6 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-11-03T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([inquiryInStorage])
     sinon.stub(storedInquiries, 'updateStorage')
     const importedInquiry = {
       id: 2,
@@ -506,13 +499,13 @@ describe('Inquiries.vue', () => {
     }
     sinon.stub(storedInquiries, 'importInquiries').resolves([importedInquiry])
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [inquiryInStorage]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = shallowMount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     // click Import
@@ -522,9 +515,7 @@ describe('Inquiries.vue', () => {
     expect(rows).to.have.lengthOf(2)
     expect(rows[1].findAll('td')[0].text()).to.equals('bar')
     expect(rows[1].findAll('td')[1].text()).to.equals('3 December 2020 20:57')
-    expect(storedInquiries.updateStorage.calledOnceWith(
-      sinon.match([inquiryInStorage, importedInquiry])
-    )).to.equals(true)
+    expect(state.inquiries).to.eql([inquiryInStorage, importedInquiry])
   })
 
   it('Imported inquiries are not selected if master check box was checked', async () => {
@@ -537,7 +528,6 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-11-03T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([inquiryInStorage])
     sinon.stub(storedInquiries, 'updateStorage')
     const importedInquiry = {
       id: 2,
@@ -549,13 +539,13 @@ describe('Inquiries.vue', () => {
     }
     sinon.stub(storedInquiries, 'importInquiries').resolves([importedInquiry])
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [inquiryInStorage]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     // click on master checkbox
@@ -570,7 +560,8 @@ describe('Inquiries.vue', () => {
     expect(checkboxes[0].vm.checked).to.equals(true)
     expect(checkboxes[1].vm.checked).to.equals(false)
   })
-
+expect(storedInquiries.updateStorage.calledOnceWith(
+      sinon.match([inquiryInStorage, importedInquiry])
   it('Deletion is not available for predefined inquiries', async () => {
     sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([
       {
@@ -582,16 +573,15 @@ describe('Inquiries.vue', () => {
         createdAt: '2020-03-08T19:57:56.299Z'
       }
     ])
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([])
 
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: []
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
     expect(wrapper.findComponent({ name: 'DeleteIcon' }).exists()).to.equals(false)
   })
@@ -614,18 +604,17 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-11-03T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([foo, bar])
     sinon.stub(storedInquiries, 'updateStorage')
 
     const state = {
       tabs: [{ id: 1 }, { id: 2 }],
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [foo, bar]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
     // click Delete icon in the first row of the grid
     await wrapper.findComponent({ name: 'DeleteIcon' }).find('svg').trigger('click')
@@ -651,7 +640,7 @@ describe('Inquiries.vue', () => {
     expect(state.tabs[0].id).to.equals(2)
 
     // check that storage is updated
-    expect(storedInquiries.updateStorage.calledOnceWith(sinon.match([bar]))).to.equals(true)
+    expect(state.inquiries).to.eql([bar])
 
     // check that delete dialog is closed
     expect(wrapper.find('[data-modal="delete"]').exists()).to.equal(false)
@@ -668,25 +657,24 @@ describe('Inquiries.vue', () => {
         createdAt: '2020-03-08T19:57:56.299Z'
       }
     ])
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([
-      {
-        id: 1,
-        name: 'foo',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-11-03T19:57:56.299Z'
-      }
-    ])
 
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: '',
+          viewType: 'chart',
+          viewOptions: [],
+          createdAt: '2020-11-03T19:57:56.299Z'
+        }
+      ]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     expect(wrapper.find('#toolbar-btns-export').isVisible()).to.equal(false)
@@ -728,26 +716,25 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-03-08T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([inquiryInStore, {
-      id: 2,
-      name: 'bar',
-      query: '',
-      viewType: 'chart',
-      viewOptions: [],
-      createdAt: '2020-03-08T19:57:56.299Z'
-    }])
 
     sinon.stub(storedInquiries, 'serialiseInquiries').returns('I am a serialized inquiries')
     sinon.stub(fu, 'exportToFile')
 
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [inquiryInStore, {
+        id: 2,
+        name: 'bar',
+        query: '',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-03-08T19:57:56.299Z'
+      }]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     const rows = wrapper.findAll('tbody tr')
@@ -785,19 +772,18 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-03-08T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([inquiryInStore])
 
     sinon.stub(storedInquiries, 'serialiseInquiries').returns('I am a serialized inquiries')
     sinon.stub(fu, 'exportToFile')
 
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [inquiryInStore]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
@@ -848,19 +834,18 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-03-08T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([foo, bar, baz])
 
     sinon.stub(storedInquiries, 'updateStorage')
 
     const state = {
       tabs: [{ id: 1 }, { id: 2 }, { id: 0 }, { id: 3 }],
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [foo, bar, baz]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     const rows = wrapper.findAll('tbody tr')
@@ -895,7 +880,7 @@ describe('Inquiries.vue', () => {
     expect(state.tabs[1].id).to.equals(3)
 
     // check that storage is updated
-    expect(storedInquiries.updateStorage.calledOnceWith(sinon.match([baz]))).to.equals(true)
+    expect(state.inquiries).to.eql([baz])
 
     // check that delete dialog is closed
     expect(wrapper.find('[data-modal="delete"]').exists()).to.equal(false)
@@ -927,18 +912,17 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-03-08T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([foo, bar])
     sinon.stub(storedInquiries, 'updateStorage')
 
     const state = {
       tabs: [],
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [foo, bar]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     const rows = wrapper.findAll('tbody tr')
@@ -970,7 +954,7 @@ describe('Inquiries.vue', () => {
     expect(wrapper.findAll('tbody tr')[1].find('td').text()).to.equals('bar')
 
     // check that storage is updated
-    expect(storedInquiries.updateStorage.calledOnceWith(sinon.match([bar]))).to.equals(true)
+    expect(state.inquiries).to.eql([bar])
 
     // check that delete dialog is closed
     expect(wrapper.find('[data-modal="delete"]').exists()).to.equal(false)
@@ -1002,18 +986,17 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-03-08T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([foo, bar])
     sinon.stub(storedInquiries, 'updateStorage')
 
     const state = {
       tabs: [],
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [foo, bar]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
@@ -1041,7 +1024,7 @@ describe('Inquiries.vue', () => {
     expect(wrapper.findAll('tbody tr')[0].find('td').text()).to.contains('hello_world')
 
     // check that storage is updated
-    expect(storedInquiries.updateStorage.calledOnceWith(sinon.match([]))).to.equals(true)
+    expect(state.inquiries).to.eql([])
 
     // check that delete dialog is closed
     expect(wrapper.find('[data-modal="delete"]').exists()).to.equal(false)
@@ -1065,16 +1048,15 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-03-08T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([foo, bar])
 
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [foo, bar]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     const mainCheckBox = wrapper.findComponent({ ref: 'mainCheckBox' })
@@ -1124,16 +1106,15 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-03-08T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([foo, bar])
 
     const state = {
-      predefinedInquiries: []
+      predefinedInquiries: [],
+      inquiries: [foo, bar]
     }
-    const store = new Vuex.Store({ state, mutations })
+    const store = new Vuex.Store({ state, mutations, actions })
 
     const wrapper = mount(Inquiries, { store })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await storedInquiries.getStoredInquiries.returnValues[0]
     await wrapper.vm.$nextTick()
 
     const mainCheckBox = wrapper.findComponent({ ref: 'mainCheckBox' })
