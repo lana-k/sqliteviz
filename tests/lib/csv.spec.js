@@ -1,7 +1,12 @@
-import { expect } from 'chai'
+import chai from 'chai'
 import sinon from 'sinon'
 import csv from '@/lib/csv'
 import Papa from 'papaparse'
+import chaiAsPromised from 'chai-as-promised'
+
+chai.use(chaiAsPromised)
+const expect = chai.expect
+chai.should()
 
 describe('csv.js', () => {
   afterEach(() => {

@@ -560,8 +560,7 @@ describe('Inquiries.vue', () => {
     expect(checkboxes[0].vm.checked).to.equals(true)
     expect(checkboxes[1].vm.checked).to.equals(false)
   })
-expect(storedInquiries.updateStorage.calledOnceWith(
-      sinon.match([inquiryInStorage, importedInquiry])
+  
   it('Deletion is not available for predefined inquiries', async () => {
     sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([
       {
