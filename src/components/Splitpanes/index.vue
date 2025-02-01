@@ -39,7 +39,7 @@
         >
           <img
             class="direction-icon"
-            :src="require('@/assets/images/chevron.svg')"
+            src="~@/assets/images/chevron.svg"
             :style="directionBeforeIconStyle"
           >
         </div>
@@ -50,7 +50,7 @@
         >
           <img
             class="direction-icon"
-            :src="require('@/assets/images/chevron.svg')"
+            src="~@/assets/images/chevron.svg"
             :style="directionAfterIconStyle"
           >
         </div>

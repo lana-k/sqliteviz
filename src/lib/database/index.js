@@ -1,7 +1,4 @@
 import fu from '@/lib/utils/fileIo'
-// We can import workers like so because of worker-loader:
-// https://webpack.js.org/loaders/worker-loader/
-import Worker from './_worker.js'
 
 // Use promise-worker in order to turn worker into the promise based one:
 // https://github.com/nolanlawson/promise-worker
@@ -10,7 +7,10 @@ import PromiseWorker from 'promise-worker'
 import events from '@/lib/utils/events'
 
 function getNewDatabase () {
-  const worker = new Worker()
+  const worker = new Worker(
+    new URL('./_worker.js', import.meta.url), 
+    { type: 'module' }
+  )
   return new Database(worker)
 }
 

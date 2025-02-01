@@ -23,7 +23,7 @@
 }
 
 .dialog-body {
-  min-height: 60px;
+  min-height: 56px;
   background-color: var(--color-bg-light);
   padding: 24px;
   border-top: 1px solid var(--color-border-light);

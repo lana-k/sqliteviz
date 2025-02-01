@@ -7,12 +7,12 @@
     <img
       v-show="checked && !disabled"
       :src="theme === 'light'
-        ? require('@/assets/images/checkbox_checked_light.svg')
-        : require('@/assets/images/checkbox_checked.svg')"
+        ? '~@/assets/images/checkbox_checked_light.svg'
+        : '~@/assets/images/checkbox_checked.svg'"
     />
     <img
       v-show="checked && disabled"
-      :src="require('@/assets/images/checkbox_checked_disabled.svg')"
+      src="~@/assets/images/checkbox_checked_disabled.svg"
     />
     <span v-if="label" class="label">{{ label }}</span>
   </div>

@@ -1,9 +1,9 @@
 <template>
   <div class="logs-container" ref="logsContainer">
     <div v-for="(msg, index) in messages" :key="index" class="msg">
-      <img v-if="msg.type === 'error'" :src="require('@/assets/images/error.svg')">
-      <img v-if="msg.type === 'info'" :src="require('@/assets/images/info.svg')" width="20px">
-      <img v-if="msg.type === 'success'" :src="require('@/assets/images/success.svg')">
+      <img v-if="msg.type === 'error'" src="~@/assets/images/error.svg">
+      <img v-if="msg.type === 'info'" src="~@/assets/images/info.svg" width="20px">
+      <img v-if="msg.type === 'success'" src="~@/assets/images/success.svg">
       <loading-indicator v-if="msg.type === 'loading'" :progress="msg.progress" />
       <span class="msg-text">{{ serializeMessage(msg) }}</span>
     </div>

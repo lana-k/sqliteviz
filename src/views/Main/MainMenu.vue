@@ -2,7 +2,7 @@
   <nav>
     <div id="nav-links">
       <a href="https://sqliteviz.com">
-        <img :src="require('@/assets/images/logo_simple.svg')">
+        <img src="~@/assets/images/logo_simple.svg">
       </a>
       <router-link to="/workspace">Workspace</router-link>
       <router-link to="/inquiries">Inquiries</router-link>
@@ -29,14 +29,14 @@
     </div>
 
     <!--Save Inquiry dialog  -->
-    <modal modal-id="save" class="dialog">
+    <modal modal-id="save" class="dialog" content-style="width: 560px;">
       <div class="dialog-header">
         Save inquiry
         <close-icon @click="cancelSave"/>
       </div>
       <div class="dialog-body">
         <div v-show="isPredefined" id="save-note">
-          <img :src="require('@/assets/images/info.svg')">
+          <img src="~@/assets/images/info.svg">
           Note: Predefined inquiries can't be edited.
           That's why your modifications will be saved as a new inquiry. Enter the name for it.
         </div>

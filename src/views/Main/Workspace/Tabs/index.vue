@@ -29,7 +29,7 @@
     </div>
 
     <!--Close tab warning dialog  -->
-    <modal modal-id="close-warn" class="dialog">
+    <modal modal-id="close-warn" class="dialog" content-style="width: 560px;">
       <div class="dialog-header">
         Close tab {{
           closingTab !== null
@@ -49,7 +49,7 @@
         <button class="secondary" @click="closeTab(closingTab)">
           Close without saving
         </button>
-        <button class="secondary" @click="$modal.hide('close-warn')">Cancel</button>
+        <button class="secondary" @click="$modal.hide('close-warn')">Don't close</button>
         <button class="primary" @click="saveAndClose(closingTab)">Save and close</button>
       </div>
     </modal>

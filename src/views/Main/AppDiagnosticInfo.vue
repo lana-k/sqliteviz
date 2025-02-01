@@ -2,7 +2,7 @@
   <div id="app-info-container">
     <img
       id="app-info-icon"
-      :src="require('@/assets/images/info.svg')"
+      src="~@/assets/images/info.svg"
       @click="$modal.show('app-info')"
     />
     <modal
@@ -31,6 +31,7 @@
 
 <script>
 import CloseIcon from '@/components/svg/close'
+import { version } from '../../../package.json'
 
 export default {
   name: 'AppDiagnosticInfo',
@@ -40,7 +41,7 @@ export default {
       info: [
         {
           name: 'sqliteviz version',
-          info: [require('../../../package.json').version]
+          info: [version]
         }
       ]
     }

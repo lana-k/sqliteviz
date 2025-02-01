@@ -14,7 +14,7 @@
         {{ loadingMsg }}
       </div>
       <div v-else class="loading-dialog-body">
-        <img :src="require('@/assets/images/success.svg')" class="success-icon state-icon" />
+        <img src="~@/assets/images/success.svg" class="success-icon state-icon" />
         {{ successMsg }}
       </div>
     </div>

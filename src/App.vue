@@ -33,42 +33,42 @@ export default {
 <style>
 @font-face {
   font-family: "Open Sans";
-  src: url("~@/assets/fonts/OpenSans-Regular.woff2");
+  src: url("@/assets/fonts/OpenSans-Regular.woff2");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Open Sans";
-  src: url("~@/assets/fonts/OpenSans-SemiBold.woff2");
+  src: url("@/assets/fonts/OpenSans-SemiBold.woff2");
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Open Sans";
-  src: url("~@/assets/fonts/OpenSans-Bold.woff2");
+  src: url("@/assets/fonts/OpenSans-Bold.woff2");
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Open Sans";
-  src: url("~@/assets/fonts/OpenSans-Italic.woff2");
+  src: url("@/assets/fonts/OpenSans-Italic.woff2");
   font-weight: 400;
   font-style: italic;
 }
 
 @font-face {
   font-family: "Open Sans";
-  src: url("~@/assets/fonts/OpenSans-SemiBoldItalic.woff2");
+  src: url("@/assets/fonts/OpenSans-SemiBoldItalic.woff2");
   font-weight: 600;
   font-style: italic;
 }
 
 @font-face {
   font-family: "Open Sans";
-  src: url("~@/assets/fonts/OpenSans-BoldItalic.woff2");
+  src: url("@/assets/fonts/OpenSans-BoldItalic.woff2");
   font-weight: 700;
   font-style: italic;
 }

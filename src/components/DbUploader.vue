@@ -16,11 +16,11 @@
       </div>
     </div>
     <div v-if="type === 'illustrated'" id="img-container">
-      <img id="drop-file-top-img" :src="require('@/assets/images/top.svg')" />
+      <img id="drop-file-top-img" src="~@/assets/images/top.svg" />
       <img
         id="left-arm-img"
         :class="{'swing': state === 'dragover'}"
-        :src="require('@/assets/images/leftArm.svg')"
+        src="~@/assets/images/leftArm.svg"
       />
       <img
         id="file-img"
@@ -30,14 +30,14 @@
           'fly': state === 'dropping',
           'hidden': state === 'dropped'
         }"
-        :src="require('@/assets/images/file.png')"
+        src="~@/assets/images/file.png"
       />
-      <img id="drop-file-bottom-img" :src="require('@/assets/images/bottom.svg')" />
-      <img id="body-img" :src="require('@/assets/images/body.svg')" />
+      <img id="drop-file-bottom-img" src="~@/assets/images/bottom.svg" />
+      <img id="body-img" src="~@/assets/images/body.svg" />
       <img
         id="right-arm-img"
         :class="{'swing': state === 'dragover'}"
-        :src="require('@/assets/images/rightArm.svg')"
+        src="~@/assets/images/rightArm.svg"
       />
     </div>
     <div id="error" class="error"></div>

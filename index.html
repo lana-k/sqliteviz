@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.png">
-    <link rel="manifest" href="<%= BASE_URL %>manifest.webmanifest">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <link rel="icon" href="favicon.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <title>sqliteviz</title>
     <style>
       #sqliteviz-loading-wrapper {
         position: fixed;
@@ -74,7 +74,7 @@
   </head>
   <body>
     <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong>We're sorry but this app doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app">
       <div id="sqliteviz-loading-wrapper">
@@ -95,8 +95,6 @@
         </svg>
       </div>
     </div>
-    <!-- extention slot start -->
-    <!-- extention slot end -->
-    <!-- built files will be auto injected -->
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

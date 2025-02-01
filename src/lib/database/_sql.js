@@ -1,8 +1,11 @@
 import initSqlJs from 'sql.js/dist/sql-wasm.js'
 import dbUtils from './_statements'
+import wasmUrl from 'sql.js/dist/sql-wasm.wasm?url'
 
 let SQL = null
-const sqlModuleReady = initSqlJs().then(sqlModule => { SQL = sqlModule })
+const sqlModuleReady = initSqlJs({
+  locateFile: () => wasmUrl
+ }).then(sqlModule => { SQL = sqlModule })
 
 function _getDataSourcesFromSqlResult (sqlResult) {
   if (!sqlResult) {

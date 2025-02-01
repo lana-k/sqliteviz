@@ -119,7 +119,7 @@
   </div>
 
   <!--Rename Inquiry dialog  -->
-  <modal modal-id="rename" class="dialog">
+  <modal modal-id="rename" class="dialog" content-style="width: 560px;">
     <div class="dialog-header">
       Rename inquiry
       <close-icon @click="$modal.hide('rename')"/>
@@ -139,7 +139,7 @@
   </modal>
 
   <!--Delete Inquiry dialog  -->
-  <modal modal-id="delete" class="dialog">
+  <modal modal-id="delete" class="dialog" content-style="width: 480px;">
     <div class="dialog-header">
       Delete {{ deleteGroup ? 'inquiries' : 'inquiry' }}
       <close-icon @click="$modal.hide('delete')"/>
@@ -147,7 +147,7 @@
     <div class="dialog-body">
       {{ deleteDialogMsg }}
       <div v-show="selectedInquiriesCount > selectedNotPredefinedCount" id="note">
-        <img :src="require('@/assets/images/info.svg')">
+        <img src="~@/assets/images/info.svg">
         Note: Predefined inquiries you've selected won't be deleted
       </div>
     </div>

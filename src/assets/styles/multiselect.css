@@ -62,14 +62,14 @@
   margin: 2px;
 }
 .sqliteviz-select .multiselect__tag-icon:after {
-  content: url('~@/assets/images/delete-tag.svg');
+  content: url('@/assets/images/delete-tag.svg');
   height: 14px;
   width: 14px;
 }
 
 .sqliteviz-select .multiselect__tag-icon:focus:after,
 .sqliteviz-select .multiselect__tag-icon:hover:after {
-  content: url('~@/assets/images/delete-tag-hover.svg');
+  content: url('@/assets/images/delete-tag-hover.svg');
 }
 
 .sqliteviz-select .multiselect__tag-icon:focus,
@@ -102,7 +102,7 @@
 }
 
 .sqliteviz-select .multiselect__select:before {
-  content: url('~@/assets/images/arrow.svg');
+  content: url('@/assets/images/arrow.svg');
   border: none;
   top: 0;
 }
@@ -116,7 +116,7 @@
 }
 
 .sqliteviz-select .multiselect__select:hover:before {
-  content: url('~@/assets/images/arrow-hover.svg');
+  content: url('@/assets/images/arrow-hover.svg');
 }
 
 .sqliteviz-select.multiselect--active .multiselect__tags {
