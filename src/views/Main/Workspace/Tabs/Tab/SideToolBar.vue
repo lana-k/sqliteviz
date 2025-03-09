@@ -1,6 +1,7 @@
 <template>
   <div class="side-tool-bar">
     <icon-button
+      ref="sqlEditorBtn"
       :active="panel === 'sqlEditor'"
       tooltip="Switch panel to SQL editor"
       tooltip-position="top-left"
@@ -10,6 +11,7 @@
     </icon-button>
 
     <icon-button
+      ref="tableBtn"
       :active="panel === 'table'"
       tooltip="Switch panel to result set"
       tooltip-position="top-left"
@@ -19,6 +21,7 @@
     </icon-button>
 
     <icon-button
+      ref="dataViewBtn"
       :active="panel === 'dataView'"
       tooltip="Switch panel to data view"
       tooltip-position="top-left"

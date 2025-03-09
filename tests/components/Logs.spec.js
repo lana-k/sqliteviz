@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { shallowMount } from '@vue/test-utils'
 import Logs from '@/components/Logs'
+import { nextTick } from 'vue'
 
 let place
 describe('Logs.vue', () => {
@@ -28,8 +29,7 @@ describe('Logs.vue', () => {
       attachTo: place,
       props: { messages, style: `height: ${containerHeight}px` }
     })
-
-    await wrapper.vm.$nextTick()
+    await nextTick()
     const height = wrapper.find('.logs-container').element.scrollHeight
     expect(wrapper.find('.logs-container').element.scrollTop)
       .to.equal(height - viewHeight)
@@ -52,11 +52,11 @@ describe('Logs.vue', () => {
       props: { messages, style: `height: ${containerHeight}px` }
     })
 
-    await wrapper.vm.$nextTick()
+    await nextTick()
     messages.push({ type: 'error', message: 'msg 5' })
 
-    await wrapper.vm.$nextTick()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
     const height = wrapper.find('.logs-container').element.scrollHeight
     expect(wrapper.find('.logs-container').element.scrollTop)
       .to.equal(height - viewHeight)

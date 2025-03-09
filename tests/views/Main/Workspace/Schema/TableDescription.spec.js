@@ -5,6 +5,7 @@ import TableDescription from '@/views/Main/Workspace/Schema/TableDescription'
 describe('TableDescription.vue', () => {
   it('Initially the columns are hidden and table name is rendered', () => {
     const wrapper = shallowMount(TableDescription, {
+      attachTo: document.body,
       props: {
         name: 'Test table',
         columns: [
@@ -15,6 +16,7 @@ describe('TableDescription.vue', () => {
     })
     expect(wrapper.find('.table-name').text()).to.equal('Test table')
     expect(wrapper.find('.columns').isVisible()).to.equal(false)
+    wrapper.unmount()
   })
 
   it('Columns are visible and correct when click on table name', async () => {

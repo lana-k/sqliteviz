@@ -37,6 +37,7 @@
       </icon-button>
 
       <icon-button
+        ref="copyToClipboardBtn"
         :disabled="!result"
         tooltip="Copy result set to clipboard"
         tooltip-position="top-left"
@@ -46,6 +47,7 @@
       </icon-button>
 
       <icon-button
+        ref="rowBtn"
         :disabled="!result"
         tooltip="View record"
         tooltip-position="top-left"
@@ -56,6 +58,7 @@
       </icon-button>
 
       <icon-button
+        ref="viewCellValueBtn"
         :disabled="!result"
         tooltip="View value"
         tooltip-position="top-left"
@@ -166,7 +169,7 @@ export default {
       viewRecord: false,
       defaultPage: 1,
       defaultSelectedCell: null,
-      enableTeleport: false
+      enableTeleport: this.$store.state.isWorkspaceVisible
     }
   },
   components: {
@@ -204,9 +207,6 @@ export default {
     this.enableTeleport = false
   },
   mounted () {
-    if (this.$store.state.isWorkspaceVisible) {
-      this.enableTeleport = true
-    }
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.runResultPanel)
     this.calculatePageSize()
@@ -366,22 +366,6 @@ export default {
 }
 
 @keyframes show-loader {
-  0% {
-    opacity: 0;
-  }
-  99% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-:deep(.vm--container) {
-  animation: show-modal 1s linear 0s 1;
-}
-
-@keyframes show-modal {
   0% {
     opacity: 0;
   }

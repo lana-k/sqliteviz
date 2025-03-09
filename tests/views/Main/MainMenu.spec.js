@@ -1,13 +1,23 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { mount, shallowMount, DOMWrapper } from '@vue/test-utils'
-import Vuex from 'vuex'
+import { mount, shallowMount } from '@vue/test-utils'
+import { createStore } from 'vuex'
 import MainMenu from '@/views/Main/MainMenu'
 import storedInquiries from '@/lib/storedInquiries'
+import { nextTick } from 'vue'
+import eventBus from '@/lib/eventBus'
 
 let wrapper = null
 
 describe('MainMenu.vue', () => {
+  let clock
+
+  beforeEach(() => {
+    clock = sinon.useFakeTimers()
+    sinon.spy(eventBus, '$emit')
+    sinon.spy(eventBus, '$off')
+  })
+
   afterEach(() => {
     sinon.restore()
 
@@ -22,22 +32,33 @@ describe('MainMenu.vue', () => {
       tabs: [{}],
       db: {}
     }
-    const store = new Vuex.Store({ state })
+    const store = createStore({ state })
     const $route = { path: '/workspace' }
-    // mount the component
+    // mount the component on workspace
     wrapper = shallowMount(MainMenu, {
-      store,
+      attachTo: document.body,
       global: {
         mocks: { $route },
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
     expect(wrapper.find('#save-btn').exists()).to.equal(true)
     expect(wrapper.find('#save-btn').isVisible()).to.equal(true)
     expect(wrapper.find('#create-btn').exists()).to.equal(true)
     expect(wrapper.find('#create-btn').isVisible()).to.equal(true)
+    wrapper.unmount()
 
-    await wrapper.vm.$set(wrapper.vm.$route, 'path', '/inquiries')
+    $route.path = '/inquiries'
+    // mount the component on inquiries
+    wrapper = shallowMount(MainMenu, {
+      attachTo: document.body,
+      global: {
+        mocks: { $route },
+        stubs: ['router-link'],
+        plugins: [store]
+      }
+    })
     expect(wrapper.find('#save-btn').exists()).to.equal(true)
     expect(wrapper.find('#save-btn').isVisible()).to.equal(false)
     expect(wrapper.find('#create-btn').exists()).to.equal(true)
@@ -50,13 +71,14 @@ describe('MainMenu.vue', () => {
       tabs: [],
       db: {}
     }
-    const store = new Vuex.Store({ state })
+    const store = createStore({ state })
     const $route = { path: '/workspace' }
     wrapper = shallowMount(MainMenu, {
-      store,
+      attachTo: document.body,
       global: {
         mocks: { $route },
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
     expect(wrapper.find('#save-btn').exists()).to.equal(true)
@@ -77,20 +99,20 @@ describe('MainMenu.vue', () => {
       tabs: [tab],
       db: {}
     }
-    const store = new Vuex.Store({ state })
+    const store = createStore({ state })
     const $route = { path: '/workspace' }
 
     wrapper = shallowMount(MainMenu, {
-      store,
       global: {
         mocks: { $route },
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
     const vm = wrapper.vm
     expect(wrapper.find('#save-btn').element.disabled).to.equal(false)
 
-    await vm.$set(state.tabs[0], 'isSaved', true)
+    store.state.tabs[0].isSaved = true
     await vm.$nextTick()
     expect(wrapper.find('#save-btn').element.disabled).to.equal(true)
   })
@@ -113,15 +135,15 @@ describe('MainMenu.vue', () => {
     const mutations = {
       setCurrentTabId: sinon.stub()
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
     const $route = { path: '/workspace' }
     const $router = { push: sinon.stub() }
 
     wrapper = shallowMount(MainMenu, {
-      store,
       global: {
         mocks: { $route, $router },
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
 
@@ -150,15 +172,15 @@ describe('MainMenu.vue', () => {
     const mutations = {
       setCurrentTabId: sinon.stub()
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
     const $route = { path: '/inquiries' }
     const $router = { push: sinon.stub() }
 
     wrapper = shallowMount(MainMenu, {
-      store,
       global: {
         mocks: { $route, $router },
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
 
@@ -181,15 +203,15 @@ describe('MainMenu.vue', () => {
         tabs: [tab],
         db: {}
       }
-      const store = new Vuex.Store({ state })
+      const store = createStore({ state })
       const $route = { path: '/workspace' }
       const $router = { push: sinon.stub() }
 
       wrapper = shallowMount(MainMenu, {
-        store,
         global: {
           mocks: { $route, $router },
-          stubs: ['router-link']
+          stubs: ['router-link'],
+          plugins: [store]
         }
       })
 
@@ -202,15 +224,15 @@ describe('MainMenu.vue', () => {
       expect(state.currentTab.execute.calledTwice).to.equal(true)
 
       // Running is disabled and route path is workspace
-      await wrapper.vm.$set(state, 'db', null)
+      store.state.db = null
       document.dispatchEvent(ctrlR)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
       document.dispatchEvent(metaR)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
 
       // Running is enabled and route path is not workspace
-      await wrapper.vm.$set(state, 'db', {})
-      await wrapper.vm.$set($route, 'path', '/inquiries')
+      state.db = {}
+      wrapper.vm.$route.path = '/inquiries'
       document.dispatchEvent(ctrlR)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
       document.dispatchEvent(metaR)
@@ -229,15 +251,15 @@ describe('MainMenu.vue', () => {
         tabs: [tab],
         db: {}
       }
-      const store = new Vuex.Store({ state })
+      const store = createStore({ state })
       const $route = { path: '/workspace' }
       const $router = { push: sinon.stub() }
 
       wrapper = shallowMount(MainMenu, {
-        store,
         global: {
           mocks: { $route, $router },
-          stubs: ['router-link']
+          stubs: ['router-link'],
+          plugins: [store]
         }
       })
 
@@ -250,15 +272,15 @@ describe('MainMenu.vue', () => {
       expect(state.currentTab.execute.calledTwice).to.equal(true)
 
       // Running is disabled and route path is workspace
-      await wrapper.vm.$set(state, 'db', null)
+      store.state.db = null
       document.dispatchEvent(ctrlEnter)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
       document.dispatchEvent(metaEnter)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
 
       // Running is enabled and route path is not workspace
-      await wrapper.vm.$set(state, 'db', {})
-      await wrapper.vm.$set($route, 'path', '/inquiries')
+      store.state.db = {}
+      wrapper.vm.$route.path = '/inquiries'
       document.dispatchEvent(ctrlEnter)
       expect(state.currentTab.execute.calledTwice).to.equal(true)
       document.dispatchEvent(metaEnter)
@@ -276,14 +298,14 @@ describe('MainMenu.vue', () => {
       tabs: [tab],
       db: {}
     }
-    const store = new Vuex.Store({ state })
+    const store = createStore({ state })
     const $route = { path: '/workspace' }
 
     wrapper = shallowMount(MainMenu, {
-      store,
       global: {
         mocks: { $route },
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
     sinon.stub(wrapper.vm, 'createNewInquiry')
@@ -295,7 +317,7 @@ describe('MainMenu.vue', () => {
     document.dispatchEvent(metaB)
     expect(wrapper.vm.createNewInquiry.calledTwice).to.equal(true)
 
-    await wrapper.vm.$set($route, 'path', '/inquiries')
+    wrapper.vm.$route.path = '/inquiries'
     document.dispatchEvent(ctrlB)
     expect(wrapper.vm.createNewInquiry.calledThrice).to.equal(true)
     document.dispatchEvent(metaB)
@@ -314,14 +336,14 @@ describe('MainMenu.vue', () => {
         tabs: [tab],
         db: {}
       }
-      const store = new Vuex.Store({ state })
+      const store = createStore({ state })
       const $route = { path: '/workspace' }
 
       wrapper = shallowMount(MainMenu, {
-        store,
         global: {
           mocks: { $route },
-          stubs: ['router-link']
+          stubs: ['router-link'],
+          plugins: [store]
         }
       })
       sinon.stub(wrapper.vm, 'checkInquiryBeforeSave')
@@ -335,15 +357,15 @@ describe('MainMenu.vue', () => {
       expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
 
       // tab is saved and route is /workspace
-      await wrapper.vm.$set(state.tabs[0], 'isSaved', true)
+      store.state.tabs[0].isSaved = true
       document.dispatchEvent(ctrlS)
       expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
       document.dispatchEvent(metaS)
       expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
 
       // tab is unsaved and route is not /workspace
-      await wrapper.vm.$set($route, 'path', '/inquiries')
-      await wrapper.vm.$set(state.tabs[0], 'isSaved', false)
+      wrapper.vm.$route.path = '/inquiries'
+      store.state.tabs[0].isSaved = false
       document.dispatchEvent(ctrlS)
       expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
       document.dispatchEvent(metaS)
@@ -376,22 +398,26 @@ describe('MainMenu.vue', () => {
           viewOptions: []
         })
       }
-      const store = new Vuex.Store({ state, mutations, actions })
+      const store = createStore({ state, mutations, actions })
       const $route = { path: '/workspace' }
       sinon.stub(storedInquiries, 'isTabNeedName').returns(false)
 
       wrapper = mount(MainMenu, {
-        store,
+        attachTo: document.body,
         global: {
           mocks: { $route },
-          stubs: ['router-link', 'app-diagnostic-info']
+          stubs: {
+            'router-link': true, 'app-diagnostic-info': true,
+            teleport: true, transition: false
+          },
+          plugins: [store]
         }
       })
 
       await wrapper.find('#save-btn').trigger('click')
 
       // check that the dialog is closed
-      expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
+      expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
 
       // check that the inquiry was saved via saveInquiry (newName='')
       expect(actions.saveInquiry.calledOnce).to.equal(true)
@@ -412,8 +438,8 @@ describe('MainMenu.vue', () => {
         }
       }))).to.equal(true)
 
-      // check that 'inquirySaved' event was triggered on $root
-      expect(new DOMWrapper(wrapper.vm.$root).emitted('inquirySaved')).to.have.lengthOf(1)
+      // check that 'inquirySaved' event was triggered on eventBus
+      expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
     })
 
   it('Shows en error when the new name is needed but not specifyied', async () => {
@@ -442,32 +468,39 @@ describe('MainMenu.vue', () => {
         viewOptions: []
       })
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
     const $route = { path: '/workspace' }
     sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
 
     wrapper = mount(MainMenu, {
-      store,
+      attachTo: document.body,
       global: {
         mocks: { $route },
-        stubs: ['router-link', 'app-diagnostic-info']
+        stubs: {
+          'router-link': true, 'app-diagnostic-info': true,
+          teleport: true, transition: false
+        },
+        plugins: [store]
       }
     })
 
     await wrapper.find('#save-btn').trigger('click')
 
     // check that the dialog is open
-    expect(wrapper.find('[data-modal="save"]').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text())
+      .to.contain('Save inquiry')
 
     // find Save in the dialog and click
     await wrapper
-      .findAll('.dialog-buttons-container button').wrappers
+      .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Save')
       .trigger('click')
 
     // check that we have an error message and dialog is still open
     expect(wrapper.find('.text-field-error').text()).to.equal('Inquiry name can\'t be empty')
-    expect(wrapper.find('[data-modal="save"]').exists()).to.equal(true)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
   })
 
   it('Saves the inquiry with a new name', async () => {
@@ -496,36 +529,43 @@ describe('MainMenu.vue', () => {
         viewOptions: []
       })
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
     const $route = { path: '/workspace' }
     sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
 
     wrapper = mount(MainMenu, {
-      store,
+      attachTo: document.body,
       global: {
         mocks: { $route },
-        stubs: ['router-link', 'app-diagnostic-info']
+        stubs: {
+          'router-link': true, 'app-diagnostic-info': true,
+          teleport: true, transition: false
+        },
+        plugins: [store]
       }
     })
 
     await wrapper.find('#save-btn').trigger('click')
 
     // check that the dialog is open
-    expect(wrapper.find('[data-modal="save"]').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text())
+      .to.contain('Save inquiry')
 
     // enter the new name
     await wrapper.find('.dialog-body input').setValue('foo')
 
     // find Save in the dialog and click
     await wrapper
-      .findAll('.dialog-buttons-container button').wrappers
+      .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Save')
       .trigger('click')
 
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     // check that the dialog is closed
-    expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
 
     // check that the inquiry was saved via saveInquiry (newName='foo')
     expect(actions.saveInquiry.calledOnce).to.equal(true)
@@ -547,8 +587,8 @@ describe('MainMenu.vue', () => {
       }
     }))).to.equal(true)
 
-    // check that 'inquirySaved' event was triggered on $root
-    expect(new DOMWrapper(wrapper.vm.$root).emitted('inquirySaved')).to.have.lengthOf(1)
+    // check that 'inquirySaved' event was triggered on eventBus
+    expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
   })
 
   it('Saves a predefined inquiry with a new name', async () => {
@@ -586,22 +626,28 @@ describe('MainMenu.vue', () => {
         viewOptions: []
       })
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
     const $route = { path: '/workspace' }
     sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
 
     wrapper = mount(MainMenu, {
-      store,
+      attachTo: document.body,
       global: {
         mocks: { $route },
-        stubs: ['router-link', 'app-diagnostic-info']
+        stubs: {
+          'router-link': true, 'app-diagnostic-info': true,
+          teleport: true, transition: false
+        },
+        plugins: [store]
       }
     })
 
     await wrapper.find('#save-btn').trigger('click')
 
     // check that the dialog is open
-    expect(wrapper.find('[data-modal="save"]').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text())
+      .to.contain('Save inquiry')
 
     // check that save-note is visible (save-note is an explanation why do we need a new name)
     expect(wrapper.find('#save-note').isVisible()).to.equal(true)
@@ -611,14 +657,15 @@ describe('MainMenu.vue', () => {
 
     // find Save in the dialog and click
     await wrapper
-      .findAll('.dialog-buttons-container button').wrappers
+      .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Save')
       .trigger('click')
 
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     // check that the dialog is closed
-    expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
 
     // check that the inquiry was saved via saveInquiry (newName='bar')
     expect(actions.saveInquiry.calledOnce).to.equal(true)
@@ -640,8 +687,8 @@ describe('MainMenu.vue', () => {
       }
     }))).to.equal(true)
 
-    // check that 'inquirySaved' event was triggered on $root
-    expect(new DOMWrapper(wrapper.vm.$root).emitted('inquirySaved')).to.have.lengthOf(1)
+    // check that 'inquirySaved' event was triggered on eventBus
+    expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
 
     // We saved predefined inquiry, so the tab will be created again
     // (because of new id) and it will be without sql result and has default view - table.
@@ -682,31 +729,38 @@ describe('MainMenu.vue', () => {
         chart: []
       })
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
     const $route = { path: '/workspace' }
     sinon.stub(storedInquiries, 'isTabNeedName').returns(true)
 
     wrapper = mount(MainMenu, {
-      store,
+      attachTo: document.body,
       global: {
         mocks: { $route },
-        stubs: ['router-link', 'app-diagnostic-info']
+        stubs: {
+          'router-link': true, 'app-diagnostic-info': true,
+          teleport: true, transition: false
+        },
+        plugins: [store]
       }
     })
 
     await wrapper.find('#save-btn').trigger('click')
 
     // check that the dialog is open
-    expect(wrapper.find('[data-modal="save"]').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text())
+      .to.contain('Save inquiry')
 
     // find Cancel in the dialog and click
     await wrapper
-      .findAll('.dialog-buttons-container button').wrappers
+      .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Cancel')
       .trigger('click')
 
     // check that the dialog is closed
-    expect(wrapper.find('[data-modal="save"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
 
     // check that the inquiry was not saved via storedInquiries.save
     expect(actions.saveInquiry.called).to.equal(false)
@@ -714,7 +768,7 @@ describe('MainMenu.vue', () => {
     // check that the tab was not updated
     expect(mutations.updateTab.called).to.equal(false)
 
-    // check that 'inquirySaved' event is not listened on $root
-    expect(wrapper.vm.$root.$listeners).to.not.have.property('inquirySaved')
+    // check that 'inquirySaved' event is not listened on eventBus
+    expect(eventBus.$off.calledOnceWith('inquirySaved')).to.equal(true)
   })
 })

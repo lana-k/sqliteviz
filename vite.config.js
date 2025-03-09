@@ -6,7 +6,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '',
+  base: './',
   plugins: [
     vue(),
     nodePolyfills({
@@ -24,12 +24,12 @@ export default defineConfig({
 ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@': fileURLToPath(new URL('./src', import.meta.url))
     },
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
 },
 optimizeDeps: {
-    include:['sql.js/dist/sql-wasm.js'],
+    include:['sql.js'],
     esbuildOptions: {
       define: {
         global: 'globalThis'

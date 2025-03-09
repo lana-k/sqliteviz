@@ -47,6 +47,7 @@ import ClearIcon from '@/components/svg/clear'
 export default {
   name: 'DelimiterSelector',
   props: ['modelValue', 'width', 'disabled'],
+  emits: ['update:modelValue'],
   components: { DropDownChevron, ClearIcon },
   data () {
     return {

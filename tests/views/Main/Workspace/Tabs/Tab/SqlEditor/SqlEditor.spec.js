@@ -1,44 +1,53 @@
 import { expect } from 'chai'
 import { mount } from '@vue/test-utils'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import SqlEditor from '@/views/Main/Workspace/Tabs/Tab/SqlEditor'
+import { nextTick } from 'vue'
 
 describe('SqlEditor.vue', () => {
-  it('Emits input event when a query is changed', async () => {
+  it('Emits update:modelValue event when a query is changed', async () => {
     // mock store state
     const state = {
       db: {}
     }
 
-    const store = new Vuex.Store({ state })
+    const store = createStore({ state })
 
-    const wrapper = mount(SqlEditor, { store })
-    await wrapper.findComponent({ name: 'codemirror' }).vm.$emit('input', 'SELECT * FROM foo')
-    expect(wrapper.emitted('input')[0]).to.eql(['SELECT * FROM foo'])
+    const wrapper = mount(SqlEditor, {
+      global: {
+        plugins: [store]
+      }
+    })
+    await wrapper.findComponent({ ref: 'cm' }).setValue('SELECT * FROM foo', 'value')
+    expect(wrapper.emitted()['update:modelValue'][0]).to.eql(['SELECT * FROM foo'])
   })
 
   it('Run is disabled if there is no db or no query or is getting result set', async () => {
     const state = {
       db: null
     }
-    const store = new Vuex.Store({ state })
+    const store = createStore({ state })
 
-    const wrapper = mount(SqlEditor, { store, props: { isGettingResults: false } })
-    await wrapper.findComponent({ name: 'codemirror' }).vm.$emit('input', 'SELECT * FROM foo')
-    const runButton = wrapper.findComponent({ name: 'RunIcon' }).vm.$parent
+    const wrapper = mount(SqlEditor, { 
+      global: { plugins: [store] },
+      props: { isGettingResults: false }
+    })
+    await wrapper.findComponent({ ref: 'cm' }).setValue('SELECT * FROM foo', 'value')
+    const runButton = wrapper.findComponent({ ref: 'runBtn' })
 
-    expect(runButton.disabled).to.equal(true)
+    expect(runButton.props('disabled')).to.equal(true)
 
-    await wrapper.vm.$set(store.state, 'db', {})
-    expect(runButton.disabled).to.equal(false)
+    store.state.db = {}
+    await nextTick()
+    expect(runButton.props('disabled')).to.equal(false)
 
-    await wrapper.findComponent({ name: 'codemirror' }).vm.$emit('input', '')
-    expect(runButton.disabled).to.equal(true)
+    await wrapper.findComponent({ ref: 'cm' }).setValue('', 'value')
+    expect(runButton.props('disabled')).to.equal(true)
 
-    await wrapper.findComponent({ name: 'codemirror' }).vm.$emit('input', 'SELECT * FROM foo')
-    expect(runButton.disabled).to.equal(false)
+    await wrapper.findComponent({ ref: 'cm' }).setValue('SELECT * FROM foo', 'value')
+    expect(runButton.props('disabled')).to.equal(false)
 
     await wrapper.setProps({ isGettingResults: true })
-    expect(runButton.disabled).to.equal(true)
+    expect(runButton.props('disabled')).to.equal(true)
   })
 })

@@ -22,6 +22,7 @@
         <chart-icon />
       </icon-button>
       <icon-button
+        ref="pivotBtn"
         :active="mode === 'pivot'"
         @click="mode = 'pivot'"
         tooltip="Switch to pivot"
@@ -42,6 +43,7 @@
         <png-icon />
       </icon-button>
       <icon-button
+        ref="svgExportBtn"
         :disabled="!importToSvgEnabled"
         tooltip="Save as SVG"
         tooltip-position="top-left"
@@ -51,6 +53,7 @@
       </icon-button>
 
       <icon-button
+        ref="htmlExportBtn"
         tooltip="Save as HTML"
         tooltip-position="top-left"
         @click="saveAsHtml"
@@ -58,6 +61,7 @@
         <HtmlIcon />
       </icon-button>
       <icon-button
+        ref="copyToClipboardBtn"
         :loading="copyingImage"
         tooltip="Copy visualisation to clipboard"
         tooltip-position="top-left"
@@ -233,20 +237,5 @@ export default {
   width: calc(100% - 39px);
   height: 100%;
   overflow: auto;
-}
-:deep(.vm--container) {
-  animation: show-modal 1s linear 0s 1;
-}
-
-@keyframes show-modal {
-  0% {
-    opacity: 0;
-  }
-  99% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
 }
 </style>

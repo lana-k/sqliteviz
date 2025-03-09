@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import * as chartHelper from '@/lib/chartHelper'
+import chartHelper from '@/lib/chartHelper'
 import * as dereference from 'react-chart-editor/lib/lib/dereference'
 
 describe('chartHelper.js', () => {

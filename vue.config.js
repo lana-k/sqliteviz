@@ -3,6 +3,7 @@ const CopyPlugin = require('copy-webpack-plugin')
 const WorkboxPlugin = require('workbox-webpack-plugin')
 
 module.exports = defineConfig({
+  parallel: false,
   transpileDependencies: true,
   publicPath: '',
   // Workaround for https://github.com/vuejs/vue-cli/issues/5399 as described
@@ -41,13 +42,6 @@ module.exports = defineConfig({
           maxSize: 10000
         }
       })
-
-    config.module
-      .rule('worker')
-      .test(/worker\.js$/)
-      .use('worker-loader')
-      .loader('worker-loader')
-      .end()
 
     config.module.rule('js').exclude.add(/worker\.js$/)
 

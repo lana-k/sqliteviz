@@ -1,4 +1,4 @@
-import initSqlJs from 'sql.js/dist/sql-wasm.js'
+import initSqlJs from 'sql.js'
 import dbUtils from './_statements'
 import wasmUrl from 'sql.js/dist/sql-wasm.wasm?url'
 

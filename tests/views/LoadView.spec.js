@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import { mount } from '@vue/test-utils'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import LoadView from '@/views/LoadView'
 import fu from '@/lib/utils/fileIo'
 import database from '@/lib/database'
@@ -26,7 +26,7 @@ describe('LoadView.vue', () => {
     const actions = {
       addTab: sinon.stub().callsFake(realActions.addTab)
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
     const $route = {
       path: '/workspace',
       query: {
@@ -58,10 +58,10 @@ describe('LoadView.vue', () => {
     Tab.prototype.execute = sinon.stub()
 
     const wrapper = mount(LoadView, {
-      store,
       global: {
         mocks: { $route, $router },
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
 
@@ -106,7 +106,7 @@ describe('LoadView.vue', () => {
     const actions = {
       addTab: sinon.stub().callsFake(realActions.addTab)
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
     const $route = {
       path: '/workspace',
       query: {
@@ -136,10 +136,10 @@ describe('LoadView.vue', () => {
     })
 
     const wrapper = mount(LoadView, {
-      store,
       global: {
         mocks: { $route, $router },
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
 

@@ -89,7 +89,7 @@ export default {
       topPaneSize: this.tab.maximize
         ? this.tab.layout[this.tab.maximize] === 'above' ? 100 : 0
         : 50,
-      enableTeleport: false
+      enableTeleport: this.$store.state.isWorkspaceVisible
     }
   },
   computed: {
@@ -103,7 +103,7 @@ export default {
       async handler () {
         if (this.isActive) {
           await nextTick()
-          this.$refs.sqlEditor.focus()
+          this.$refs.sqlEditor?.focus()
         }
       }
     },
@@ -114,16 +114,17 @@ export default {
       })
     }
   },
-  activated () {
+  async activated () {
     this.enableTeleport = true
+    if (this.isActive) {
+      await nextTick()
+      this.$refs.sqlEditor.focus()
+    }
   },
   deactivated () {
     this.enableTeleport = false
   },
-  mounted () {
-    if (this.$store.state.isWorkspaceVisible) {
-      this.enableTeleport = true
-    }
+  async mounted () {
     this.tab.dataView = this.$refs.dataView
   },
   methods: {

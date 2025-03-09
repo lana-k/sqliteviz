@@ -1,11 +1,20 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { shallowMount, mount, DOMWrapper } from '@vue/test-utils'
+import { shallowMount, mount } from '@vue/test-utils'
 import mutations from '@/store/mutations'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import Tabs from '@/views/Main/Workspace/Tabs'
+import eventBus from '@/lib/eventBus'
+
 
 describe('Tabs.vue', () => {
+  let clock
+  
+  beforeEach(() => {
+    clock = sinon.useFakeTimers()
+    sinon.spy(eventBus, '$emit')
+  })
+
   afterEach(() => {
     sinon.restore()
   })
@@ -15,18 +24,19 @@ describe('Tabs.vue', () => {
     const state = {
       tabs: []
     }
-    const store = new Vuex.Store({ state })
+    const store = createStore({ state })
 
     // mount the component
     const wrapper = shallowMount(Tabs, {
-      store,
       global: {
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
 
     // check start-guide visibility
     expect(wrapper.find('#start-guide').isVisible()).to.equal(true)
+    wrapper.unmount()
   })
 
   it('Renders tabs', () => {
@@ -38,13 +48,14 @@ describe('Tabs.vue', () => {
       ],
       currentTabId: 2
     }
-    const store = new Vuex.Store({ state })
+    const store = createStore({ state })
 
     // mount the component
     const wrapper = shallowMount(Tabs, {
-      store,
+      attachTo: document.body,
       global: {
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
 
@@ -63,6 +74,7 @@ describe('Tabs.vue', () => {
     expect(secondTab.text()).to.include('Untitled')
     expect(secondTab.find('.star').isVisible()).to.equal(true)
     expect(secondTab.classes()).to.include('tab-selected')
+    wrapper.unmount()
   })
 
   it('Selects the tab on click', async () => {
@@ -75,13 +87,13 @@ describe('Tabs.vue', () => {
       currentTabId: 2
     }
 
-    const store = new Vuex.Store({ state, mutations })
+    const store = createStore({ state, mutations })
 
     // mount the component
     const wrapper = shallowMount(Tabs, {
-      store,
       global: {
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
 
@@ -94,6 +106,7 @@ describe('Tabs.vue', () => {
     const secondTab = wrapper.findAll('.tab')[1]
     expect(secondTab.classes()).to.not.include('tab-selected')
     expect(state.currentTabId).to.equal(1)
+    wrapper.unmount()
   })
 
   it("Deletes the tab on close if it's saved", async () => {
@@ -131,13 +144,13 @@ describe('Tabs.vue', () => {
       currentTabId: 2
     }
 
-    const store = new Vuex.Store({ state, mutations })
+    const store = createStore({ state, mutations })
 
     // mount the component
     const wrapper = mount(Tabs, {
-      store,
       global: {
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
 
@@ -152,6 +165,7 @@ describe('Tabs.vue', () => {
     expect(firstTab.text()).to.include('Untitled')
     expect(firstTab.find('.star').isVisible()).to.equal(true)
     expect(firstTab.classes()).to.include('tab-selected')
+    wrapper.unmount()
   })
 
   it("Doesn't delete tab on close if user cancel closing", async () => {
@@ -189,13 +203,16 @@ describe('Tabs.vue', () => {
       currentTabId: 2
     }
 
-    const store = new Vuex.Store({ state, mutations })
+    const store = createStore({ state, mutations })
 
     // mount the component
     const wrapper = mount(Tabs, {
-      store,
+      attachTo: document.body,
       global: {
-        stubs: ['router-link']
+        stubs: {
+          'router-link': true, teleport: true, transition: false
+        },
+        plugins: [store]
       }
     })
 
@@ -204,13 +221,14 @@ describe('Tabs.vue', () => {
     await secondTabCloseIcon.trigger('click')
 
     // check that Close Tab dialog is visible
-    const modal = wrapper.find('[data-modal="close-warn"]')
+    const modal = wrapper.find('.dialog.vfm')
     expect(modal.exists()).to.equal(true)
+    expect(modal.find('.dialog-header').text()).to.contain('Close tab')
 
     // find Cancel in the dialog
     const cancelBtn = wrapper
-      .findAll('.dialog-buttons-container button').wrappers
-      .find(button => button.text() === 'Cancel')
+      .findAll('.dialog-buttons-container button')
+      .find(button => button.text() === "Don't close")
 
     // click Cancel in the dialog
     await cancelBtn.trigger('click')
@@ -219,7 +237,9 @@ describe('Tabs.vue', () => {
     expect(wrapper.findAllComponents({ name: 'Tab' })).to.have.lengthOf(2)
 
     // check that the dialog is closed
-    expect(wrapper.find('[data-modal="close-warn"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    wrapper.unmount()
   })
 
   it('Closes without saving', async () => {
@@ -257,13 +277,16 @@ describe('Tabs.vue', () => {
       currentTabId: 2
     }
 
-    const store = new Vuex.Store({ state, mutations })
+    const store = createStore({ state, mutations })
 
     // mount the component
     const wrapper = mount(Tabs, {
-      store,
+      attachTo: document.body,
       global: {
-        stubs: ['router-link']
+        stubs: {
+          'router-link': true, teleport: true, transition: false
+        },
+        plugins: [store]
       }
     })
 
@@ -273,7 +296,7 @@ describe('Tabs.vue', () => {
 
     // find 'Close without saving' in the dialog
     const closeBtn = wrapper
-      .findAll('.dialog-buttons-container button').wrappers
+      .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Close without saving')
 
     // click 'Close without saving' in the dialog
@@ -287,11 +310,12 @@ describe('Tabs.vue', () => {
     expect(firstTab.classes()).to.include('tab-selected')
 
     // check that 'saveInquiry' event was not emited
-    const rootWrapper = new DOMWrapper(wrapper.vm.$root)
-    expect(rootWrapper.emitted('saveInquiry')).to.equal(undefined)
+    expect(eventBus.$emit.calledWith('saveInquiry')).to.equal(false)
 
     // check that the dialog is closed
-    expect(wrapper.find('[data-modal="close-warn"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    wrapper.unmount()
   })
 
   it('Closes with saving', async () => {
@@ -329,13 +353,16 @@ describe('Tabs.vue', () => {
       currentTabId: 2
     }
 
-    const store = new Vuex.Store({ state, mutations })
+    const store = createStore({ state, mutations })
 
     // mount the component
     const wrapper = mount(Tabs, {
-      store,
+      attachTo: document.body,
       global: {
-        stubs: ['router-link']
+        stubs: {
+          'router-link': true, teleport: true, transition: false
+        },
+        plugins: [store]
       }
     })
 
@@ -345,14 +372,14 @@ describe('Tabs.vue', () => {
 
     // find 'Save and close' in the dialog
     const closeBtn = wrapper
-      .findAll('.dialog-buttons-container button').wrappers
+      .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Save and close')
 
     // click 'Save and close' in the dialog
     await closeBtn.trigger('click')
 
-    // pretend like saving is completed - trigger 'inquirySaved' on $root
-    await wrapper.vm.$root.$emit('inquirySaved')
+    // pretend like saving is completed - trigger 'inquirySaved' on eventBus
+    await eventBus.$emit('inquirySaved')
 
     // check that tab is closed
     expect(wrapper.findAllComponents({ name: 'Tab' })).to.have.lengthOf(1)
@@ -362,11 +389,12 @@ describe('Tabs.vue', () => {
     expect(firstTab.classes()).to.include('tab-selected')
 
     // check that 'saveInquiry' event was emited
-    const rootWrapper = new DOMWrapper(wrapper.vm.$root)
-    expect(rootWrapper.emitted('saveInquiry')).to.have.lengthOf(1)
+    expect(eventBus.$emit.calledWith('saveInquiry')).to.equal(true)
 
     // check that the dialog is closed
-    expect(wrapper.find('[data-modal="close-warn"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    wrapper.unmount()
   })
 
   it('Prevents closing a tab of a browser if there is unsaved inquiry', () => {
@@ -379,13 +407,13 @@ describe('Tabs.vue', () => {
       currentTabId: 2
     }
 
-    const store = new Vuex.Store({ state, mutations })
+    const store = createStore({ state, mutations })
 
     // mount the component
     const wrapper = shallowMount(Tabs, {
-      store,
       global: {
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
 
@@ -394,6 +422,7 @@ describe('Tabs.vue', () => {
     wrapper.vm.leavingSqliteviz(event)
 
     expect(event.preventDefault.calledOnce).to.equal(true)
+    wrapper.unmount()
   })
 
   it("Doesn't prevent closing a tab of a browser if there is unsaved inquiry", () => {
@@ -405,13 +434,13 @@ describe('Tabs.vue', () => {
       currentTabId: 1
     }
 
-    const store = new Vuex.Store({ state, mutations })
+    const store = createStore({ state, mutations })
 
     // mount the component
     const wrapper = shallowMount(Tabs, {
-      store,
       global: {
-        stubs: ['router-link']
+        stubs: ['router-link'],
+        plugins: [store]
       }
     })
 
@@ -420,5 +449,6 @@ describe('Tabs.vue', () => {
     wrapper.vm.leavingSqliteviz(event)
 
     expect(event.preventDefault.calledOnce).to.equal(false)
+    wrapper.unmount()
   })
 })

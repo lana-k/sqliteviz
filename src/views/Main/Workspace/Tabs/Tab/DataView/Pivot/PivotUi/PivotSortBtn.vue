@@ -15,6 +15,7 @@ import SortIcon from '@/components/svg/sort'
 export default {
   name: 'PivotSortBtn',
   props: ['direction', 'modelValue'],
+  emits: ['update:modelValue'],
   components: {
     SortIcon
   },

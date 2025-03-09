@@ -1,14 +1,22 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import { mount, shallowMount } from '@vue/test-utils'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import Inquiries from '@/views/Main/Inquiries'
 import storedInquiries from '@/lib/storedInquiries'
 import mutations from '@/store/mutations'
 import actions from '@/store/actions'
 import fu from '@/lib/utils/fileIo'
+import { nextTick } from 'vue'
+
 
 describe('Inquiries.vue', () => {
+  let clock
+
+  beforeEach(() => {
+    clock = sinon.useFakeTimers()
+  })
+
   afterEach(() => {
     sinon.restore()
   })
@@ -24,10 +32,15 @@ describe('Inquiries.vue', () => {
       updatePredefinedInquiries: sinon.stub(),
       setLoadingPredefinedInquiries: sinon.stub()
     }
-    const store = new Vuex.Store({ state, mutations, actions })
-    const wrapper = shallowMount(Inquiries, { store })
+    const store = createStore({ state, mutations, actions })
+    const wrapper = shallowMount(Inquiries, {
+      global: {
+        plugins: [store]
+      }
+    })
 
     expect(wrapper.find('#start-guide').exists()).to.equal(true)
+    wrapper.unmount()
   })
 
   it('Renders the list of saved and predefined inquiries', async () => {
@@ -64,10 +77,13 @@ describe('Inquiries.vue', () => {
       ]
     }
 
-    const store = new Vuex.Store({ state, mutations, actions })
-    const wrapper = shallowMount(Inquiries, { store })
+    const store = createStore({ state, mutations, actions })
+    const wrapper = shallowMount(Inquiries, {
+      attachTo: document.body,
+      global: { plugins: [store] } 
+    })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     expect(wrapper.find('#start-guide').exists()).to.equal(false)
     expect(wrapper.find('#toolbar-btns-import').isVisible()).to.equal(true)
@@ -82,6 +98,7 @@ describe('Inquiries.vue', () => {
     expect(rows[1].findAll('td')[1].text()).to.equals('3 November 2020 20:57')
     expect(rows[2].findAll('td')[0].text()).to.equals('bar')
     expect(rows[2].findAll('td')[1].text()).to.equals('4 December 2020 19:53')
+    wrapper.unmount()
   })
 
   it('Filters the list of inquiries', async () => {
@@ -118,15 +135,20 @@ describe('Inquiries.vue', () => {
       ]
     }
 
-    const store = new Vuex.Store({ state, mutations, actions })
-    const wrapper = mount(Inquiries, { store })
+    const store = createStore({ state, mutations, actions })
+    const wrapper = mount(Inquiries, {
+      global: {
+        plugins: [store]
+      }
+    })
     await wrapper.find('#toolbar-search input').setValue('OO')
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     const rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(1)
     expect(rows[0].findAll('td')[0].text()).to.equals('foo')
     expect(rows[0].findAll('td')[1].text()).to.contains('3 November 2020 20:57')
+    wrapper.unmount()
   })
 
   it('Shows No found message when filter returns nothing', async () => {
@@ -163,14 +185,18 @@ describe('Inquiries.vue', () => {
       ]
     }
 
-    const store = new Vuex.Store({ state, mutations, actions })
-    const wrapper = mount(Inquiries, { store })
+    const store = createStore({ state, mutations, actions })
+    const wrapper = mount(Inquiries, {
+      attachTo: document.body, 
+      global: { plugins: [store] } 
+    })
     await wrapper.find('#toolbar-search input').setValue('baz')
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     expect(wrapper.find('#inquiries-not-found').text()).to.equal('No inquiries found')
     expect(wrapper.find('#start-guide').exists()).to.equal(false)
     expect(wrapper.find('tbody').isVisible()).to.equal(false)
+    wrapper.unmount()
   })
 
   it('Predefined inquiry has a badge', async () => {
@@ -199,14 +225,19 @@ describe('Inquiries.vue', () => {
       ]
     }
 
-    const store = new Vuex.Store({ state, mutations, actions })
-    const wrapper = shallowMount(Inquiries, { store })
+    const store = createStore({ state, mutations, actions })
+    const wrapper = shallowMount(Inquiries, {
+      global: {
+        plugins: [store]
+      }
+    })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     const rows = wrapper.findAll('tbody tr')
     expect(rows[0].find('td .badge').exists()).to.equals(true)
     expect(rows[1].find('td .badge').exists()).to.equals(false)
+    wrapper.unmount()
   })
 
   it('Exports one inquiry', async () => {
@@ -227,12 +258,13 @@ describe('Inquiries.vue', () => {
       ]
     }
 
-    const store = new Vuex.Store({ state, mutations, actions })
-    const wrapper = mount(Inquiries, { store })
+    const store = createStore({ state, mutations, actions })
+    const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
     await wrapper.findComponent({ name: 'ExportIcon' }).find('svg').trigger('click')
     expect(fu.exportToFile.calledOnceWith('I am a serialized inquiry', 'foo.json')).to.equals(true)
+    wrapper.unmount()
   })
 
   it('Duplicates an inquiry', async () => {
@@ -259,11 +291,11 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: [],
       inquiries: [inquiryInStorage]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
     await wrapper.findComponent({ name: 'CopyIcon' }).find('svg').trigger('click')
 
     expect(storedInquiries.duplicateInquiry.calledOnceWith(inquiryInStorage)).to.equals(true)
@@ -273,6 +305,7 @@ describe('Inquiries.vue', () => {
     expect(rows[1].findAll('td')[0].text()).to.equals('foo copy')
     expect(rows[1].findAll('td')[1].text()).to.contains('3 December 2020 20:57')
     expect(state.inquiries).to.eql([inquiryInStorage, newInquiry])
+    wrapper.unmount()
   })
 
   it('The copy of the inquiry is not selected if all inquiries were selected before duplication',
@@ -299,11 +332,11 @@ describe('Inquiries.vue', () => {
         predefinedInquiries: [],
         inquiries: [inquiryInStorage]
       }
-      const store = new Vuex.Store({ state, mutations, actions })
+      const store = createStore({ state, mutations, actions })
 
-      const wrapper = mount(Inquiries, { store })
+      const wrapper = mount(Inquiries, { global: { plugins: [store] } })
       await storedInquiries.readPredefinedInquiries.returnValues[0]
-      await wrapper.vm.$nextTick()
+      await nextTick()
       await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
         .trigger('click')
       await wrapper.findComponent({ name: 'CopyIcon' }).find('svg').trigger('click')
@@ -311,6 +344,7 @@ describe('Inquiries.vue', () => {
       const checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
       expect(checkboxes[0].vm.checked).to.equals(true)
       expect(checkboxes[1].vm.checked).to.equals(false)
+      wrapper.unmount()
     })
 
   it('Opens an inquiry', async () => {
@@ -332,23 +366,25 @@ describe('Inquiries.vue', () => {
     const actions = { addTab: sinon.stub().resolves(1) }
     sinon.spy(mutations, 'setCurrentTabId')
     const $router = { push: sinon.stub() }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
     const wrapper = shallowMount(Inquiries, {
-      store,
       global: {
-        mocks: { $router }
+        mocks: { $router },
+        plugins: [store]
       }
     })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
     await wrapper.find('tbody tr').trigger('click')
+    await clock.tick(0)
 
     expect(actions.addTab.calledOnce).to.equals(true)
-    expect(actions.addTab.getCall(0).args[1]).to.equals(inquiryInStorage)
+    expect(actions.addTab.getCall(0).args[1]).to.eql(inquiryInStorage)
     await actions.addTab.returnValues[0]
     expect(mutations.setCurrentTabId.calledOnceWith(state, 1)).to.equals(true)
     expect($router.push.calledOnceWith('/workspace')).to.equals(true)
+    wrapper.unmount()
   })
 
   it('Rename is not available for predefined inquiries', async () => {
@@ -367,12 +403,13 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: [],
       inquiries: []
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect(wrapper.findComponent({ name: 'RenameIcon' }).exists()).to.equals(false)
+    wrapper.unmount()
   })
 
   it('Renames an inquiry', async () => {
@@ -392,17 +429,24 @@ describe('Inquiries.vue', () => {
         }
       ]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
-
-    const wrapper = mount(Inquiries, { store })
+    const store = createStore({ state, mutations, actions })
+    const wrapper = mount(Inquiries, {
+      attachTo: document.body,
+      global: { 
+        plugins: [store],
+        stubs: { teleport: true, transition: false }
+      }
+    })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     // click Rename icon in the grid
     await wrapper.findComponent({ name: 'RenameIcon' }).find('svg').trigger('click')
 
     // check that rename dialog is open
-    expect(wrapper.find('[data-modal="rename"]').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text())
+      .to.contain('Rename inquiry')
 
     // check that input is filled by the current inquiry name
     expect(wrapper.find('.dialog-body input').element.value).to.equals('foo')
@@ -412,10 +456,10 @@ describe('Inquiries.vue', () => {
 
     // find Rename in the dialog and click
     await wrapper
-      .findAll('.dialog-buttons-container button').wrappers
+      .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Rename')
       .trigger('click')
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     // check that the name in the grid is changed
     expect(wrapper.find('tbody tr td').text()).to.equals('bar')
@@ -434,7 +478,9 @@ describe('Inquiries.vue', () => {
     expect(state.tabs[0].name).to.equals('bar')
 
     // check that rename dialog is closed
-    expect(wrapper.find('[data-modal="rename"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    wrapper.unmount()
   })
 
   it('Shows an error if try to rename to empty string', async () => {
@@ -454,11 +500,17 @@ describe('Inquiries.vue', () => {
         }
       ]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, {
+      attachTo: document.body,
+      global: {
+        plugins: [store],
+        stubs: { teleport: true, transition: false }
+      }
+    })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     // click Rename icon in the grid
     await wrapper.findComponent({ name: 'RenameIcon' }).find('svg').trigger('click')
@@ -468,14 +520,16 @@ describe('Inquiries.vue', () => {
 
     // find Rename in the dialog and click
     await wrapper
-      .findAll('.dialog-buttons-container button').wrappers
+      .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Rename')
       .trigger('click')
 
     expect(wrapper.find('.dialog-body .text-field-error').text())
       .to.equals("Inquiry name can't be empty")
     // check that rename dialog is still open
-    expect(wrapper.find('[data-modal="rename"]').exists()).to.equal(true)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    wrapper.unmount()
   })
 
   it('Imports inquiries', async () => {
@@ -502,11 +556,11 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: [],
       inquiries: [inquiryInStorage]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = shallowMount(Inquiries, { store })
+    const wrapper = shallowMount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     // click Import
     await wrapper.find('#toolbar-btns-import').trigger('click')
@@ -516,6 +570,7 @@ describe('Inquiries.vue', () => {
     expect(rows[1].findAll('td')[0].text()).to.equals('bar')
     expect(rows[1].findAll('td')[1].text()).to.equals('3 December 2020 20:57')
     expect(state.inquiries).to.eql([inquiryInStorage, importedInquiry])
+    wrapper.unmount()
   })
 
   it('Imported inquiries are not selected if master check box was checked', async () => {
@@ -542,11 +597,11 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: [],
       inquiries: [inquiryInStorage]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     // click on master checkbox
     await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
@@ -559,6 +614,7 @@ describe('Inquiries.vue', () => {
     expect(wrapper.findComponent({ ref: 'mainCheckBox' }).vm.checked).to.equals(false)
     expect(checkboxes[0].vm.checked).to.equals(true)
     expect(checkboxes[1].vm.checked).to.equals(false)
+    wrapper.unmount()
   })
   
   it('Deletion is not available for predefined inquiries', async () => {
@@ -577,12 +633,13 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: [],
       inquiries: []
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect(wrapper.findComponent({ name: 'DeleteIcon' }).exists()).to.equals(false)
+    wrapper.unmount()
   })
 
   it('Delete an inquiry', async () => {
@@ -610,23 +667,31 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: [],
       inquiries: [foo, bar]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, {
+      attachTo: document.body,
+      global: { 
+        plugins: [store],
+        stubs: { teleport: true, transition: false }
+      }
+     })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
     // click Delete icon in the first row of the grid
     await wrapper.findComponent({ name: 'DeleteIcon' }).find('svg').trigger('click')
 
     // check that delete dialog is open
-    expect(wrapper.find('[data-modal="delete"]').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text())
+    .to.contain('Delete inquiry')
 
     // check the message in the dialog
     expect(wrapper.find('.dialog-body').text()).to.contains('"foo"?')
 
     // find Delete in the dialog and click
     await wrapper
-      .findAll('.dialog-buttons-container button').wrappers
+      .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Delete')
       .trigger('click')
 
@@ -642,7 +707,9 @@ describe('Inquiries.vue', () => {
     expect(state.inquiries).to.eql([bar])
 
     // check that delete dialog is closed
-    expect(wrapper.find('[data-modal="delete"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    wrapper.unmount()
   })
 
   it('Group operations are available when there are checked rows', async () => {
@@ -670,11 +737,14 @@ describe('Inquiries.vue', () => {
         }
       ]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, {
+      attachTo: document.body,
+      global: { plugins: [store] }
+    })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     expect(wrapper.find('#toolbar-btns-export').isVisible()).to.equal(false)
     expect(wrapper.find('#toolbar-btns-delete').isVisible()).to.equal(false)
@@ -695,6 +765,7 @@ describe('Inquiries.vue', () => {
     await rows[0].find('.checkbox-container').trigger('click')
     expect(wrapper.find('#toolbar-btns-export').isVisible()).to.equal(true)
     expect(wrapper.find('#toolbar-btns-delete').isVisible()).to.equal(true)
+    wrapper.unmount()
   })
 
   it('Exports a group of inquiries', async () => {
@@ -730,11 +801,11 @@ describe('Inquiries.vue', () => {
         createdAt: '2020-03-08T19:57:56.299Z'
       }]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     const rows = wrapper.findAll('tbody tr')
 
@@ -751,6 +822,7 @@ describe('Inquiries.vue', () => {
     expect(
       fu.exportToFile.calledOnceWith('I am a serialized inquiries', 'My sqliteviz inquiries.json')
     ).to.equals(true)
+    wrapper.unmount()
   })
 
   it('Exports all inquiries', async () => {
@@ -779,11 +851,11 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: [],
       inquiries: [inquiryInStore]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
       .trigger('click')
@@ -797,6 +869,7 @@ describe('Inquiries.vue', () => {
     expect(
       fu.exportToFile.calledOnceWith('I am a serialized inquiries', 'My sqliteviz inquiries.json')
     ).to.equals(true)
+    wrapper.unmount()
   })
 
   it('Deletes a group of inquiries', async () => {
@@ -841,11 +914,17 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: [],
       inquiries: [foo, bar, baz]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, {
+      attachTo: document.body,
+      global: { 
+        plugins: [store],
+        stubs: { teleport: true, transition: false }
+       }
+    })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     const rows = wrapper.findAll('tbody tr')
 
@@ -856,7 +935,7 @@ describe('Inquiries.vue', () => {
     await wrapper.find('#toolbar-btns-delete').trigger('click')
 
     // check that delete dialog is open
-    expect(wrapper.find('[data-modal="delete"]').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
 
     // check the message in the dialog
     expect(wrapper.find('.dialog-body').text())
@@ -864,7 +943,7 @@ describe('Inquiries.vue', () => {
 
     // find Delete in the dialog and click
     await wrapper
-      .findAll('.dialog-buttons-container button').wrappers
+      .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Delete')
       .trigger('click')
 
@@ -882,7 +961,9 @@ describe('Inquiries.vue', () => {
     expect(state.inquiries).to.eql([baz])
 
     // check that delete dialog is closed
-    expect(wrapper.find('[data-modal="delete"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    wrapper.unmount()
   })
 
   it('Ignores predefined inquiries during deletion', async () => {
@@ -918,11 +999,17 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: [],
       inquiries: [foo, bar]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, {
+      attachTo: document.body,
+      global: {
+        plugins: [store],
+        stubs: { teleport: true, transition: false } 
+      }
+    })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     const rows = wrapper.findAll('tbody tr')
 
@@ -933,7 +1020,7 @@ describe('Inquiries.vue', () => {
     await wrapper.find('#toolbar-btns-delete').trigger('click')
 
     // check that delete dialog is open
-    expect(wrapper.find('[data-modal="delete"]').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
 
     // check the message in the dialog
     expect(wrapper.find('.dialog-body').text())
@@ -943,7 +1030,7 @@ describe('Inquiries.vue', () => {
 
     // find Delete in the dialog and click
     await wrapper
-      .findAll('.dialog-buttons-container button').wrappers
+      .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Delete')
       .trigger('click')
 
@@ -956,7 +1043,9 @@ describe('Inquiries.vue', () => {
     expect(state.inquiries).to.eql([bar])
 
     // check that delete dialog is closed
-    expect(wrapper.find('[data-modal="delete"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    wrapper.unmount()
   })
 
   it('Deletes all inquiries ignoring predefined ones', async () => {
@@ -992,11 +1081,17 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: [],
       inquiries: [foo, bar]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, {
+      attachTo: document.body,
+      global: {
+        plugins: [store],
+        stubs: { teleport: true, transition: false }
+      }
+    })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
       .trigger('click')
@@ -1004,7 +1099,7 @@ describe('Inquiries.vue', () => {
     await wrapper.find('#toolbar-btns-delete').trigger('click')
 
     // check that delete dialog is open
-    expect(wrapper.find('[data-modal="delete"]').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
 
     // check the message in the dialog
     expect(wrapper.find('.dialog-body').text())
@@ -1014,7 +1109,7 @@ describe('Inquiries.vue', () => {
 
     // find Delete in the dialog and click
     await wrapper
-      .findAll('.dialog-buttons-container button').wrappers
+      .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Delete')
       .trigger('click')
 
@@ -1026,7 +1121,9 @@ describe('Inquiries.vue', () => {
     expect(state.inquiries).to.eql([])
 
     // check that delete dialog is closed
-    expect(wrapper.find('[data-modal="delete"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    wrapper.unmount()
   })
 
   it('Main checkbox', async () => {
@@ -1052,11 +1149,11 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: [],
       inquiries: [foo, bar]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     const mainCheckBox = wrapper.findComponent({ ref: 'mainCheckBox' })
     // Select all with main checkbox
@@ -1076,6 +1173,7 @@ describe('Inquiries.vue', () => {
     await mainCheckBox.find('.checkbox-container').trigger('click')
     expect(checkboxes[0].vm.checked).to.equals(false)
     expect(checkboxes[0].vm.checked).to.equals(false)
+    wrapper.unmount()
   })
 
   it('Selection and filter', async () => {
@@ -1110,11 +1208,11 @@ describe('Inquiries.vue', () => {
       predefinedInquiries: [],
       inquiries: [foo, bar]
     }
-    const store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
-    const wrapper = mount(Inquiries, { store })
+    const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     const mainCheckBox = wrapper.findComponent({ ref: 'mainCheckBox' })
     // Select all with main checkbox
@@ -1128,7 +1226,7 @@ describe('Inquiries.vue', () => {
 
     // Filter
     await wrapper.find('#toolbar-search input').setValue('foo')
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect([...wrapper.vm.selectedInquiriesIds]).to.eql([1])
     expect(wrapper.vm.selectedNotPredefinedCount).to.eql(1)
     checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
@@ -1136,7 +1234,7 @@ describe('Inquiries.vue', () => {
 
     // Clear filter
     await wrapper.find('#toolbar-search input').setValue('')
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect([...wrapper.vm.selectedInquiriesIds]).to.eql([1])
     expect(wrapper.vm.selectedNotPredefinedCount).to.eql(1)
     checkboxes = wrapper.findAll('tr .checkbox-container')
@@ -1151,7 +1249,7 @@ describe('Inquiries.vue', () => {
 
     // Filter
     await wrapper.find('#toolbar-search input').setValue('hello')
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect([...wrapper.vm.selectedInquiriesIds]).to.eql([0])
     expect(wrapper.vm.selectedNotPredefinedCount).to.eql(0)
     checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
@@ -1162,7 +1260,8 @@ describe('Inquiries.vue', () => {
 
     // Clear filter - main checkbox bocomes not checked
     await wrapper.find('#toolbar-search input').setValue('')
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect(mainCheckBox.vm.checked).to.equals(false)
+    wrapper.unmount()
   })
 })

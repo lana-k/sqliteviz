@@ -11,6 +11,7 @@
     </div>
     <side-tool-bar panel="sqlEditor" @switchTo="$emit('switchTo', $event)">
       <icon-button
+        ref="runBtn"
         :disabled="runDisabled"
         :loading="isGettingResults"
         tooltip="Run SQL query"
@@ -72,9 +73,9 @@ export default {
     }
   },
   methods: {
-    onChange: time.debounce(showHint, 400),
+    onChange: time.debounce((value, editor) => showHint(editor), 400),
     focus () {
-      this.$refs.cm.cminstance.focus()
+      this.$refs.cm.cminstance?.focus()
     }
   }
 }

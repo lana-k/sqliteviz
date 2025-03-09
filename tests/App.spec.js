@@ -1,10 +1,11 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import { shallowMount } from '@vue/test-utils'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import App from '@/App'
 import storedInquiries from '@/lib/storedInquiries'
 import mutations from '@/store/mutations'
+import { nextTick } from 'vue'
 
 describe('App.vue', () => {
   afterEach(() => {
@@ -19,8 +20,13 @@ describe('App.vue', () => {
       predefinedInquiries: [],
       inquiries: []
     }
-    const store = new Vuex.Store({ state, mutations })
-    shallowMount(App, { store, stubs: ['router-view'] })
+    const store = createStore({ state, mutations })
+    shallowMount(App, {
+      global: { 
+        stubs: ['router-view'],
+        plugins: [store]
+      }
+    })
 
     expect(state.inquiries).to.eql([{ id: 1 }, { id: 2 }, { id: 3 }])
   })
@@ -35,11 +41,14 @@ describe('App.vue', () => {
       predefinedInquiries: [],
       inquiries: []
     }
-    const store = new Vuex.Store({ state, mutations })
-    const wrapper = shallowMount(App, { store, stubs: ['router-view'] })
+    const store = createStore({ state, mutations })
+    shallowMount(App, {
+      global: { stubs: ['router-view'],
+      plugins: [store] }
+    })
 
     store.state.inquiries.splice(0, 1, { id: 1, name: 'new foo name' })
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     expect(storedInquiries.updateStorage.calledTwice).to.equal(true)
 

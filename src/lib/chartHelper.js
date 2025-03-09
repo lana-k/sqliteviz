@@ -1,4 +1,4 @@
-import dereference from 'react-chart-editor/lib/lib/dereference'
+import * as dereference from 'react-chart-editor/lib/lib/dereference'
 import plotly from 'plotly.js'
 import { nanoid } from 'nanoid'
 
@@ -21,7 +21,7 @@ export function getOptionsForSave (state, dataSources) {
   for (const key in dataSources) {
     emptySources[key] = []
   }
-  dereference(stateCopy.data, emptySources)
+  dereference.default(stateCopy.data, emptySources)
   return stateCopy
 }
 

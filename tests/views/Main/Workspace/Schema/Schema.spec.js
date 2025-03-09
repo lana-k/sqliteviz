@@ -9,8 +9,16 @@ import TableDescription from '@/views/Main/Workspace/Schema/TableDescription'
 import database from '@/lib/database'
 import fIo from '@/lib/utils/fileIo'
 import csv from '@/lib/csv'
+import { nextTick } from 'vue'
+
 
 describe('Schema.vue', () => {
+  let clock
+
+  beforeEach(() => {
+    clock = sinon.useFakeTimers()
+  })
+
   afterEach(() => {
     sinon.restore()
   })
@@ -34,6 +42,7 @@ describe('Schema.vue', () => {
     // check DB name and schema visibility
     expect(wrapper.find('.db-name').text()).to.equal('fooDB')
     expect(wrapper.find('.schema').isVisible()).to.equal(true)
+    wrapper.unmount()
   })
 
   it('Schema visibility is toggled when click on DB name', async () => {
@@ -47,6 +56,7 @@ describe('Schema.vue', () => {
 
     // mout the component
     const wrapper = mount(Schema, {
+      attachTo: document.body,
       global: {
         plugins: [store]
       }
@@ -57,6 +67,7 @@ describe('Schema.vue', () => {
     expect(wrapper.find('.schema').isVisible()).to.equal(false)
     await wrapper.find('.db-name').trigger('click')
     expect(wrapper.find('.schema').isVisible()).to.equal(true)
+    wrapper.unmount()
   })
 
   it('Schema filter', async () => {
@@ -117,6 +128,7 @@ describe('Schema.vue', () => {
     expect(tables[0].vm.name).to.equal('foo')
     expect(tables[1].vm.name).to.equal('bar')
     expect(tables[2].vm.name).to.equal('foobar')
+    wrapper.unmount()
   })
 
   it('exports db', async () => {
@@ -135,6 +147,7 @@ describe('Schema.vue', () => {
 
     await wrapper.findComponent({ name: 'export-icon' }).find('svg').trigger('click')
     expect(state.db.export.calledOnceWith('fooDB'))
+    wrapper.unmount()
   })
 
   it('adds table', async () => {
@@ -165,8 +178,10 @@ describe('Schema.vue', () => {
 
     const store = createStore({ state, actions, mutations })
     const wrapper = mount(Schema, {
+      attachTo: document.body,
       global: {
-        plugins: [store]
+        plugins: [store],
+        stubs: { teleport: true, transition: false }
       }
     })
     sinon.spy(wrapper.vm.$refs.addCsvJson, 'preview')
@@ -176,13 +191,16 @@ describe('Schema.vue', () => {
     await wrapper.findComponent({ name: 'add-table-icon' }).find('svg').trigger('click')
     await wrapper.vm.$refs.addCsvJson.preview.returnValues[0]
     await wrapper.vm.addCsvJson.returnValues[0]
-    await wrapper.vm.$nextTick()
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(true)
+    await nextTick()
+    await nextTick()
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text())
+      .to.contain('CSV import')
     await wrapper.find('#import-start').trigger('click')
     await wrapper.vm.$refs.addCsvJson.loadToDb.returnValues[0]
     await wrapper.find('#import-finish').trigger('click')
-    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
     await state.db.refreshSchema.returnValues[0]
 
     expect(wrapper.vm.$store.state.db.schema).to.eql([
@@ -195,5 +213,6 @@ describe('Schema.vue', () => {
       col1: [1],
       col2: ['foo']
     })
+    wrapper.unmount()
   })
 })

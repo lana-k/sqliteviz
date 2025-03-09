@@ -4,18 +4,23 @@ import PivotSortBtn from '@/views/Main/Workspace/Tabs/Tab/DataView/Pivot/PivotUi
 
 describe('PivotSortBtn.vue', () => {
   it('switches order', async () => {
-    const wrapper = shallowMount(PivotSortBtn, { props: { value: 'key_a_to_z' } })
+    const wrapper = shallowMount(PivotSortBtn, { 
+      props: {
+        modelValue: 'key_a_to_z',
+        'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
+      }
+    })
 
-    expect(wrapper.vm.value).to.equal('key_a_to_z')
+    expect(wrapper.props('modelValue')).to.equal('key_a_to_z')
     await wrapper.find('.pivot-sort-btn').trigger('click')
-    expect(wrapper.emitted('input')[0]).to.eql(['value_a_to_z'])
+    expect(wrapper.props('modelValue')).to.equal('value_a_to_z')
 
-    await wrapper.setProps({ value: 'value_a_to_z' })
+    await wrapper.setValue('value_a_to_z')
     await wrapper.find('.pivot-sort-btn').trigger('click')
-    expect(wrapper.emitted('input')[1]).to.eql(['value_z_to_a'])
+    expect(wrapper.props('modelValue')).to.equal('value_z_to_a')
 
-    await wrapper.setProps({ value: 'value_z_to_a' })
+    await wrapper.setValue('value_z_to_a')
     await wrapper.find('.pivot-sort-btn').trigger('click')
-    expect(wrapper.emitted('input')[2]).to.eql(['key_a_to_z'])
+    expect(wrapper.props('modelValue')).to.equal('key_a_to_z')
   })
 })

@@ -18,7 +18,7 @@ describe('tooltipMixin.js', () => {
       template: '<div :style="tooltipStyle"></div>',
       mixins: [tooltipMixin]
     }
-    const wrapper = mount(component)
+    const wrapper = mount(component, { attachTo: container })
     expect(wrapper.find('div').isVisible()).to.equal(false)
   })
 
@@ -108,7 +108,7 @@ describe('tooltipMixin.js', () => {
       template: '<div :style="tooltipStyle"></div>',
       mixins: [tooltipMixin]
     }
-    const wrapper = mount(component)
+    const wrapper = mount(component, { attachTo: container })
     await wrapper.vm.showTooltip(new MouseEvent('mouseenter', {
       clientX: 10,
       clientY: 20

@@ -3,6 +3,8 @@
     :modal-id="name"
     class="dialog"
     :clickToClose="false"
+    :contentTransition="{name: 'loading-dialog'}"
+    :overlayTransition="{name: 'loading-dialog'}"
   >
     <div class="dialog-header">
       {{ title }}
@@ -21,6 +23,7 @@
     <div class="dialog-buttons-container">
       <button
         class="secondary"
+        type="button"
         :disabled="loading"
         @click="$emit('cancel')"
       >
@@ -28,6 +31,7 @@
       </button>
       <button
         class="primary"
+        type="button"
         :disabled="loading"
         @click="$emit('action')"
       >
@@ -67,6 +71,31 @@ export default {
   }
 }
 </script>
+
+<style>
+.loading-dialog-enter-active {
+  animation: show-modal 1s linear 0s 1;
+}
+.loading-dialog-leave-active {
+  opacity: 0;
+}
+
+@keyframes show-modal {
+  0% {
+    opacity: 0;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.loading-modal {
+  width: 400px;
+}
+</style>
 
 <style scoped>
 .loading-dialog-body {

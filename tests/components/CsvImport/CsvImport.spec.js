@@ -1,15 +1,16 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import { mount } from '@vue/test-utils'
 import CsvJsonImport from '@/components/CsvJsonImport'
 import csv from '@/lib/csv'
+import { nextTick } from 'vue'
+
 
 describe('CsvJsonImport.vue', () => {
   let state = {}
   let actions = {}
   let mutations = {}
-  let store = {}
   let clock
   let wrapper
   const newTabId = 1
@@ -27,7 +28,7 @@ describe('CsvJsonImport.vue', () => {
     actions = {
       addTab: sinon.stub().resolves(newTabId)
     }
-    store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
     const db = {
       sanitizeTableName: sinon.stub().returns('my_data'),
@@ -41,17 +42,25 @@ describe('CsvJsonImport.vue', () => {
 
     // mount the component
     wrapper = mount(CsvJsonImport, {
-      store,
+      global: {
+        plugins: [store],
+        stubs: {
+          teleport: true,
+          transition: false
+        }
+      },
       props: {
         file,
         dialogName: 'addCsvJson',
         db
-      }
+      },
+      attachTo: document.body
     })
   })
 
   afterEach(() => {
     sinon.restore()
+    wrapper.unmount()
   })
 
   it('previews', async () => {
@@ -76,11 +85,12 @@ describe('CsvJsonImport.vue', () => {
 
     wrapper.vm.preview()
     await wrapper.vm.open()
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(true)
+    await nextTick()
+    await nextTick()
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
     expect(wrapper.find('.dialog-header').text()).to.equal('CSV import')
     expect(wrapper.find('#csv-json-table-name input').element.value).to.equal('my_data')
-    expect(wrapper.findComponent({ name: 'delimiter-selector' }).vm.value).to.equal('|')
+    expect(wrapper.findComponent({ name: 'delimiter-selector' }).props('modelValue')).to.equal('|')
     expect(wrapper.find('#quote-char input').element.value).to.equal('"')
     expect(wrapper.find('#escape-char input').element.value).to.equal('"')
     expect(wrapper.findComponent({ name: 'check-box' }).vm.checked).to.equal(true)
@@ -115,7 +125,8 @@ describe('CsvJsonImport.vue', () => {
 
     await wrapper.vm.preview()
     await wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
     const rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(0)
     expect(wrapper.findComponent({ name: 'logs' }).text())
@@ -123,7 +134,7 @@ describe('CsvJsonImport.vue', () => {
     expect(wrapper.find('.no-data').isVisible()).to.equal(true)
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#import-start').isVisible()).to.equal(true)
-    expect(wrapper.find('#import-start').attributes().disabled).to.equal('disabled')
+    expect(wrapper.find('#import-start').attributes().disabled).to.equal('')
   })
 
   it('reparses when parameters changes', async () => {
@@ -143,7 +154,8 @@ describe('CsvJsonImport.vue', () => {
     wrapper.vm.preview()
     wrapper.vm.open()
     await csv.parse.returnValues[0]
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     parse.onCall(1).resolves({
       delimiter: ',',
@@ -266,7 +278,8 @@ describe('CsvJsonImport.vue', () => {
 
     wrapper.vm.preview()
     wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     let resolveParsing
     parse.onCall(1).returns(new Promise(resolve => {
@@ -286,7 +299,6 @@ describe('CsvJsonImport.vue', () => {
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
-    await wrapper.vm.$nextTick()
 
     // "Parsing CSV..." in the logs
     expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[1].text())
@@ -349,7 +361,8 @@ describe('CsvJsonImport.vue', () => {
 
     wrapper.vm.preview()
     wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     let resolveImport
     wrapper.vm.db.addTableFromCsv.onCall(0).returns(new Promise(resolve => {
@@ -359,7 +372,6 @@ describe('CsvJsonImport.vue', () => {
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
-    await wrapper.vm.$nextTick()
 
     // Parsing success in the logs
     expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[1].text())
@@ -420,12 +432,12 @@ describe('CsvJsonImport.vue', () => {
 
     wrapper.vm.preview()
     wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
-    await wrapper.vm.$nextTick()
 
     // Parsing success in the logs
     const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
@@ -483,12 +495,12 @@ describe('CsvJsonImport.vue', () => {
 
     wrapper.vm.preview()
     wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
-    await wrapper.vm.$nextTick()
 
     // Parsing success in the logs
     const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
@@ -544,12 +556,12 @@ describe('CsvJsonImport.vue', () => {
 
     wrapper.vm.preview()
     wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
-    await wrapper.vm.$nextTick()
 
     // Parsing success in the logs
     expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[2].text())
@@ -613,12 +625,12 @@ describe('CsvJsonImport.vue', () => {
 
     wrapper.vm.preview()
     wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
-    await wrapper.vm.$nextTick()
 
     // Import success in the logs
     const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
@@ -670,12 +682,12 @@ describe('CsvJsonImport.vue', () => {
 
     wrapper.vm.preview()
     wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
-    await wrapper.vm.$nextTick()
 
     // Import success in the logs
     const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
@@ -711,17 +723,18 @@ describe('CsvJsonImport.vue', () => {
 
     wrapper.vm.preview()
     wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#import-start').trigger('click')
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     await wrapper.find('#import-finish').trigger('click')
-
+    await clock.tick(100)
     expect(actions.addTab.calledOnce).to.equal(true)
     await actions.addTab.returnValues[0]
     expect(mutations.setCurrentTabId.calledOnceWith(state, newTabId)).to.equal(true)
-    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(false)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
     expect(wrapper.emitted('finish')).to.have.lengthOf(1)
   })
 
@@ -742,14 +755,15 @@ describe('CsvJsonImport.vue', () => {
 
     await wrapper.vm.preview()
     await wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#import-start').trigger('click')
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     await wrapper.find('#import-cancel').trigger('click')
-
-    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
     expect(wrapper.vm.db.execute.calledOnceWith('DROP TABLE "my_data"')).to.equal(true)
     expect(wrapper.vm.db.refreshSchema.calledOnce).to.equal(true)
     expect(wrapper.emitted('cancel')).to.have.lengthOf(1)
@@ -763,23 +777,24 @@ describe('CsvJsonImport.vue', () => {
     })
     await wrapper.vm.preview()
     await wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await clock.tick(400)
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect(wrapper.find('#csv-json-table-name .text-field-error').text()).to.equal('')
 
     wrapper.vm.db.validateTableName = sinon.stub().rejects(new Error('this is a bad table name'))
     await wrapper.find('#csv-json-table-name input').setValue('bar')
     await clock.tick(400)
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect(wrapper.find('#csv-json-table-name .text-field-error').text())
       .to.equal('this is a bad table name. Try another table name.')
 
     await wrapper.find('#csv-json-table-name input').setValue('')
     await clock.tick(400)
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect(wrapper.find('#csv-json-table-name .text-field-error').text()).to.equal('')
 
     await wrapper.find('#import-start').trigger('click')
@@ -793,7 +808,6 @@ describe('CsvJsonImport.vue - json', () => {
   let state = {}
   let actions = {}
   let mutations = {}
-  let store = {}
   let clock
   let wrapper
   const newTabId = 1
@@ -817,7 +831,7 @@ describe('CsvJsonImport.vue - json', () => {
     actions = {
       addTab: sinon.stub().resolves(newTabId)
     }
-    store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
     const db = {
       sanitizeTableName: sinon.stub().returns('my_data'),
@@ -831,24 +845,33 @@ describe('CsvJsonImport.vue - json', () => {
 
     // mount the component
     wrapper = mount(CsvJsonImport, {
-      store,
+      global: { 
+        plugins: [store],
+        stubs: {
+          teleport: true,
+          transition: false
+        }
+      },
       props: {
         file,
         dialogName: 'addCsvJson',
         db
-      }
+      },
+      attachTo: document.body
     })
   })
 
   afterEach(() => {
     sinon.restore()
+    wrapper.unmount()
   })
 
   it('previews', async () => {
     await wrapper.vm.preview()
     await wrapper.vm.open()
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(true)
+    await nextTick()
+    await nextTick()
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
     expect(wrapper.find('.dialog-header').text()).to.equal('JSON import')
     expect(wrapper.find('#csv-json-table-name input').element.value).to.equal('my_data')
     expect(wrapper.findComponent({ name: 'delimiter-selector' }).exists()).to.equal(false)
@@ -906,11 +929,12 @@ describe('CsvJsonImport.vue - json', () => {
 
     await wrapper.vm.preview()
     await wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     // "Parsing JSON..." in the logs
     expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[1].text())
@@ -946,12 +970,13 @@ describe('CsvJsonImport.vue - json', () => {
 
     await wrapper.vm.preview()
     await wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
     await getJsonParseResult.returnValues[1]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     // Parsing success in the logs
     expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[2].text())
@@ -984,12 +1009,14 @@ describe('CsvJsonImport.vue - json', () => {
 
     await wrapper.vm.preview()
     await wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
     await getJsonParseResult.returnValues[1]
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     // Import success in the logs
     const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')
@@ -1008,7 +1035,6 @@ describe('CsvJsonImport.vue - ndjson', () => {
   let state = {}
   let actions = {}
   let mutations = {}
-  let store = {}
   let clock
   let wrapper
   const newTabId = 1
@@ -1026,7 +1052,7 @@ describe('CsvJsonImport.vue - ndjson', () => {
     actions = {
       addTab: sinon.stub().resolves(newTabId)
     }
-    store = new Vuex.Store({ state, mutations, actions })
+    const store = createStore({ state, mutations, actions })
 
     const db = {
       sanitizeTableName: sinon.stub().returns('my_data'),
@@ -1040,17 +1066,25 @@ describe('CsvJsonImport.vue - ndjson', () => {
 
     // mount the component
     wrapper = mount(CsvJsonImport, {
-      store,
+      global: {
+        plugins: [store],
+        stubs: {
+          teleport: true,
+          transition: false
+        }
+      },
       props: {
         file,
         dialogName: 'addCsvJson',
         db
-      }
+      },
+      attachTo: document.body
     })
   })
 
   afterEach(() => {
     sinon.restore()
+    wrapper.unmount()
   })
 
   it('previews', async () => {
@@ -1068,8 +1102,9 @@ describe('CsvJsonImport.vue - ndjson', () => {
 
     wrapper.vm.preview()
     await wrapper.vm.open()
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('[data-modal="addCsvJson"]').exists()).to.equal(true)
+    await nextTick()
+    await nextTick()
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
     expect(wrapper.find('.dialog-header').text()).to.equal('JSON import')
     expect(wrapper.find('#csv-json-table-name input').element.value).to.equal('my_data')
     expect(wrapper.findComponent({ name: 'delimiter-selector' }).exists()).to.equal(false)
@@ -1100,7 +1135,8 @@ describe('CsvJsonImport.vue - ndjson', () => {
 
     wrapper.vm.preview()
     wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     let resolveParsing
     parse.onCall(1).returns(new Promise(resolve => {
@@ -1119,7 +1155,7 @@ describe('CsvJsonImport.vue - ndjson', () => {
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     // "Parsing JSON..." in the logs
     expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[1].text())
@@ -1180,12 +1216,13 @@ describe('CsvJsonImport.vue - ndjson', () => {
 
     wrapper.vm.preview()
     wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     // Parsing success in the logs
     expect(wrapper.findComponent({ name: 'logs' }).findAll('.msg')[2].text())
@@ -1243,12 +1280,13 @@ describe('CsvJsonImport.vue - ndjson', () => {
 
     wrapper.vm.preview()
     wrapper.vm.open()
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
 
     await wrapper.find('#csv-json-table-name input').setValue('foo')
     await wrapper.find('#import-start').trigger('click')
     await csv.parse.returnValues[1]
-    await wrapper.vm.$nextTick()
+    await nextTick()
 
     // Import success in the logs
     const logs = wrapper.findComponent({ name: 'logs' }).findAll('.msg')

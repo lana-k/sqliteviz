@@ -1,14 +1,15 @@
 import { expect } from 'chai'
 import { shallowMount } from '@vue/test-utils'
 import Splitpanes from '@/components/Splitpanes'
+import { nextTick } from 'vue'
 
 describe('Splitpanes.vue', () => {
   it('renders correctly - vertical', () => {
     // mount the component
     const wrapper = shallowMount(Splitpanes, {
       slots: {
-        leftPane: '<div />',
-        rightPane: '<div />'
+        'left-pane': '<div />',
+        'right-pane': '<div />'
       },
       props: {
         before: { size: 60, max: 100 },
@@ -44,8 +45,8 @@ describe('Splitpanes.vue', () => {
     // mount the component
     const wrapper = shallowMount(Splitpanes, {
       slots: {
-        leftPane: '<div />',
-        rightPane: '<div />'
+        'left-pane': '<div />',
+        'right-pane': '<div />'
       },
       props: {
         before: { size: 60, max: 100 },
@@ -74,8 +75,8 @@ describe('Splitpanes.vue', () => {
     // mount the component
     let wrapper = shallowMount(Splitpanes, {
       slots: {
-        leftPane: '<div />',
-        rightPane: '<div />'
+        'left-pane': '<div />',
+        'right-pane': '<div />'
       },
       props: {
         before: { size: 0, max: 100 },
@@ -130,24 +131,24 @@ describe('Splitpanes.vue', () => {
 
   it('drag - vertical', async () => {
     const root = document.createElement('div')
-    const place = document.createElement('div')
-    root.style.width = '600px'
-    root.style.height = '500px'
-    root.appendChild(place)
     document.body.appendChild(root)
+    document.body.style.margin = 0
 
     // mount the component
     const wrapper = shallowMount(Splitpanes, {
-      attachTo: place,
+      attachTo: root,
       slots: {
-        leftPane: '<div />',
-        rightPane: '<div />'
+        'left-pane': '<div />',
+        'right-pane': '<div />'
       },
       props: {
         before: { size: 60, max: 100 },
         after: { size: 40, max: 100 }
       }
     })
+    const parent = root.querySelector('[data-v-app=""]')
+    parent.style.width = '600px'
+    parent.style.height = '500px'
 
     await wrapper.find('.splitpanes-splitter').trigger('mousedown')
     document.dispatchEvent(new MouseEvent('mousemove', {
@@ -155,7 +156,7 @@ describe('Splitpanes.vue', () => {
       clientY: 80
     }))
     document.dispatchEvent(new MouseEvent('mouseup'))
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect(wrapper.findAll('.splitpanes-pane')[0].element.style.width).to.equal('50%')
     wrapper.unmount()
     root.remove()
@@ -163,18 +164,15 @@ describe('Splitpanes.vue', () => {
 
   it('drag - horizontal', async () => {
     const root = document.createElement('div')
-    const place = document.createElement('div')
-    root.style.width = '600px'
-    root.style.height = '500px'
-    root.appendChild(place)
     document.body.appendChild(root)
+    document.body.style.margin = 0
 
     // mount the component
     const wrapper = shallowMount(Splitpanes, {
-      attachTo: place,
+      attachTo: root,
       slots: {
-        leftPane: '<div />',
-        rightPane: '<div />'
+        'left-pane': '<div />',
+        'right-pane': '<div />'
       },
       props: {
         before: { size: 10, max: 100 },
@@ -182,6 +180,10 @@ describe('Splitpanes.vue', () => {
         horizontal: true
       }
     })
+
+    const parent = root.querySelector('[data-v-app=""]')
+    parent.style.width = '600px'
+    parent.style.height = '500px'
 
     await wrapper.find('.splitpanes-splitter').trigger('mousedown')
     document.dispatchEvent(new MouseEvent('mousemove', {
@@ -189,7 +191,8 @@ describe('Splitpanes.vue', () => {
       clientY: 250
     }))
     document.dispatchEvent(new MouseEvent('mouseup'))
-    await wrapper.vm.$nextTick()
+    await nextTick()
+    await nextTick()
     expect(wrapper.findAll('.splitpanes-pane')[0].element.style.height).to.equal('50%')
     wrapper.unmount()
     root.remove()
@@ -197,18 +200,15 @@ describe('Splitpanes.vue', () => {
 
   it('drag - horizontal - touch', async () => {
     const root = document.createElement('div')
-    const place = document.createElement('div')
-    root.style.width = '600px'
-    root.style.height = '500px'
-    root.appendChild(place)
     document.body.appendChild(root)
+    document.body.style.margin = 0
 
     // mount the component
     const wrapper = shallowMount(Splitpanes, {
-      attachTo: place,
+      attachTo: root,
       slots: {
-        leftPane: '<div />',
-        rightPane: '<div />'
+        'left-pane': '<div />',
+        'right-pane': '<div />'
       },
       props: {
         before: { size: 10, max: 100 },
@@ -216,6 +216,10 @@ describe('Splitpanes.vue', () => {
         horizontal: true
       }
     })
+
+    const parent = root.querySelector('[data-v-app=""]')
+    parent.style.width = '600px'
+    parent.style.height = '500px'
 
     window.ontouchstart = null
     await wrapper.find('.splitpanes-splitter').trigger('touchstart')
@@ -229,7 +233,7 @@ describe('Splitpanes.vue', () => {
     })
     document.dispatchEvent(event)
     document.dispatchEvent(new MouseEvent('touchend'))
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect(wrapper.findAll('.splitpanes-pane')[0].element.style.height).to.equal('50%')
     wrapper.unmount()
     root.remove()
@@ -238,18 +242,15 @@ describe('Splitpanes.vue', () => {
 
   it('drag - vertical - touch', async () => {
     const root = document.createElement('div')
-    const place = document.createElement('div')
-    root.style.width = '600px'
-    root.style.height = '500px'
-    root.appendChild(place)
     document.body.appendChild(root)
+    document.body.style.margin = 0
 
     // mount the component
     const wrapper = shallowMount(Splitpanes, {
-      attachTo: place,
+      attachTo: root,
       slots: {
-        leftPane: '<div />',
-        rightPane: '<div />'
+        'left-pane': '<div />',
+        'right-pane': '<div />'
       },
       props: {
         before: { size: 60, max: 100 },
@@ -257,6 +258,9 @@ describe('Splitpanes.vue', () => {
       }
     })
     window.ontouchstart = null
+    const parent = root.querySelector('[data-v-app=""]')
+    parent.style.width = '600px'
+    parent.style.height = '500px'
 
     await wrapper.find('.splitpanes-splitter').trigger('touchstart')
     const event = new TouchEvent('touchmove')
@@ -269,7 +273,7 @@ describe('Splitpanes.vue', () => {
     })
     document.dispatchEvent(event)
     document.dispatchEvent(new MouseEvent('touchend'))
-    await wrapper.vm.$nextTick()
+    await nextTick()
     expect(wrapper.findAll('.splitpanes-pane')[0].element.style.width).to.equal('50%')
     wrapper.unmount()
     root.remove()

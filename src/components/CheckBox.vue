@@ -5,13 +5,18 @@
   >
     <div v-show="!checked" class="unchecked" />
     <img
-      v-show="checked && !disabled"
-      :src="theme === 'light'
-        ? '~@/assets/images/checkbox_checked_light.svg'
-        : '~@/assets/images/checkbox_checked.svg'"
+      v-show="checked && !disabled && theme === 'light'"
+      class="checked-light"
+      src="~@/assets/images/checkbox_checked_light.svg"
+    />
+    <img
+      v-show="checked && !disabled && theme !== 'light'"
+      class="checked"
+      src="~@/assets/images/checkbox_checked.svg"
     />
     <img
       v-show="checked && disabled"
+      class="checked-disabled"
       src="~@/assets/images/checkbox_checked_disabled.svg"
     />
     <span v-if="label" class="label">{{ label }}</span>

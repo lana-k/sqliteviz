@@ -123,7 +123,7 @@ describe('Pivot.vue', () => {
       }
     })
 
-    await wrapper.findComponent({ name: 'pivotUi' }).vm.$emit('input', {
+    await wrapper.findComponent({ name: 'pivotUi' }).setValue({
       rows: ['year'],
       cols: ['item'],
       colOrder: 'value_a_to_z',
@@ -132,9 +132,10 @@ describe('Pivot.vue', () => {
       aggregatorName: 'Count',
       renderer: $.pivotUtilities.renderers.Table,
       rendererName: 'Table',
-      rendererOptions: undefined,
       vals: []
     })
+    sinon.stub(wrapper.findComponent({ref: "customChart"}).vm, 'getOptionsForSave')
+      .returns({ here_are: 'custom chart settings' })
 
     let optionsForSave = wrapper.vm.getOptionsForSave()
 
@@ -147,7 +148,7 @@ describe('Pivot.vue', () => {
     expect(optionsForSave.rendererOptions).to.equal(undefined)
     expect(optionsForSave.vals).to.eql([])
 
-    await wrapper.findComponent({ name: 'pivotUi' }).vm.$emit('input', {
+    await wrapper.findComponent({ name: 'pivotUi' }).setValue({
       rows: ['item'],
       cols: ['year'],
       colOrder: 'value_a_to_z',
@@ -156,14 +157,6 @@ describe('Pivot.vue', () => {
       aggregatorName: 'Count',
       renderer: $.pivotUtilities.renderers['Custom chart'],
       rendererName: 'Custom chart',
-      rendererOptions: {
-        customChartComponent: {
-          $mount: sinon.stub(),
-          getOptionsForSave () {
-            return { here_are: 'custom chart settings' }
-          }
-        }
-      },
       vals: []
     })
 
@@ -202,7 +195,10 @@ describe('Pivot.vue', () => {
 
     expect(await wrapper.vm.prepareCopy()).to.be.instanceof(HTMLCanvasElement)
 
-    await wrapper.findComponent({ name: 'pivotUi' }).vm.$emit('input', {
+    sinon.stub(wrapper.findComponent({ref: "customChart"}).vm, 'prepareCopy')
+      .returns(URL.createObjectURL(new Blob()))
+
+    await wrapper.findComponent({ name: 'pivotUi' }).setValue({
       rows: ['item'],
       cols: ['year'],
       colOrder: 'value_a_to_z',
@@ -211,18 +207,12 @@ describe('Pivot.vue', () => {
       aggregatorName: 'Count',
       renderer: $.pivotUtilities.renderers['Custom chart'],
       rendererName: 'Custom chart',
-      rendererOptions: {
-        customChartComponent: {
-          $mount: sinon.stub(),
-          prepareCopy: sinon.stub().returns(URL.createObjectURL(new Blob()))
-        }
-      },
       vals: []
     })
 
     expect(await wrapper.vm.prepareCopy()).to.be.a('string')
 
-    await wrapper.findComponent({ name: 'pivotUi' }).vm.$emit('input', {
+    await wrapper.findComponent({ name: 'pivotUi' }).setValue({
       rows: ['item'],
       cols: ['year'],
       colOrder: 'value_a_to_z',
@@ -265,7 +255,7 @@ describe('Pivot.vue', () => {
       attachTo: container
     })
 
-    const chartComponent = wrapper.vm.pivotOptions.rendererOptions.customChartComponent
+    const chartComponent = wrapper.findComponent({ref: "customChart"}).vm
     sinon.stub(chartComponent, 'saveAsSvg')
 
     await wrapper.vm.saveAsSvg()
@@ -300,7 +290,7 @@ describe('Pivot.vue', () => {
       attachTo: container
     })
 
-    const chartComponent = wrapper.vm.pivotOptions.rendererOptions.customChartComponent
+    const chartComponent = wrapper.findComponent({ref: "customChart"}).vm
     sinon.stub(chartComponent, 'saveAsHtml')
 
     await wrapper.vm.saveAsHtml()
@@ -335,7 +325,7 @@ describe('Pivot.vue', () => {
       attachTo: container
     })
 
-    const chartComponent = wrapper.vm.pivotOptions.rendererOptions.customChartComponent
+    const chartComponent = wrapper.findComponent({ref: "customChart"}).vm
     sinon.stub(chartComponent, 'saveAsPng')
 
     await wrapper.vm.saveAsPng()

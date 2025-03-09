@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { mount } from '@vue/test-utils'
 import actions from '@/store/actions'
 import mutations from '@/store/mutations'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import Workspace from '@/views/Main/Workspace'
 
 describe('Workspace.vue', () => {
@@ -11,13 +11,13 @@ describe('Workspace.vue', () => {
       db: {},
       tabs: []
     }
-    const store = new Vuex.Store({ state, actions, mutations })
+    const store = createStore({ state, actions, mutations })
     const $route = { path: '/workspace', query: {} }
     mount(Workspace, {
-      store,
       global: {
-        stubs: ['router-link'],
-        mocks: { $route }
+        stubs: ['router-link', 'modal'],
+        mocks: { $route },
+        plugins: [store]
       }
     })
 
@@ -34,13 +34,13 @@ describe('Workspace.vue', () => {
       db: {},
       tabs: []
     }
-    const store = new Vuex.Store({ state, actions, mutations })
+    const store = createStore({ state, actions, mutations })
     const $route = { path: '/workspace', query: { hide_schema: '1' } }
     const vm = mount(Workspace, {
-      store,
       global: {
-        stubs: ['router-link'],
-        mocks: { $route }
+        stubs: ['router-link', 'modal'],
+        mocks: { $route },
+        plugins: [store]
       }
     })
 

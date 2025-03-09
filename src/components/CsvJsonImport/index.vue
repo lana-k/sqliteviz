@@ -290,17 +290,16 @@ export default {
         delimiter: this.delimiter,
         columns: !this.isJson && !this.isNdJson ? null : ['doc']
       }
-      const parsingMsg = {
+      let parsingMsg = {}
+      this.importMessages.push({
         message: `Parsing ${this.typeName}...`,
         type: 'info'
-      }
-      this.importMessages.push(parsingMsg)
+      })
+      // Get *reactive* link to parsing message for later updates
+      parsingMsg = this.importMessages[this.importMessages.length - 1]
       const parsingLoadingIndicator = setTimeout(() => { parsingMsg.type = 'loading' }, 1000)
 
-      const importMsg = {
-        message: `Importing ${this.typeName} into a SQLite database...`,
-        type: 'info'
-      }
+      let importMsg = {}
       let importLoadingIndicator = null
 
       const updateProgress = progress => {
@@ -333,7 +332,11 @@ export default {
           clearTimeout(parsingLoadingIndicator)
 
           // Add info about import start
-          this.importMessages.push(importMsg)
+          this.importMessages.push({
+            message: `Importing ${this.typeName} into a SQLite database...`,
+            type: 'info'
+          })
+          importMsg = this.importMessages[this.importMessages.length - 1]
 
           // Show import progress after 1 second
           importLoadingIndicator = setTimeout(() => {

@@ -18,7 +18,7 @@
       ref="customChart"
       v-bind="customChartComponentProps"
       @update="$emit('update')"
-      @onLoadingImageCompleted="$emit('loadingImageCompleted')"
+      @loadingImageCompleted="$emit('loadingImageCompleted')"
     />
   </div>
 </div>
@@ -183,13 +183,12 @@ export default {
 
     getOptionsForSave () {
       const options = { ...this.pivotOptions }
-      if (options.rendererOptions) {
+      if (this.viewCustomChart) {
         const chartComponent = this.$refs.customChart
         options.rendererOptions = {
           customChartOptions: chartComponent.getOptionsForSave()
         }
       }
-
       return options
     },
 

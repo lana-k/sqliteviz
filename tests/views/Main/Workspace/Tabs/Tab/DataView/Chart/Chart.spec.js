@@ -5,6 +5,7 @@ import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart'
 import chartHelper from '@/lib/chartHelper'
 import * as dereference from 'react-chart-editor/lib/lib/dereference'
 import fIo from '@/lib/utils/fileIo'
+import { nextTick } from 'vue'
 
 describe('Chart.vue', () => {
   afterEach(() => {
@@ -19,13 +20,15 @@ describe('Chart.vue', () => {
     const chartData = vm.getOptionsForSave()
     expect(stub.calledOnceWith(vm.state, vm.dataSources)).to.equal(true)
     expect(chartData).to.equal('result')
+    wrapper.unmount()
   })
 
   it('emits update when plotly updates', async () => {
     // mount the component
     const wrapper = mount(Chart)
-    wrapper.findComponent({ ref: 'plotlyEditor' }).vm.$emit('onUpdate')
+    wrapper.findComponent({ ref: 'plotlyEditor' }).vm.$emit('update')
     expect(wrapper.emitted('update')).to.have.lengthOf(1)
+    wrapper.unmount()
   })
 
   it('calls dereference when dataSources is changed', async () => {
@@ -47,6 +50,7 @@ describe('Chart.vue', () => {
 
     await wrapper.setProps({ dataSources: newDataSources })
     expect(dereference.default.called).to.equal(true)
+    wrapper.unmount()
   })
 
   it("doesn't calls dereference when dataSources is null", async () => {
@@ -63,6 +67,7 @@ describe('Chart.vue', () => {
 
     await wrapper.setProps({ dataSources: null })
     expect(dereference.default.called).to.equal(false)
+    wrapper.unmount()
   })
 
   it('saveAsPng', async () => {
@@ -77,11 +82,12 @@ describe('Chart.vue', () => {
     })
     sinon.spy(wrapper.vm, 'prepareCopy')
 
-    await wrapper.vm.$nextTick() // chart is rendered
+    await nextTick() // chart is rendered
     await wrapper.vm.saveAsPng()
 
     const url = await wrapper.vm.prepareCopy.returnValues[0]
     expect(wrapper.emitted().loadingImageCompleted.length).to.equal(1)
     expect(fIo.downloadFromUrl.calledOnceWith(url, 'chart'))
+    wrapper.unmount()
   })
 })

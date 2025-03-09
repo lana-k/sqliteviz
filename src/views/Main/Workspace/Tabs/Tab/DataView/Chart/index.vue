@@ -31,7 +31,7 @@ import 'react-chart-editor/lib/react-chart-editor.css'
 
 import ReactPlotlyEditor from 'react-chart-editor'
 import chartHelper from '@/lib/chartHelper'
-import dereference from 'react-chart-editor/lib/lib/dereference'
+import * as dereference from 'react-chart-editor/lib/lib/dereference'
 import fIo from '@/lib/utils/fileIo'
 import events from '@/lib/utils/events'
 
@@ -101,7 +101,7 @@ export default {
       // we need to update state.data in order to update the graph
       // https://github.com/plotly/react-chart-editor/issues/948
       if (this.dataSources) {
-        dereference(this.state.data, this.dataSources)
+        dereference.default(this.state.data, this.dataSources)
       }
     }
   },

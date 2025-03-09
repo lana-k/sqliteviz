@@ -5,26 +5,34 @@ import CheckBox from '@/components/CheckBox'
 describe('CheckBox', () => {
   it('unchecked by default', () => {
     const wrapper = shallowMount(CheckBox, {
-      props: { init: false }
+      props: { init: false },
+      attachTo: document.body
     })
     expect(wrapper.find('img').isVisible()).to.equal(false)
+    wrapper.unmount()
   })
 
   it('gets init state according to passed props', () => {
     const wrapperChecked = shallowMount(CheckBox, {
-      props: { init: true }
+      props: { init: true },
+      attachTo: document.body
     })
-    expect(wrapperChecked.find('img').isVisible()).to.equal(true)
+    expect(wrapperChecked.find('img.checked').isVisible()).to.equal(true)
+    wrapperChecked.unmount()
+    
     const wrapperUnchecked = shallowMount(CheckBox, {
-      props: { init: false }
+      props: { init: false },
+      attachTo: document.body
     })
     expect(wrapperUnchecked.find('img').isVisible()).to.equal(false)
+    wrapperUnchecked.unmount()
   })
 
   it('checked on click', async () => {
-    const wrapper = shallowMount(CheckBox)
+    const wrapper = shallowMount(CheckBox, { attachTo: document.body })
     await wrapper.trigger('click')
-    expect(wrapper.find('img').isVisible()).to.equal(true)
+    expect(wrapper.find('img.checked').isVisible()).to.equal(true)
+    wrapper.unmount()
   })
 
   it('emits event on click', async () => {
