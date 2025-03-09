@@ -56,7 +56,7 @@ export default {
       },
       visible: true,
       resizeObserver: null,
-      useResizeHandler: false
+      useResizeHandler: this.$store.state.isWorkspaceVisible
     }
   },
   computed: {
