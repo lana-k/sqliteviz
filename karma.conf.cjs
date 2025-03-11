@@ -7,6 +7,9 @@ module.exports = function (config) {
             'vue': 'vue/dist/vue.esm-bundler.js'
           }
         },
+        server: {
+          preTransformRequests: false
+        }
       },
       coverage: {
         enable: true,

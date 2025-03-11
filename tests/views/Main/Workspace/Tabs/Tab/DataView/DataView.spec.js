@@ -5,12 +5,18 @@ import sinon from 'sinon'
 import { nextTick } from 'vue'
 
 describe('DataView.vue', () => {
+  const $store = { state: { isWorkspaceVisible: true } }
+
   afterEach(() => {
     sinon.restore()
   })
 
   it('emits update on mode changing', async () => {
-    const wrapper = mount(DataView)
+    const wrapper = mount(DataView, { 
+      global: {
+        stubs: { 'chart': true }
+      }
+    })
 
     const pivotBtn = wrapper.findComponent({ ref: 'pivotBtn' })
     await pivotBtn.trigger('click')
@@ -20,7 +26,11 @@ describe('DataView.vue', () => {
   })
 
   it('method getOptionsForSave calls the same method of the current view component', async () => {
-    const wrapper = mount(DataView)
+    const wrapper = mount(DataView,  {
+      global: {
+        mocks: { $store }
+      }
+    })
 
     const chart = wrapper.findComponent({ name: 'Chart' }).vm
     sinon.stub(chart, 'getOptionsForSave').returns({ here_are: 'chart_settings' })
@@ -38,7 +48,11 @@ describe('DataView.vue', () => {
   })
 
   it('method saveAsSvg calls the same method of the current view component', async () => {
-    const wrapper = mount(DataView)
+    const wrapper = mount(DataView, {
+      global: {
+        mocks: { $store }
+      }
+    })
 
     // Find chart and spy the method
     const chart = wrapper.findComponent({ name: 'Chart' }).vm
@@ -68,7 +82,11 @@ describe('DataView.vue', () => {
   })
 
   it('method saveAsHtml calls the same method of the current view component', async () => {
-    const wrapper = mount(DataView)
+    const wrapper = mount(DataView, {
+      global: {
+        mocks: { $store }
+      }
+    })
 
     // Find chart and spy the method
     const chart = wrapper.findComponent({ name: 'Chart' }).vm
@@ -97,7 +115,11 @@ describe('DataView.vue', () => {
     const ClipboardItem = window.ClipboardItem
     delete window.ClipboardItem
     sinon.spy(window, 'alert')
-    const wrapper = mount(DataView)
+    const wrapper = mount(DataView, {
+      global: {
+        stubs: { 'chart': true }
+      }
+    })
 
     const copyBtn = wrapper.findComponent({ ref: 'copyToClipboardBtn' })
     await copyBtn.trigger('click')
@@ -120,7 +142,8 @@ describe('DataView.vue', () => {
     const wrapper = mount(DataView, {
       attachTo: document.body,
       global: {
-        stubs: { teleport: true, transition: false }
+        stubs: { teleport: true, transition: false },
+        mocks: { $store }
       }
     })
     sinon.stub(wrapper.vm.$refs.viewComponent, 'prepareCopy').callsFake(async () => {
@@ -165,7 +188,13 @@ describe('DataView.vue', () => {
   it('copy to clipboard less than 1 sec', async () => {
     sinon.stub(window.navigator.clipboard, 'write').resolves()
     const clock = sinon.useFakeTimers()
-    const wrapper = mount(DataView)
+    const wrapper = mount(DataView, {
+      attachTo: document.body,
+      global: {
+        stubs: { teleport: true, transition: false },
+        mocks: { $store }
+      }
+    })
     sinon.spy(wrapper.vm, 'copyToClipboard')
     sinon.stub(wrapper.vm.$refs.viewComponent, 'prepareCopy').callsFake(async () => {
       await clock.tick(500)
@@ -182,7 +211,8 @@ describe('DataView.vue', () => {
 
     await nextTick()
     // The dialog is not shown...
-    expect(wrapper.find('[data-modal="prepareCopy"]').exists()).to.equal(false)
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
     // copyToClipboard is called
     expect(wrapper.vm.copyToClipboard.calledOnce).to.equal(true)
     wrapper.unmount()
@@ -194,7 +224,8 @@ describe('DataView.vue', () => {
     const wrapper = mount(DataView, {
       attachTo: document.body,
       global: {
-        stubs: { teleport: true, transition: false }
+        stubs: { teleport: true, transition: false },
+        mocks: { $store }
       }
     })
     sinon.spy(wrapper.vm, 'copyToClipboard')

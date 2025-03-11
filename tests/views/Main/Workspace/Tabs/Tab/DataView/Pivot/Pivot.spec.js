@@ -9,6 +9,7 @@ import pivotHelper from '@/views/Main/Workspace/Tabs/Tab/DataView/Pivot/pivotHel
 
 describe('Pivot.vue', () => {
   let container
+  const $store = { state: { isWorkspaceVisible: true } }
 
   beforeEach(() => {
     container = document.createElement('div')
@@ -36,6 +37,9 @@ describe('Pivot.vue', () => {
           vals: [],
           rendererName: 'Table'
         }
+      },
+      global: {
+        stubs: { 'chart': true }
       }
     })
     const colLabels = wrapper.findAll('.pivot-output thead th.pvtColLabel')
@@ -71,6 +75,9 @@ describe('Pivot.vue', () => {
           vals: [],
           rendererName: 'Table'
         }
+      },
+      global: {
+        stubs: { 'chart': true }
       }
     })
 
@@ -120,6 +127,9 @@ describe('Pivot.vue', () => {
           vals: [],
           rendererName: 'Table'
         }
+      },
+      global: {
+        mocks: { $store }
       }
     })
 
@@ -190,7 +200,10 @@ describe('Pivot.vue', () => {
           rendererName: 'Table'
         }
       },
-      attachTo: container
+      attachTo: container,
+      global: {
+        mocks: { $store }
+      }
     })
 
     expect(await wrapper.vm.prepareCopy()).to.be.instanceof(HTMLCanvasElement)
@@ -252,7 +265,10 @@ describe('Pivot.vue', () => {
           }
         }
       },
-      attachTo: container
+      attachTo: container,
+      global: {
+        mocks: { $store }
+      }
     })
 
     const chartComponent = wrapper.findComponent({ref: "customChart"}).vm
@@ -287,7 +303,10 @@ describe('Pivot.vue', () => {
           }
         }
       },
-      attachTo: container
+      attachTo: container,
+      global: {
+        mocks: { $store }
+      }
     })
 
     const chartComponent = wrapper.findComponent({ref: "customChart"}).vm
@@ -322,7 +341,10 @@ describe('Pivot.vue', () => {
           }
         }
       },
-      attachTo: container
+      attachTo: container,
+      global: {
+        mocks: { $store }
+      }
     })
 
     const chartComponent = wrapper.findComponent({ref: "customChart"}).vm
@@ -352,7 +374,10 @@ describe('Pivot.vue', () => {
           rendererName: 'Bar Chart'
         }
       },
-      attachTo: container
+      attachTo: container,
+      global: {
+        stubs: { 'chart': true }
+      }
     })
 
     await wrapper.vm.saveAsSvg()
@@ -380,7 +405,10 @@ describe('Pivot.vue', () => {
           rendererName: 'Bar Chart'
         }
       },
-      attachTo: container
+      attachTo: container,
+      global: {
+        stubs: { 'chart': true }
+      }
     })
 
     await wrapper.vm.saveAsHtml()
@@ -410,7 +438,10 @@ describe('Pivot.vue', () => {
           rendererName: 'Table'
         }
       },
-      attachTo: container
+      attachTo: container,
+      global: {
+        stubs: { 'chart': true }
+      }
     })
 
     await wrapper.vm.saveAsHtml()
@@ -440,7 +471,10 @@ describe('Pivot.vue', () => {
           rendererName: 'Bar Chart'
         }
       },
-      attachTo: container
+      attachTo: container,
+      global: {
+        stubs: { 'chart': true }
+      }
     })
 
     await wrapper.vm.saveAsPng()
@@ -472,7 +506,10 @@ describe('Pivot.vue', () => {
           rendererName: 'Table'
         }
       },
-      attachTo: container
+      attachTo: container,
+      global: {
+        stubs: { 'chart': true }
+      }
     })
 
     await wrapper.vm.saveAsPng()

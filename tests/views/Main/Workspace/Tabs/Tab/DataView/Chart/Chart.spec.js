@@ -8,13 +8,19 @@ import fIo from '@/lib/utils/fileIo'
 import { nextTick } from 'vue'
 
 describe('Chart.vue', () => {
+  const $store = { state: { isWorkspaceVisible: true } }
+
   afterEach(() => {
     sinon.restore()
   })
 
   it('getOptionsForSave called with proper arguments', () => {
     // mount the component
-    const wrapper = shallowMount(Chart)
+    const wrapper = shallowMount(Chart, {
+      global: {
+        mocks: { $store }
+      }
+    })
     const vm = wrapper.vm
     const stub = sinon.stub(chartHelper, 'getOptionsForSave').returns('result')
     const chartData = vm.getOptionsForSave()
@@ -25,7 +31,11 @@ describe('Chart.vue', () => {
 
   it('emits update when plotly updates', async () => {
     // mount the component
-    const wrapper = mount(Chart)
+    const wrapper = mount(Chart, {
+      global: {
+        mocks: { $store }
+      }
+    })
     wrapper.findComponent({ ref: 'plotlyEditor' }).vm.$emit('update')
     expect(wrapper.emitted('update')).to.have.lengthOf(1)
     wrapper.unmount()
@@ -40,7 +50,10 @@ describe('Chart.vue', () => {
 
     // mount the component
     const wrapper = shallowMount(Chart, {
-      props: { dataSources }
+      props: { dataSources },
+      global: {
+        mocks: { $store }
+      }
     })
 
     const newDataSources = {
@@ -62,7 +75,10 @@ describe('Chart.vue', () => {
 
     // mount the component
     const wrapper = shallowMount(Chart, {
-      props: { dataSources }
+      props: { dataSources },
+      global: {
+        mocks: { $store }
+      }
     })
 
     await wrapper.setProps({ dataSources: null })
@@ -78,7 +94,10 @@ describe('Chart.vue', () => {
     }
 
     const wrapper = mount(Chart, {
-      props: { dataSources }
+      props: { dataSources },
+      global: {
+        mocks: { $store }
+      }
     })
     sinon.spy(wrapper.vm, 'prepareCopy')
 
