@@ -53,7 +53,7 @@ export default {
   color: var(--color-text-active);
   border-color: var(--color-border-dark);
 }
-.pivot-sort-btn:hover deep(.sort-icon path) {
+.pivot-sort-btn:hover :deep(.sort-icon path) {
   fill: var(--color-text-active);
 }
 
