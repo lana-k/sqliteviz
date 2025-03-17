@@ -1,6 +1,6 @@
 <template>
   <div class="sql-editor-panel">
-    <div class="codemirror-container original-style">
+    <div class="codemirror-box original-style">
       <codemirror
         ref="cm"
         v-model:value="query"
@@ -91,12 +91,13 @@ export default {
   overflow: hidden;
 }
 
-.codemirror-container {
+.codemirror-box {
   flex-grow: 1;
   overflow: auto;
 }
 
-:deep(.vue-codemirror) {
+:deep(.codemirror-container) {
+  display: block;
   height: 100%;
   max-height: 100%;
 }

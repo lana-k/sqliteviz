@@ -25,7 +25,7 @@
         v-if="currentFormat === 'json' && formattedJson"
         :value="formattedJson"
         :options="cmOptions"
-        class="json-value"
+        class="json-value original-style"
       />
       <pre
         v-if="currentFormat === 'text'"
@@ -192,7 +192,8 @@ export default {
   color: var(--color-accent);
 }
 
-:deep(.vue-codemirror) {
+:deep(.codemirror-container) {
+  display: block;
   height: 100%;
   max-height: 100%;
 }
