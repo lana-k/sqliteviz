@@ -48,7 +48,10 @@ describe('LoadView.vue', () => {
     const inquiriesRes = new Response()
     inquiriesRes.json = sinon.stub().resolves({
       version: 2,
-      inquiries: [{ id: 1, name: 'foo' }, { id: 2, name: 'bar' }]
+      inquiries: [
+        { id: 1, name: 'foo' },
+        { id: 2, name: 'bar' }
+      ]
     })
     readFile.onCall(1).returns(Promise.resolve(inquiriesRes))
     const db = {
@@ -71,11 +74,14 @@ describe('LoadView.vue', () => {
     expect(fu.readFile.firstCall.args[0]).to.equal('https://my-url/test.db')
 
     // Db is loaded
-    expect(db.loadDb.firstCall.args[0]).to.equal(await dataRes.blob.returnValues[0])
+    expect(db.loadDb.firstCall.args[0]).to.equal(
+      await dataRes.blob.returnValues[0]
+    )
 
     // Inquiries file is read
-    expect(fu.readFile.secondCall.args[0])
-      .to.equal('https://my-url/test_inquiries.json')
+    expect(fu.readFile.secondCall.args[0]).to.equal(
+      'https://my-url/test_inquiries.json'
+    )
 
     // Tab for inquiry is created
     expect(actions.addTab.calledOnce).to.equal(true)
@@ -95,7 +101,7 @@ describe('LoadView.vue', () => {
     expect($router.push.called).to.equal(true)
   })
 
-  it('Doesn\'t redirect and show the button if there is an error', async () => {
+  it("Doesn't redirect and show the button if there is an error", async () => {
     const state = {
       tabs: []
     }

@@ -34,7 +34,7 @@ export default {
   emits: ['click'],
   mixins: [tooltipMixin],
   methods: {
-    onClick () {
+    onClick() {
       this.hideTooltip()
       this.$emit('click')
     }

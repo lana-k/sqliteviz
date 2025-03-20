@@ -2,7 +2,7 @@ import * as dereference from 'react-chart-editor/lib/lib/dereference'
 import plotly from 'plotly.js'
 import { nanoid } from 'nanoid'
 
-export function getOptionsFromDataSources (dataSources) {
+export function getOptionsFromDataSources(dataSources) {
   if (!dataSources) {
     return []
   }
@@ -13,7 +13,7 @@ export function getOptionsFromDataSources (dataSources) {
   }))
 }
 
-export function getOptionsForSave (state, dataSources) {
+export function getOptionsForSave(state, dataSources) {
   // we don't need to save the data, only settings
   // so we modify state.data using dereference
   const stateCopy = JSON.parse(JSON.stringify(state))
@@ -25,7 +25,7 @@ export function getOptionsForSave (state, dataSources) {
   return stateCopy
 }
 
-export async function getImageDataUrl (element, type) {
+export async function getImageDataUrl(element, type) {
   const chartElement = element.querySelector('.js-plotly-plot')
   return await plotly.toImage(chartElement, {
     format: type,
@@ -34,7 +34,7 @@ export async function getImageDataUrl (element, type) {
   })
 }
 
-export function getChartData (element) {
+export function getChartData(element) {
   const chartElement = element.querySelector('.js-plotly-plot')
   return {
     data: chartElement.data,
@@ -42,7 +42,7 @@ export function getChartData (element) {
   }
 }
 
-export function getHtml (options) {
+export function getHtml(options) {
   const chartId = nanoid()
   return `
       <script src="https://cdn.plot.ly/plotly-latest.js" charset="UTF-8"></script>

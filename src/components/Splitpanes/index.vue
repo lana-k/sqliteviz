@@ -7,7 +7,11 @@
       { 'splitpanes-dragging': dragging }
     ]"
   >
-    <div class="movable-splitter" ref="movableSplitter" :style="movableSplitterStyle" />
+    <div
+      class="movable-splitter"
+      ref="movableSplitter"
+      :style="movableSplitterStyle"
+    />
     <div
       class="splitpanes-pane"
       ref="left"
@@ -27,8 +31,11 @@
         :class="[
           'toggle-btns',
           {
-            'both': after.max === 100 && before.max === 100 &&
-              paneAfter.size > 0 && paneBefore.size > 0
+            both:
+              after.max === 100 &&
+              before.max === 100 &&
+              paneAfter.size > 0 &&
+              paneBefore.size > 0
           }
         ]"
       >
@@ -41,7 +48,7 @@
             class="direction-icon"
             src="~@/assets/images/chevron.svg"
             :style="directionBeforeIconStyle"
-          >
+          />
         </div>
         <div
           v-if="before.max === 100 && paneBefore.size > 0"
@@ -52,16 +59,12 @@
             class="direction-icon"
             src="~@/assets/images/chevron.svg"
             :style="directionAfterIconStyle"
-          >
+          />
         </div>
       </div>
     </div>
     <!-- splitter end -->
-    <div
-      class="splitpanes-pane"
-      ref="right"
-      :style="styles.after"
-    >
+    <div class="splitpanes-pane" ref="right" :style="styles.after">
       <slot name="right-pane" />
     </div>
   </div>
@@ -87,17 +90,18 @@ export default {
     }
   },
   emits: [],
-  data () {
+  data() {
     return {
       container: null,
       paneBefore: this.before,
       paneAfter: this.after,
-      beforeMinimising: !this.after.size || !this.before.size
-        ? this.default
-        : {
-            before: this.before.size,
-            after: this.after.size
-          },
+      beforeMinimising:
+        !this.after.size || !this.before.size
+          ? this.default
+          : {
+              before: this.before.size,
+              after: this.after.size
+            },
       dragging: false,
       movableSplitter: {
         top: 0,
@@ -107,19 +111,23 @@ export default {
     }
   },
   computed: {
-    styles () {
+    styles() {
       return {
-        before: { [this.horizontal ? 'height' : 'width']: `${this.paneBefore.size}%` },
-        after: { [this.horizontal ? 'height' : 'width']: `${this.paneAfter.size}%` }
+        before: {
+          [this.horizontal ? 'height' : 'width']: `${this.paneBefore.size}%`
+        },
+        after: {
+          [this.horizontal ? 'height' : 'width']: `${this.paneAfter.size}%`
+        }
       }
     },
-    movableSplitterStyle () {
+    movableSplitterStyle() {
       const style = { ...this.movableSplitter }
       style.top += '%'
       style.left += '%'
       return style
     },
-    directionBeforeIconStyle () {
+    directionBeforeIconStyle() {
       const expanded = this.paneBefore.size !== 0
       const translation = 'translate(-50%, -50%) '
       let rotation = ''
@@ -134,7 +142,7 @@ export default {
         transform: translation + rotation
       }
     },
-    directionAfterIconStyle () {
+    directionAfterIconStyle() {
       const expanded = this.paneAfter.size !== 0
       const translation = 'translate(-50%, -50%)'
       let rotation = ''
@@ -152,35 +160,43 @@ export default {
   },
 
   methods: {
-    bindEvents () {
+    bindEvents() {
       // Passive: false to prevent scrolling while touch dragging.
-      document.addEventListener('mousemove', this.onMouseMove, { passive: false })
+      document.addEventListener('mousemove', this.onMouseMove, {
+        passive: false
+      })
       document.addEventListener('mouseup', this.onMouseUp)
 
       if ('ontouchstart' in window) {
-        document.addEventListener('touchmove', this.onMouseMove, { passive: false })
+        document.addEventListener('touchmove', this.onMouseMove, {
+          passive: false
+        })
         document.addEventListener('touchend', this.onMouseUp)
       }
     },
 
-    unbindEvents () {
-      document.removeEventListener('mousemove', this.onMouseMove, { passive: false })
+    unbindEvents() {
+      document.removeEventListener('mousemove', this.onMouseMove, {
+        passive: false
+      })
       document.removeEventListener('mouseup', this.onMouseUp)
 
       if ('ontouchstart' in window) {
-        document.removeEventListener('touchmove', this.onMouseMove, { passive: false })
+        document.removeEventListener('touchmove', this.onMouseMove, {
+          passive: false
+        })
         document.removeEventListener('touchend', this.onMouseUp)
       }
     },
 
-    onMouseMove (event) {
+    onMouseMove(event) {
       event.preventDefault()
       this.dragging = true
       this.movableSplitter.visibility = 'visible'
       this.moveSplitter(event)
     },
 
-    onMouseUp () {
+    onMouseUp() {
       if (this.dragging) {
         const dragPercentage = this.horizontal
           ? this.movableSplitter.top
@@ -201,7 +217,7 @@ export default {
       this.unbindEvents()
     },
 
-    moveSplitter (event) {
+    moveSplitter(event) {
       const splitterInfo = {
         container: this.container,
         paneBeforeMax: this.paneBefore.max,
@@ -213,12 +229,13 @@ export default {
       this.movableSplitter[dir] = offset
     },
 
-    togglePane (pane) {
+    togglePane(pane) {
       if (pane.size > 0) {
         this.beforeMinimising.before = this.paneBefore.size
         this.beforeMinimising.after = this.paneAfter.size
         pane.size = 0
-        const otherPane = pane === this.paneBefore ? this.paneAfter : this.paneBefore
+        const otherPane =
+          pane === this.paneBefore ? this.paneAfter : this.paneBefore
         otherPane.size = 100 - pane.size
       } else {
         this.paneBefore.size = this.beforeMinimising.before
@@ -226,7 +243,7 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.container = this.$refs.container
   }
 }
@@ -239,9 +256,15 @@ export default {
   position: relative;
 }
 
-.splitpanes-vertical {flex-direction: row;}
-.splitpanes-horizontal {flex-direction: column;}
-.splitpanes-dragging * {user-select: none;}
+.splitpanes-vertical {
+  flex-direction: row;
+}
+.splitpanes-horizontal {
+  flex-direction: column;
+}
+.splitpanes-dragging * {
+  user-select: none;
+}
 
 .splitpanes-pane {
   width: 100%;
@@ -281,14 +304,14 @@ export default {
 
 .movable-splitter {
   position: absolute;
-  background-color:rgba(162, 177, 198, 0.5);
+  background-color: rgba(162, 177, 198, 0.5);
 }
 
 .splitpanes-vertical > .splitpanes-splitter,
 .splitpanes-vertical > .movable-splitter {
   width: 8px;
   z-index: 5;
-  height: 100%
+  height: 100%;
 }
 
 .splitpanes-horizontal > .splitpanes-splitter,
@@ -339,20 +362,32 @@ export default {
   left: 50%;
 }
 
-.splitpanes-horizontal > .splitpanes-splitter .toggle-btns.both .toggle-btn:first-child {
+.splitpanes-horizontal
+  > .splitpanes-splitter
+  .toggle-btns.both
+  .toggle-btn:first-child {
   border-radius: var(--border-radius-small) 0 0 var(--border-radius-small);
 }
 
-.splitpanes-horizontal > .splitpanes-splitter .toggle-btns.both .toggle-btn:last-child {
+.splitpanes-horizontal
+  > .splitpanes-splitter
+  .toggle-btns.both
+  .toggle-btn:last-child {
   border-radius: 0 var(--border-radius-small) var(--border-radius-small) 0;
   margin-left: -1px;
 }
 
-.splitpanes-vertical > .splitpanes-splitter .toggle-btns.both .toggle-btn:first-child {
+.splitpanes-vertical
+  > .splitpanes-splitter
+  .toggle-btns.both
+  .toggle-btn:first-child {
   border-radius: var(--border-radius-small) var(--border-radius-small) 0 0;
 }
 
-.splitpanes-vertical > .splitpanes-splitter .toggle-btns.both .toggle-btn:last-child {
+.splitpanes-vertical
+  > .splitpanes-splitter
+  .toggle-btns.both
+  .toggle-btn:last-child {
   border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
   margin-top: -1px;
 }

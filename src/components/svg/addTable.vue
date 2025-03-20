@@ -29,7 +29,7 @@
       </g>
       <defs>
         <clipPath id="clip0">
-          <rect width="18" height="18" fill="white"/>
+          <rect width="18" height="18" fill="white" />
         </clipPath>
       </defs>
     </svg>
@@ -48,7 +48,7 @@ export default {
   props: ['tooltip'],
   emits: ['click'],
   methods: {
-    onClick () {
+    onClick() {
       this.hideTooltip()
       this.$emit('click')
     }

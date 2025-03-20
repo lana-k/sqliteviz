@@ -1,7 +1,7 @@
 <template>
   <svg
     @click.stop="$emit('click')"
-    :class="['icon', {'disabled': disabled }]"
+    :class="['icon', { disabled: disabled }]"
     :width="size"
     :height="size"
     viewBox="0 0 14 14"

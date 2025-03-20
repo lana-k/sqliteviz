@@ -1,8 +1,10 @@
 export default {
-  * generateChunks (data, size) {
+  *generateChunks(data, size) {
     const matrix = Object.keys(data).map(col => data[col])
     const [row] = matrix
-    const transposedMatrix = row.map((value, column) => matrix.map(row => row[column]))
+    const transposedMatrix = row.map((value, column) =>
+      matrix.map(row => row[column])
+    )
 
     const count = Math.ceil(transposedMatrix.length / size)
 
@@ -13,13 +15,13 @@ export default {
     }
   },
 
-  getInsertStmt (tabName, columns) {
+  getInsertStmt(tabName, columns) {
     const colList = `"${columns.join('", "')}"`
     const params = columns.map(() => '?').join(', ')
     return `INSERT INTO "${tabName}" (${colList}) VALUES (${params});`
   },
 
-  getCreateStatement (tabName, data) {
+  getCreateStatement(tabName, data) {
     let result = `CREATE table "${tabName}"(`
     for (const col in data) {
       // Get the first row of values to determine types
@@ -38,7 +40,8 @@ export default {
           type = 'TEXT'
           break
         }
-        default: type = 'TEXT'
+        default:
+          type = 'TEXT'
       }
       result += `"${col}" ${type}, `
     }

@@ -39,7 +39,7 @@ describe('Pivot.vue', () => {
         }
       },
       global: {
-        stubs: { 'chart': true }
+        stubs: { chart: true }
       }
     })
     const colLabels = wrapper.findAll('.pivot-output thead th.pvtColLabel')
@@ -77,7 +77,7 @@ describe('Pivot.vue', () => {
         }
       },
       global: {
-        stubs: { 'chart': true }
+        stubs: { chart: true }
       }
     })
 
@@ -144,7 +144,11 @@ describe('Pivot.vue', () => {
       rendererName: 'Table',
       vals: []
     })
-    sinon.stub(wrapper.findComponent({ref: "customChart"}).vm, 'getOptionsForSave')
+    sinon
+      .stub(
+        wrapper.findComponent({ ref: 'customChart' }).vm,
+        'getOptionsForSave'
+      )
       .returns({ here_are: 'custom chart settings' })
 
     let optionsForSave = wrapper.vm.getOptionsForSave()
@@ -208,7 +212,8 @@ describe('Pivot.vue', () => {
 
     expect(await wrapper.vm.prepareCopy()).to.be.instanceof(HTMLCanvasElement)
 
-    sinon.stub(wrapper.findComponent({ref: "customChart"}).vm, 'prepareCopy')
+    sinon
+      .stub(wrapper.findComponent({ ref: 'customChart' }).vm, 'prepareCopy')
       .returns(URL.createObjectURL(new Blob()))
 
     await wrapper.findComponent({ name: 'pivotUi' }).setValue({
@@ -271,7 +276,7 @@ describe('Pivot.vue', () => {
       }
     })
 
-    const chartComponent = wrapper.findComponent({ref: "customChart"}).vm
+    const chartComponent = wrapper.findComponent({ ref: 'customChart' }).vm
     sinon.stub(chartComponent, 'saveAsSvg')
 
     await wrapper.vm.saveAsSvg()
@@ -309,7 +314,7 @@ describe('Pivot.vue', () => {
       }
     })
 
-    const chartComponent = wrapper.findComponent({ref: "customChart"}).vm
+    const chartComponent = wrapper.findComponent({ ref: 'customChart' }).vm
     sinon.stub(chartComponent, 'saveAsHtml')
 
     await wrapper.vm.saveAsHtml()
@@ -347,7 +352,7 @@ describe('Pivot.vue', () => {
       }
     })
 
-    const chartComponent = wrapper.findComponent({ref: "customChart"}).vm
+    const chartComponent = wrapper.findComponent({ ref: 'customChart' }).vm
     sinon.stub(chartComponent, 'saveAsPng')
 
     await wrapper.vm.saveAsPng()
@@ -376,7 +381,7 @@ describe('Pivot.vue', () => {
       },
       attachTo: container,
       global: {
-        stubs: { 'chart': true }
+        stubs: { chart: true }
       }
     })
 
@@ -407,7 +412,7 @@ describe('Pivot.vue', () => {
       },
       attachTo: container,
       global: {
-        stubs: { 'chart': true }
+        stubs: { chart: true }
       }
     })
 
@@ -440,14 +445,16 @@ describe('Pivot.vue', () => {
       },
       attachTo: container,
       global: {
-        stubs: { 'chart': true }
+        stubs: { chart: true }
       }
     })
 
     await wrapper.vm.saveAsHtml()
     expect(pivotHelper.getPivotHtml.calledOnce).to.equal(true)
     const html = pivotHelper.getPivotHtml.returnValues[0]
-    expect(fIo.exportToFile.calledOnceWith(html, 'pivot.html', 'text/html')).to.equal(true)
+    expect(
+      fIo.exportToFile.calledOnceWith(html, 'pivot.html', 'text/html')
+    ).to.equal(true)
   })
 
   it('saveAsPng - standart chart', async () => {
@@ -473,7 +480,7 @@ describe('Pivot.vue', () => {
       },
       attachTo: container,
       global: {
-        stubs: { 'chart': true }
+        stubs: { chart: true }
       }
     })
 
@@ -481,12 +488,18 @@ describe('Pivot.vue', () => {
     expect(chartHelper.getImageDataUrl.calledOnce).to.equal(true)
     await chartHelper.getImageDataUrl.returnValues[0]
     expect(wrapper.emitted().loadingImageCompleted.length).to.equal(1)
-    expect(fIo.downloadFromUrl.calledOnceWith('standat chart data url', 'pivot')).to.equal(true)
+    expect(
+      fIo.downloadFromUrl.calledOnceWith('standat chart data url', 'pivot')
+    ).to.equal(true)
   })
 
   it('saveAsPng - table', async () => {
-    sinon.stub(pivotHelper, 'getPivotCanvas').returns(document.createElement('canvas'))
-    sinon.stub(HTMLCanvasElement.prototype, 'toDataURL').returns('canvas data url')
+    sinon
+      .stub(pivotHelper, 'getPivotCanvas')
+      .returns(document.createElement('canvas'))
+    sinon
+      .stub(HTMLCanvasElement.prototype, 'toDataURL')
+      .returns('canvas data url')
     sinon.stub(fIo, 'downloadFromUrl')
 
     const wrapper = mount(Pivot, {
@@ -508,7 +521,7 @@ describe('Pivot.vue', () => {
       },
       attachTo: container,
       global: {
-        stubs: { 'chart': true }
+        stubs: { chart: true }
       }
     })
 
@@ -516,6 +529,8 @@ describe('Pivot.vue', () => {
     expect(HTMLCanvasElement.prototype.toDataURL.calledOnce).to.equal(true)
     await HTMLCanvasElement.prototype.toDataURL.returnValues[0]
     expect(wrapper.emitted().loadingImageCompleted.length).to.equal(1)
-    expect(fIo.downloadFromUrl.calledOnceWith('canvas data url', 'pivot')).to.equal(true)
+    expect(
+      fIo.downloadFromUrl.calledOnceWith('canvas data url', 'pivot')
+    ).to.equal(true)
   })
 })

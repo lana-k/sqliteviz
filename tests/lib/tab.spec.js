@@ -75,9 +75,11 @@ describe('tab.js', () => {
       currentTabId: 1,
       dbName: 'fooDb',
       db: {
-        execute: sinon.stub().returns(new Promise(resolve => {
-          resolveQuering = resolve
-        })),
+        execute: sinon.stub().returns(
+          new Promise(resolve => {
+            resolveQuering = resolve
+          })
+        ),
         refreshSchema: sinon.stub().resolves()
       }
     }

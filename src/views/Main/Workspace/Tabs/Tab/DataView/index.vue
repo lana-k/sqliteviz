@@ -31,7 +31,7 @@
         <pivot-icon />
       </icon-button>
 
-      <div class="side-tool-bar-divider"/>
+      <div class="side-tool-bar-divider" />
 
       <icon-button
         :disabled="!importToPngEnabled || loadingImage"
@@ -67,20 +67,20 @@
         tooltip-position="top-left"
         @click="prepareCopy"
       >
-        <clipboard-icon/>
+        <clipboard-icon />
       </icon-button>
     </side-tool-bar>
 
-  <loading-dialog
-    loadingMsg="Rendering the visualisation..."
-    successMsg="Image is ready"
-    actionBtnName="Copy"
-    name="prepareCopy"
-    title="Copy to clipboard"
-    :loading="preparingCopy"
-    @action="copyToClipboard"
-    @cancel="cancelCopy"
-  />
+    <loading-dialog
+      loadingMsg="Rendering the visualisation..."
+      successMsg="Image is ready"
+      actionBtnName="Copy"
+      name="prepareCopy"
+      title="Copy to clipboard"
+      :loading="preparingCopy"
+      @action="copyToClipboard"
+      @cancel="cancelCopy"
+    />
   </div>
 </template>
 
@@ -117,7 +117,7 @@ export default {
     ClipboardIcon,
     loadingDialog
   },
-  data () {
+  data() {
     return {
       mode: this.initMode || 'chart',
       importToPngEnabled: true,
@@ -129,18 +129,18 @@ export default {
     }
   },
   computed: {
-    plotlyInPivot () {
+    plotlyInPivot() {
       return this.mode === 'pivot' && this.$refs.viewComponent.viewCustomChart
     }
   },
   watch: {
-    mode () {
+    mode() {
       this.$emit('update')
       this.importToPngEnabled = true
     }
   },
   methods: {
-    async saveAsPng () {
+    async saveAsPng() {
       this.loadingImage = true
       /*
       setTimeout does its thing by putting its callback on the callback queue.
@@ -160,10 +160,10 @@ export default {
       this.$refs.viewComponent.saveAsPng()
       this.exportSignal('png')
     },
-    getOptionsForSave () {
+    getOptionsForSave() {
       return this.$refs.viewComponent.getOptionsForSave()
     },
-    async prepareCopy () {
+    async prepareCopy() {
       if ('ClipboardItem' in window) {
         this.preparingCopy = true
         this.$modal.show('prepareCopy')
@@ -172,7 +172,7 @@ export default {
         await time.sleep(0)
         this.dataToCopy = await this.$refs.viewComponent.prepareCopy()
         const t1 = performance.now()
-        if ((t1 - t0) < 950) {
+        if (t1 - t0 < 950) {
           this.$modal.hide('prepareCopy')
           this.copyToClipboard()
         } else {
@@ -181,30 +181,30 @@ export default {
       } else {
         alert(
           "Your browser doesn't support copying images into the clipboard. " +
-          'If you use Firefox you can enable it ' +
-          'by setting dom.events.asyncClipboard.clipboardItem to true.'
+            'If you use Firefox you can enable it ' +
+            'by setting dom.events.asyncClipboard.clipboardItem to true.'
         )
       }
     },
-    async copyToClipboard () {
+    async copyToClipboard() {
       cIo.copyImage(this.dataToCopy)
       this.$modal.hide('prepareCopy')
       this.exportSignal('clipboard')
     },
-    cancelCopy () {
+    cancelCopy() {
       this.dataToCopy = null
       this.$modal.hide('prepareCopy')
     },
 
-    saveAsSvg () {
+    saveAsSvg() {
       this.$refs.viewComponent.saveAsSvg()
       this.exportSignal('svg')
     },
-    saveAsHtml () {
+    saveAsHtml() {
       this.$refs.viewComponent.saveAsHtml()
       this.exportSignal('html')
     },
-    exportSignal (to) {
+    exportSignal(to) {
       const eventLabels = { type: to }
 
       if (this.mode === 'chart' || this.plotlyInPivot) {

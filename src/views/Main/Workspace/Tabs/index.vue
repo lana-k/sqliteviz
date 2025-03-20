@@ -1,11 +1,11 @@
 <template>
-   <div id="tabs">
+  <div id="tabs">
     <div id="tabs-header" v-if="tabs.length > 0">
       <div
         v-for="(tab, index) in tabs"
         :key="index"
         @click="selectTab(tab.id)"
-        :class="[{'tab-selected': (tab.id === selectedTabId)}, 'tab']"
+        :class="[{ 'tab-selected': tab.id === selectedTabId }, 'tab']"
       >
         <div class="tab-name">
           <span v-show="!tab.isSaved" class="star">*</span>
@@ -13,15 +13,15 @@
           <span v-else class="tab-untitled">{{ tab.tempName }}</span>
         </div>
         <div>
-          <close-icon class="close-icon" :size="10" @click="beforeCloseTab(tab)"/>
+          <close-icon
+            class="close-icon"
+            :size="10"
+            @click="beforeCloseTab(tab)"
+          />
         </div>
       </div>
     </div>
-    <tab
-      v-for="tab in tabs"
-      :key="tab.id"
-      :tab="tab"
-    />
+    <tab v-for="tab in tabs" :key="tab.id" :tab="tab" />
     <div v-show="tabs.length === 0" id="start-guide">
       <span class="link" @click="emitCreateTabEvent">Create</span>
       new inquiry from scratch or open one from
@@ -31,26 +31,33 @@
     <!--Close tab warning dialog  -->
     <modal modal-id="close-warn" class="dialog" content-style="width: 560px;">
       <div class="dialog-header">
-        Close tab {{
+        Close tab
+        {{
           closingTab !== null
-          ? (closingTab.name || `[${closingTab.tempName}]`)
-          : ''
+            ? closingTab.name || `[${closingTab.tempName}]`
+            : ''
         }}
-        <close-icon @click="$modal.hide('close-warn')"/>
+        <close-icon @click="$modal.hide('close-warn')" />
       </div>
       <div class="dialog-body">
-        You have unsaved changes. Save changes in {{
+        You have unsaved changes. Save changes in
+        {{
           closingTab !== null
-          ? (closingTab.name || `[${closingTab.tempName}]`)
-          : ''
-        }} before closing?
+            ? closingTab.name || `[${closingTab.tempName}]`
+            : ''
+        }}
+        before closing?
       </div>
       <div class="dialog-buttons-container">
         <button class="secondary" @click="closeTab(closingTab)">
           Close without saving
         </button>
-        <button class="secondary" @click="$modal.hide('close-warn')">Don't close</button>
-        <button class="primary" @click="saveAndClose(closingTab)">Save and close</button>
+        <button class="secondary" @click="$modal.hide('close-warn')">
+          Don't close
+        </button>
+        <button class="primary" @click="saveAndClose(closingTab)">
+          Save and close
+        </button>
       </div>
     </modal>
   </div>
@@ -67,36 +74,36 @@ export default {
     Tab,
     CloseIcon
   },
-  data () {
+  data() {
     return {
       closingTab: null
     }
   },
   computed: {
-    tabs () {
+    tabs() {
       return this.$store.state.tabs
     },
-    selectedTabId () {
+    selectedTabId() {
       return this.$store.state.currentTabId
     }
   },
-  created () {
+  created() {
     window.addEventListener('beforeunload', this.leavingSqliteviz)
   },
   methods: {
-    emitCreateTabEvent () {
+    emitCreateTabEvent() {
       eventBus.$emit('createNewInquiry')
     },
-    leavingSqliteviz (event) {
+    leavingSqliteviz(event) {
       if (this.tabs.some(tab => !tab.isSaved)) {
         event.preventDefault()
         event.returnValue = ''
       }
     },
-    selectTab (id) {
+    selectTab(id) {
       this.$store.commit('setCurrentTabId', id)
     },
-    beforeCloseTab (tab) {
+    beforeCloseTab(tab) {
       this.closingTab = tab
       if (!tab.isSaved) {
         this.$modal.show('close-warn')
@@ -104,11 +111,11 @@ export default {
         this.closeTab(tab)
       }
     },
-    closeTab (tab) {
+    closeTab(tab) {
       this.$modal.hide('close-warn')
       this.$store.commit('deleteTab', tab)
     },
-    saveAndClose (tab) {
+    saveAndClose(tab) {
       eventBus.$on('inquirySaved', () => {
         this.closeTab(tab)
         eventBus.$off('inquirySaved')

@@ -4,7 +4,7 @@ module.exports = function (config) {
       config: {
         resolve: {
           alias: {
-            'vue': 'vue/dist/vue.esm-bundler.js'
+            vue: 'vue/dist/vue.esm-bundler.js'
           }
         },
         server: {
@@ -32,19 +32,19 @@ module.exports = function (config) {
         pattern: 'test.setup.js',
         type: 'module',
         watched: false,
-        served: false,
+        served: false
       },
       {
         pattern: 'tests/**/*.spec.js',
         type: 'module',
         watched: false,
-        served: false,
+        served: false
       },
       {
         pattern: 'src/assets/styles/*.css',
         type: 'css',
         watched: false,
-        served: false,
+        served: false
       }
     ],
 

@@ -19,20 +19,23 @@ describe('storedInquiries.js', () => {
   })
 
   it('getStoredInquiries migrate and returns inquiries of v1', () => {
-    localStorage.setItem('myQueries', JSON.stringify([
-      {
-        id: '123',
-        name: 'foo',
-        query: 'SELECT * FROM foo',
-        chart: { here_are: 'foo chart settings' }
-      },
-      {
-        id: '456',
-        name: 'bar',
-        query: 'SELECT * FROM bar',
-        chart: { here_are: 'bar chart settings' }
-      }
-    ]))
+    localStorage.setItem(
+      'myQueries',
+      JSON.stringify([
+        {
+          id: '123',
+          name: 'foo',
+          query: 'SELECT * FROM foo',
+          chart: { here_are: 'foo chart settings' }
+        },
+        {
+          id: '456',
+          name: 'bar',
+          query: 'SELECT * FROM bar',
+          chart: { here_are: 'bar chart settings' }
+        }
+      ])
+    )
     const inquiries = storedInquiries.getStoredInquiries()
     expect(inquiries).to.eql([
       {
@@ -53,10 +56,7 @@ describe('storedInquiries.js', () => {
   })
 
   it('updateStorage and getStoredInquiries', () => {
-    const data = [
-      { id: 1 },
-      { id: 2 }
-    ]
+    const data = [{ id: 1 }, { id: 2 }]
     storedInquiries.updateStorage(data)
     const inquiries = storedInquiries.getStoredInquiries()
     expect(inquiries).to.eql(data)
@@ -77,7 +77,9 @@ describe('storedInquiries.js', () => {
 
     const copy = storedInquiries.duplicateInquiry(base)
     expect(copy).to.have.property('id').which.not.equal(base.id)
-    expect(copy).to.have.property('name').which.equal(base.name + ' Copy')
+    expect(copy)
+      .to.have.property('name')
+      .which.equal(base.name + ' Copy')
     expect(copy).to.have.property('query').which.equal(base.query)
     expect(copy).to.have.property('viewType').which.equal(base.viewType)
     expect(copy).to.have.property('viewOptions').which.eql(base.viewOptions)
@@ -197,14 +199,16 @@ describe('storedInquiries.js', () => {
     `
 
     const inquiry = storedInquiries.deserialiseInquiries(str)
-    expect(inquiry).to.eql([{
-      id: 1,
-      name: 'foo',
-      query: 'select * from foo',
-      viewType: 'chart',
-      viewOptions: [],
-      createdAt: '2020-11-03T14:17:49.524Z'
-    }])
+    expect(inquiry).to.eql([
+      {
+        id: 1,
+        name: 'foo',
+        query: 'select * from foo',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-11-03T14:17:49.524Z'
+      }
+    ])
   })
 
   it('deserialiseInquiries generates new id to avoid duplication', () => {
@@ -256,14 +260,16 @@ describe('storedInquiries.js', () => {
     sinon.stub(fu, 'importFile').returns(Promise.resolve(str))
     const inquiries = await storedInquiries.importInquiries()
 
-    expect(inquiries).to.eql([{
-      id: 1,
-      name: 'foo',
-      query: 'select * from foo',
-      viewType: 'chart',
-      viewOptions: [],
-      createdAt: '2020-11-03T14:17:49.524Z'
-    }])
+    expect(inquiries).to.eql([
+      {
+        id: 1,
+        name: 'foo',
+        query: 'select * from foo',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-11-03T14:17:49.524Z'
+      }
+    ])
   })
 
   it('importInquiries', async () => {
@@ -281,14 +287,16 @@ describe('storedInquiries.js', () => {
     sinon.stub(fu, 'importFile').returns(Promise.resolve(str))
     const inquiries = await storedInquiries.importInquiries()
 
-    expect(inquiries).to.eql([{
-      id: 1,
-      name: 'foo',
-      query: 'select * from foo',
-      viewType: 'chart',
-      viewOptions: [],
-      createdAt: '2020-11-03T14:17:49.524Z'
-    }])
+    expect(inquiries).to.eql([
+      {
+        id: 1,
+        name: 'foo',
+        query: 'select * from foo',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-11-03T14:17:49.524Z'
+      }
+    ])
   })
 
   it('readPredefinedInquiries old', async () => {
@@ -312,7 +320,8 @@ describe('storedInquiries.js', () => {
         viewType: 'chart',
         viewOptions: [],
         createdAt: '2020-11-03T14:17:49.524Z'
-      }])
+      }
+    ])
   })
 
   it('readPredefinedInquiries', async () => {
@@ -340,6 +349,7 @@ describe('storedInquiries.js', () => {
         viewType: 'chart',
         viewOptions: [],
         createdAt: '2020-11-03T14:17:49.524Z'
-      }])
+      }
+    ])
   })
 })

@@ -25,7 +25,7 @@ export default {
   components: { Paginate },
   props: ['pageCount', 'modelValue'],
   emits: ['update:modelValue'],
-  data () {
+  data() {
     return {
       page: this.modelValue,
       chevron: `
@@ -39,10 +39,10 @@ export default {
     }
   },
   watch: {
-    page () {
+    page() {
       this.$emit('update:modelValue', this.page)
     },
-    modelValue () {
+    modelValue() {
       this.page = this.modelValue
     }
   }
@@ -93,7 +93,7 @@ export default {
 
 :deep(.paginator-next:hover path),
 :deep(.paginator-prev:hover path) {
-   fill: var(--color-text-active);
+  fill: var(--color-text-active);
 }
 :deep(.paginator-disabled path),
 :deep(.paginator-disabled:hover path) {

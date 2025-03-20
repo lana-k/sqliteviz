@@ -7,7 +7,7 @@
       :default="{ before: 20, after: 80 }"
     >
       <template #left-pane>
-        <schema/>
+        <schema />
       </template>
       <template #right-pane>
         <tabs />
@@ -29,14 +29,17 @@ export default {
     Splitpanes,
     Tabs
   },
-  data () {
+  data() {
     return {
       schemaWidth: this.$route.query.hide_schema === '1' ? 0 : 20
     }
   },
-  async beforeCreate () {
+  async beforeCreate() {
     const schema = this.$store.state.db.schema
-    if ((!schema || schema.length === 0) && this.$store.state.tabs.length === 0) {
+    if (
+      (!schema || schema.length === 0) &&
+      this.$store.state.tabs.length === 0
+    ) {
       const stmt = [
         '/*',
         ' * Your database is empty. In order to start building charts',
@@ -60,10 +63,10 @@ export default {
       events.send('inquiry.create', null, { auto: true })
     }
   },
-  activated () {
+  activated() {
     this.$store.commit('setIsWorkspaceVisible', true)
   },
-  deactivated () {
+  deactivated() {
     this.$store.commit('setIsWorkspaceVisible', false)
   }
 }

@@ -1,42 +1,42 @@
 <template>
-    <div class="record-navigator">
-        <icon-button
-            :disabled="modelValue === 0"
-            tooltip="First row"
-            tooltip-position="top-left"
-            class="first"
-            @click="$emit('update:modelValue', 0)"
-        >
-            <edge-arrow-icon :disabled="false" />
-        </icon-button>
-        <icon-button
-            :disabled="modelValue === 0"
-            tooltip="Previous row"
-            tooltip-position="top-left"
-            class="prev"
-            @click="$emit('update:modelValue', modelValue - 1)"
-        >
-            <arrow-icon :disabled="false" />
-        </icon-button>
-        <icon-button
-            :disabled="modelValue === total - 1"
-            tooltip="Next row"
-            tooltip-position="top-left"
-            class="next"
-            @click="$emit('update:modelValue', modelValue + 1)"
-        >
-            <arrow-icon :disabled="false" />
-        </icon-button>
-        <icon-button
-            :disabled="modelValue === total - 1"
-            tooltip="Last row"
-            tooltip-position="top-left"
-            class="last"
-            @click="$emit('update:modelValue', total - 1)"
-        >
-            <edge-arrow-icon :disabled="false" />
-        </icon-button>
-    </div>
+  <div class="record-navigator">
+    <icon-button
+      :disabled="modelValue === 0"
+      tooltip="First row"
+      tooltip-position="top-left"
+      class="first"
+      @click="$emit('update:modelValue', 0)"
+    >
+      <edge-arrow-icon :disabled="false" />
+    </icon-button>
+    <icon-button
+      :disabled="modelValue === 0"
+      tooltip="Previous row"
+      tooltip-position="top-left"
+      class="prev"
+      @click="$emit('update:modelValue', modelValue - 1)"
+    >
+      <arrow-icon :disabled="false" />
+    </icon-button>
+    <icon-button
+      :disabled="modelValue === total - 1"
+      tooltip="Next row"
+      tooltip-position="top-left"
+      class="next"
+      @click="$emit('update:modelValue', modelValue + 1)"
+    >
+      <arrow-icon :disabled="false" />
+    </icon-button>
+    <icon-button
+      :disabled="modelValue === total - 1"
+      tooltip="Last row"
+      tooltip-position="top-left"
+      class="last"
+      @click="$emit('update:modelValue', total - 1)"
+    >
+      <edge-arrow-icon :disabled="false" />
+    </icon-button>
+  </div>
 </template>
 
 <script>
@@ -59,7 +59,7 @@ export default {
 
 <style scoped>
 .record-navigator {
-    display: flex;
+  display: flex;
 }
 
 .record-navigator .next,

@@ -1,10 +1,5 @@
 <template>
-  <svg
-    width="18"
-    height="19"
-    viewBox="0 0 18 19"
-    fill="none"
-  >
+  <svg width="18" height="19" viewBox="0 0 18 19" fill="none">
     <g clip-path="url(#clip0)">
       <path
         d="M4.5 1.51343H10.5L15 6.01343V8.45284H13.5V6.76343H9.75V3.01343H4.5V8.45284H3V3.01343C3
@@ -47,14 +42,18 @@
     </g>
     <defs>
       <clipPath id="clip0">
-        <rect width="18" height="18" fill="white" transform="translate(0 0.0134277)"/>
+        <rect
+          width="18"
+          height="18"
+          fill="white"
+          transform="translate(0 0.0134277)"
+        />
       </clipPath>
     </defs>
   </svg>
 </template>
 
 <script>
-
 export default {
   name: 'SqlEditorIcon'
 }

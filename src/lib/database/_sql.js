@@ -5,9 +5,11 @@ import wasmUrl from 'sql.js/dist/sql-wasm.wasm?url'
 let SQL = null
 const sqlModuleReady = initSqlJs({
   locateFile: () => wasmUrl
- }).then(sqlModule => { SQL = sqlModule })
+}).then(sqlModule => {
+  SQL = sqlModule
+})
 
-function _getDataSourcesFromSqlResult (sqlResult) {
+function _getDataSourcesFromSqlResult(sqlResult) {
   if (!sqlResult) {
     return {}
   }
@@ -19,31 +21,30 @@ function _getDataSourcesFromSqlResult (sqlResult) {
 }
 
 export default class Sql {
-  constructor () {
+  constructor() {
     this.db = null
   }
 
-  static build () {
-    return sqlModuleReady
-      .then(() => {
-        return new Sql()
-      })
+  static build() {
+    return sqlModuleReady.then(() => {
+      return new Sql()
+    })
   }
 
-  createDb (buffer) {
+  createDb(buffer) {
     if (this.db != null) this.db.close()
     this.db = new SQL.Database(buffer)
     return this.db
   }
 
-  open (buffer) {
+  open(buffer) {
     this.createDb(buffer && new Uint8Array(buffer))
     return {
       ready: true
     }
   }
 
-  exec (sql, params) {
+  exec(sql, params) {
     if (this.db === null) {
       this.createDb()
     }
@@ -59,7 +60,7 @@ export default class Sql {
     })
   }
 
-  import (tabName, data, progressCounterId, progressCallback, chunkSize = 1500) {
+  import(tabName, data, progressCounterId, progressCallback, chunkSize = 1500) {
     if (this.db === null) {
       this.createDb()
     }
@@ -80,7 +81,10 @@ export default class Sql {
       }
       this.db.exec('COMMIT')
       count++
-      progressCallback({ progress: 100 * (count / chunksAmount), id: progressCounterId })
+      progressCallback({
+        progress: 100 * (count / chunksAmount),
+        id: progressCounterId
+      })
     }
 
     return {
@@ -88,11 +92,11 @@ export default class Sql {
     }
   }
 
-  export () {
+  export() {
     return this.db.export()
   }
 
-  close () {
+  close() {
     if (this.db) {
       this.db.close()
     }

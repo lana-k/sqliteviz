@@ -319,22 +319,24 @@ describe('mutations', () => {
   })
 
   it('updatePredefinedInquiries - array', () => {
-    const inquiries = [{
-      id: 1,
-      name: 'foo',
-      query: 'SELECT * FROM foo',
-      viewType: 'chart',
-      viewOptions: {},
-      createdAt: '2020-11-07T20:57:04.492Z'
-    },
-    {
-      id: 2,
-      name: 'bar',
-      query: 'SELECT * FROM bar',
-      viewType: 'chart',
-      viewOptions: {},
-      createdAt: '2020-11-07T20:57:04.492Z'
-    }]
+    const inquiries = [
+      {
+        id: 1,
+        name: 'foo',
+        query: 'SELECT * FROM foo',
+        viewType: 'chart',
+        viewOptions: {},
+        createdAt: '2020-11-07T20:57:04.492Z'
+      },
+      {
+        id: 2,
+        name: 'bar',
+        query: 'SELECT * FROM bar',
+        viewType: 'chart',
+        viewOptions: {},
+        createdAt: '2020-11-07T20:57:04.492Z'
+      }
+    ]
 
     const state = {
       predefinedInquiries: []

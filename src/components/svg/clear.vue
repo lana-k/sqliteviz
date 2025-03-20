@@ -1,6 +1,6 @@
 <template>
   <svg
-    :class="['clear-icon', {'disabled': disabled}]"
+    :class="['clear-icon', { disabled: disabled }]"
     width="20"
     height="20"
     viewBox="0 0 20 20"
@@ -21,7 +21,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'ClearIcon',
   props: ['disabled']
@@ -42,6 +41,6 @@ export default {
 }
 
 .disabled.clear-icon:hover path {
-  fill: #C8D4E3;
+  fill: #c8d4e3;
 }
 </style>

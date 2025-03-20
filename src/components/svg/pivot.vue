@@ -1,10 +1,5 @@
 <template>
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 18 18"
-    fill="none"
-  >
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
     <path
       fill-rule="evenodd"
       clip-rule="evenodd"
@@ -14,14 +9,13 @@
       14.1914C14.8372 13.965 15.0161 13.5645 15.0161 12.8467V9.43008H13.1914L15.7661 5.13901Z"
       fill="#A2B1C6"
     />
-    <path d="M6.41943 0H18.4194V4H6.41943V0Z" fill="#A2B1C6"/>
-    <path d="M0.419434 6H4.41943V18H0.419434V6Z" fill="#A2B1C6"/>
-    <path d="M0.419434 0H4.41943V4H0.419434V0Z" fill="#A2B1C6"/>
+    <path d="M6.41943 0H18.4194V4H6.41943V0Z" fill="#A2B1C6" />
+    <path d="M0.419434 6H4.41943V18H0.419434V6Z" fill="#A2B1C6" />
+    <path d="M0.419434 0H4.41943V4H0.419434V0Z" fill="#A2B1C6" />
   </svg>
 </template>
 
 <script>
-
 export default {
   name: 'PivotIcon'
 }

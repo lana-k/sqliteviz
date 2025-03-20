@@ -97,7 +97,8 @@ describe('chartHelper.js', () => {
     expect(doc.children[0].src).to.includes('plotly-latest.js')
     expect(doc.children[1].id).to.have.lengthOf(21)
     expect(doc.children[2].innerHTML).to.includes(doc.children[1].id)
-    expect(doc.children[2].innerHTML)
-      .to.includes('Plotly.newPlot(el, "plotly data", "plotly layout"')
+    expect(doc.children[2].innerHTML).to.includes(
+      'Plotly.newPlot(el, "plotly data", "plotly layout"'
+    )
   })
 })

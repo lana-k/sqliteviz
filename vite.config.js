@@ -11,23 +11,23 @@ export default defineConfig({
   plugins: [
     vue(),
     nodePolyfills({
-        include: ['process', 'util', 'stream', 'buffer'],
-        globals: { global: true, process: true },
-      }),
+      include: ['process', 'util', 'stream', 'buffer'],
+      globals: { global: true, process: true }
+    }),
     viteStaticCopy({
-        targets: [
-          {
-            src: 'LICENSE',
-            dest: './'
-          }
-        ]
-      }),
+      targets: [
+        {
+          src: 'LICENSE',
+          dest: './'
+        }
+      ]
+    }),
     VitePWA({
       filename: 'service-worker.js',
       manifest: false,
       injectRegister: false,
       workbox: {
-        globPatterns: ["**\/*.{js,wasm,css,html,woff2,png}"],
+        globPatterns: ['**\/*.{js,wasm,css,html,woff2,png}'],
         globIgnores: ['*.map', 'LICENSE', 'inquiries.json'],
         clientsClaim: true,
         skipWaiting: false,
@@ -39,10 +39,10 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
-    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
   },
   optimizeDeps: {
-    include:['sql.js'],
+    include: ['sql.js'],
     esbuildOptions: {
       define: {
         global: 'globalThis'
@@ -56,4 +56,3 @@ export default defineConfig({
     }
   }
 })
-

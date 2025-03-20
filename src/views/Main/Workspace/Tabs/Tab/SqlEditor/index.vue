@@ -18,7 +18,7 @@
         tooltip-position="top-left"
         @click="$emit('run')"
       >
-        <run-icon :disabled="runDisabled"/>
+        <run-icon :disabled="runDisabled" />
       </icon-button>
     </side-tool-bar>
   </div>
@@ -47,7 +47,7 @@ export default {
     IconButton,
     RunIcon
   },
-  data () {
+  data() {
     return {
       query: this.modelValue,
       cmOptions: {
@@ -63,18 +63,18 @@ export default {
     }
   },
   computed: {
-    runDisabled () {
-      return (!this.$store.state.db || !this.query || this.isGettingResults)
+    runDisabled() {
+      return !this.$store.state.db || !this.query || this.isGettingResults
     }
   },
   watch: {
-    query () {
+    query() {
       this.$emit('update:modelValue', this.query)
     }
   },
   methods: {
     onChange: time.debounce((value, editor) => showHint(editor), 400),
-    focus () {
+    focus() {
       this.$refs.cm.cminstance?.focus()
     }
   }

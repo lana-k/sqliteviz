@@ -1,5 +1,5 @@
 export default {
-  data () {
+  data() {
     return {
       tooltipStyle: {
         visibility: 'hidden'
@@ -7,13 +7,15 @@ export default {
     }
   },
   computed: {
-    tooltipElement () {
+    tooltipElement() {
       return this.$refs.tooltip
     }
   },
   methods: {
-    showTooltip (e, tooltipPosition) {
-      const position = tooltipPosition ? tooltipPosition.split('-') : ['top', 'right']
+    showTooltip(e, tooltipPosition) {
+      const position = tooltipPosition
+        ? tooltipPosition.split('-')
+        : ['top', 'right']
       const offset = 12
 
       if (position[0] === 'top') {
@@ -25,12 +27,13 @@ export default {
       if (position[1] === 'right') {
         this.tooltipStyle.left = e.clientX + offset + 'px'
       } else {
-        this.tooltipStyle.left = e.clientX - offset - this.tooltipElement.offsetWidth + 'px'
+        this.tooltipStyle.left =
+          e.clientX - offset - this.tooltipElement.offsetWidth + 'px'
       }
 
       this.tooltipStyle.visibility = 'visible'
     },
-    hideTooltip () {
+    hideTooltip() {
       this.tooltipStyle.visibility = 'hidden'
     }
   }

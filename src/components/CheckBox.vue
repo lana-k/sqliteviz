@@ -1,6 +1,10 @@
 <template>
   <div
-    :class="['checkbox-container', { 'checked': checked }, {'disabled': disabled}]"
+    :class="[
+      'checkbox-container',
+      { checked: checked },
+      { disabled: disabled }
+    ]"
     @click.stop="onClick"
   >
     <div v-show="!checked" class="unchecked" />
@@ -31,7 +35,7 @@ export default {
       type: String,
       required: false,
       default: 'accent',
-      validator: (value) => {
+      validator: value => {
         return ['accent', 'light'].includes(value)
       }
     },
@@ -52,13 +56,13 @@ export default {
     }
   },
   emits: ['click'],
-  data () {
+  data() {
     return {
       checked: this.init
     }
   },
   methods: {
-    onClick () {
+    onClick() {
       if (!this.disabled) {
         this.checked = !this.checked
         this.$emit('click', this.checked)
@@ -86,7 +90,7 @@ export default {
 }
 
 img {
-    display: block;
+  display: block;
 }
 .label {
   margin-left: 6px;
@@ -106,6 +110,6 @@ img {
 
 .disabled .unchecked,
 .disabled .unchecked:hover {
-  background-color:  var(--color-bg-light-2);
+  background-color: var(--color-bg-light-2);
 }
 </style>

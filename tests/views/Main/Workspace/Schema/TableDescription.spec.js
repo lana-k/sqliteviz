@@ -36,7 +36,11 @@ describe('TableDescription.vue', () => {
 
     expect(wrapper.find('.columns').isVisible()).to.equal(true)
     expect(wrapper.findAll('.column').length).to.equal(2)
-    expect(wrapper.findAll('.column')[0].text()).to.include('id').and.include('number')
-    expect(wrapper.findAll('.column')[1].text()).to.include('title').and.include('nvarchar(24)')
+    expect(wrapper.findAll('.column')[0].text())
+      .to.include('id')
+      .and.include('number')
+    expect(wrapper.findAll('.column')[1].text())
+      .to.include('title')
+      .and.include('nvarchar(24)')
   })
 })

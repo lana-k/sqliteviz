@@ -3,35 +3,35 @@ on:
   workflow_dispatch:
   push:
     branches:
-    - 'master'
+      - 'master'
   pull_request:
     branches:
-    - 'master'
+      - 'master'
 
 jobs:
   test:
     name: Run tests
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16.x
-    - name: Install browsers
-      run: |
-        export DEBIAN_FRONTEND=noninteractive
-        sudo apt-get update
-        sudo apt-get install -y chromium-browser firefox
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: Install browsers
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser firefox
 
-    - name: Update npm
-      run: npm install -g npm@8
+      - name: Update npm
+        run: npm install -g npm@8
 
-    - name: Install the project
-      run: npm install
+      - name: Install the project
+        run: npm install
 
-    - name: Run lint
-      run: npm run lint -- --no-fix
+      - name: Run lint
+        run: npm run lint -- --no-fix
 
-    - name: Run karma tests
-      run: npm run test
+      - name: Run karma tests
+        run: npm run test

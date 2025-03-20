@@ -10,13 +10,21 @@
       id="loading-predefined-status"
       v-if="$store.state.loadingPredefinedInquiries"
     >
-      <loading-indicator/>
+      <loading-indicator />
       Loading predefined inquiries...
     </div>
-    <div id="my-inquiries-content" ref="my-inquiries-content" v-show="allInquiries.length > 0">
+    <div
+      id="my-inquiries-content"
+      ref="my-inquiries-content"
+      v-show="allInquiries.length > 0"
+    >
       <div id="my-inquiries-toolbar">
         <div id="toolbar-buttons">
-          <button id="toolbar-btns-import" class="toolbar" @click="importInquiries">
+          <button
+            id="toolbar-btns-import"
+            class="toolbar"
+            @click="importInquiries"
+          >
             Import
           </button>
           <button
@@ -37,7 +45,11 @@
           </button>
         </div>
         <div id="toolbar-search">
-          <text-field placeholder="Search inquiry by name" width="300px" v-model="filter"/>
+          <text-field
+            placeholder="Search inquiry by name"
+            width="300px"
+            v-model="filter"
+          />
         </div>
       </div>
 
@@ -46,27 +58,32 @@
       </div>
 
       <div v-show="showedInquiries.length > 0" class="rounded-bg">
-      <div class="header-container">
-        <div>
-          <div class="fixed-header" ref="name-th">
-            <check-box ref="mainCheckBox" theme="light" @click="toggleSelectAll"/>
-            <div class="name-th">Name</div>
-          </div>
-          <div class="fixed-header">
-            Created at
+        <div class="header-container">
+          <div>
+            <div class="fixed-header" ref="name-th">
+              <check-box
+                ref="mainCheckBox"
+                theme="light"
+                @click="toggleSelectAll"
+              />
+              <div class="name-th">Name</div>
+            </div>
+            <div class="fixed-header">Created at</div>
           </div>
         </div>
-      </div>
-      <div class="table-container" :style="{ 'max-height': `${maxTableHeight}px` }">
-        <table ref="table" class="sqliteviz-table">
-          <tbody>
-            <tr
-              v-for="(inquiry, index) in showedInquiries"
-              :key="inquiry.id"
-              @click="openInquiry(index)"
-            >
-              <td ref="name-td">
-                 <div class="cell-data">
+        <div
+          class="table-container"
+          :style="{ 'max-height': `${maxTableHeight}px` }"
+        >
+          <table ref="table" class="sqliteviz-table">
+            <tbody>
+              <tr
+                v-for="(inquiry, index) in showedInquiries"
+                :key="inquiry.id"
+                @click="openInquiry(index)"
+              >
+                <td ref="name-td">
+                  <div class="cell-data">
                     <check-box
                       ref="rowCheckBox"
                       :init="selectAll || selectedInquiriesIds.has(inquiry.id)"
@@ -81,82 +98,89 @@
                       @mouseleave="hideTooltip"
                     >
                       Predefined
-                      <span class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
-                        Predefined inquiries come from the server.
-                        These inquiries can’t be deleted or renamed.
+                      <span
+                        class="icon-tooltip"
+                        :style="tooltipStyle"
+                        ref="tooltip"
+                      >
+                        Predefined inquiries come from the server. These
+                        inquiries can’t be deleted or renamed.
                       </span>
                     </div>
-                 </div>
-              </td>
-              <td>
-                <div class="second-column">
-                  <div class="date-container">
-                    {{ createdAtFormatted(inquiry.createdAt) }}
                   </div>
-                  <div class="icons-container">
-                    <rename-icon
-                      v-if="!inquiry.isPredefined"
-                      @click="showRenameDialog(inquiry.id)"
-                    />
-                    <copy-icon @click="duplicateInquiry(index)"/>
-                    <export-icon
-                      @click="exportToFile([inquiry], `${inquiry.name}.json`)"
-                      tooltip="Export inquiry to file"
-                      tooltip-position="top-left"
-                    />
-                    <delete-icon
-                      v-if="!inquiry.isPredefined"
-                      @click="showDeleteDialog((new Set()).add(inquiry.id))"
-                    />
+                </td>
+                <td>
+                  <div class="second-column">
+                    <div class="date-container">
+                      {{ createdAtFormatted(inquiry.createdAt) }}
+                    </div>
+                    <div class="icons-container">
+                      <rename-icon
+                        v-if="!inquiry.isPredefined"
+                        @click="showRenameDialog(inquiry.id)"
+                      />
+                      <copy-icon @click="duplicateInquiry(index)" />
+                      <export-icon
+                        @click="exportToFile([inquiry], `${inquiry.name}.json`)"
+                        tooltip="Export inquiry to file"
+                        tooltip-position="top-left"
+                      />
+                      <delete-icon
+                        v-if="!inquiry.isPredefined"
+                        @click="showDeleteDialog(new Set().add(inquiry.id))"
+                      />
+                    </div>
                   </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
+
+    <!--Rename Inquiry dialog  -->
+    <modal modal-id="rename" class="dialog" content-style="width: 560px;">
+      <div class="dialog-header">
+        Rename inquiry
+        <close-icon @click="$modal.hide('rename')" />
+      </div>
+      <div class="dialog-body">
+        <text-field
+          label="New inquiry name"
+          :error-msg="errorMsg"
+          v-model="newName"
+          width="100%"
+        />
+      </div>
+      <div class="dialog-buttons-container">
+        <button class="secondary" @click="$modal.hide('rename')">Cancel</button>
+        <button class="primary" @click="renameInquiry">Rename</button>
+      </div>
+    </modal>
+
+    <!--Delete Inquiry dialog  -->
+    <modal modal-id="delete" class="dialog" content-style="width: 480px;">
+      <div class="dialog-header">
+        Delete {{ deleteGroup ? 'inquiries' : 'inquiry' }}
+        <close-icon @click="$modal.hide('delete')" />
+      </div>
+      <div class="dialog-body">
+        {{ deleteDialogMsg }}
+        <div
+          v-show="selectedInquiriesCount > selectedNotPredefinedCount"
+          id="note"
+        >
+          <img src="~@/assets/images/info.svg" />
+          Note: Predefined inquiries you've selected won't be deleted
+        </div>
+      </div>
+      <div class="dialog-buttons-container">
+        <button class="secondary" @click="$modal.hide('delete')">Cancel</button>
+        <button class="primary" @click="deleteInquiry">Delete</button>
+      </div>
+    </modal>
   </div>
-
-  <!--Rename Inquiry dialog  -->
-  <modal modal-id="rename" class="dialog" content-style="width: 560px;">
-    <div class="dialog-header">
-      Rename inquiry
-      <close-icon @click="$modal.hide('rename')"/>
-    </div>
-    <div class="dialog-body">
-      <text-field
-        label="New inquiry name"
-        :error-msg="errorMsg"
-        v-model="newName"
-        width="100%"
-      />
-    </div>
-    <div class="dialog-buttons-container">
-      <button class="secondary" @click="$modal.hide('rename')">Cancel</button>
-      <button class="primary" @click="renameInquiry">Rename</button>
-    </div>
-  </modal>
-
-  <!--Delete Inquiry dialog  -->
-  <modal modal-id="delete" class="dialog" content-style="width: 480px;">
-    <div class="dialog-header">
-      Delete {{ deleteGroup ? 'inquiries' : 'inquiry' }}
-      <close-icon @click="$modal.hide('delete')"/>
-    </div>
-    <div class="dialog-body">
-      {{ deleteDialogMsg }}
-      <div v-show="selectedInquiriesCount > selectedNotPredefinedCount" id="note">
-        <img src="~@/assets/images/info.svg">
-        Note: Predefined inquiries you've selected won't be deleted
-      </div>
-    </div>
-    <div class="dialog-buttons-container">
-      <button class="secondary" @click="$modal.hide('delete')">Cancel</button>
-      <button class="primary" @click="deleteInquiry">Delete</button>
-    </div>
-  </modal>
-</div>
 </template>
 
 <script>
@@ -185,7 +209,7 @@ export default {
     LoadingIndicator
   },
   mixins: [tooltipMixin],
-  data () {
+  data() {
     return {
       filter: null,
       newName: null,
@@ -201,47 +225,51 @@ export default {
     }
   },
   computed: {
-    inquiries () {
+    inquiries() {
       return this.$store.state.inquiries
     },
-    predefinedInquiries () {
+    predefinedInquiries() {
       return this.$store.state.predefinedInquiries.map(inquiry => {
         inquiry.isPredefined = true
         return inquiry
       })
     },
-    predefinedInquiriesIds () {
+    predefinedInquiriesIds() {
       return new Set(this.predefinedInquiries.map(inquiry => inquiry.id))
     },
-    showedInquiries () {
+    showedInquiries() {
       let showedInquiries = this.allInquiries
       if (this.filter) {
         showedInquiries = showedInquiries.filter(
-          inquiry => inquiry.name.toUpperCase().indexOf(this.filter.toUpperCase()) >= 0
+          inquiry =>
+            inquiry.name.toUpperCase().indexOf(this.filter.toUpperCase()) >= 0
         )
       }
       return showedInquiries
     },
 
-    allInquiries () {
+    allInquiries() {
       return this.predefinedInquiries.concat(this.inquiries)
     },
-    processedInquiryIndex () {
-      return this.inquiries.findIndex(inquiry => inquiry.id === this.processedInquiryId)
+    processedInquiryIndex() {
+      return this.inquiries.findIndex(
+        inquiry => inquiry.id === this.processedInquiryId
+      )
     },
-    deleteDialogMsg () {
-      if (!this.deleteGroup && (
-        this.processedInquiryIndex === null ||
+    deleteDialogMsg() {
+      if (
+        !this.deleteGroup &&
+        (this.processedInquiryIndex === null ||
           this.processedInquiryIndex < 0 ||
-          this.processedInquiryIndex > this.inquiries.length
-      )) {
+          this.processedInquiryIndex > this.inquiries.length)
+      ) {
         return ''
       }
 
       const deleteItem = this.deleteGroup
-        ? `${this.selectedNotPredefinedCount} ${this.selectedNotPredefinedCount > 1
-          ? 'inquiries'
-          : 'inquiry'}`
+        ? `${this.selectedNotPredefinedCount} ${
+            this.selectedNotPredefinedCount > 1 ? 'inquiries' : 'inquiry'
+          }`
         : `"${this.inquiries[this.processedInquiryIndex].name}"`
 
       return `Are you sure you want to delete ${deleteItem}?`
@@ -249,14 +277,16 @@ export default {
   },
   watch: {
     showedInquiries: {
-      handler () {
-        this.selectedInquiriesIds = new Set(this.showedInquiries
-          .filter(inquiry => this.selectedInquiriesIds.has(inquiry.id))
-          .map(inquiry => inquiry.id)
+      handler() {
+        this.selectedInquiriesIds = new Set(
+          this.showedInquiries
+            .filter(inquiry => this.selectedInquiriesIds.has(inquiry.id))
+            .map(inquiry => inquiry.id)
         )
         this.selectedInquiriesCount = this.selectedInquiriesIds.size
-        this.selectedNotPredefinedCount = ([...this.selectedInquiriesIds]
-          .filter(id => !this.predefinedInquiriesIds.has(id))).length
+        this.selectedNotPredefinedCount = [...this.selectedInquiriesIds].filter(
+          id => !this.predefinedInquiriesIds.has(id)
+        ).length
 
         if (this.selectedInquiriesIds.size < this.showedInquiries.length) {
           if (this.$refs.mainCheckBox) {
@@ -268,9 +298,11 @@ export default {
       deep: true
     }
   },
-  async created () {
-    const loadingPredefinedInquiries = this.$store.state.loadingPredefinedInquiries
-    const predefinedInquiriesLoaded = this.$store.state.predefinedInquiriesLoaded
+  async created() {
+    const loadingPredefinedInquiries =
+      this.$store.state.loadingPredefinedInquiries
+    const predefinedInquiriesLoaded =
+      this.$store.state.predefinedInquiriesLoaded
     if (!predefinedInquiriesLoaded && !loadingPredefinedInquiries) {
       try {
         this.$store.commit('setLoadingPredefinedInquiries', true)
@@ -283,7 +315,7 @@ export default {
       this.$store.commit('setLoadingPredefinedInquiries', false)
     }
   },
-  mounted () {
+  mounted() {
     this.resizeObserver = new ResizeObserver(this.calcMaxTableHeight)
     this.resizeObserver.observe(this.$refs['my-inquiries-content'])
 
@@ -292,15 +324,15 @@ export default {
     this.calcNameWidth()
     this.calcMaxTableHeight()
   },
-  beforeUnmount () {
+  beforeUnmount() {
     this.resizeObserver.unobserve(this.$refs['my-inquiries-content'])
     this.tableResizeObserver.unobserve(this.$refs.table)
   },
   methods: {
-    emitCreateTabEvent () {
+    emitCreateTabEvent() {
       eventBus.$emit('createNewInquiry')
     },
-    createdAtFormatted (value) {
+    createdAtFormatted(value) {
       if (!value) {
         return ''
       }
@@ -310,20 +342,24 @@ export default {
         hour: '2-digit',
         minute: '2-digit'
       }
-      return new Date(value).toLocaleDateString('en-GB', dateOptions) + ' ' +
-             new Date(value).toLocaleTimeString('en-GB', timeOptions)
+      return (
+        new Date(value).toLocaleDateString('en-GB', dateOptions) +
+        ' ' +
+        new Date(value).toLocaleTimeString('en-GB', timeOptions)
+      )
     },
-    calcNameWidth () {
-      const nameWidth = this.$refs['name-td'] && this.$refs['name-td'][0]
-        ? this.$refs['name-td'][0].getBoundingClientRect().width
-        : 0
+    calcNameWidth() {
+      const nameWidth =
+        this.$refs['name-td'] && this.$refs['name-td'][0]
+          ? this.$refs['name-td'][0].getBoundingClientRect().width
+          : 0
       this.$refs['name-th'].style = `width: ${nameWidth}px`
     },
-    calcMaxTableHeight () {
+    calcMaxTableHeight() {
       const freeSpace = this.$refs['my-inquiries-content'].offsetHeight - 200
       this.maxTableHeight = freeSpace - (freeSpace % 40) + 1
     },
-    openInquiry (index) {
+    openInquiry(index) {
       const tab = this.showedInquiries[index]
       setTimeout(() => {
         this.$store.dispatch('addTab', tab).then(id => {
@@ -332,13 +368,13 @@ export default {
         })
       })
     },
-    showRenameDialog (id) {
+    showRenameDialog(id) {
       this.errorMsg = null
       this.processedInquiryId = id
       this.newName = this.inquiries[this.processedInquiryIndex].name
       this.$modal.show('rename')
     },
-    renameInquiry () {
+    renameInquiry() {
       if (!this.newName) {
         this.errorMsg = "Inquiry name can't be empty"
         return
@@ -351,21 +387,26 @@ export default {
       // hide dialog
       this.$modal.hide('rename')
     },
-    duplicateInquiry (index) {
-      const newInquiry = storedInquiries.duplicateInquiry(this.showedInquiries[index])
+    duplicateInquiry(index) {
+      const newInquiry = storedInquiries.duplicateInquiry(
+        this.showedInquiries[index]
+      )
       this.$store.dispatch('addInquiry', newInquiry)
     },
-    showDeleteDialog (idsSet) {
+    showDeleteDialog(idsSet) {
       this.deleteGroup = idsSet.size > 1
       if (!this.deleteGroup) {
         this.processedInquiryId = idsSet.values().next().value
       }
       this.$modal.show('delete')
     },
-    deleteInquiry () {
+    deleteInquiry() {
       this.$modal.hide('delete')
       if (!this.deleteGroup) {
-        this.$store.dispatch('deleteInquiries', new Set().add(this.processedInquiryId))
+        this.$store.dispatch(
+          'deleteInquiries',
+          new Set().add(this.processedInquiryId)
+        )
 
         // Clear checkbox
         if (this.selectedInquiriesIds.has(this.processedInquiryId)) {
@@ -379,27 +420,31 @@ export default {
       }
       this.selectedInquiriesCount = this.selectedInquiriesIds.size
     },
-    exportToFile (inquiryList, fileName) {
+    exportToFile(inquiryList, fileName) {
       storedInquiries.export(inquiryList, fileName)
     },
-    exportSelectedInquiries () {
-      const inquiryList = this.allInquiries.filter(
-        inquiry => this.selectedInquiriesIds.has(inquiry.id)
+    exportSelectedInquiries() {
+      const inquiryList = this.allInquiries.filter(inquiry =>
+        this.selectedInquiriesIds.has(inquiry.id)
       )
 
       this.exportToFile(inquiryList, 'My sqliteviz inquiries.json')
     },
 
-    importInquiries () {
-      storedInquiries.importInquiries()
-        .then(importedInquiries => {
-          this.$store.commit('setInquiries', this.inquiries.concat(importedInquiries))
-        })
+    importInquiries() {
+      storedInquiries.importInquiries().then(importedInquiries => {
+        this.$store.commit(
+          'setInquiries',
+          this.inquiries.concat(importedInquiries)
+        )
+      })
     },
 
-    toggleSelectAll (checked) {
+    toggleSelectAll(checked) {
       this.selectAll = checked
-      this.$refs.rowCheckBox.forEach(item => { item.checked = checked })
+      this.$refs.rowCheckBox.forEach(item => {
+        item.checked = checked
+      })
 
       this.selectedInquiriesIds = checked
         ? new Set(this.showedInquiries.map(inquiry => inquiry.id))
@@ -407,12 +452,13 @@ export default {
 
       this.selectedInquiriesCount = this.selectedInquiriesIds.size
       this.selectedNotPredefinedCount = checked
-        ? ([...this.selectedInquiriesIds].filter(id => !this.predefinedInquiriesIds.has(id)))
-            .length
+        ? [...this.selectedInquiriesIds].filter(
+            id => !this.predefinedInquiriesIds.has(id)
+          ).length
         : 0
     },
 
-    toggleRow (checked, id) {
+    toggleRow(checked, id) {
       const isPredefined = this.predefinedInquiriesIds.has(id)
       if (checked) {
         this.selectedInquiriesIds.add(id)

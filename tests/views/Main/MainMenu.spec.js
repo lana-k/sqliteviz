@@ -150,7 +150,9 @@ describe('MainMenu.vue', () => {
     await wrapper.find('#create-btn').trigger('click')
     expect(actions.addTab.calledOnce).to.equal(true)
     await actions.addTab.returnValues[0]
-    expect(mutations.setCurrentTabId.calledOnceWith(state, newInquiryId)).to.equal(true)
+    expect(
+      mutations.setCurrentTabId.calledOnceWith(state, newInquiryId)
+    ).to.equal(true)
     expect($router.push.calledOnce).to.equal(false)
   })
 
@@ -187,105 +189,111 @@ describe('MainMenu.vue', () => {
     await wrapper.find('#create-btn').trigger('click')
     expect(actions.addTab.calledOnce).to.equal(true)
     await actions.addTab.returnValues[0]
-    expect(mutations.setCurrentTabId.calledOnceWith(state, newInquiryId)).to.equal(true)
+    expect(
+      mutations.setCurrentTabId.calledOnceWith(state, newInquiryId)
+    ).to.equal(true)
     expect($router.push.calledOnce).to.equal(true)
   })
 
-  it('Ctrl R calls currentTab.execute if running is enabled and route.path is "/workspace"',
-    async () => {
-      const tab = {
-        query: 'SELECT * FROM foo',
-        execute: sinon.stub(),
-        isSaved: false
+  it('Ctrl R calls currentTab.execute if running is enabled and route.path is "/workspace"', async () => {
+    const tab = {
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isSaved: false
+    }
+    const state = {
+      currentTab: tab,
+      tabs: [tab],
+      db: {}
+    }
+    const store = createStore({ state })
+    const $route = { path: '/workspace' }
+    const $router = { push: sinon.stub() }
+
+    wrapper = shallowMount(MainMenu, {
+      global: {
+        mocks: { $route, $router },
+        stubs: ['router-link'],
+        plugins: [store]
       }
-      const state = {
-        currentTab: tab,
-        tabs: [tab],
-        db: {}
-      }
-      const store = createStore({ state })
-      const $route = { path: '/workspace' }
-      const $router = { push: sinon.stub() }
-
-      wrapper = shallowMount(MainMenu, {
-        global: {
-          mocks: { $route, $router },
-          stubs: ['router-link'],
-          plugins: [store]
-        }
-      })
-
-      const ctrlR = new KeyboardEvent('keydown', { key: 'r', ctrlKey: true })
-      const metaR = new KeyboardEvent('keydown', { key: 'r', metaKey: true })
-      // Running is enabled and route path is workspace
-      document.dispatchEvent(ctrlR)
-      expect(state.currentTab.execute.calledOnce).to.equal(true)
-      document.dispatchEvent(metaR)
-      expect(state.currentTab.execute.calledTwice).to.equal(true)
-
-      // Running is disabled and route path is workspace
-      store.state.db = null
-      document.dispatchEvent(ctrlR)
-      expect(state.currentTab.execute.calledTwice).to.equal(true)
-      document.dispatchEvent(metaR)
-      expect(state.currentTab.execute.calledTwice).to.equal(true)
-
-      // Running is enabled and route path is not workspace
-      state.db = {}
-      wrapper.vm.$route.path = '/inquiries'
-      document.dispatchEvent(ctrlR)
-      expect(state.currentTab.execute.calledTwice).to.equal(true)
-      document.dispatchEvent(metaR)
-      expect(state.currentTab.execute.calledTwice).to.equal(true)
     })
 
-  it('Ctrl Enter calls currentTab.execute if running is enabled and route.path is "/workspace"',
-    async () => {
-      const tab = {
-        query: 'SELECT * FROM foo',
-        execute: sinon.stub(),
-        isSaved: false
+    const ctrlR = new KeyboardEvent('keydown', { key: 'r', ctrlKey: true })
+    const metaR = new KeyboardEvent('keydown', { key: 'r', metaKey: true })
+    // Running is enabled and route path is workspace
+    document.dispatchEvent(ctrlR)
+    expect(state.currentTab.execute.calledOnce).to.equal(true)
+    document.dispatchEvent(metaR)
+    expect(state.currentTab.execute.calledTwice).to.equal(true)
+
+    // Running is disabled and route path is workspace
+    store.state.db = null
+    document.dispatchEvent(ctrlR)
+    expect(state.currentTab.execute.calledTwice).to.equal(true)
+    document.dispatchEvent(metaR)
+    expect(state.currentTab.execute.calledTwice).to.equal(true)
+
+    // Running is enabled and route path is not workspace
+    state.db = {}
+    wrapper.vm.$route.path = '/inquiries'
+    document.dispatchEvent(ctrlR)
+    expect(state.currentTab.execute.calledTwice).to.equal(true)
+    document.dispatchEvent(metaR)
+    expect(state.currentTab.execute.calledTwice).to.equal(true)
+  })
+
+  it('Ctrl Enter calls currentTab.execute if running is enabled and route.path is "/workspace"', async () => {
+    const tab = {
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isSaved: false
+    }
+    const state = {
+      currentTab: tab,
+      tabs: [tab],
+      db: {}
+    }
+    const store = createStore({ state })
+    const $route = { path: '/workspace' }
+    const $router = { push: sinon.stub() }
+
+    wrapper = shallowMount(MainMenu, {
+      global: {
+        mocks: { $route, $router },
+        stubs: ['router-link'],
+        plugins: [store]
       }
-      const state = {
-        currentTab: tab,
-        tabs: [tab],
-        db: {}
-      }
-      const store = createStore({ state })
-      const $route = { path: '/workspace' }
-      const $router = { push: sinon.stub() }
-
-      wrapper = shallowMount(MainMenu, {
-        global: {
-          mocks: { $route, $router },
-          stubs: ['router-link'],
-          plugins: [store]
-        }
-      })
-
-      const ctrlEnter = new KeyboardEvent('keydown', { key: 'Enter', ctrlKey: true })
-      const metaEnter = new KeyboardEvent('keydown', { key: 'Enter', metaKey: true })
-      // Running is enabled and route path is workspace
-      document.dispatchEvent(ctrlEnter)
-      expect(state.currentTab.execute.calledOnce).to.equal(true)
-      document.dispatchEvent(metaEnter)
-      expect(state.currentTab.execute.calledTwice).to.equal(true)
-
-      // Running is disabled and route path is workspace
-      store.state.db = null
-      document.dispatchEvent(ctrlEnter)
-      expect(state.currentTab.execute.calledTwice).to.equal(true)
-      document.dispatchEvent(metaEnter)
-      expect(state.currentTab.execute.calledTwice).to.equal(true)
-
-      // Running is enabled and route path is not workspace
-      store.state.db = {}
-      wrapper.vm.$route.path = '/inquiries'
-      document.dispatchEvent(ctrlEnter)
-      expect(state.currentTab.execute.calledTwice).to.equal(true)
-      document.dispatchEvent(metaEnter)
-      expect(state.currentTab.execute.calledTwice).to.equal(true)
     })
+
+    const ctrlEnter = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      ctrlKey: true
+    })
+    const metaEnter = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      metaKey: true
+    })
+    // Running is enabled and route path is workspace
+    document.dispatchEvent(ctrlEnter)
+    expect(state.currentTab.execute.calledOnce).to.equal(true)
+    document.dispatchEvent(metaEnter)
+    expect(state.currentTab.execute.calledTwice).to.equal(true)
+
+    // Running is disabled and route path is workspace
+    store.state.db = null
+    document.dispatchEvent(ctrlEnter)
+    expect(state.currentTab.execute.calledTwice).to.equal(true)
+    document.dispatchEvent(metaEnter)
+    expect(state.currentTab.execute.calledTwice).to.equal(true)
+
+    // Running is enabled and route path is not workspace
+    store.state.db = {}
+    wrapper.vm.$route.path = '/inquiries'
+    document.dispatchEvent(ctrlEnter)
+    expect(state.currentTab.execute.calledTwice).to.equal(true)
+    document.dispatchEvent(metaEnter)
+    expect(state.currentTab.execute.calledTwice).to.equal(true)
+  })
 
   it('Ctrl B calls createNewInquiry', async () => {
     const tab = {
@@ -324,123 +332,129 @@ describe('MainMenu.vue', () => {
     expect(wrapper.vm.createNewInquiry.callCount).to.equal(4)
   })
 
-  it('Ctrl S calls checkInquiryBeforeSave if the tab is unsaved and route path is /workspace',
-    async () => {
-      const tab = {
-        query: 'SELECT * FROM foo',
-        execute: sinon.stub(),
-        isSaved: false
+  it('Ctrl S calls checkInquiryBeforeSave if the tab is unsaved and route path is /workspace', async () => {
+    const tab = {
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isSaved: false
+    }
+    const state = {
+      currentTab: tab,
+      tabs: [tab],
+      db: {}
+    }
+    const store = createStore({ state })
+    const $route = { path: '/workspace' }
+
+    wrapper = shallowMount(MainMenu, {
+      global: {
+        mocks: { $route },
+        stubs: ['router-link'],
+        plugins: [store]
       }
-      const state = {
-        currentTab: tab,
-        tabs: [tab],
-        db: {}
-      }
-      const store = createStore({ state })
-      const $route = { path: '/workspace' }
-
-      wrapper = shallowMount(MainMenu, {
-        global: {
-          mocks: { $route },
-          stubs: ['router-link'],
-          plugins: [store]
-        }
-      })
-      sinon.stub(wrapper.vm, 'checkInquiryBeforeSave')
-
-      const ctrlS = new KeyboardEvent('keydown', { key: 's', ctrlKey: true })
-      const metaS = new KeyboardEvent('keydown', { key: 's', metaKey: true })
-      // tab is unsaved and route is /workspace
-      document.dispatchEvent(ctrlS)
-      expect(wrapper.vm.checkInquiryBeforeSave.calledOnce).to.equal(true)
-      document.dispatchEvent(metaS)
-      expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
-
-      // tab is saved and route is /workspace
-      store.state.tabs[0].isSaved = true
-      document.dispatchEvent(ctrlS)
-      expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
-      document.dispatchEvent(metaS)
-      expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
-
-      // tab is unsaved and route is not /workspace
-      wrapper.vm.$route.path = '/inquiries'
-      store.state.tabs[0].isSaved = false
-      document.dispatchEvent(ctrlS)
-      expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
-      document.dispatchEvent(metaS)
-      expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
     })
+    sinon.stub(wrapper.vm, 'checkInquiryBeforeSave')
 
-  it('Saves the inquiry when no need the new name',
-    async () => {
-      const tab = {
-        id: 1,
+    const ctrlS = new KeyboardEvent('keydown', { key: 's', ctrlKey: true })
+    const metaS = new KeyboardEvent('keydown', { key: 's', metaKey: true })
+    // tab is unsaved and route is /workspace
+    document.dispatchEvent(ctrlS)
+    expect(wrapper.vm.checkInquiryBeforeSave.calledOnce).to.equal(true)
+    document.dispatchEvent(metaS)
+    expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
+
+    // tab is saved and route is /workspace
+    store.state.tabs[0].isSaved = true
+    document.dispatchEvent(ctrlS)
+    expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
+    document.dispatchEvent(metaS)
+    expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
+
+    // tab is unsaved and route is not /workspace
+    wrapper.vm.$route.path = '/inquiries'
+    store.state.tabs[0].isSaved = false
+    document.dispatchEvent(ctrlS)
+    expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
+    document.dispatchEvent(metaS)
+    expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
+  })
+
+  it('Saves the inquiry when no need the new name', async () => {
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isSaved: false
+    }
+    const state = {
+      currentTab: tab,
+      tabs: [tab],
+      db: {}
+    }
+    const mutations = {
+      updateTab: sinon.stub()
+    }
+    const actions = {
+      saveInquiry: sinon.stub().returns({
         name: 'foo',
+        id: 1,
         query: 'SELECT * FROM foo',
-        execute: sinon.stub(),
-        isSaved: false
-      }
-      const state = {
-        currentTab: tab,
-        tabs: [tab],
-        db: {}
-      }
-      const mutations = {
-        updateTab: sinon.stub()
-      }
-      const actions = {
-        saveInquiry: sinon.stub().returns({
-          name: 'foo',
-          id: 1,
-          query: 'SELECT * FROM foo',
-          viewType: 'chart',
-          viewOptions: []
-        })
-      }
-      const store = createStore({ state, mutations, actions })
-      const $route = { path: '/workspace' }
-      sinon.stub(storedInquiries, 'isTabNeedName').returns(false)
-
-      wrapper = mount(MainMenu, {
-        attachTo: document.body,
-        global: {
-          mocks: { $route },
-          stubs: {
-            'router-link': true, 'app-diagnostic-info': true,
-            teleport: true, transition: false
-          },
-          plugins: [store]
-        }
+        viewType: 'chart',
+        viewOptions: []
       })
+    }
+    const store = createStore({ state, mutations, actions })
+    const $route = { path: '/workspace' }
+    sinon.stub(storedInquiries, 'isTabNeedName').returns(false)
 
-      await wrapper.find('#save-btn').trigger('click')
-
-      // check that the dialog is closed
-      expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
-
-      // check that the inquiry was saved via saveInquiry (newName='')
-      expect(actions.saveInquiry.calledOnce).to.equal(true)
-      expect(actions.saveInquiry.args[0][1]).to.eql({
-        inquiryTab: state.currentTab, newName: ''
-      })
-
-      // check that the tab was updated
-      expect(mutations.updateTab.calledOnceWith(state, sinon.match({
-        tab,
-        newValues: {
-          name: 'foo',
-          id: 1,
-          query: 'SELECT * FROM foo',
-          viewType: 'chart',
-          viewOptions: [],
-          isSaved: true
-        }
-      }))).to.equal(true)
-
-      // check that 'inquirySaved' event was triggered on eventBus
-      expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
+    wrapper = mount(MainMenu, {
+      attachTo: document.body,
+      global: {
+        mocks: { $route },
+        stubs: {
+          'router-link': true,
+          'app-diagnostic-info': true,
+          teleport: true,
+          transition: false
+        },
+        plugins: [store]
+      }
     })
+
+    await wrapper.find('#save-btn').trigger('click')
+
+    // check that the dialog is closed
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+
+    // check that the inquiry was saved via saveInquiry (newName='')
+    expect(actions.saveInquiry.calledOnce).to.equal(true)
+    expect(actions.saveInquiry.args[0][1]).to.eql({
+      inquiryTab: state.currentTab,
+      newName: ''
+    })
+
+    // check that the tab was updated
+    expect(
+      mutations.updateTab.calledOnceWith(
+        state,
+        sinon.match({
+          tab,
+          newValues: {
+            name: 'foo',
+            id: 1,
+            query: 'SELECT * FROM foo',
+            viewType: 'chart',
+            viewOptions: [],
+            isSaved: true
+          }
+        })
+      )
+    ).to.equal(true)
+
+    // check that 'inquirySaved' event was triggered on eventBus
+    expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
+  })
 
   it('Shows en error when the new name is needed but not specifyied', async () => {
     const tab = {
@@ -477,8 +491,10 @@ describe('MainMenu.vue', () => {
       global: {
         mocks: { $route },
         stubs: {
-          'router-link': true, 'app-diagnostic-info': true,
-          teleport: true, transition: false
+          'router-link': true,
+          'app-diagnostic-info': true,
+          teleport: true,
+          transition: false
         },
         plugins: [store]
       }
@@ -488,8 +504,9 @@ describe('MainMenu.vue', () => {
 
     // check that the dialog is open
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
-    expect(wrapper.find('.dialog.vfm .dialog-header').text())
-      .to.contain('Save inquiry')
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Save inquiry'
+    )
 
     // find Save in the dialog and click
     await wrapper
@@ -498,7 +515,9 @@ describe('MainMenu.vue', () => {
       .trigger('click')
 
     // check that we have an error message and dialog is still open
-    expect(wrapper.find('.text-field-error').text()).to.equal('Inquiry name can\'t be empty')
+    expect(wrapper.find('.text-field-error').text()).to.equal(
+      "Inquiry name can't be empty"
+    )
     await clock.tick(100)
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
   })
@@ -538,8 +557,10 @@ describe('MainMenu.vue', () => {
       global: {
         mocks: { $route },
         stubs: {
-          'router-link': true, 'app-diagnostic-info': true,
-          teleport: true, transition: false
+          'router-link': true,
+          'app-diagnostic-info': true,
+          teleport: true,
+          transition: false
         },
         plugins: [store]
       }
@@ -549,8 +570,9 @@ describe('MainMenu.vue', () => {
 
     // check that the dialog is open
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
-    expect(wrapper.find('.dialog.vfm .dialog-header').text())
-      .to.contain('Save inquiry')
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Save inquiry'
+    )
 
     // enter the new name
     await wrapper.find('.dialog-body input').setValue('foo')
@@ -575,17 +597,22 @@ describe('MainMenu.vue', () => {
     })
 
     // check that the tab was updated
-    expect(mutations.updateTab.calledOnceWith(state, sinon.match({
-      tab,
-      newValues: {
-        name: 'foo',
-        id: 1,
-        query: 'SELECT * FROM foo',
-        viewType: 'chart',
-        viewOptions: [],
-        isSaved: true
-      }
-    }))).to.equal(true)
+    expect(
+      mutations.updateTab.calledOnceWith(
+        state,
+        sinon.match({
+          tab,
+          newValues: {
+            name: 'foo',
+            id: 1,
+            query: 'SELECT * FROM foo',
+            viewType: 'chart',
+            viewOptions: [],
+            isSaved: true
+          }
+        })
+      )
+    ).to.equal(true)
 
     // check that 'inquirySaved' event was triggered on eventBus
     expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
@@ -635,8 +662,10 @@ describe('MainMenu.vue', () => {
       global: {
         mocks: { $route },
         stubs: {
-          'router-link': true, 'app-diagnostic-info': true,
-          teleport: true, transition: false
+          'router-link': true,
+          'app-diagnostic-info': true,
+          teleport: true,
+          transition: false
         },
         plugins: [store]
       }
@@ -646,8 +675,9 @@ describe('MainMenu.vue', () => {
 
     // check that the dialog is open
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
-    expect(wrapper.find('.dialog.vfm .dialog-header').text())
-      .to.contain('Save inquiry')
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Save inquiry'
+    )
 
     // check that save-note is visible (save-note is an explanation why do we need a new name)
     expect(wrapper.find('#save-note').isVisible()).to.equal(true)
@@ -675,17 +705,22 @@ describe('MainMenu.vue', () => {
     })
 
     // check that the tab was updated
-    expect(mutations.updateTab.calledOnceWith(state, sinon.match({
-      tab,
-      newValues: {
-        name: 'bar',
-        id: 2,
-        query: 'SELECT * FROM foo',
-        viewType: 'chart',
-        viewOptions: [],
-        isSaved: true
-      }
-    }))).to.equal(true)
+    expect(
+      mutations.updateTab.calledOnceWith(
+        state,
+        sinon.match({
+          tab,
+          newValues: {
+            name: 'bar',
+            id: 2,
+            query: 'SELECT * FROM foo',
+            viewType: 'chart',
+            viewOptions: [],
+            isSaved: true
+          }
+        })
+      )
+    ).to.equal(true)
 
     // check that 'inquirySaved' event was triggered on eventBus
     expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
@@ -738,8 +773,10 @@ describe('MainMenu.vue', () => {
       global: {
         mocks: { $route },
         stubs: {
-          'router-link': true, 'app-diagnostic-info': true,
-          teleport: true, transition: false
+          'router-link': true,
+          'app-diagnostic-info': true,
+          teleport: true,
+          transition: false
         },
         plugins: [store]
       }
@@ -749,8 +786,9 @@ describe('MainMenu.vue', () => {
 
     // check that the dialog is open
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
-    expect(wrapper.find('.dialog.vfm .dialog-header').text())
-      .to.contain('Save inquiry')
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Save inquiry'
+    )
 
     // find Cancel in the dialog and click
     await wrapper

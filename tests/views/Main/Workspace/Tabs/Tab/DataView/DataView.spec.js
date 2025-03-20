@@ -12,9 +12,9 @@ describe('DataView.vue', () => {
   })
 
   it('emits update on mode changing', async () => {
-    const wrapper = mount(DataView, { 
+    const wrapper = mount(DataView, {
       global: {
-        stubs: { 'chart': true }
+        stubs: { chart: true }
       }
     })
 
@@ -26,24 +26,32 @@ describe('DataView.vue', () => {
   })
 
   it('method getOptionsForSave calls the same method of the current view component', async () => {
-    const wrapper = mount(DataView,  {
+    const wrapper = mount(DataView, {
       global: {
         mocks: { $store }
       }
     })
 
     const chart = wrapper.findComponent({ name: 'Chart' }).vm
-    sinon.stub(chart, 'getOptionsForSave').returns({ here_are: 'chart_settings' })
+    sinon
+      .stub(chart, 'getOptionsForSave')
+      .returns({ here_are: 'chart_settings' })
 
-    expect(wrapper.vm.getOptionsForSave()).to.eql({ here_are: 'chart_settings' })
+    expect(wrapper.vm.getOptionsForSave()).to.eql({
+      here_are: 'chart_settings'
+    })
 
     const pivotBtn = wrapper.findComponent({ ref: 'pivotBtn' })
     await pivotBtn.trigger('click')
 
     const pivot = wrapper.findComponent({ name: 'pivot' }).vm
-    sinon.stub(pivot, 'getOptionsForSave').returns({ here_are: 'pivot_settings' })
+    sinon
+      .stub(pivot, 'getOptionsForSave')
+      .returns({ here_are: 'pivot_settings' })
 
-    expect(wrapper.vm.getOptionsForSave()).to.eql({ here_are: 'pivot_settings' })
+    expect(wrapper.vm.getOptionsForSave()).to.eql({
+      here_are: 'pivot_settings'
+    })
     wrapper.unmount()
   })
 
@@ -117,7 +125,7 @@ describe('DataView.vue', () => {
     sinon.spy(window, 'alert')
     const wrapper = mount(DataView, {
       global: {
-        stubs: { 'chart': true }
+        stubs: { chart: true }
       }
     })
 
@@ -127,8 +135,8 @@ describe('DataView.vue', () => {
     expect(
       window.alert.calledOnceWith(
         "Your browser doesn't support copying images into the clipboard. " +
-        'If you use Firefox you can enable it ' +
-        'by setting dom.events.asyncClipboard.clipboardItem to true.'
+          'If you use Firefox you can enable it ' +
+          'by setting dom.events.asyncClipboard.clipboardItem to true.'
       )
     ).to.equal(true)
 
@@ -146,9 +154,11 @@ describe('DataView.vue', () => {
         mocks: { $store }
       }
     })
-    sinon.stub(wrapper.vm.$refs.viewComponent, 'prepareCopy').callsFake(async () => {
-      await clock.tick(5000)
-    })
+    sinon
+      .stub(wrapper.vm.$refs.viewComponent, 'prepareCopy')
+      .callsFake(async () => {
+        await clock.tick(5000)
+      })
 
     // Click copy to clipboard
     const copyBtn = wrapper.findComponent({ ref: 'copyToClipboardBtn' })
@@ -156,11 +166,14 @@ describe('DataView.vue', () => {
 
     // The dialog is shown...
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
-    expect(wrapper.find('.dialog.vfm .dialog-header').text())
-      .to.contain('Copy to clipboard')
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Copy to clipboard'
+    )
 
     // ... with Rendering message...
-    expect(wrapper.find('.dialog-body').text()).to.equal('Rendering the visualisation...')
+    expect(wrapper.find('.dialog-body').text()).to.equal(
+      'Rendering the visualisation...'
+    )
 
     // Switch to microtasks (let prepareCopy run)
     await clock.tick(0)
@@ -177,7 +190,9 @@ describe('DataView.vue', () => {
     expect(wrapper.find('.dialog-body').text()).to.equal('Image is ready')
 
     // Click copy
-    await wrapper.find('.dialog-buttons-container button.primary').trigger('click')
+    await wrapper
+      .find('.dialog-buttons-container button.primary')
+      .trigger('click')
 
     // The dialog is not shown...
     await clock.tick(100)
@@ -196,9 +211,11 @@ describe('DataView.vue', () => {
       }
     })
     sinon.spy(wrapper.vm, 'copyToClipboard')
-    sinon.stub(wrapper.vm.$refs.viewComponent, 'prepareCopy').callsFake(async () => {
-      await clock.tick(500)
-    })
+    sinon
+      .stub(wrapper.vm.$refs.viewComponent, 'prepareCopy')
+      .callsFake(async () => {
+        await clock.tick(500)
+      })
 
     // Click copy to clipboard
     const copyBtn = wrapper.findComponent({ ref: 'copyToClipboardBtn' })
@@ -229,9 +246,11 @@ describe('DataView.vue', () => {
       }
     })
     sinon.spy(wrapper.vm, 'copyToClipboard')
-    sinon.stub(wrapper.vm.$refs.viewComponent, 'prepareCopy').callsFake(async () => {
-      await clock.tick(5000)
-    })
+    sinon
+      .stub(wrapper.vm.$refs.viewComponent, 'prepareCopy')
+      .callsFake(async () => {
+        await clock.tick(5000)
+      })
 
     // Click copy to clipboard
     const copyBtn = wrapper.findComponent({ ref: 'copyToClipboardBtn' })
@@ -245,7 +264,9 @@ describe('DataView.vue', () => {
     await nextTick()
 
     // Click cancel
-    await wrapper.find('.dialog-buttons-container button.secondary').trigger('click')
+    await wrapper
+      .find('.dialog-buttons-container button.secondary')
+      .trigger('click')
 
     // The dialog is not shown...
     await clock.tick(100)

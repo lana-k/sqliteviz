@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'disabled': disabled }">
+  <div :class="{ disabled: disabled }">
     <div class="text-field-label">Delimiter</div>
     <div
       class="delimiter-selector-container"
@@ -8,7 +8,7 @@
     >
       <div class="value">
         <input
-          :class="{ 'filled': filled }"
+          :class="{ filled: filled }"
           ref="delimiterInput"
           type="text"
           maxlength="1"
@@ -19,7 +19,7 @@
         <div class="name">{{ getSymbolName(modelValue) }}</div>
       </div>
       <div class="controls" @click.stop>
-        <clear-icon @click="clear" :disabled="disabled"/>
+        <clear-icon @click="clear" :disabled="disabled" />
         <drop-down-chevron
           :disabled="disabled"
           @click="!disabled && (showOptions = !showOptions)"
@@ -33,7 +33,8 @@
         @click="chooseOption(option)"
         class="option"
       >
-        <pre>{{option}}</pre><div>{{ getSymbolName(option) }}</div>
+        <pre>{{ option }}</pre>
+        <div>{{ getSymbolName(option) }}</div>
       </div>
     </div>
   </div>
@@ -49,7 +50,7 @@ export default {
   props: ['modelValue', 'width', 'disabled'],
   emits: ['update:modelValue'],
   components: { DropDownChevron, ClearIcon },
-  data () {
+  data() {
     return {
       showOptions: false,
       options: [',', '\t', ' ', '|', ';', '\u001F', '\u001E'],
@@ -58,7 +59,7 @@ export default {
     }
   },
   watch: {
-    inputValue () {
+    inputValue() {
       if (this.inputValue) {
         this.filled = true
         if (this.inputValue !== this.modelValue) {
@@ -69,25 +70,25 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     this.inputValue = this.modelValue
   },
   methods: {
-    getSymbolName (str) {
+    getSymbolName(str) {
       if (!str) {
         return ''
       }
       return ascii[str.charCodeAt(0).toString()].name
     },
-    chooseOption (option) {
+    chooseOption(option) {
       this.inputValue = option
       this.showOptions = false
     },
-    onContainerClick (event) {
+    onContainerClick(event) {
       this.$refs.delimiterInput.focus()
     },
 
-    clear () {
+    clear() {
       if (!this.disabled) {
         this.inputValue = ''
         this.$refs.delimiterInput.focus()

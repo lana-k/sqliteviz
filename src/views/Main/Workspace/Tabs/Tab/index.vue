@@ -11,15 +11,15 @@
         <div :id="'above-' + tab.id" class="above" />
       </template>
       <template #right-pane>
-        <div :id="'bottom-'+ tab.id" ref="bottomPane" class="bottomPane" />
+        <div :id="'bottom-' + tab.id" ref="bottomPane" class="bottomPane" />
       </template>
     </splitpanes>
 
-    <div :id="'hidden-'+ tab.id" class="hidden-part" />
+    <div :id="'hidden-' + tab.id" class="hidden-part" />
 
     <teleport
       defer
-      :to="enableTeleport ? `#${tab.layout.sqlEditor}-${tab.id}`: undefined"
+      :to="enableTeleport ? `#${tab.layout.sqlEditor}-${tab.id}` : undefined"
       :disabled="!enableTeleport"
     >
       <sql-editor
@@ -33,7 +33,7 @@
 
     <teleport
       defer
-      :to="enableTeleport ? `#${tab.layout.table}-${tab.id}`: undefined"
+      :to="enableTeleport ? `#${tab.layout.table}-${tab.id}` : undefined"
       :disabled="!enableTeleport"
     >
       <run-result
@@ -84,51 +84,53 @@ export default {
     RunResult,
     Splitpanes
   },
-  data () {
+  data() {
     return {
       topPaneSize: this.tab.maximize
-        ? this.tab.layout[this.tab.maximize] === 'above' ? 100 : 0
+        ? this.tab.layout[this.tab.maximize] === 'above'
+          ? 100
+          : 0
         : 50,
       enableTeleport: this.$store.state.isWorkspaceVisible
     }
   },
   computed: {
-    isActive () {
+    isActive() {
       return this.tab.id === this.$store.state.currentTabId
     }
   },
   watch: {
     isActive: {
       immediate: true,
-      async handler () {
+      async handler() {
         if (this.isActive) {
           await nextTick()
           this.$refs.sqlEditor?.focus()
         }
       }
     },
-    'tab.query' () {
+    'tab.query'() {
       this.$store.commit('updateTab', {
         tab: this.tab,
         newValues: { isSaved: false }
       })
     }
   },
-  async activated () {
+  async activated() {
     this.enableTeleport = true
     if (this.isActive) {
       await nextTick()
       this.$refs.sqlEditor.focus()
     }
   },
-  deactivated () {
+  deactivated() {
     this.enableTeleport = false
   },
-  async mounted () {
+  async mounted() {
     this.tab.dataView = this.$refs.dataView
   },
   methods: {
-    onSwitchView (from, to) {
+    onSwitchView(from, to) {
       const fromPosition = this.tab.layout[from]
       this.tab.layout[from] = this.tab.layout[to]
       this.tab.layout[to] = fromPosition
@@ -136,7 +138,7 @@ export default {
 
       events.send('inquiry.panel', null, { panel: to })
     },
-    onDataViewUpdate () {
+    onDataViewUpdate() {
       this.$store.commit('updateTab', {
         tab: this.tab,
         newValues: { isSaved: false }

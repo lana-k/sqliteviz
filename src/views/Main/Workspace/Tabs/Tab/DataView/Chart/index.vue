@@ -1,15 +1,23 @@
 <template>
   <div v-show="visible" class="chart-container" ref="chartContainer">
     <div class="warning chart-warning" v-show="!dataSources && visible">
-      There is no data to build a chart. Run your SQL query and make sure the result is not empty.
+      There is no data to build a chart. Run your SQL query and make sure the
+      result is not empty.
     </div>
-    <div class="chart" :style="{ height: !dataSources ? 'calc(100% - 40px)' : '100%' }">
+    <div
+      class="chart"
+      :style="{ height: !dataSources ? 'calc(100% - 40px)' : '100%' }"
+    >
       <PlotlyEditor
-         v-show="visible"
+        v-show="visible"
         :data="state.data"
         :layout="state.layout"
         :frames="state.frames"
-        :config="{ editable: true, displaylogo: false, modeBarButtonsToRemove: ['toImage'] }"
+        :config="{
+          editable: true,
+          displaylogo: false,
+          modeBarButtonsToRemove: ['toImage']
+        }"
         :dataSources="dataSources"
         :dataSourceOptions="dataSourceOptions"
         :plotly="plotly"
@@ -21,7 +29,7 @@
         @render="onRender"
       />
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -38,15 +46,17 @@ import events from '@/lib/utils/events'
 export default {
   name: 'Chart',
   props: [
-    'dataSources', 'initOptions',
-    'importToPngEnabled', 'importToSvgEnabled',
+    'dataSources',
+    'initOptions',
+    'importToPngEnabled',
+    'importToSvgEnabled',
     'forPivot'
   ],
   emits: ['update:importToSvgEnabled', 'update', 'loadingImageCompleted'],
   components: {
     PlotlyEditor: applyPureReactInVue(ReactPlotlyEditor)
   },
-  data () {
+  data() {
     return {
       plotly,
       state: this.initOptions || {
@@ -60,20 +70,23 @@ export default {
     }
   },
   computed: {
-    dataSourceOptions () {
+    dataSourceOptions() {
       return chartHelper.getOptionsFromDataSources(this.dataSources)
     }
   },
-  created () {
+  created() {
     // https://github.com/plotly/plotly.js/issues/4555
     plotly.setPlotConfig({
       notifyOnLogging: 1
     })
     this.$watch(
-      () => this.state && this.state.data && this.state.data
-        .map(trace => `${trace.type}${trace.mode ? '-' + trace.mode : ''}`)
-        .join(','),
-      (value) => {
+      () =>
+        this.state &&
+        this.state.data &&
+        this.state.data
+          .map(trace => `${trace.type}${trace.mode ? '-' + trace.mode : ''}`)
+          .join(','),
+      value => {
         events.send('viz_plotly.render', null, {
           type: value,
           pivot: !!this.forPivot
@@ -83,21 +96,21 @@ export default {
     )
     this.$emit('update:importToSvgEnabled', true)
   },
-  mounted () {
+  mounted() {
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.chartContainer)
   },
-  activated () {
+  activated() {
     this.useResizeHandler = true
   },
-  deactivated () {
+  deactivated() {
     this.useResizeHandler = false
   },
-  beforeUnmount () {
+  beforeUnmount() {
     this.resizeObserver.unobserve(this.$refs.chartContainer)
   },
   watch: {
-    dataSources () {
+    dataSources() {
       // we need to update state.data in order to update the graph
       // https://github.com/plotly/react-chart-editor/issues/948
       if (this.dataSources) {
@@ -106,41 +119,44 @@ export default {
     }
   },
   methods: {
-    async handleResize () {
+    async handleResize() {
       this.visible = false
       await this.$nextTick()
       this.visible = true
     },
-    onRender (data, layout, frames) {
+    onRender(data, layout, frames) {
       // TODO: check changes and enable Save button if needed
     },
-    update (data, layout, frames) {
+    update(data, layout, frames) {
       this.state = { data, layout, frames }
       this.$emit('update')
     },
-    getOptionsForSave () {
+    getOptionsForSave() {
       return chartHelper.getOptionsForSave(this.state, this.dataSources)
     },
-    async saveAsPng () {
+    async saveAsPng() {
       const url = await this.prepareCopy()
       this.$emit('loadingImageCompleted')
       fIo.downloadFromUrl(url, 'chart')
     },
 
-    async saveAsSvg () {
+    async saveAsSvg() {
       const url = await this.prepareCopy('svg')
       fIo.downloadFromUrl(url, 'chart')
     },
 
-    saveAsHtml () {
+    saveAsHtml() {
       fIo.exportToFile(
         chartHelper.getHtml(this.state),
         'chart.html',
         'text/html'
       )
     },
-    async prepareCopy (type = 'png') {
-      return await chartHelper.getImageDataUrl(this.$refs.plotlyEditor.$el, type)
+    async prepareCopy(type = 'png') {
+      return await chartHelper.getImageDataUrl(
+        this.$refs.plotlyEditor.$el,
+        type
+      )
     }
   }
 }

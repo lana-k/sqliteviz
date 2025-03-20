@@ -7,7 +7,7 @@ const migrate = migration._migrate
 
 export default {
   version: 2,
-  getStoredInquiries () {
+  getStoredInquiries() {
     let myInquiries = JSON.parse(localStorage.getItem('myInquiries'))
     if (!myInquiries) {
       const oldInquiries = localStorage.getItem('myQueries')
@@ -22,7 +22,7 @@ export default {
     return (myInquiries && myInquiries.inquiries) || []
   },
 
-  duplicateInquiry (baseInquiry) {
+  duplicateInquiry(baseInquiry) {
     const newInquiry = JSON.parse(JSON.stringify(baseInquiry))
     newInquiry.name = newInquiry.name + ' Copy'
     newInquiry.id = nanoid()
@@ -32,21 +32,28 @@ export default {
     return newInquiry
   },
 
-  isTabNeedName (inquiryTab) {
+  isTabNeedName(inquiryTab) {
     return inquiryTab.isPredefined || !inquiryTab.name
   },
 
-  updateStorage (inquiries) {
-    localStorage.setItem('myInquiries', JSON.stringify({ version: this.version, inquiries }))
+  updateStorage(inquiries) {
+    localStorage.setItem(
+      'myInquiries',
+      JSON.stringify({ version: this.version, inquiries })
+    )
   },
 
-  serialiseInquiries (inquiryList) {
+  serialiseInquiries(inquiryList) {
     const preparedData = JSON.parse(JSON.stringify(inquiryList))
     preparedData.forEach(inquiry => delete inquiry.isPredefined)
-    return JSON.stringify({ version: this.version, inquiries: preparedData }, null, 4)
+    return JSON.stringify(
+      { version: this.version, inquiries: preparedData },
+      null,
+      4
+    )
   },
 
-  deserialiseInquiries (str) {
+  deserialiseInquiries(str) {
     const inquiries = JSON.parse(str)
     let inquiryList = []
     if (!inquiries.version) {
@@ -59,7 +66,9 @@ export default {
 
     // Generate new ids if they are the same as existing inquiries
     inquiryList.forEach(inquiry => {
-      const allInquiriesIds = this.getStoredInquiries().map(inquiry => inquiry.id)
+      const allInquiriesIds = this.getStoredInquiries().map(
+        inquiry => inquiry.id
+      )
       if (allInquiriesIds.includes(inquiry.id)) {
         inquiry.id = nanoid()
       }
@@ -68,24 +77,23 @@ export default {
     return inquiryList
   },
 
-  importInquiries () {
-    return fu.importFile()
-      .then(str => {
-        const inquires = this.deserialiseInquiries(str)
+  importInquiries() {
+    return fu.importFile().then(str => {
+      const inquires = this.deserialiseInquiries(str)
 
-        events.send('inquiry.import', inquires.length)
+      events.send('inquiry.import', inquires.length)
 
-        return inquires
-      })
+      return inquires
+    })
   },
-  export (inquiryList, fileName) {
+  export(inquiryList, fileName) {
     const jsonStr = this.serialiseInquiries(inquiryList)
     fu.exportToFile(jsonStr, fileName)
 
     events.send('inquiry.export', inquiryList.length)
   },
 
-  async readPredefinedInquiries () {
+  async readPredefinedInquiries() {
     const res = await fu.readFile('./inquiries.json')
     const data = await res.json()
 

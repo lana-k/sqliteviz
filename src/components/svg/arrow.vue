@@ -11,10 +11,9 @@
       13.5L16.35 6.75L17.9475 8.33625Z"
       fill="#506784"
     />
-</svg>
+  </svg>
 </template>
 
 <script>
-export default {
-}
+export default {}
 </script>

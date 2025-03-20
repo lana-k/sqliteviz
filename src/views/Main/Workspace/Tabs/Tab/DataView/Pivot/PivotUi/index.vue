@@ -1,6 +1,6 @@
 <template>
   <div class="pivot-ui">
-    <div :class="{collapsed}">
+    <div :class="{ collapsed }">
       <div class="row">
         <label>Columns</label>
         <multiselect
@@ -139,7 +139,12 @@
 import $ from 'jquery'
 import Multiselect from 'vue-multiselect'
 import PivotSortBtn from './PivotSortBtn'
-import { renderers, aggregators, zeroValAggregators, twoValAggregators } from '../pivotHelper'
+import {
+  renderers,
+  aggregators,
+  zeroValAggregators,
+  twoValAggregators
+} from '../pivotHelper'
 
 export default {
   name: 'pivotUi',
@@ -149,23 +154,35 @@ export default {
     Multiselect,
     PivotSortBtn
   },
-  data () {
-    const aggregatorName = (this.modelValue && this.modelValue.aggregatorName) || 'Count'
-    const rendererName = (this.modelValue && this.modelValue.rendererName) || 'Table'
+  data() {
+    const aggregatorName =
+      (this.modelValue && this.modelValue.aggregatorName) || 'Count'
+    const rendererName =
+      (this.modelValue && this.modelValue.rendererName) || 'Table'
     return {
       collapsed: false,
-      renderer: { name: rendererName, fun: $.pivotUtilities.renderers[rendererName] },
-      aggregator: { name: aggregatorName, fun: $.pivotUtilities.aggregators[aggregatorName] },
+      renderer: {
+        name: rendererName,
+        fun: $.pivotUtilities.renderers[rendererName]
+      },
+      aggregator: {
+        name: aggregatorName,
+        fun: $.pivotUtilities.aggregators[aggregatorName]
+      },
       rows: (this.modelValue && this.modelValue.rows) || [],
       cols: (this.modelValue && this.modelValue.cols) || [],
-      val1: (this.modelValue && this.modelValue.vals && this.modelValue.vals[0]) || '',
-      val2: (this.modelValue && this.modelValue.vals && this.modelValue.vals[1]) || '',
+      val1:
+        (this.modelValue && this.modelValue.vals && this.modelValue.vals[0]) ||
+        '',
+      val2:
+        (this.modelValue && this.modelValue.vals && this.modelValue.vals[1]) ||
+        '',
       colOrder: (this.modelValue && this.modelValue.colOrder) || 'key_a_to_z',
       rowOrder: (this.modelValue && this.modelValue.rowOrder) || 'key_a_to_z'
     }
   },
   computed: {
-    valCount () {
+    valCount() {
       if (zeroValAggregators.includes(this.aggregator.name)) {
         return 0
       }
@@ -176,47 +193,47 @@ export default {
 
       return 1
     },
-    renderers () {
+    renderers() {
       return renderers
     },
-    aggregators () {
+    aggregators() {
       return aggregators
     },
-    rowsToSelect () {
+    rowsToSelect() {
       return this.keyNames.filter(key => !this.cols.includes(key))
     },
-    colsToSelect () {
+    colsToSelect() {
       return this.keyNames.filter(key => !this.rows.includes(key))
     }
   },
   watch: {
-    renderer () {
+    renderer() {
       this.returnValue()
     },
-    aggregator () {
+    aggregator() {
       this.returnValue()
     },
-    rows () {
+    rows() {
       this.returnValue()
     },
-    cols () {
+    cols() {
       this.returnValue()
     },
-    val1 () {
+    val1() {
       this.returnValue()
     },
-    val2 () {
+    val2() {
       this.returnValue()
     },
-    colOrder () {
+    colOrder() {
       this.returnValue()
     },
-    rowOrder () {
+    rowOrder() {
       this.returnValue()
     }
   },
   methods: {
-    returnValue () {
+    returnValue() {
       const vals = []
       for (let i = 1; i <= this.valCount; i++) {
         vals.push(this[`val${i}`])
@@ -281,7 +298,6 @@ export default {
   white-space: nowrap;
   margin: auto;
   cursor: pointer;
-
 }
 
 .switcher:hover {

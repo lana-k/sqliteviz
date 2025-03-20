@@ -38,7 +38,11 @@ describe('splitter.js', () => {
 
     document.body.appendChild(container)
 
-    const dragPercentage = splitter.getCurrentDragPercentage(event, container, isHorisontal)
+    const dragPercentage = splitter.getCurrentDragPercentage(
+      event,
+      container,
+      isHorisontal
+    )
     expect(dragPercentage).to.equal(50)
   })
 
@@ -53,7 +57,11 @@ describe('splitter.js', () => {
 
     document.body.appendChild(container)
 
-    const dragPercentage = splitter.getCurrentDragPercentage(event, container, isHorisontal)
+    const dragPercentage = splitter.getCurrentDragPercentage(
+      event,
+      container,
+      isHorisontal
+    )
     expect(dragPercentage).to.equal(25)
   })
 

@@ -3,12 +3,14 @@ import time from '@/lib/utils/time'
 import events from '@/lib/utils/events'
 
 export default class Tab {
-  constructor (state, inquiry = {}) {
+  constructor(state, inquiry = {}) {
     this.id = inquiry.id || nanoid()
     this.name = inquiry.id ? inquiry.name : null
-    this.tempName = inquiry.name || (state.untitledLastIndex
-      ? `Untitled ${state.untitledLastIndex}`
-      : 'Untitled')
+    this.tempName =
+      inquiry.name ||
+      (state.untitledLastIndex
+        ? `Untitled ${state.untitledLastIndex}`
+        : 'Untitled')
     this.query = inquiry.query
     this.viewOptions = inquiry.viewOptions || undefined
     this.isPredefined = inquiry.isPredefined
@@ -28,7 +30,7 @@ export default class Tab {
     this.state = state
   }
 
-  async execute () {
+  async execute() {
     this.isGettingResults = true
     this.result = null
     this.error = null
@@ -39,7 +41,8 @@ export default class Tab {
       this.time = time.getPeriod(start, new Date())
 
       if (this.result && this.result.values) {
-        events.send('resultset.create',
+        events.send(
+          'resultset.create',
           this.result.values[this.result.columns[0]].length
         )
       }

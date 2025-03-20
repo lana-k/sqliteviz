@@ -33,7 +33,11 @@
         fill="#A2B1C6"
       />
     </svg>
-    <span class="icon-tooltip" :style="{...tooltipStyle, maxWidth: maxWidth }" ref="tooltip">
+    <span
+      class="icon-tooltip"
+      :style="{ ...tooltipStyle, maxWidth: maxWidth }"
+      ref="tooltip"
+    >
       {{ hint }}
     </span>
   </div>
@@ -48,7 +52,7 @@ export default {
   emits: ['click'],
   mixins: [tooltipMixin],
   methods: {
-    onClick () {
+    onClick() {
       this.hideTooltip()
       this.$emit('click')
     }

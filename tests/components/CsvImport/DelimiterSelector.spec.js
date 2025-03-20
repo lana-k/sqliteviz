@@ -37,9 +37,9 @@ describe('DelimiterSelector', async () => {
 
   it('changes value by typing', async () => {
     const wrapper = shallowMount(DelimiterSelector, {
-      props: { 
+      props: {
         modelValue: ',',
-        'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
+        'onUpdate:modelValue': e => wrapper.setProps({ modelValue: e })
       }
     })
 
@@ -51,7 +51,7 @@ describe('DelimiterSelector', async () => {
     const wrapper = mount(DelimiterSelector, {
       props: {
         modelValue: '|',
-        'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
+        'onUpdate:modelValue': e => wrapper.setProps({ modelValue: e })
       },
       attachTo: document.body
     })
@@ -66,9 +66,9 @@ describe('DelimiterSelector', async () => {
 
   it("doesn't change value when becomes empty", async () => {
     const wrapper = mount(DelimiterSelector, {
-      props: { 
+      props: {
         modelValue: '|',
-        'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
+        'onUpdate:modelValue': e => wrapper.setProps({ modelValue: e })
       }
     })
 
@@ -96,7 +96,7 @@ describe('DelimiterSelector', async () => {
       props: {
         modelValue: '|',
         disabled: true,
-        'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
+        'onUpdate:modelValue': e => wrapper.setProps({ modelValue: e })
       },
       attachTo: document.body
     })

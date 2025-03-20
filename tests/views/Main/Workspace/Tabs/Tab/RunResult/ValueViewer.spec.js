@@ -25,7 +25,7 @@ describe('ValueViewer.vue', () => {
       }
     })
     await wrapper.find('button.json').trigger('click')
-    expect(wrapper.find('.value-body').text()).to.equals('Can\'t parse JSON.')
+    expect(wrapper.find('.value-body').text()).to.equals("Can't parse JSON.")
   })
 
   it('copy to clipboard', async () => {
@@ -38,7 +38,8 @@ describe('ValueViewer.vue', () => {
 
     await wrapper.find('button.copy').trigger('click')
 
-    expect(window.navigator.clipboard.writeText.calledOnceWith('foo'))
-      .to.equal(true)
+    expect(window.navigator.clipboard.writeText.calledOnceWith('foo')).to.equal(
+      true
+    )
   })
 })

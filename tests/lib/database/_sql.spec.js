@@ -62,7 +62,9 @@ describe('_sql.js', () => {
     const data = tempDb.export()
     const sql = await Sql.build()
     sql.open(data)
-    expect(() => { sql.exec() }).to.throw('exec: Missing query string')
+    expect(() => {
+      sql.exec()
+    }).to.throw('exec: Missing query string')
   })
 
   it('imports', async () => {

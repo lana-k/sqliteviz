@@ -1,11 +1,11 @@
 <template>
   <div>
     <main-menu />
-      <router-view id="main-view" v-slot="{ Component }">
-        <keep-alive include="Workspace,Inquiries">
-          <component :is="Component"/>
-        </keep-alive>
-      </router-view>
+    <router-view id="main-view" v-slot="{ Component }">
+      <keep-alive include="Workspace,Inquiries">
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
   </div>
 </template>
 

@@ -11,50 +11,50 @@
           >
             {{ th.name }}
           </div>
-      </div>
+        </div>
       </div>
       <div
         class="table-container"
         ref="table-container"
         @scroll="onScrollTable"
       >
-      <table
-        ref="table"
-        class="sqliteviz-table"
-        tabindex="0"
-        @keydown="onTableKeydown"
-      >
-        <thead>
-          <tr>
-            <th v-for="(th, index) in columns" :key="index" ref="th">
-              <div class="cell-data" :style="cellStyle">{{ th }}</div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="rowIndex in currentPageData.count" :key="rowIndex">
-            <td
-              v-for="(col, colIndex) in columns"
-              :data-col="colIndex"
-              :data-row="pageSize * (currentPage - 1) + rowIndex - 1"
-              :data-isNull="isNull(getCellValue(col, rowIndex))"
-              :data-isBlob="isBlob(getCellValue(col, rowIndex))"
-              :key="colIndex"
-              :aria-selected="false"
-              @click="onCellClick"
-            >
-              <div class="cell-data" :style="cellStyle">
-                {{ getCellText(col, rowIndex) }}
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <table
+          ref="table"
+          class="sqliteviz-table"
+          tabindex="0"
+          @keydown="onTableKeydown"
+        >
+          <thead>
+            <tr>
+              <th v-for="(th, index) in columns" :key="index" ref="th">
+                <div class="cell-data" :style="cellStyle">{{ th }}</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="rowIndex in currentPageData.count" :key="rowIndex">
+              <td
+                v-for="(col, colIndex) in columns"
+                :data-col="colIndex"
+                :data-row="pageSize * (currentPage - 1) + rowIndex - 1"
+                :data-isNull="isNull(getCellValue(col, rowIndex))"
+                :data-isBlob="isBlob(getCellValue(col, rowIndex))"
+                :key="colIndex"
+                :aria-selected="false"
+                @click="onCellClick"
+              >
+                <div class="cell-data" :style="cellStyle">
+                  {{ getCellText(col, rowIndex) }}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
     <div class="table-footer">
       <div class="table-footer-count">
-        {{ rowCount }} {{rowCount === 1 ? 'row' : 'rows'}} retrieved
+        {{ rowCount }} {{ rowCount === 1 ? 'row' : 'rows' }} retrieved
         <span v-if="preview">for preview</span>
         <span v-if="time">in {{ time }}</span>
       </div>
@@ -88,7 +88,7 @@ export default {
     selectedCellCoordinates: Object
   },
   emits: ['updateSelectedCell'],
-  data () {
+  data() {
     return {
       header: null,
       tableWidth: null,
@@ -98,20 +98,20 @@ export default {
     }
   },
   computed: {
-    columns () {
+    columns() {
       return this.dataSet.columns
     },
-    rowCount () {
+    rowCount() {
       return this.dataSet.values[this.columns[0]].length
     },
-    cellStyle () {
+    cellStyle() {
       const eq = this.tableWidth / this.columns.length
       return { maxWidth: `${Math.max(eq, 100)}px` }
     },
-    pageCount () {
+    pageCount() {
       return Math.ceil(this.rowCount / this.pageSize)
     },
-    currentPageData () {
+    currentPageData() {
       const start = (this.currentPage - 1) * this.pageSize
       let end = start + this.pageSize
       if (end > this.rowCount - 1) {
@@ -124,31 +124,32 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.resizeObserver = new ResizeObserver(this.calculateHeadersWidth)
     this.resizeObserver.observe(this.$refs.table)
     this.calculateHeadersWidth()
 
     if (this.selectedCellCoordinates) {
       const { row, col } = this.selectedCellCoordinates
-      const cell = this.$refs.table
-        .querySelector(`td[data-col="${col}"][data-row="${row}"]`)
+      const cell = this.$refs.table.querySelector(
+        `td[data-col="${col}"][data-row="${row}"]`
+      )
       if (cell) {
         this.selectCell(cell)
       }
     }
   },
   methods: {
-    isBlob (value) {
+    isBlob(value) {
       return value && ArrayBuffer.isView(value)
     },
-    isNull (value) {
+    isNull(value) {
       return value === null
     },
-    getCellValue (col, rowIndex) {
+    getCellValue(col, rowIndex) {
       return this.dataSet.values[col][rowIndex - 1 + this.currentPageData.start]
     },
-    getCellText (col, rowIndex) {
+    getCellText(col, rowIndex) {
       const value = this.getCellValue(col, rowIndex)
       if (this.isNull(value)) {
         return 'NULL'
@@ -158,7 +159,7 @@ export default {
       }
       return value
     },
-    calculateHeadersWidth () {
+    calculateHeadersWidth() {
       this.tableWidth = this.$refs['table-container'].offsetWidth
       this.$nextTick(() => {
         this.header = this.$refs.th.map(th => {
@@ -166,10 +167,11 @@ export default {
         })
       })
     },
-    onScrollTable () {
-      this.$refs['header-container'].scrollLeft = this.$refs['table-container'].scrollLeft
+    onScrollTable() {
+      this.$refs['header-container'].scrollLeft =
+        this.$refs['table-container'].scrollLeft
     },
-    onTableKeydown (e) {
+    onTableKeydown(e) {
       const keyCodeMap = {
         37: 'left',
         39: 'right',
@@ -187,10 +189,10 @@ export default {
 
       this.moveFocusInTable(this.selectedCellElement, keyCodeMap[e.keyCode])
     },
-    onCellClick (e) {
+    onCellClick(e) {
       this.selectCell(e.target.closest('td'), false)
     },
-    selectCell (cell, scrollTo = true) {
+    selectCell(cell, scrollTo = true) {
       if (!cell) {
         if (this.selectedCellElement) {
           this.selectedCellElement.ariaSelected = 'false'
@@ -213,7 +215,7 @@ export default {
 
       this.$emit('updateSelectedCell', this.selectedCellElement)
     },
-    moveFocusInTable (initialCell, direction) {
+    moveFocusInTable(initialCell, direction) {
       const currentRowIndex = +initialCell.dataset.row
       const currentColIndex = +initialCell.dataset.col
       let newRowIndex, newColIndex
@@ -242,22 +244,23 @@ export default {
         newColIndex = currentColIndex
       }
 
-      const newCell = this.$refs.table
-        .querySelector(`td[data-col="${newColIndex}"][data-row="${newRowIndex}"]`)
+      const newCell = this.$refs.table.querySelector(
+        `td[data-col="${newColIndex}"][data-row="${newRowIndex}"]`
+      )
       if (newCell) {
         this.selectCell(newCell)
       }
     }
   },
-  beforeUnmount () {
+  beforeUnmount() {
     this.resizeObserver.unobserve(this.$refs.table)
   },
   watch: {
-    currentPageData () {
+    currentPageData() {
       this.calculateHeadersWidth()
       this.selectCell(null)
     },
-    dataSet () {
+    dataSet() {
       this.currentPage = 1
     }
   }
@@ -271,7 +274,7 @@ table.sqliteviz-table:focus {
 .sqliteviz-table tbody td:hover {
   background-color: var(--color-bg-light-3);
 }
-.sqliteviz-table tbody td[aria-selected="true"] {
-  box-shadow:inset 0 0 0 1px var(--color-accent);
+.sqliteviz-table tbody td[aria-selected='true'] {
+  box-shadow: inset 0 0 0 1px var(--color-accent);
 }
 </style>

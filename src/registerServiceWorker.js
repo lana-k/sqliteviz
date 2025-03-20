@@ -1,7 +1,7 @@
 import events from '@/lib/utils/events'
 let refresh = false
 
-function invokeServiceWorkerUpdateFlow (registration) {
+function invokeServiceWorkerUpdateFlow(registration) {
   const agree = confirm('New version of the app is available. Refresh now?')
   if (agree) {
     if (registration.waiting) {
@@ -14,7 +14,8 @@ function invokeServiceWorkerUpdateFlow (registration) {
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
-    const registration = await navigator.serviceWorker.register('service-worker.js')
+    const registration =
+      await navigator.serviceWorker.register('service-worker.js')
     // ensure the case when the updatefound event was missed is also handled
     // by re-invoking the prompt when there's a waiting Service Worker
     if (registration.waiting) {

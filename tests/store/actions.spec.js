@@ -2,13 +2,8 @@ import { expect } from 'chai'
 import actions from '@/store/actions'
 import sinon from 'sinon'
 
-const {
-  addTab,
-  addInquiry,
-  deleteInquiries,
-  renameInquiry,
-  saveInquiry
-} = actions
+const { addTab, addInquiry, deleteInquiries, renameInquiry, saveInquiry } =
+  actions
 
 describe('actions', () => {
   it('addTab adds new blank tab', async () => {
@@ -117,22 +112,30 @@ describe('actions', () => {
         { id: 2, name: 'bar' },
         { id: 3, name: 'baz' }
       ],
-      tabs: [{ id: 1, name: 'foo' }, { id: 2, name: 'bar' }]
+      tabs: [
+        { id: 1, name: 'foo' },
+        { id: 2, name: 'bar' }
+      ]
     }
     const commit = sinon.spy()
 
-    await renameInquiry({ state, commit }, { inquiryId: 2, newName: 'new name' })
+    await renameInquiry(
+      { state, commit },
+      { inquiryId: 2, newName: 'new name' }
+    )
     expect(state.inquiries).to.eql([
       { id: 1, name: 'foo' },
       { id: 2, name: 'new name' },
       { id: 3, name: 'baz' }
     ])
-    expect(commit.calledWith('updateTab', {
-      tab: { id: 2, name: 'bar' },
-      newValues: {
-        name: 'new name'
-      }
-    })).to.equal(true)
+    expect(
+      commit.calledWith('updateTab', {
+        tab: { id: 2, name: 'bar' },
+        newValues: {
+          name: 'new name'
+        }
+      })
+    ).to.equal(true)
   })
 
   it('saveInquiry adds new inquiry in the storage', async () => {
@@ -146,7 +149,7 @@ describe('actions', () => {
       viewOptions: [],
       name: null,
       dataView: {
-        getOptionsForSave () {
+        getOptionsForSave() {
           return ['chart']
         }
       }
@@ -156,10 +159,13 @@ describe('actions', () => {
       tabs: [tab]
     }
 
-    const value = await saveInquiry({ state }, {
-      inquiryTab: tab,
-      newName: 'foo'
-    })
+    const value = await saveInquiry(
+      { state },
+      {
+        inquiryTab: tab,
+        newName: 'foo'
+      }
+    )
     expect(value.id).to.equal(tab.id)
     expect(value.name).to.equal('foo')
     expect(value.query).to.equal(tab.query)
@@ -176,7 +182,7 @@ describe('actions', () => {
       viewOptions: [],
       name: null,
       dataView: {
-        getOptionsForSave () {
+        getOptionsForSave() {
           return ['chart']
         }
       }
@@ -187,10 +193,13 @@ describe('actions', () => {
       tabs: [tab]
     }
 
-    const first = await saveInquiry({ state }, {
-      inquiryTab: tab,
-      newName: 'foo'
-    })
+    const first = await saveInquiry(
+      { state },
+      {
+        inquiryTab: tab,
+        newName: 'foo'
+      }
+    )
 
     tab.name = 'foo'
     tab.query = 'select * from foo'
@@ -202,7 +211,9 @@ describe('actions', () => {
     expect(second.name).to.equal(first.name)
     expect(second.query).to.equal(tab.query)
     expect(second.viewOptions).to.eql(['chart'])
-    expect(new Date(second.createdAt).getTime()).to.equal(first.createdAt.getTime())
+    expect(new Date(second.createdAt).getTime()).to.equal(
+      first.createdAt.getTime()
+    )
   })
 
   it("save adds a new inquiry with new id if it's based on predefined inquiry", async () => {
@@ -215,7 +226,7 @@ describe('actions', () => {
       viewOptions: [],
       name: 'foo predefined',
       dataView: {
-        getOptionsForSave () {
+        getOptionsForSave() {
           return ['chart']
         }
       },
@@ -227,10 +238,13 @@ describe('actions', () => {
       tabs: [tab]
     }
 
-    await saveInquiry({ state }, {
-      inquiryTab: tab,
-      newName: 'foo'
-    })
+    await saveInquiry(
+      { state },
+      {
+        inquiryTab: tab,
+        newName: 'foo'
+      }
+    )
 
     const inquiries = state.inquiries
     expect(inquiries).has.lengthOf(1)

@@ -1,10 +1,5 @@
 <template>
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 18 18"
-    fill="none"
-  >
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
     <path
       fill-rule="evenodd"
       clip-rule="evenodd"
@@ -17,7 +12,7 @@
         6.91686 13.5552 6.91522Z"
       fill="#A2B1C6"
     />
-    <circle cx="5.50049" cy="6.00339" r="1.5" fill="#A2B1C6"/>
+    <circle cx="5.50049" cy="6.00339" r="1.5" fill="#A2B1C6" />
     <path
       fill-rule="evenodd"
       clip-rule="evenodd"
@@ -27,11 +22,10 @@
         1.21788ZM16.0374 2.71788L1.96424 2.713L1.96289 15.2773L16.036 15.2821L16.0374 2.71788Z"
       fill="#A2B1C6"
     />
-</svg>
+  </svg>
 </template>
 
 <script>
-
 export default {
   name: 'DataViewIcon'
 }

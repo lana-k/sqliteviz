@@ -1,12 +1,12 @@
 export default {
-  setDb (state, db) {
+  setDb(state, db) {
     if (state.db) {
       state.db.shutDown()
     }
     state.db = db
   },
 
-  updateTab (state, { tab, newValues }) {
+  updateTab(state, { tab, newValues }) {
     const { name, id, query, viewType, viewOptions, isSaved } = newValues
     const oldId = tab.id
 
@@ -14,19 +14,31 @@ export default {
       state.currentTabId = id
     }
 
-    if (id) { tab.id = id }
-    if (name) { tab.name = name }
-    if (query) { tab.query = query }
-    if (viewType) { tab.viewType = viewType }
-    if (viewOptions) { tab.viewOptions = viewOptions }
-    if (isSaved !== undefined) { tab.isSaved = isSaved }
+    if (id) {
+      tab.id = id
+    }
+    if (name) {
+      tab.name = name
+    }
+    if (query) {
+      tab.query = query
+    }
+    if (viewType) {
+      tab.viewType = viewType
+    }
+    if (viewOptions) {
+      tab.viewOptions = viewOptions
+    }
+    if (isSaved !== undefined) {
+      tab.isSaved = isSaved
+    }
     if (isSaved) {
       // Saved inquiry is not predefined
       delete tab.isPredefined
     }
   },
 
-  deleteTab (state, tab) {
+  deleteTab(state, tab) {
     const index = state.tabs.indexOf(tab)
     // If closing tab is the current opened
     if (tab.id === state.currentTabId) {
@@ -44,27 +56,29 @@ export default {
     }
     state.tabs.splice(index, 1)
   },
-  setCurrentTabId (state, id) {
+  setCurrentTabId(state, id) {
     try {
       state.currentTabId = id
       state.currentTab = state.tabs.find(tab => tab.id === id)
     } catch (e) {
-      console.error('Can\'t open a tab id:' + id)
+      console.error("Can't open a tab id:" + id)
     }
   },
-  updatePredefinedInquiries (state, inquiries) {
-    state.predefinedInquiries = Array.isArray(inquiries) ? inquiries : [inquiries]
+  updatePredefinedInquiries(state, inquiries) {
+    state.predefinedInquiries = Array.isArray(inquiries)
+      ? inquiries
+      : [inquiries]
   },
-  setLoadingPredefinedInquiries (state, value) {
+  setLoadingPredefinedInquiries(state, value) {
     state.loadingPredefinedInquiries = value
   },
-  setPredefinedInquiriesLoaded (state, value) {
+  setPredefinedInquiriesLoaded(state, value) {
     state.predefinedInquiriesLoaded = value
   },
-  setInquiries (state, value) {
+  setInquiries(state, value) {
     state.inquiries = value
   },
-  setIsWorkspaceVisible (state, value) {
+  setIsWorkspaceVisible(state, value) {
     state.isWorkspaceVisible = value
   }
 }

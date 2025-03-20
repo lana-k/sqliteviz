@@ -71,10 +71,12 @@ describe('database.js', () => {
       type: 'INTEGER'
     })
 
-    expect(schema[1].columns).to.eql([{
-      name: 'amount',
-      type: 'INTEGER'
-    }])
+    expect(schema[1].columns).to.eql([
+      {
+        name: 'amount',
+        type: 'INTEGER'
+      }
+    ])
   })
 
   it('creates empty db with name database', async () => {
@@ -114,7 +116,9 @@ describe('database.js', () => {
     buffer.name = 'foo.sqlite'
 
     await db.loadDb(buffer)
-    const result = await db.execute('SELECT * from test limit 1; SELECT * from test;')
+    const result = await db.execute(
+      'SELECT * from test limit 1; SELECT * from test;'
+    )
     expect(result.values).to.eql({
       id: [1, 2],
       name: ['Harry Potter', 'Draco Malfoy'],
@@ -141,7 +145,9 @@ describe('database.js', () => {
     const buffer = new Blob([data])
     buffer.name = 'foo.sqlite'
     await db.loadDb(buffer)
-    await expect(db.execute('SELECT * from foo')).to.be.rejectedWith(/^no such table: foo$/)
+    await expect(db.execute('SELECT * from foo')).to.be.rejectedWith(
+      /^no such table: foo$/
+    )
   })
 
   it('adds table from csv', async () => {
@@ -186,37 +192,44 @@ describe('database.js', () => {
     }
     const progressHandler = sinon.stub()
     const progressCounterId = db.createProgressCounter(progressHandler)
-    await expect(db.addTableFromCsv('foo', data, progressCounterId)).to.be.rejected
+    await expect(db.addTableFromCsv('foo', data, progressCounterId)).to.be
+      .rejected
   })
 
   it('progressCounters', () => {
     const firstHandler = sinon.stub()
     const firstId = db.createProgressCounter(firstHandler)
-    db.worker.dispatchEvent(new MessageEvent('message', {
-      data: {
-        progress: 50,
-        id: firstId
-      }
-    }))
+    db.worker.dispatchEvent(
+      new MessageEvent('message', {
+        data: {
+          progress: 50,
+          id: firstId
+        }
+      })
+    )
     expect(firstHandler.calledOnceWith(50)).to.equal(true)
 
     const secondHandler = sinon.stub()
     const secondId = db.createProgressCounter(secondHandler)
-    db.worker.dispatchEvent(new MessageEvent('message', {
-      data: {
-        progress: 70,
-        id: secondId
-      }
-    }))
+    db.worker.dispatchEvent(
+      new MessageEvent('message', {
+        data: {
+          progress: 70,
+          id: secondId
+        }
+      })
+    )
     expect(firstId).to.not.equals(secondId)
     expect(secondHandler.calledOnceWith(70)).to.equal(true)
 
-    db.worker.dispatchEvent(new MessageEvent('message', {
-      data: {
-        progress: 80,
-        id: firstId
-      }
-    }))
+    db.worker.dispatchEvent(
+      new MessageEvent('message', {
+        data: {
+          progress: 80,
+          id: firstId
+        }
+      })
+    )
     expect(firstHandler.calledTwice).to.equal(true)
     expect(firstHandler.secondCall.calledWith(80)).to.equal(true)
 
@@ -268,12 +281,17 @@ describe('database.js', () => {
 
   it('validateTableName', async () => {
     await db.execute('CREATE TABLE foo(id)')
-    await expect(db.validateTableName('foo')).to.be.rejectedWith('table "foo" already exists')
-    await expect(db.validateTableName('1foo'))
-      .to.be.rejectedWith("Table name can't start with a digit")
-    await expect(db.validateTableName('foo(05.08.2020)'))
-      .to.be.rejectedWith('Table name can contain only letters, digits and underscores')
-    await expect(db.validateTableName('sqlite_foo'))
-      .to.be.rejectedWith("Table name can't start with sqlite_")
+    await expect(db.validateTableName('foo')).to.be.rejectedWith(
+      'table "foo" already exists'
+    )
+    await expect(db.validateTableName('1foo')).to.be.rejectedWith(
+      "Table name can't start with a digit"
+    )
+    await expect(db.validateTableName('foo(05.08.2020)')).to.be.rejectedWith(
+      'Table name can contain only letters, digits and underscores'
+    )
+    await expect(db.validateTableName('sqlite_foo')).to.be.rejectedWith(
+      "Table name can't start with sqlite_"
+    )
   })
 })

@@ -80,7 +80,6 @@ describe('SQLite extensions', function () {
       'sqrt(square(16))': [16],
       'ceil(-1.95) + ceil(1.95)': [1],
       'floor(-1.95) + floor(1.95)': [-1]
-
     })
   })
 
@@ -452,7 +451,15 @@ describe('SQLite extensions', function () {
       FROM dataset;
     `)
     expect(actual.values).to.eql({
-      xx: [1], xy: [0], xz: [1], yx: [0], yy: [1], yz: [1], zx: [1], zy: [1], zz: [1]
+      xx: [1],
+      xy: [0],
+      xz: [1],
+      yx: [0],
+      yy: [1],
+      yz: [1],
+      zx: [1],
+      zy: [1],
+      zz: [1]
     })
   })
 
@@ -475,7 +482,10 @@ describe('SQLite extensions', function () {
 
       SELECT lua_inline(1), lua_full(1) - 1 < 0.000001;
     `)
-    expect(actual.values).to.eql({ 'lua_inline(1)': [2], 'lua_full(1) - 1 < 0.000001': [1] })
+    expect(actual.values).to.eql({
+      'lua_inline(1)': [2],
+      'lua_full(1) - 1 < 0.000001': [1]
+    })
   })
 
   it('supports aggregate Lua functions', async function () {
@@ -534,6 +544,9 @@ describe('SQLite extensions', function () {
 
       SELECT * FROM lua_match('%w+', 'hello world from Lua');
     `)
-    expect(actual.values).to.eql({ idx: [1, 2, 3, 4], elm: ['hello', 'world', 'from', 'Lua'] })
+    expect(actual.values).to.eql({
+      idx: [1, 2, 3, 4],
+      elm: ['hello', 'world', 'from', 'Lua']
+    })
   })
 })

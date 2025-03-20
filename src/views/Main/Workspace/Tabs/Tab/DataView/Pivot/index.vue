@@ -1,27 +1,28 @@
 <template>
-<div class="pivot-container">
-  <div class="warning pivot-warning" v-show="!dataSources">
-    There is no data to build a pivot. Run your SQL query and make sure the result is not empty.
-  </div>
-  <pivot-ui
-    :key-names="columns"
-    v-model="pivotOptions"
-    @update="$emit('update')"
-  />
-  <div ref="pivotOutput" class="pivot-output"/>
-  <div
-    ref="customChartOutput"
-    v-show="viewCustomChart"
-    class="custom-chart-output"
-  >
-    <chart
-      ref="customChart"
-      v-bind="customChartComponentProps"
+  <div class="pivot-container">
+    <div class="warning pivot-warning" v-show="!dataSources">
+      There is no data to build a pivot. Run your SQL query and make sure the
+      result is not empty.
+    </div>
+    <pivot-ui
+      :key-names="columns"
+      v-model="pivotOptions"
       @update="$emit('update')"
-      @loadingImageCompleted="$emit('loadingImageCompleted')"
     />
+    <div ref="pivotOutput" class="pivot-output" />
+    <div
+      ref="customChartOutput"
+      v-show="viewCustomChart"
+      class="custom-chart-output"
+    >
+      <chart
+        ref="customChart"
+        v-bind="customChartComponentProps"
+        @update="$emit('update')"
+        @loadingImageCompleted="$emit('loadingImageCompleted')"
+      />
+    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -37,7 +38,12 @@ import events from '@/lib/utils/events'
 
 export default {
   name: 'pivot',
-  props: ['dataSources', 'initOptions', 'importToPngEnabled', 'importToSvgEnabled'],
+  props: [
+    'dataSources',
+    'initOptions',
+    'importToPngEnabled',
+    'importToSvgEnabled'
+  ],
   emits: [
     'loadingImageCompleted',
     'update',
@@ -48,7 +54,7 @@ export default {
     PivotUi,
     Chart
   },
-  data () {
+  data() {
     return {
       resizeObserver: null,
       pivotOptions: !this.initOptions
@@ -83,25 +89,25 @@ export default {
     }
   },
   computed: {
-    columns () {
+    columns() {
       return Object.keys(this.dataSources || {})
     },
 
-    viewStandartChart () {
+    viewStandartChart() {
       return this.pivotOptions.rendererName in $.pivotUtilities.plotly_renderers
     },
 
-    viewCustomChart () {
+    viewCustomChart() {
       return this.pivotOptions.rendererName === 'Custom chart'
     }
   },
   watch: {
-    dataSources () {
+    dataSources() {
       this.show()
     },
     'pivotOptions.rendererName': {
       immediate: true,
-      handler () {
+      handler() {
         this.$emit(
           'update:importToPngEnabled',
           this.pivotOptions.rendererName !== 'TSV Export'
@@ -115,22 +121,22 @@ export default {
         })
       }
     },
-    pivotOptions () {
+    pivotOptions() {
       this.show()
     }
   },
-  mounted () {
+  mounted() {
     this.show()
     // We need to detect resizing because plotly doesn't resize when resize its container
     // but it resize on window.resize (we will trigger it manualy in order to make plotly resize)
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.customChartOutput)
   },
-  beforeUnmount () {
+  beforeUnmount() {
     this.resizeObserver.unobserve(this.$refs.customChartOutput)
   },
   methods: {
-    handleResize () {
+    handleResize() {
       // hack: plotly changes size only on window.resize event,
       // so, we trigger it when container resizes (e.g. when move splitter)
       if (this.viewStandartChart) {
@@ -138,7 +144,7 @@ export default {
       }
     },
 
-    show () {
+    show() {
       const options = { ...this.pivotOptions }
       if (this.viewStandartChart) {
         options.rendererOptions = {
@@ -163,7 +169,9 @@ export default {
 
       $(this.$refs.pivotOutput).pivot(
         function (callback) {
-          const rowCount = !this.dataSources ? 0 : this.dataSources[this.columns[0]].length
+          const rowCount = !this.dataSources
+            ? 0
+            : this.dataSources[this.columns[0]].length
           for (let i = 1; i <= rowCount; i++) {
             const row = {}
             this.columns.forEach(col => {
@@ -181,7 +189,7 @@ export default {
       }
     },
 
-    getOptionsForSave () {
+    getOptionsForSave() {
       const options = { ...this.pivotOptions }
       if (this.viewCustomChart) {
         const chartComponent = this.$refs.customChart
@@ -192,20 +200,22 @@ export default {
       return options
     },
 
-    async saveAsPng () {
+    async saveAsPng() {
       if (this.viewCustomChart) {
         this.$refs.customChart.saveAsPng()
       } else {
         const source = this.viewStandartChart
           ? await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
-          : (await pivotHelper.getPivotCanvas(this.$refs.pivotOutput)).toDataURL('image/png')
+          : (
+              await pivotHelper.getPivotCanvas(this.$refs.pivotOutput)
+            ).toDataURL('image/png')
 
         this.$emit('loadingImageCompleted')
         fIo.downloadFromUrl(source, 'pivot')
       }
     },
 
-    async prepareCopy () {
+    async prepareCopy() {
       if (this.viewCustomChart) {
         return await this.$refs.customChart.prepareCopy()
       }
@@ -215,16 +225,19 @@ export default {
       return await pivotHelper.getPivotCanvas(this.$refs.pivotOutput)
     },
 
-    async saveAsSvg () {
+    async saveAsSvg() {
       if (this.viewCustomChart) {
         this.$refs.customChart.saveAsSvg()
       } else if (this.viewStandartChart) {
-        const url = await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'svg')
+        const url = await chartHelper.getImageDataUrl(
+          this.$refs.pivotOutput,
+          'svg'
+        )
         fIo.downloadFromUrl(url, 'pivot')
       }
     },
 
-    saveAsHtml () {
+    saveAsHtml() {
       if (this.viewCustomChart) {
         this.$refs.customChart.saveAsHtml()
         return

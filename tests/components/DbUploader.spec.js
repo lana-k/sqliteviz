@@ -7,7 +7,6 @@ import fu from '@/lib/utils/fileIo'
 import database from '@/lib/database'
 import { nextTick } from 'vue'
 
-
 describe('DbUploader.vue', () => {
   let state = {}
   let mutations = {}

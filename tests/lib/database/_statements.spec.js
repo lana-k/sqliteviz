@@ -19,8 +19,9 @@ describe('_statements.js', () => {
 
   it('getInsertStmt', () => {
     const columns = ['id', 'name']
-    expect(stmts.getInsertStmt('foo', columns))
-      .to.equal('INSERT INTO "foo" ("id", "name") VALUES (?, ?);')
+    expect(stmts.getInsertStmt('foo', columns)).to.equal(
+      'INSERT INTO "foo" ("id", "name") VALUES (?, ?);'
+    )
   })
 
   it('getCreateStatement', () => {

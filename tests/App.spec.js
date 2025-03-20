@@ -13,16 +13,16 @@ describe('App.vue', () => {
   })
 
   it('Gets inquiries', () => {
-    sinon.stub(storedInquiries, 'getStoredInquiries').returns([
-      { id: 1 }, { id: 2 }, { id: 3 }
-    ])
+    sinon
+      .stub(storedInquiries, 'getStoredInquiries')
+      .returns([{ id: 1 }, { id: 2 }, { id: 3 }])
     const state = {
       predefinedInquiries: [],
       inquiries: []
     }
     const store = createStore({ state, mutations })
     shallowMount(App, {
-      global: { 
+      global: {
         stubs: ['router-view'],
         plugins: [store]
       }
@@ -33,7 +33,9 @@ describe('App.vue', () => {
 
   it('Updates inquiries when they change in store', async () => {
     sinon.stub(storedInquiries, 'getStoredInquiries').returns([
-      { id: 1, name: 'foo' }, { id: 2, name: 'baz' }, { id: 3, name: 'bar' }
+      { id: 1, name: 'foo' },
+      { id: 2, name: 'baz' },
+      { id: 3, name: 'bar' }
     ])
     sinon.spy(storedInquiries, 'updateStorage')
 
@@ -43,8 +45,7 @@ describe('App.vue', () => {
     }
     const store = createStore({ state, mutations })
     shallowMount(App, {
-      global: { stubs: ['router-view'],
-      plugins: [store] }
+      global: { stubs: ['router-view'], plugins: [store] }
     })
 
     store.state.inquiries.splice(0, 1, { id: 1, name: 'new foo name' })

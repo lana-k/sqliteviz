@@ -6,10 +6,9 @@ import { createStore } from 'vuex'
 import Tabs from '@/views/Main/Workspace/Tabs'
 import eventBus from '@/lib/eventBus'
 
-
 describe('Tabs.vue', () => {
   let clock
-  
+
   beforeEach(() => {
     clock = sinon.useFakeTimers()
     sinon.spy(eventBus, '$emit')
@@ -43,8 +42,21 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
+        {
+          id: 1,
+          name: 'foo',
+          query: 'select * from foo',
+          chart: [],
+          isSaved: true
+        },
+        {
+          id: 2,
+          name: null,
+          tempName: 'Untitled',
+          query: '',
+          chart: [],
+          isSaved: false
+        }
       ],
       currentTabId: 2
     }
@@ -81,8 +93,21 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
+        {
+          id: 1,
+          name: 'foo',
+          query: 'select * from foo',
+          chart: [],
+          isSaved: true
+        },
+        {
+          id: 2,
+          name: null,
+          tempName: 'Untitled',
+          query: '',
+          chart: [],
+          isSaved: false
+        }
       ],
       currentTabId: 2
     }
@@ -210,7 +235,9 @@ describe('Tabs.vue', () => {
       attachTo: document.body,
       global: {
         stubs: {
-          'router-link': true, teleport: true, transition: false
+          'router-link': true,
+          teleport: true,
+          transition: false
         },
         plugins: [store]
       }
@@ -284,7 +311,9 @@ describe('Tabs.vue', () => {
       attachTo: document.body,
       global: {
         stubs: {
-          'router-link': true, teleport: true, transition: false
+          'router-link': true,
+          teleport: true,
+          transition: false
         },
         plugins: [store]
       }
@@ -360,7 +389,9 @@ describe('Tabs.vue', () => {
       attachTo: document.body,
       global: {
         stubs: {
-          'router-link': true, teleport: true, transition: false
+          'router-link': true,
+          teleport: true,
+          transition: false
         },
         plugins: [store]
       }
@@ -401,8 +432,21 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true },
-        { id: 2, name: null, tempName: 'Untitled', query: '', chart: [], isSaved: false }
+        {
+          id: 1,
+          name: 'foo',
+          query: 'select * from foo',
+          chart: [],
+          isSaved: true
+        },
+        {
+          id: 2,
+          name: null,
+          tempName: 'Untitled',
+          query: '',
+          chart: [],
+          isSaved: false
+        }
       ],
       currentTabId: 2
     }
@@ -429,7 +473,13 @@ describe('Tabs.vue', () => {
     // mock store state
     const state = {
       tabs: [
-        { id: 1, name: 'foo', query: 'select * from foo', chart: [], isSaved: true }
+        {
+          id: 1,
+          name: 'foo',
+          query: 'select * from foo',
+          chart: [],
+          isSaved: true
+        }
       ],
       currentTabId: 1
     }

@@ -1,17 +1,17 @@
 <template>
   <div class="db-uploader-container" :style="{ width }">
-    <change-db-icon v-if="type === 'small'" @click="browse"/>
+    <change-db-icon v-if="type === 'small'" @click="browse" />
     <div v-if="type === 'illustrated'" class="drop-area-container">
       <div
         class="drop-area"
         @dragover.prevent="state = 'dragover'"
-        @dragleave.prevent="state=''"
+        @dragleave.prevent="state = ''"
         @drop.prevent="drop"
         @click="browse"
       >
         <div class="text">
-          Drop the database, CSV, JSON or NDJSON file here
-          or click to choose a file from your computer.
+          Drop the database, CSV, JSON or NDJSON file here or click to choose a
+          file from your computer.
         </div>
       </div>
     </div>
@@ -19,16 +19,16 @@
       <img id="drop-file-top-img" src="~@/assets/images/top.svg" />
       <img
         id="left-arm-img"
-        :class="{'swing': state === 'dragover'}"
+        :class="{ swing: state === 'dragover' }"
         src="~@/assets/images/leftArm.svg"
       />
       <img
         id="file-img"
         ref="fileImg"
         :class="{
-          'swing': state === 'dragover',
-          'fly': state === 'dropping',
-          'hidden': state === 'dropped'
+          swing: state === 'dragover',
+          fly: state === 'dropping',
+          hidden: state === 'dropped'
         }"
         src="~@/assets/images/file.png"
       />
@@ -36,7 +36,7 @@
       <img id="body-img" src="~@/assets/images/body.svg" />
       <img
         id="right-arm-img"
-        :class="{'swing': state === 'dragover'}"
+        :class="{ swing: state === 'dragover' }"
         src="~@/assets/images/rightArm.svg"
       />
     </div>
@@ -68,7 +68,7 @@ export default {
       type: String,
       required: false,
       default: 'small',
-      validator: (value) => {
+      validator: value => {
         return ['illustrated', 'small'].includes(value)
       }
     },
@@ -83,7 +83,7 @@ export default {
     ChangeDbIcon,
     CsvJsonImport
   },
-  data () {
+  data() {
     return {
       state: '',
       animationPromise: Promise.resolve(),
@@ -91,9 +91,9 @@ export default {
       newDb: null
     }
   },
-  mounted () {
+  mounted() {
     if (this.type === 'illustrated') {
-      this.animationPromise = new Promise((resolve) => {
+      this.animationPromise = new Promise(resolve => {
         this.$refs.fileImg.addEventListener('animationend', event => {
           if (event.animationName.startsWith('fly')) {
             this.state = 'dropped'
@@ -104,26 +104,27 @@ export default {
     }
   },
   methods: {
-    cancelImport () {
+    cancelImport() {
       if (this.newDb) {
         this.newDb.shutDown()
         this.newDb = null
       }
     },
 
-    async finish () {
+    async finish() {
       this.$store.commit('setDb', this.newDb)
       if (this.$route.path !== '/workspace') {
         this.$router.push('/workspace')
       }
     },
 
-    loadDb (file) {
-      return Promise.all([this.newDb.loadDb(file), this.animationPromise])
-        .then(this.finish)
+    loadDb(file) {
+      return Promise.all([this.newDb.loadDb(file), this.animationPromise]).then(
+        this.finish
+      )
     },
 
-    async checkFile (file) {
+    async checkFile(file) {
       this.state = 'dropping'
       this.newDb = database.getNewDatabase()
 
@@ -140,16 +141,19 @@ export default {
         await this.$nextTick()
         const csvJsonImportModal = this.$refs.addCsvJson
         csvJsonImportModal.reset()
-        return Promise.all([csvJsonImportModal.preview(), this.animationPromise])
-          .then(csvJsonImportModal.open)
+        return Promise.all([
+          csvJsonImportModal.preview(),
+          this.animationPromise
+        ]).then(csvJsonImportModal.open)
       }
     },
-    browse () {
-      fIo.getFileFromUser('.db,.sqlite,.sqlite3,.csv,.json,.ndjson')
+    browse() {
+      fIo
+        .getFileFromUser('.db,.sqlite,.sqlite3,.csv,.json,.ndjson')
         .then(this.checkFile)
     },
 
-    drop (event) {
+    drop(event) {
       this.checkFile(event.dataTransfer.files[0])
     }
   }
@@ -243,11 +247,15 @@ export default {
   transform-origin: 0 56px;
 }
 #file-img.swing {
-   transform-origin: -74px 139px;
+  transform-origin: -74px 139px;
 }
 @keyframes swing {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(-7deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-7deg);
+  }
 }
 
 #file-img.fly {

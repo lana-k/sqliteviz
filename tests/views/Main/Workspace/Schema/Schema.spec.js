@@ -11,7 +11,6 @@ import fIo from '@/lib/utils/fileIo'
 import csv from '@/lib/csv'
 import { nextTick } from 'vue'
 
-
 describe('Schema.vue', () => {
   let clock
 
@@ -145,7 +144,10 @@ describe('Schema.vue', () => {
       }
     })
 
-    await wrapper.findComponent({ name: 'export-icon' }).find('svg').trigger('click')
+    await wrapper
+      .findComponent({ name: 'export-icon' })
+      .find('svg')
+      .trigger('click')
     expect(state.db.export.calledOnceWith('fooDB'))
     wrapper.unmount()
   })
@@ -188,14 +190,18 @@ describe('Schema.vue', () => {
     sinon.spy(wrapper.vm, 'addCsvJson')
     sinon.spy(wrapper.vm.$refs.addCsvJson, 'loadToDb')
 
-    await wrapper.findComponent({ name: 'add-table-icon' }).find('svg').trigger('click')
+    await wrapper
+      .findComponent({ name: 'add-table-icon' })
+      .find('svg')
+      .trigger('click')
     await wrapper.vm.$refs.addCsvJson.preview.returnValues[0]
     await wrapper.vm.addCsvJson.returnValues[0]
     await nextTick()
     await nextTick()
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
-    expect(wrapper.find('.dialog.vfm .dialog-header').text())
-      .to.contain('CSV import')
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'CSV import'
+    )
     await wrapper.find('#import-start').trigger('click')
     await wrapper.vm.$refs.addCsvJson.loadToDb.returnValues[0]
     await wrapper.find('#import-finish').trigger('click')
@@ -205,7 +211,13 @@ describe('Schema.vue', () => {
 
     expect(wrapper.vm.$store.state.db.schema).to.eql([
       { name: 'foo', columns: [{ name: 'id', type: 'N/A' }] },
-      { name: 'test', columns: [{ name: 'col1', type: 'REAL' }, { name: 'col2', type: 'TEXT' }] }
+      {
+        name: 'test',
+        columns: [
+          { name: 'col1', type: 'REAL' },
+          { name: 'col2', type: 'TEXT' }
+        ]
+      }
     ])
 
     const res = await wrapper.vm.$store.state.db.execute('select * from test')

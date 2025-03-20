@@ -1,5 +1,5 @@
 export default {
-  _migrate (installedVersion, inquiries) {
+  _migrate(installedVersion, inquiries) {
     if (installedVersion === 1) {
       inquiries.forEach(inquire => {
         inquire.viewType = 'chart'

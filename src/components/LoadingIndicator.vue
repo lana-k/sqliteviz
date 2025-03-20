@@ -1,5 +1,10 @@
 <template>
-  <svg :class="animationClass" :height="size" :width="size" :viewBox="`0 0 ${size} ${size}`">
+  <svg
+    :class="animationClass"
+    :height="size"
+    :width="size"
+    :viewBox="`0 0 ${size} ${size}`"
+  >
     <circle
       class="loader-svg bg"
       :style="{ strokeWidth }"
@@ -9,7 +14,11 @@
     />
     <circle
       class="loader-svg front"
-      :style="{ strokeDasharray: circleProgress, strokeDashoffset: offset, strokeWidth }"
+      :style="{
+        strokeDasharray: circleProgress,
+        strokeDashoffset: offset,
+        strokeWidth
+      }"
       :cx="size / 2"
       :cy="size / 2"
       :r="radius"
@@ -33,22 +42,24 @@ export default {
   },
   emits: [],
   computed: {
-    circleProgress () {
+    circleProgress() {
       const circle = this.radius * 3.14 * 2
-      const dash = this.progress ? (circle * this.progress) / 100 : circle * 1 / 3
+      const dash = this.progress
+        ? (circle * this.progress) / 100
+        : (circle * 1) / 3
       const space = circle - dash
       return `${dash}px, ${space}px`
     },
-    animationClass () {
+    animationClass() {
       return this.progress === undefined ? 'loading' : 'progress'
     },
-    radius () {
+    radius() {
       return this.size / 2 - this.strokeWidth
     },
-    offset () {
-      return this.radius * 3.14 / 2
+    offset() {
+      return (this.radius * 3.14) / 2
     },
-    strokeWidth () {
+    strokeWidth() {
       return this.size / 10
     }
   }
@@ -58,7 +69,10 @@ export default {
 <style scoped>
 .loader-svg {
   position: absolute;
-  left: 0; right: 0; top: 0; bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
   fill: none;
   stroke-linecap: round;
   stroke: var(--color-accent);
@@ -70,7 +84,7 @@ export default {
 
 .loading .loader-svg.front {
   will-change: transform;
-  animation: fill-animation-loading 1s cubic-bezier(1,1,1,1) 0s infinite;
+  animation: fill-animation-loading 1s cubic-bezier(1, 1, 1, 1) 0s infinite;
   transform-origin: center;
 }
 
@@ -97,10 +111,10 @@ export default {
 }
 
 .progress .loader-svg.bg {
-  animation: bg-animation 1.5s cubic-bezier(1,1,1,1) 0s infinite;
+  animation: bg-animation 1.5s cubic-bezier(1, 1, 1, 1) 0s infinite;
 }
 
-@keyframes bg-animation{
+@keyframes bg-animation {
   0% {
     r: 8;
   }
@@ -109,8 +123,7 @@ export default {
     r: 9;
   }
   100% {
-   r: 8;
+    r: 8;
   }
 }
-
 </style>

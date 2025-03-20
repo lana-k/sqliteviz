@@ -3,20 +3,23 @@
     :modal-id="name"
     class="dialog"
     :clickToClose="false"
-    :contentTransition="{name: 'loading-dialog'}"
-    :overlayTransition="{name: 'loading-dialog'}"
+    :contentTransition="{ name: 'loading-dialog' }"
+    :overlayTransition="{ name: 'loading-dialog' }"
   >
     <div class="dialog-header">
       {{ title }}
-      <close-icon @click="$emit('cancel')" :disabled="loading"/>
+      <close-icon @click="$emit('cancel')" :disabled="loading" />
     </div>
     <div class="dialog-body">
       <div v-if="loading" class="loading-dialog-body">
-        <loading-indicator :size="30" class="state-icon"/>
+        <loading-indicator :size="30" class="state-icon" />
         {{ loadingMsg }}
       </div>
       <div v-else class="loading-dialog-body">
-        <img src="~@/assets/images/success.svg" class="success-icon state-icon" />
+        <img
+          src="~@/assets/images/success.svg"
+          class="success-icon state-icon"
+        />
         {{ successMsg }}
       </div>
     </div>
@@ -57,7 +60,7 @@ export default {
   },
   emits: ['cancel', 'action'],
   watch: {
-    loading () {
+    loading() {
       if (this.loading) {
         this.$modal.show(this.name)
       }
@@ -65,7 +68,7 @@ export default {
   },
   components: { LoadingIndicator, CloseIcon },
   methods: {
-    cancel () {
+    cancel() {
       this.$emit('cancel')
     }
   }

@@ -1,8 +1,16 @@
 <template>
   <div>
-    <div v-if="label" :class="['text-field-label', { error: errorMsg }, {'disabled': disabled}]">
+    <div
+      v-if="label"
+      :class="['text-field-label', { error: errorMsg }, { disabled: disabled }]"
+    >
       {{ label }}
-      <hint-icon class="hint" v-if="hint" :hint="hint" :max-width="maxHintWidth || '149px'"/>
+      <hint-icon
+        class="hint"
+        v-if="hint"
+        :hint="hint"
+        :max-width="maxHintWidth || '149px'"
+      />
     </div>
     <input
       type="text"
@@ -75,7 +83,7 @@ input.error {
   position: relative;
 }
 
-.text-field-label .hint{
+.text-field-label .hint {
   position: absolute;
   top: -2px;
   right: -22px;

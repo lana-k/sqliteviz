@@ -9,7 +9,6 @@ import actions from '@/store/actions'
 import fu from '@/lib/utils/fileIo'
 import { nextTick } from 'vue'
 
-
 describe('Inquiries.vue', () => {
   let clock
 
@@ -80,7 +79,7 @@ describe('Inquiries.vue', () => {
     const store = createStore({ state, mutations, actions })
     const wrapper = shallowMount(Inquiries, {
       attachTo: document.body,
-      global: { plugins: [store] } 
+      global: { plugins: [store] }
     })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await nextTick()
@@ -187,13 +186,15 @@ describe('Inquiries.vue', () => {
 
     const store = createStore({ state, mutations, actions })
     const wrapper = mount(Inquiries, {
-      attachTo: document.body, 
-      global: { plugins: [store] } 
+      attachTo: document.body,
+      global: { plugins: [store] }
     })
     await wrapper.find('#toolbar-search input').setValue('baz')
     await nextTick()
 
-    expect(wrapper.find('#inquiries-not-found').text()).to.equal('No inquiries found')
+    expect(wrapper.find('#inquiries-not-found').text()).to.equal(
+      'No inquiries found'
+    )
     expect(wrapper.find('#start-guide').exists()).to.equal(false)
     expect(wrapper.find('tbody').isVisible()).to.equal(false)
     wrapper.unmount()
@@ -242,7 +243,9 @@ describe('Inquiries.vue', () => {
 
   it('Exports one inquiry', async () => {
     sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([])
-    sinon.stub(storedInquiries, 'serialiseInquiries').returns('I am a serialized inquiry')
+    sinon
+      .stub(storedInquiries, 'serialiseInquiries')
+      .returns('I am a serialized inquiry')
     sinon.stub(fu, 'exportToFile')
     const state = {
       predefinedInquiries: [],
@@ -262,8 +265,13 @@ describe('Inquiries.vue', () => {
     const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await nextTick()
-    await wrapper.findComponent({ name: 'ExportIcon' }).find('svg').trigger('click')
-    expect(fu.exportToFile.calledOnceWith('I am a serialized inquiry', 'foo.json')).to.equals(true)
+    await wrapper
+      .findComponent({ name: 'ExportIcon' })
+      .find('svg')
+      .trigger('click')
+    expect(
+      fu.exportToFile.calledOnceWith('I am a serialized inquiry', 'foo.json')
+    ).to.equals(true)
     wrapper.unmount()
   })
 
@@ -296,9 +304,14 @@ describe('Inquiries.vue', () => {
     const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await nextTick()
-    await wrapper.findComponent({ name: 'CopyIcon' }).find('svg').trigger('click')
+    await wrapper
+      .findComponent({ name: 'CopyIcon' })
+      .find('svg')
+      .trigger('click')
 
-    expect(storedInquiries.duplicateInquiry.calledOnceWith(inquiryInStorage)).to.equals(true)
+    expect(
+      storedInquiries.duplicateInquiry.calledOnceWith(inquiryInStorage)
+    ).to.equals(true)
 
     const rows = wrapper.findAll('tbody tr')
     expect(rows).to.have.lengthOf(2)
@@ -308,44 +321,48 @@ describe('Inquiries.vue', () => {
     wrapper.unmount()
   })
 
-  it('The copy of the inquiry is not selected if all inquiries were selected before duplication',
-    async () => {
-      sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([])
-      const inquiryInStorage = {
-        id: 1,
-        name: 'foo',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-11-03T19:57:56.299Z'
-      }
-      const newInquiry = {
-        id: 2,
-        name: 'foo copy',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-12-03T19:57:56.299Z'
-      }
-      sinon.stub(storedInquiries, 'duplicateInquiry').returns(newInquiry)
-      const state = {
-        predefinedInquiries: [],
-        inquiries: [inquiryInStorage]
-      }
-      const store = createStore({ state, mutations, actions })
+  it('The copy of the inquiry is not selected if all inquiries were selected before duplication', async () => {
+    sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([])
+    const inquiryInStorage = {
+      id: 1,
+      name: 'foo',
+      query: '',
+      viewType: 'chart',
+      viewOptions: [],
+      createdAt: '2020-11-03T19:57:56.299Z'
+    }
+    const newInquiry = {
+      id: 2,
+      name: 'foo copy',
+      query: '',
+      viewType: 'chart',
+      viewOptions: [],
+      createdAt: '2020-12-03T19:57:56.299Z'
+    }
+    sinon.stub(storedInquiries, 'duplicateInquiry').returns(newInquiry)
+    const state = {
+      predefinedInquiries: [],
+      inquiries: [inquiryInStorage]
+    }
+    const store = createStore({ state, mutations, actions })
 
-      const wrapper = mount(Inquiries, { global: { plugins: [store] } })
-      await storedInquiries.readPredefinedInquiries.returnValues[0]
-      await nextTick()
-      await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
-        .trigger('click')
-      await wrapper.findComponent({ name: 'CopyIcon' }).find('svg').trigger('click')
+    const wrapper = mount(Inquiries, { global: { plugins: [store] } })
+    await storedInquiries.readPredefinedInquiries.returnValues[0]
+    await nextTick()
+    await wrapper
+      .findComponent({ ref: 'mainCheckBox' })
+      .find('.checkbox-container')
+      .trigger('click')
+    await wrapper
+      .findComponent({ name: 'CopyIcon' })
+      .find('svg')
+      .trigger('click')
 
-      const checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
-      expect(checkboxes[0].vm.checked).to.equals(true)
-      expect(checkboxes[1].vm.checked).to.equals(false)
-      wrapper.unmount()
-    })
+    const checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
+    expect(checkboxes[0].vm.checked).to.equals(true)
+    expect(checkboxes[1].vm.checked).to.equals(false)
+    wrapper.unmount()
+  })
 
   it('Opens an inquiry', async () => {
     sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([])
@@ -408,7 +425,9 @@ describe('Inquiries.vue', () => {
     const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await nextTick()
-    expect(wrapper.findComponent({ name: 'RenameIcon' }).exists()).to.equals(false)
+    expect(wrapper.findComponent({ name: 'RenameIcon' }).exists()).to.equals(
+      false
+    )
     wrapper.unmount()
   })
 
@@ -432,7 +451,7 @@ describe('Inquiries.vue', () => {
     const store = createStore({ state, mutations, actions })
     const wrapper = mount(Inquiries, {
       attachTo: document.body,
-      global: { 
+      global: {
         plugins: [store],
         stubs: { teleport: true, transition: false }
       }
@@ -441,12 +460,16 @@ describe('Inquiries.vue', () => {
     await nextTick()
 
     // click Rename icon in the grid
-    await wrapper.findComponent({ name: 'RenameIcon' }).find('svg').trigger('click')
+    await wrapper
+      .findComponent({ name: 'RenameIcon' })
+      .find('svg')
+      .trigger('click')
 
     // check that rename dialog is open
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
-    expect(wrapper.find('.dialog.vfm .dialog-header').text())
-      .to.contain('Rename inquiry')
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Rename inquiry'
+    )
 
     // check that input is filled by the current inquiry name
     expect(wrapper.find('.dialog-body input').element.value).to.equals('foo')
@@ -465,14 +488,16 @@ describe('Inquiries.vue', () => {
     expect(wrapper.find('tbody tr td').text()).to.equals('bar')
 
     // check that storage is updated
-    expect(state.inquiries).to.eql([{
-      id: 1,
-      name: 'bar',
-      query: '',
-      viewType: 'chart',
-      viewOptions: [],
-      createdAt: '2020-11-03T19:57:56.299Z'
-    }])
+    expect(state.inquiries).to.eql([
+      {
+        id: 1,
+        name: 'bar',
+        query: '',
+        viewType: 'chart',
+        viewOptions: [],
+        createdAt: '2020-11-03T19:57:56.299Z'
+      }
+    ])
 
     // check that coresponding tab also changed the name
     expect(state.tabs[0].name).to.equals('bar')
@@ -513,7 +538,10 @@ describe('Inquiries.vue', () => {
     await nextTick()
 
     // click Rename icon in the grid
-    await wrapper.findComponent({ name: 'RenameIcon' }).find('svg').trigger('click')
+    await wrapper
+      .findComponent({ name: 'RenameIcon' })
+      .find('svg')
+      .trigger('click')
 
     // change the name
     await wrapper.find('.dialog-body input').setValue('')
@@ -524,8 +552,9 @@ describe('Inquiries.vue', () => {
       .find(button => button.text() === 'Rename')
       .trigger('click')
 
-    expect(wrapper.find('.dialog-body .text-field-error').text())
-      .to.equals("Inquiry name can't be empty")
+    expect(wrapper.find('.dialog-body .text-field-error').text()).to.equals(
+      "Inquiry name can't be empty"
+    )
     // check that rename dialog is still open
     await clock.tick(100)
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
@@ -604,19 +633,23 @@ describe('Inquiries.vue', () => {
     await nextTick()
 
     // click on master checkbox
-    await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
+    await wrapper
+      .findComponent({ ref: 'mainCheckBox' })
+      .find('.checkbox-container')
       .trigger('click')
 
     // click Import
     await wrapper.find('#toolbar-btns-import').trigger('click')
 
     const checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
-    expect(wrapper.findComponent({ ref: 'mainCheckBox' }).vm.checked).to.equals(false)
+    expect(wrapper.findComponent({ ref: 'mainCheckBox' }).vm.checked).to.equals(
+      false
+    )
     expect(checkboxes[0].vm.checked).to.equals(true)
     expect(checkboxes[1].vm.checked).to.equals(false)
     wrapper.unmount()
   })
-  
+
   it('Deletion is not available for predefined inquiries', async () => {
     sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([
       {
@@ -638,7 +671,9 @@ describe('Inquiries.vue', () => {
     const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await nextTick()
-    expect(wrapper.findComponent({ name: 'DeleteIcon' }).exists()).to.equals(false)
+    expect(wrapper.findComponent({ name: 'DeleteIcon' }).exists()).to.equals(
+      false
+    )
     wrapper.unmount()
   })
 
@@ -671,20 +706,24 @@ describe('Inquiries.vue', () => {
 
     const wrapper = mount(Inquiries, {
       attachTo: document.body,
-      global: { 
+      global: {
         plugins: [store],
         stubs: { teleport: true, transition: false }
       }
-     })
+    })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await nextTick()
     // click Delete icon in the first row of the grid
-    await wrapper.findComponent({ name: 'DeleteIcon' }).find('svg').trigger('click')
+    await wrapper
+      .findComponent({ name: 'DeleteIcon' })
+      .find('svg')
+      .trigger('click')
 
     // check that delete dialog is open
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
-    expect(wrapper.find('.dialog.vfm .dialog-header').text())
-    .to.contain('Delete inquiry')
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Delete inquiry'
+    )
 
     // check the message in the dialog
     expect(wrapper.find('.dialog-body').text()).to.contains('"foo"?')
@@ -777,7 +816,9 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-03-08T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([predefinedInquiry])
+    sinon
+      .stub(storedInquiries, 'readPredefinedInquiries')
+      .resolves([predefinedInquiry])
     const inquiryInStore = {
       id: 1,
       name: 'foo',
@@ -787,19 +828,24 @@ describe('Inquiries.vue', () => {
       createdAt: '2020-03-08T19:57:56.299Z'
     }
 
-    sinon.stub(storedInquiries, 'serialiseInquiries').returns('I am a serialized inquiries')
+    sinon
+      .stub(storedInquiries, 'serialiseInquiries')
+      .returns('I am a serialized inquiries')
     sinon.stub(fu, 'exportToFile')
 
     const state = {
       predefinedInquiries: [],
-      inquiries: [inquiryInStore, {
-        id: 2,
-        name: 'bar',
-        query: '',
-        viewType: 'chart',
-        viewOptions: [],
-        createdAt: '2020-03-08T19:57:56.299Z'
-      }]
+      inquiries: [
+        inquiryInStore,
+        {
+          id: 2,
+          name: 'bar',
+          query: '',
+          viewType: 'chart',
+          viewOptions: [],
+          createdAt: '2020-03-08T19:57:56.299Z'
+        }
+      ]
     }
     const store = createStore({ state, mutations, actions })
 
@@ -815,12 +861,17 @@ describe('Inquiries.vue', () => {
 
     await wrapper.find('#toolbar-btns-export').trigger('click')
 
-    expect(storedInquiries.serialiseInquiries.calledOnceWith(
-      sinon.match([predefinedInquiry, inquiryInStore])
-    )).to.equals(true)
+    expect(
+      storedInquiries.serialiseInquiries.calledOnceWith(
+        sinon.match([predefinedInquiry, inquiryInStore])
+      )
+    ).to.equals(true)
 
     expect(
-      fu.exportToFile.calledOnceWith('I am a serialized inquiries', 'My sqliteviz inquiries.json')
+      fu.exportToFile.calledOnceWith(
+        'I am a serialized inquiries',
+        'My sqliteviz inquiries.json'
+      )
     ).to.equals(true)
     wrapper.unmount()
   })
@@ -834,7 +885,9 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-03-08T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([predefinedInquiry])
+    sinon
+      .stub(storedInquiries, 'readPredefinedInquiries')
+      .resolves([predefinedInquiry])
     const inquiryInStore = {
       id: 1,
       name: 'foo',
@@ -844,7 +897,9 @@ describe('Inquiries.vue', () => {
       createdAt: '2020-03-08T19:57:56.299Z'
     }
 
-    sinon.stub(storedInquiries, 'serialiseInquiries').returns('I am a serialized inquiries')
+    sinon
+      .stub(storedInquiries, 'serialiseInquiries')
+      .returns('I am a serialized inquiries')
     sinon.stub(fu, 'exportToFile')
 
     const state = {
@@ -857,17 +912,24 @@ describe('Inquiries.vue', () => {
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await nextTick()
 
-    await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
+    await wrapper
+      .findComponent({ ref: 'mainCheckBox' })
+      .find('.checkbox-container')
       .trigger('click')
 
     await wrapper.find('#toolbar-btns-export').trigger('click')
 
-    expect(storedInquiries.serialiseInquiries.calledOnceWith(
-      sinon.match([predefinedInquiry, inquiryInStore])
-    )).to.equals(true)
+    expect(
+      storedInquiries.serialiseInquiries.calledOnceWith(
+        sinon.match([predefinedInquiry, inquiryInStore])
+      )
+    ).to.equals(true)
 
     expect(
-      fu.exportToFile.calledOnceWith('I am a serialized inquiries', 'My sqliteviz inquiries.json')
+      fu.exportToFile.calledOnceWith(
+        'I am a serialized inquiries',
+        'My sqliteviz inquiries.json'
+      )
     ).to.equals(true)
     wrapper.unmount()
   })
@@ -881,7 +943,9 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-03-08T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([predefinedInquiry])
+    sinon
+      .stub(storedInquiries, 'readPredefinedInquiries')
+      .resolves([predefinedInquiry])
     const foo = {
       id: 1,
       name: 'foo',
@@ -918,10 +982,10 @@ describe('Inquiries.vue', () => {
 
     const wrapper = mount(Inquiries, {
       attachTo: document.body,
-      global: { 
+      global: {
         plugins: [store],
         stubs: { teleport: true, transition: false }
-       }
+      }
     })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await nextTick()
@@ -938,8 +1002,9 @@ describe('Inquiries.vue', () => {
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
 
     // check the message in the dialog
-    expect(wrapper.find('.dialog-body').text())
-      .to.contains('Are you sure you want to delete 2 inquiries?')
+    expect(wrapper.find('.dialog-body').text()).to.contains(
+      'Are you sure you want to delete 2 inquiries?'
+    )
 
     // find Delete in the dialog and click
     await wrapper
@@ -949,7 +1014,9 @@ describe('Inquiries.vue', () => {
 
     // check the rows in the grid
     expect(wrapper.findAll('tbody tr')).to.have.lengthOf(2)
-    expect(wrapper.findAll('tbody tr')[0].find('td').text()).to.contains('hello_world')
+    expect(wrapper.findAll('tbody tr')[0].find('td').text()).to.contains(
+      'hello_world'
+    )
     expect(wrapper.findAll('tbody tr')[1].find('td').text()).to.equals('baz')
 
     // check that deleted inquiry was also deleted from tabs
@@ -975,89 +1042,9 @@ describe('Inquiries.vue', () => {
       viewOptions: [],
       createdAt: '2020-03-08T19:57:56.299Z'
     }
-    sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([predefinedInquiry])
-    const foo = {
-      id: 1,
-      name: 'foo',
-      query: '',
-      viewType: 'chart',
-      viewOptions: [],
-      createdAt: '2020-03-08T19:57:56.299Z'
-    }
-    const bar = {
-      id: 2,
-      name: 'bar',
-      query: '',
-      viewType: 'chart',
-      viewOptions: [],
-      createdAt: '2020-03-08T19:57:56.299Z'
-    }
-    sinon.stub(storedInquiries, 'updateStorage')
-
-    const state = {
-      tabs: [],
-      predefinedInquiries: [],
-      inquiries: [foo, bar]
-    }
-    const store = createStore({ state, mutations, actions })
-
-    const wrapper = mount(Inquiries, {
-      attachTo: document.body,
-      global: {
-        plugins: [store],
-        stubs: { teleport: true, transition: false } 
-      }
-    })
-    await storedInquiries.readPredefinedInquiries.returnValues[0]
-    await nextTick()
-
-    const rows = wrapper.findAll('tbody tr')
-
-    // Select inquiries (select also predefined inquiries)
-    await rows[0].find('.checkbox-container').trigger('click')
-    await rows[1].find('.checkbox-container').trigger('click')
-
-    await wrapper.find('#toolbar-btns-delete').trigger('click')
-
-    // check that delete dialog is open
-    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
-
-    // check the message in the dialog
-    expect(wrapper.find('.dialog-body').text())
-      .to.contains('Are you sure you want to delete 1 inquiry?')
-
-    expect(wrapper.find('.dialog-body #note').isVisible()).to.equals(true)
-
-    // find Delete in the dialog and click
-    await wrapper
-      .findAll('.dialog-buttons-container button')
-      .find(button => button.text() === 'Delete')
-      .trigger('click')
-
-    // check the rows in the grid
-    expect(wrapper.findAll('tbody tr')).to.have.lengthOf(2)
-    expect(wrapper.findAll('tbody tr')[0].find('td').text()).to.contains('hello_world')
-    expect(wrapper.findAll('tbody tr')[1].find('td').text()).to.equals('bar')
-
-    // check that storage is updated
-    expect(state.inquiries).to.eql([bar])
-
-    // check that delete dialog is closed
-    await clock.tick(100)
-    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
-    wrapper.unmount()
-  })
-
-  it('Deletes all inquiries ignoring predefined ones', async () => {
-    const predefinedInquiry = {
-      id: 0,
-      name: 'hello_world',
-      query: '',
-      viewType: 'chart',
-      viewOptions: [],
-      createdAt: '2020-03-08T19:57:56.299Z'
-    }
-    sinon.stub(storedInquiries, 'readPredefinedInquiries').resolves([predefinedInquiry])
+    sinon
+      .stub(storedInquiries, 'readPredefinedInquiries')
+      .resolves([predefinedInquiry])
     const foo = {
       id: 1,
       name: 'foo',
@@ -1093,7 +1080,96 @@ describe('Inquiries.vue', () => {
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await nextTick()
 
-    await wrapper.findComponent({ ref: 'mainCheckBox' }).find('.checkbox-container')
+    const rows = wrapper.findAll('tbody tr')
+
+    // Select inquiries (select also predefined inquiries)
+    await rows[0].find('.checkbox-container').trigger('click')
+    await rows[1].find('.checkbox-container').trigger('click')
+
+    await wrapper.find('#toolbar-btns-delete').trigger('click')
+
+    // check that delete dialog is open
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+
+    // check the message in the dialog
+    expect(wrapper.find('.dialog-body').text()).to.contains(
+      'Are you sure you want to delete 1 inquiry?'
+    )
+
+    expect(wrapper.find('.dialog-body #note').isVisible()).to.equals(true)
+
+    // find Delete in the dialog and click
+    await wrapper
+      .findAll('.dialog-buttons-container button')
+      .find(button => button.text() === 'Delete')
+      .trigger('click')
+
+    // check the rows in the grid
+    expect(wrapper.findAll('tbody tr')).to.have.lengthOf(2)
+    expect(wrapper.findAll('tbody tr')[0].find('td').text()).to.contains(
+      'hello_world'
+    )
+    expect(wrapper.findAll('tbody tr')[1].find('td').text()).to.equals('bar')
+
+    // check that storage is updated
+    expect(state.inquiries).to.eql([bar])
+
+    // check that delete dialog is closed
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    wrapper.unmount()
+  })
+
+  it('Deletes all inquiries ignoring predefined ones', async () => {
+    const predefinedInquiry = {
+      id: 0,
+      name: 'hello_world',
+      query: '',
+      viewType: 'chart',
+      viewOptions: [],
+      createdAt: '2020-03-08T19:57:56.299Z'
+    }
+    sinon
+      .stub(storedInquiries, 'readPredefinedInquiries')
+      .resolves([predefinedInquiry])
+    const foo = {
+      id: 1,
+      name: 'foo',
+      query: '',
+      viewType: 'chart',
+      viewOptions: [],
+      createdAt: '2020-03-08T19:57:56.299Z'
+    }
+    const bar = {
+      id: 2,
+      name: 'bar',
+      query: '',
+      viewType: 'chart',
+      viewOptions: [],
+      createdAt: '2020-03-08T19:57:56.299Z'
+    }
+    sinon.stub(storedInquiries, 'updateStorage')
+
+    const state = {
+      tabs: [],
+      predefinedInquiries: [],
+      inquiries: [foo, bar]
+    }
+    const store = createStore({ state, mutations, actions })
+
+    const wrapper = mount(Inquiries, {
+      attachTo: document.body,
+      global: {
+        plugins: [store],
+        stubs: { teleport: true, transition: false }
+      }
+    })
+    await storedInquiries.readPredefinedInquiries.returnValues[0]
+    await nextTick()
+
+    await wrapper
+      .findComponent({ ref: 'mainCheckBox' })
+      .find('.checkbox-container')
       .trigger('click')
 
     await wrapper.find('#toolbar-btns-delete').trigger('click')
@@ -1102,8 +1178,9 @@ describe('Inquiries.vue', () => {
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
 
     // check the message in the dialog
-    expect(wrapper.find('.dialog-body').text())
-      .to.contains('Are you sure you want to delete 2 inquiries?')
+    expect(wrapper.find('.dialog-body').text()).to.contains(
+      'Are you sure you want to delete 2 inquiries?'
+    )
 
     expect(wrapper.find('.dialog-body #note').isVisible()).to.equals(true)
 
@@ -1115,7 +1192,9 @@ describe('Inquiries.vue', () => {
 
     // check the rows in the grid
     expect(wrapper.findAll('tbody tr')).to.have.lengthOf(1)
-    expect(wrapper.findAll('tbody tr')[0].find('td').text()).to.contains('hello_world')
+    expect(wrapper.findAll('tbody tr')[0].find('td').text()).to.contains(
+      'hello_world'
+    )
 
     // check that storage is updated
     expect(state.inquiries).to.eql([])

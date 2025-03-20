@@ -1,7 +1,7 @@
 <template>
   <div>
     <div @click="colVisible = !colVisible" class="table-name">
-      <tree-chevron :expanded="colVisible"/>
+      <tree-chevron :expanded="colVisible" />
       {{ name }}
     </div>
     <div v-show="colVisible" class="columns">
@@ -20,7 +20,7 @@ export default {
   name: 'TableDescription',
   components: { TreeChevron },
   props: ['name', 'columns'],
-  data () {
+  data() {
     return {
       colVisible: false
     }
@@ -29,7 +29,8 @@ export default {
 </script>
 
 <style scoped>
-.table-name, .column {
+.table-name,
+.column {
   margin-top: 11px;
 }
 

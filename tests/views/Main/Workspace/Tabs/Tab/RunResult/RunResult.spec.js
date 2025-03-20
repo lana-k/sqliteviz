@@ -39,8 +39,8 @@ describe('RunResult.vue', () => {
     expect(
       window.alert.calledOnceWith(
         "Your browser doesn't support copying into the clipboard. " +
-        'If you use Firefox you can enable it ' +
-        'by setting dom.events.asyncClipboard.clipboardItem to true.'
+          'If you use Firefox you can enable it ' +
+          'by setting dom.events.asyncClipboard.clipboardItem to true.'
       )
     ).to.equal(true)
 
@@ -79,8 +79,9 @@ describe('RunResult.vue', () => {
 
     // The dialog is shown...
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
-    expect(wrapper.find('.dialog.vfm .dialog-header').text())
-      .to.contain('Copy to clipboard')
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Copy to clipboard'
+    )
 
     // ... with Building message...
     expect(wrapper.find('.dialog-body').text()).to.equal('Building CSV...')
@@ -96,7 +97,9 @@ describe('RunResult.vue', () => {
     expect(wrapper.find('.dialog-body').text()).to.equal('CSV is ready')
 
     // Click copy
-    await wrapper.find('.dialog-buttons-container button.primary').trigger('click')
+    await wrapper
+      .find('.dialog-buttons-container button.primary')
+      .trigger('click')
     await window.navigator.clipboard.writeText.returnValues[0]
 
     // The dialog is not shown...
@@ -180,7 +183,9 @@ describe('RunResult.vue', () => {
     await nextTick()
 
     // Click cancel
-    await wrapper.find('.dialog-buttons-container button.secondary').trigger('click')
+    await wrapper
+      .find('.dialog-buttons-container button.secondary')
+      .trigger('click')
     // The dialog is not shown...
     await clock.tick(100)
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
@@ -246,8 +251,9 @@ describe('RunResult.vue', () => {
 
     // Click on 'bar' cell again
     await rows[1].findAll('td')[1].trigger('click')
-    expect(wrapper.find('.value-viewer-container .table-preview').text())
-      .to.equals('No cell selected to view')
+    expect(
+      wrapper.find('.value-viewer-container .table-preview').text()
+    ).to.equals('No cell selected to view')
     wrapper.unmount()
   })
 
@@ -318,8 +324,9 @@ describe('RunResult.vue', () => {
 
     // Click on 'foo' cell again
     await rows[1].find('td').trigger('click')
-    expect(wrapper.find('.value-viewer-container .table-preview').text())
-      .to.equals('No cell selected to view')
+    expect(
+      wrapper.find('.value-viewer-container .table-preview').text()
+    ).to.equals('No cell selected to view')
     wrapper.unmount()
   })
 
@@ -357,8 +364,9 @@ describe('RunResult.vue', () => {
 
     // 'name-1' is selected
     expect(wrapper.find('.value-body').text()).to.equals('name-1')
-    let selectedCell = wrapper
-      .find('.sqliteviz-table tbody td[aria-selected="true"]')
+    let selectedCell = wrapper.find(
+      '.sqliteviz-table tbody td[aria-selected="true"]'
+    )
     expect(selectedCell.text()).to.equals('name-1')
 
     // Go to last record
@@ -375,8 +383,9 @@ describe('RunResult.vue', () => {
 
     // '29' is selected
     expect(wrapper.find('.value-body').text()).to.equals('29')
-    selectedCell = wrapper
-      .find('.sqliteviz-table tbody td[aria-selected="true"]')
+    selectedCell = wrapper.find(
+      '.sqliteviz-table tbody td[aria-selected="true"]'
+    )
     expect(selectedCell.text()).to.equals('29')
     wrapper.unmount()
   })

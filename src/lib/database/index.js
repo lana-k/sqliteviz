@@ -6,11 +6,10 @@ import PromiseWorker from 'promise-worker'
 
 import events from '@/lib/utils/events'
 
-function getNewDatabase () {
-  const worker = new Worker(
-    new URL('./_worker.js', import.meta.url), 
-    { type: 'module' }
-  )
+function getNewDatabase() {
+  const worker = new Worker(new URL('./_worker.js', import.meta.url), {
+    type: 'module'
+  })
   return new Database(worker)
 }
 
@@ -20,7 +19,7 @@ export default {
 
 let progressCounterIds = 0
 class Database {
-  constructor (worker) {
+  constructor(worker) {
     this.dbName = null
     this.schema = null
     this.worker = worker
@@ -31,29 +30,33 @@ class Database {
       const progress = e.data.progress
       if (progress !== undefined) {
         const id = e.data.id
-        this.importProgresses[id].dispatchEvent(new CustomEvent('progress', {
-          detail: progress
-        }))
+        this.importProgresses[id].dispatchEvent(
+          new CustomEvent('progress', {
+            detail: progress
+          })
+        )
       }
     })
   }
 
-  shutDown () {
+  shutDown() {
     this.worker.terminate()
   }
 
-  createProgressCounter (callback) {
+  createProgressCounter(callback) {
     const id = progressCounterIds++
     this.importProgresses[id] = new EventTarget()
-    this.importProgresses[id].addEventListener('progress', e => { callback(e.detail) })
+    this.importProgresses[id].addEventListener('progress', e => {
+      callback(e.detail)
+    })
     return id
   }
 
-  deleteProgressCounter (id) {
+  deleteProgressCounter(id) {
     delete this.importProgresses[id]
   }
 
-  async addTableFromCsv (tabName, data, progressCounterId) {
+  async addTableFromCsv(tabName, data, progressCounterId) {
     const result = await this.pw.postMessage({
       action: 'import',
       data,
@@ -68,9 +71,12 @@ class Database {
     this.refreshSchema()
   }
 
-  async loadDb (file) {
+  async loadDb(file) {
     const fileContent = file ? await fu.readAsArrayBuffer(file) : null
-    const res = await this.pw.postMessage({ action: 'open', buffer: fileContent })
+    const res = await this.pw.postMessage({
+      action: 'open',
+      buffer: fileContent
+    })
 
     if (res.error) {
       throw new Error(res.error)
@@ -85,7 +91,7 @@ class Database {
     })
   }
 
-  async refreshSchema () {
+  async refreshSchema() {
     const getSchemaSql = `
     WITH columns as (
       SELECT
@@ -103,7 +109,7 @@ class Database {
     this.schema = JSON.parse(result.values.objects[0])
   }
 
-  async execute (commands) {
+  async execute(commands) {
     await this.pw.postMessage({ action: 'reopen' })
     const results = await this.pw.postMessage({ action: 'exec', sql: commands })
 
@@ -114,7 +120,7 @@ class Database {
     return results[results.length - 1]
   }
 
-  async export (fileName) {
+  async export(fileName) {
     const data = await this.pw.postMessage({ action: 'export' })
 
     if (data.error) {
@@ -124,13 +130,15 @@ class Database {
     events.send('database.export', data.byteLength, { to: 'sqlite' })
   }
 
-  async validateTableName (name) {
+  async validateTableName(name) {
     if (name.startsWith('sqlite_')) {
       throw new Error("Table name can't start with sqlite_")
     }
 
     if (/[^\w]/.test(name)) {
-      throw new Error('Table name can contain only letters, digits and underscores')
+      throw new Error(
+        'Table name can contain only letters, digits and underscores'
+      )
     }
 
     if (/^(\d)/.test(name)) {
@@ -140,7 +148,7 @@ class Database {
     await this.execute(`BEGIN; CREATE TABLE "${name}"(id); ROLLBACK;`)
   }
 
-  sanitizeTableName (tabName) {
+  sanitizeTableName(tabName) {
     return tabName
       .replace(/[^\w]/g, '_') // replace everything that is not letter, digit or _  with _
       .replace(/^(\d)/, '_$1') // add _ at beginning if starts with digit

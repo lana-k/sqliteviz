@@ -2,7 +2,7 @@
   <nav>
     <div id="nav-links">
       <a href="https://sqliteviz.com">
-        <img src="~@/assets/images/logo_simple.svg">
+        <img src="~@/assets/images/logo_simple.svg" />
       </a>
       <router-link to="/workspace">Workspace</router-link>
       <router-link to="/inquiries">Inquiries</router-link>
@@ -18,11 +18,7 @@
       >
         Save
       </button>
-      <button
-        id="create-btn"
-        class="primary"
-        @click="createNewInquiry"
-      >
+      <button id="create-btn" class="primary" @click="createNewInquiry">
         Create
       </button>
       <app-diagnostic-info />
@@ -32,13 +28,13 @@
     <modal modal-id="save" class="dialog" content-style="width: 560px;">
       <div class="dialog-header">
         Save inquiry
-        <close-icon @click="cancelSave"/>
+        <close-icon @click="cancelSave" />
       </div>
       <div class="dialog-body">
         <div v-show="isPredefined" id="save-note">
-          <img src="~@/assets/images/info.svg">
-          Note: Predefined inquiries can't be edited.
-          That's why your modifications will be saved as a new inquiry. Enter the name for it.
+          <img src="~@/assets/images/info.svg" />
+          Note: Predefined inquiries can't be edited. That's why your
+          modifications will be saved as a new inquiry. Enter the name for it.
         </div>
         <text-field
           label="Inquiry name"
@@ -70,36 +66,39 @@ export default {
     CloseIcon,
     AppDiagnosticInfo
   },
-  data () {
+  data() {
     return {
       name: '',
       errorMsg: null
     }
   },
   computed: {
-    currentInquiry () {
+    currentInquiry() {
       return this.$store.state.currentTab
     },
-    isSaved () {
+    isSaved() {
       return this.currentInquiry && this.currentInquiry.isSaved
     },
-    isPredefined () {
+    isPredefined() {
       return this.currentInquiry && this.currentInquiry.isPredefined
     },
-    runDisabled () {
-      return this.currentInquiry && (!this.$store.state.db || !this.currentInquiry.query)
+    runDisabled() {
+      return (
+        this.currentInquiry &&
+        (!this.$store.state.db || !this.currentInquiry.query)
+      )
     }
   },
-  created () {
+  created() {
     eventBus.$on('createNewInquiry', this.createNewInquiry)
     eventBus.$on('saveInquiry', this.checkInquiryBeforeSave)
     document.addEventListener('keydown', this._keyListener)
   },
-  beforeUnmount () {
+  beforeUnmount() {
     document.removeEventListener('keydown', this._keyListener)
   },
   methods: {
-    createNewInquiry () {
+    createNewInquiry() {
       this.$store.dispatch('addTab').then(id => {
         this.$store.commit('setCurrentTabId', id)
         if (this.$route.path !== '/workspace') {
@@ -109,11 +108,11 @@ export default {
 
       events.send('inquiry.create', null, { auto: false })
     },
-    cancelSave () {
+    cancelSave() {
       this.$modal.hide('save')
       eventBus.$off('inquirySaved')
     },
-    checkInquiryBeforeSave () {
+    checkInquiryBeforeSave() {
       this.errorMsg = null
       this.name = ''
 
@@ -123,10 +122,10 @@ export default {
         this.saveInquiry()
       }
     },
-    async saveInquiry () {
+    async saveInquiry() {
       const isNeedName = storedInquiries.isTabNeedName(this.currentInquiry)
       if (isNeedName && !this.name) {
-        this.errorMsg = 'Inquiry name can\'t be empty'
+        this.errorMsg = "Inquiry name can't be empty"
         return
       }
       const dataSet = this.currentInquiry.result
@@ -168,7 +167,7 @@ export default {
       eventBus.$emit('inquirySaved')
       events.send('inquiry.save')
     },
-    _keyListener (e) {
+    _keyListener(e) {
       if (this.$route.path === '/workspace') {
         // Run query Ctrl+R or Ctrl+Enter
         if ((e.key === 'r' || e.key === 'Enter') && (e.ctrlKey || e.metaKey)) {

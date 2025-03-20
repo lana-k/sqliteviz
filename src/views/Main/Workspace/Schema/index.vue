@@ -1,16 +1,16 @@
 <template>
   <div id="schema-container">
     <div id="schema-filter">
-      <text-field placeholder="Search table" width="100%" v-model="filter"/>
+      <text-field placeholder="Search table" width="100%" v-model="filter" />
     </div>
     <div id="db">
       <div @click="schemaVisible = !schemaVisible" class="db-name">
-        <tree-chevron v-show="schema.length > 0" :expanded="schemaVisible"/>
+        <tree-chevron v-show="schema.length > 0" :expanded="schemaVisible" />
         {{ dbName }}
       </div>
       <db-uploader id="db-edit" type="small" />
-      <export-icon tooltip="Export database" @click="exportToFile"/>
-      <add-table-icon @click="addCsvJson"/>
+      <export-icon tooltip="Export database" @click="exportToFile" />
+      <add-table-icon @click="addCsvJson" />
     </div>
     <div v-show="schemaVisible" class="schema">
       <table-description
@@ -53,7 +53,7 @@ export default {
     AddTableIcon,
     CsvJsonImport
   },
-  data () {
+  data() {
     return {
       schemaVisible: true,
       filter: null,
@@ -61,7 +61,7 @@ export default {
     }
   },
   computed: {
-    schema () {
+    schema() {
       if (!this.$store.state.db.schema) {
         return []
       }
@@ -69,18 +69,19 @@ export default {
       return !this.filter
         ? this.$store.state.db.schema
         : this.$store.state.db.schema.filter(
-          table => table.name.toUpperCase().indexOf(this.filter.toUpperCase()) !== -1
-        )
+            table =>
+              table.name.toUpperCase().indexOf(this.filter.toUpperCase()) !== -1
+          )
     },
-    dbName () {
+    dbName() {
       return this.$store.state.db.dbName
     }
   },
   methods: {
-    exportToFile () {
+    exportToFile() {
       this.$store.state.db.export(`${this.dbName}.sqlite`)
     },
-    async addCsvJson () {
+    async addCsvJson() {
       this.file = await fIo.getFileFromUser('.csv,.json,.ndjson')
       await this.$nextTick()
       const csvJsonImportModal = this.$refs.addCsvJson
@@ -119,7 +120,8 @@ export default {
   background-image: linear-gradient(white 73%, rgba(255, 255, 255, 0));
   z-index: 2;
 }
-.schema, .db-name {
+.schema,
+.db-name {
   color: var(--color-text-base);
   font-size: 13px;
   white-space: nowrap;

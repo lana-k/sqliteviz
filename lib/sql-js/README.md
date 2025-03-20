@@ -5,7 +5,7 @@ a custom version of [sql.js][1]. It allows sqliteviz to have more recent
 version of SQLite build with a number of useful extensions.
 
 `Makefile` from [sql.js][1] is rewritten as more comprehensible `configure.py`
- and `build.py` Python scripts that run in `emscripten/emsdk` Docker container.
+and `build.py` Python scripts that run in `emscripten/emsdk` Docker container.
 
 ## Extension
 
@@ -84,15 +84,15 @@ described in [this message from SQLite Forum][12]:
 > amalgamation code and the extensions would thereafter be automatically
 > initialized on each connection.
 
-[1]:  https://github.com/sql-js/sql.js
-[2]:  https://sqlite.org/amalgamation.html
-[3]:  https://sqlite.org/src/dir?ci=trunk&name=ext/misc
-[4]:  https://sqlite.org/fts5.html
-[5]:  https://github.com/jakethaw/pivot_vtab
-[6]:  https://sqlite.org/series.html
-[7]:  https://sqlite.org/src/file/ext/misc/series.c
-[8]:  https://sqlite.org/src/file/ext/misc/closure.c
-[9]:  https://sqlite.org/src/file/ext/misc/uuid.c
+[1]: https://github.com/sql-js/sql.js
+[2]: https://sqlite.org/amalgamation.html
+[3]: https://sqlite.org/src/dir?ci=trunk&name=ext/misc
+[4]: https://sqlite.org/fts5.html
+[5]: https://github.com/jakethaw/pivot_vtab
+[6]: https://sqlite.org/series.html
+[7]: https://sqlite.org/src/file/ext/misc/series.c
+[8]: https://sqlite.org/src/file/ext/misc/closure.c
+[9]: https://sqlite.org/src/file/ext/misc/uuid.c
 [10]: https://sqlite.org/src/file/ext/misc/regexp.c
 [11]: https://charlesleifer.com/blog/querying-tree-structures-in-sqlite-using-python-and-the-transitive-closure-extension/
 [12]: https://sqlite.org/forum/forumpost/6ad7d4f4bebe5e06?raw

@@ -1,6 +1,6 @@
 <template>
   <svg
-    :class="['chevron-icon', {'disabled': disabled}]"
+    :class="['chevron-icon', { disabled: disabled }]"
     width="20"
     height="20"
     viewBox="0 0 20 20"
@@ -15,7 +15,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'DropDownChevron',
   props: ['disabled']
@@ -36,6 +35,6 @@ export default {
 }
 
 .disabled.chevron-icon:hover path {
-  fill: #C8D4E3;
+  fill: #c8d4e3;
 }
 </style>

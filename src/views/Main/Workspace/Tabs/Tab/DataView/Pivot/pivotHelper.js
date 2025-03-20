@@ -17,7 +17,7 @@ export const twoValAggregators = [
   '80% Lower Bound'
 ]
 
-export function _getDataSources (pivotData) {
+export function _getDataSources(pivotData) {
   const rowKeys = pivotData.getRowKeys()
   const colKeys = pivotData.getColKeys()
 
@@ -49,7 +49,7 @@ export function _getDataSources (pivotData) {
   return Object.assign(dataSources, dataSourcesByCols, dataSourcesByRows)
 }
 
-function customChartRenderer (data, options) {
+function customChartRenderer(data, options) {
   const propsRef = options.getCustomComponentsProps()
   propsRef.dataSources = _getDataSources(data)
   return null
@@ -69,19 +69,21 @@ export const renderers = Object.keys($.pivotUtilities.renderers).map(key => {
   }
 })
 
-export const aggregators = Object.keys($.pivotUtilities.aggregators).map(key => {
-  return {
-    name: key,
-    fun: $.pivotUtilities.aggregators[key]
+export const aggregators = Object.keys($.pivotUtilities.aggregators).map(
+  key => {
+    return {
+      name: key,
+      fun: $.pivotUtilities.aggregators[key]
+    }
   }
-})
+)
 
-export async function getPivotCanvas (pivotOutput) {
+export async function getPivotCanvas(pivotOutput) {
   const tableElement = pivotOutput.querySelector('.pvtTable')
   return await html2canvas(tableElement, { logging: false })
 }
 
-export function getPivotHtml (pivotOutput) {
+export function getPivotHtml(pivotOutput) {
   return `
       <style>
         table.pvtTable {

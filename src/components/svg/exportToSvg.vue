@@ -1,10 +1,5 @@
 <template>
-  <svg
-    width="19"
-    height="18"
-    viewBox="0 0 19 18"
-    fill="none"
-  >
+  <svg width="19" height="18" viewBox="0 0 19 18" fill="none">
     <path
       d="M4.28369 13.9966C4.28369 13.7711 4.20312 13.5953 4.04199 13.4693C3.88379 13.3433 3.604
         13.213 3.20264 13.0782C2.80127 12.9434 2.47314 12.813 2.21826 12.6871C1.38916 12.2798
@@ -54,7 +49,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'ExportToSvgIcon'
 }

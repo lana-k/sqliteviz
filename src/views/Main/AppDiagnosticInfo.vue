@@ -5,22 +5,18 @@
       src="~@/assets/images/info.svg"
       @click="$modal.show('app-info')"
     />
-    <modal
-      modal-id="app-info"
-      class="dialog"
-      content-class="app-info-modal"
-    >
+    <modal modal-id="app-info" class="dialog" content-class="app-info-modal">
       <div class="dialog-header">
         App info
-        <close-icon @click="$modal.hide('app-info')"/>
+        <close-icon @click="$modal.hide('app-info')" />
       </div>
       <div class="dialog-body">
         <div v-for="(item, index) in info" :key="index" class="info-item">
-          {{item.name}}
-          <div class="divider"/>
+          {{ item.name }}
+          <div class="divider" />
           <div class="options">
             <div v-for="(opt, index) in item.info" :key="index">
-              {{opt}}
+              {{ opt }}
             </div>
           </div>
         </div>
@@ -36,7 +32,7 @@ import { version } from '../../../package.json'
 export default {
   name: 'AppDiagnosticInfo',
   components: { CloseIcon },
-  data () {
+  data() {
     return {
       info: [
         {
@@ -47,7 +43,7 @@ export default {
     }
   },
 
-  async created () {
+  async created() {
     const state = this.$store.state
     let result = (await state.db.execute('select sqlite_version()')).values
     this.info.push({
@@ -94,7 +90,7 @@ export default {
 }
 .info-item {
   margin-bottom: 32px;
-   font-size: 14px;
+  font-size: 14px;
 }
 .info-item:last-child {
   margin-bottom: 0;

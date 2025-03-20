@@ -1,11 +1,11 @@
 <template>
-  <div :class="['pivot-sort-btn', direction] " @click="changeSorting">
-  {{ modelValue.includes('key') ? 'key' : 'value' }}
-  <sort-icon
-    class="sort-icon"
-    :horizontal="direction === 'col'"
-    :asc="modelValue.includes('a_to_z')"
-  />
+  <div :class="['pivot-sort-btn', direction]" @click="changeSorting">
+    {{ modelValue.includes('key') ? 'key' : 'value' }}
+    <sort-icon
+      class="sort-icon"
+      :horizontal="direction === 'col'"
+      :asc="modelValue.includes('a_to_z')"
+    />
   </div>
 </template>
 
@@ -20,7 +20,7 @@ export default {
     SortIcon
   },
   methods: {
-    changeSorting () {
+    changeSorting() {
       if (this.modelValue === 'key_a_to_z') {
         this.$emit('update:modelValue', 'value_a_to_z')
       } else if (this.modelValue === 'value_a_to_z') {

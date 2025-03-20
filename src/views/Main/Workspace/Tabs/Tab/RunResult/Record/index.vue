@@ -9,11 +9,9 @@
       >
         <thead>
           <tr>
-            <th/>
+            <th />
             <th>
-              <div class="cell-data">
-                Row #{{ currentRowIndex + 1 }}
-              </div>
+              <div class="cell-data">Row #{{ currentRowIndex + 1 }}</div>
             </th>
           </tr>
         </thead>
@@ -39,11 +37,11 @@
     </div>
     <div class="table-footer">
       <div class="table-footer-count">
-        {{ rowCount }} {{rowCount === 1 ? 'row' : 'rows'}} retrieved
+        {{ rowCount }} {{ rowCount === 1 ? 'row' : 'rows' }} retrieved
         <span v-if="time">in {{ time }}</span>
       </div>
 
-     <row-navigator v-model="currentRowIndex" :total="rowCount"/>
+      <row-navigator v-model="currentRowIndex" :total="rowCount" />
     </div>
   </div>
 </template>
@@ -61,31 +59,32 @@ export default {
     selectedColumnIndex: Number
   },
   emits: ['updateSelectedCell'],
-  data () {
+  data() {
     return {
       selectedCellElement: null,
       currentRowIndex: this.rowIndex
     }
   },
   computed: {
-    columns () {
+    columns() {
       return this.dataSet.columns
     },
-    rowCount () {
+    rowCount() {
       return this.dataSet.values[this.columns[0]].length
     }
   },
-  mounted () {
+  mounted() {
     const col = this.selectedColumnIndex
     const row = this.currentRowIndex
-    const cell = this.$refs.table
-      .querySelector(`td[data-col="${col}"][data-row="${row}"]`)
+    const cell = this.$refs.table.querySelector(
+      `td[data-col="${col}"][data-row="${row}"]`
+    )
     if (cell) {
       this.selectCell(cell)
     }
   },
   watch: {
-    async currentRowIndex () {
+    async currentRowIndex() {
       await nextTick()
       if (this.selectedCellElement) {
         const previouslySelected = this.selectedCellElement
@@ -95,16 +94,16 @@ export default {
     }
   },
   methods: {
-    isBlob (value) {
+    isBlob(value) {
       return value && ArrayBuffer.isView(value)
     },
-    isNull (value) {
+    isNull(value) {
       return value === null
     },
-    getCellValue (col) {
+    getCellValue(col) {
       return this.dataSet.values[col][this.currentRowIndex]
     },
-    getCellText (col) {
+    getCellText(col) {
       const value = this.getCellValue(col)
       if (this.isNull(value)) {
         return 'NULL'
@@ -114,7 +113,7 @@ export default {
       }
       return value
     },
-    onTableKeydown (e) {
+    onTableKeydown(e) {
       const keyCodeMap = {
         38: 'up',
         40: 'down'
@@ -130,10 +129,10 @@ export default {
 
       this.moveFocusInTable(this.selectedCellElement, keyCodeMap[e.keyCode])
     },
-    onCellClick (e) {
+    onCellClick(e) {
       this.selectCell(e.target.closest('td'), false)
     },
-    selectCell (cell, scrollTo = true) {
+    selectCell(cell, scrollTo = true) {
       if (!cell) {
         if (this.selectedCellElement) {
           this.selectedCellElement.ariaSelected = 'false'
@@ -152,19 +151,21 @@ export default {
 
       if (this.selectedCellElement && scrollTo) {
         this.selectedCellElement.scrollIntoView()
-        this.selectedCellElement.closest('.table-container').scrollTo({ left: 0 })
+        this.selectedCellElement
+          .closest('.table-container')
+          .scrollTo({ left: 0 })
       }
 
       this.$emit('updateSelectedCell', this.selectedCellElement)
     },
-    moveFocusInTable (initialCell, direction) {
+    moveFocusInTable(initialCell, direction) {
       const currentColIndex = +initialCell.dataset.col
-      const newColIndex = direction === 'up'
-        ? currentColIndex - 1
-        : currentColIndex + 1
+      const newColIndex =
+        direction === 'up' ? currentColIndex - 1 : currentColIndex + 1
 
-      const newCell = this.$refs.table
-        .querySelector(`td[data-col="${newColIndex}"][data-row="${this.currentRowIndex}"]`)
+      const newCell = this.$refs.table.querySelector(
+        `td[data-col="${newColIndex}"][data-row="${this.currentRowIndex}"]`
+      )
       if (newCell) {
         this.selectCell(newCell)
       }
@@ -180,7 +181,7 @@ table.sqliteviz-table:focus {
 .sqliteviz-table tbody td:hover {
   background-color: var(--color-bg-light-3);
 }
-.sqliteviz-table tbody td[aria-selected="true"] {
+.sqliteviz-table tbody td[aria-selected='true'] {
   box-shadow: inset 0 0 0 1px var(--color-accent);
 }
 

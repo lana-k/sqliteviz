@@ -1,15 +1,10 @@
 <template>
-  <svg
-    width="19"
-    height="19"
-    viewBox="0 0 19 19"
-    fill="none"
-  >
+  <svg width="19" height="19" viewBox="0 0 19 19" fill="none">
     <g clip-path="url(#clip0_2130_5292)">
-    <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
-      d="M1.85303 11.3794L1.85303 7.80371L5.86304 7.80371L5.86304
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M1.85303 11.3794L1.85303 7.80371L5.86304 7.80371L5.86304
       11.3794L1.85303 11.3794ZM7.36304 11.3794L7.36304 7.80371L11.3428
       7.80371L11.3428 11.3794L7.36304 11.3794ZM12.8428 11.3794L16.853
       11.3794L16.853 7.80371L12.8428 7.80371L12.8428 11.3794ZM15.353
@@ -29,24 +24,23 @@
       14.3121L6.76685 12.8794L4.67027 12.8794ZM8.26685 12.8794L8.26685
       14.3121L10.387 14.3121L10.387 12.8794L8.26685 12.8794ZM11.887
       12.8794L11.887 14.3121L14.0315 14.3121L14.0315 12.8794L11.887 12.8794Z"
-      fill="#A2B1C6"
-    />
+        fill="#A2B1C6"
+      />
     </g>
     <defs>
       <clipPath id="clip0_2130_5292">
         <rect
-        width="18"
-        height="18"
-        fill="white"
-        transform="translate(0.353027 18.5916) rotate(-90)"
-      />
+          width="18"
+          height="18"
+          fill="white"
+          transform="translate(0.353027 18.5916) rotate(-90)"
+        />
       </clipPath>
     </defs>
-</svg>
+  </svg>
 </template>
 
 <script>
-
 export default {
   name: 'RowIcon'
 }

@@ -32,7 +32,7 @@ export default {
   props: ['tooltip', 'tooltipPosition'],
   emits: ['click'],
   methods: {
-    onClick () {
+    onClick() {
       this.hideTooltip()
       this.$emit('click')
     }

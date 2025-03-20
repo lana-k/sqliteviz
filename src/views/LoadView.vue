@@ -1,17 +1,15 @@
 <template>
-    <div>
-      <logs
-        id="logs"
-        :messages="messages"
-      />
-      <button
-        v-if="hasErrors"
-        id="open-workspace-btn"
-        class="secondary"
-        @click="$router.push('/workspace?hide_schema=1')">
-        Open workspace
-      </button>
-    </div>
+  <div>
+    <logs id="logs" :messages="messages" />
+    <button
+      v-if="hasErrors"
+      id="open-workspace-btn"
+      class="secondary"
+      @click="$router.push('/workspace?hide_schema=1')"
+    >
+      Open workspace
+    </button>
+  </div>
 </template>
 
 <script>
@@ -25,7 +23,7 @@ export default {
   components: {
     Logs
   },
-  data () {
+  data() {
     return {
       newDb: null,
       messages: [],
@@ -34,11 +32,11 @@ export default {
     }
   },
   computed: {
-    hasErrors () {
+    hasErrors() {
       return this.dataMsg.type === 'error' || this.inquiryMsg.type === 'error'
     }
   },
-  async created () {
+  async created() {
     const {
       data_url: dataUrl,
       data_format: dataFormat,
@@ -65,7 +63,7 @@ export default {
     }
   },
   methods: {
-    async loadData (dataUrl, dataFormat) {
+    async loadData(dataUrl, dataFormat) {
       this.newDb = database.getNewDatabase()
       if (dataUrl) {
         this.dataMsg = {
@@ -95,7 +93,7 @@ export default {
       }
       this.$store.commit('setDb', this.newDb)
     },
-    async getSqliteDb (dataUrl) {
+    async getSqliteDb(dataUrl) {
       try {
         const filename = new URL(dataUrl).pathname.split('/').pop()
         const res = await fu.readFile(dataUrl)
@@ -114,7 +112,7 @@ export default {
         this.dataMsg.type = 'error'
       }
     },
-    async loadInquiries (inquiryUrl, inquiryIds = []) {
+    async loadInquiries(inquiryUrl, inquiryIds = []) {
       if (!inquiryUrl) {
         return []
       }
@@ -148,7 +146,7 @@ export default {
       // Loading indicator is not needed anymore
       clearTimeout(loadingInquiriesIndicator)
     },
-    async openInquiries (inquiries, maximize) {
+    async openInquiries(inquiries, maximize) {
       let tabToOpen = null
       const layout = maximize ? this.getLayout(maximize) : undefined
       for (const inquiry of inquiries) {
@@ -167,7 +165,7 @@ export default {
       this.$store.state.currentTab.execute()
     },
 
-    getLayout (panelToMaximize) {
+    getLayout(panelToMaximize) {
       if (panelToMaximize === 'dataView') {
         return {
           sqlEditor: 'hidden',
@@ -190,7 +188,6 @@ export default {
 #logs {
   margin: 8px auto;
   max-width: 800px;
-
 }
 
 #open-workspace-btn {

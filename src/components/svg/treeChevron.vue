@@ -17,7 +17,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'treeChevron',
   props: {
@@ -31,7 +30,7 @@ export default {
 
 <style scoped>
 .chevron-icon {
-  -webkit-transition: transform .15s ease-in-out;
-  transition: transform .15s ease-in-out;
+  -webkit-transition: transform 0.15s ease-in-out;
+  transition: transform 0.15s ease-in-out;
 }
 </style>

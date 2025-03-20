@@ -9,7 +9,8 @@
     "build": "vite build",
     "serve": "vite preview",
     "test": "karma start karma.conf.cjs",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src"
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
+    "format": "prettier .  --write"
   },
   "dependencies": {
     "buffer": "^6.0.3",
@@ -45,6 +46,7 @@
     "chai": "^4.1.2",
     "chai-as-promised": "^8.0.1",
     "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
@@ -59,6 +61,7 @@
     "karma-spec-reporter": "^0.0.36",
     "karma-vite": "^1.0.5",
     "mocha": "^5.2.0",
+    "prettier": "3.5.3",
     "process": "^0.11.10",
     "url-loader": "^4.1.1",
     "vite": "^5.4.14",

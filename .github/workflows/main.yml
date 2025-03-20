@@ -3,43 +3,43 @@ on:
   workflow_dispatch:
   push:
     tags:
-    - '*'
+      - '*'
 
 jobs:
   deploy:
     name: Create release
-    runs-on: ubuntu-latest    
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16.x
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
 
-    - name: Update npm
-      run: npm install -g npm@8
+      - name: Update npm
+        run: npm install -g npm@8
 
-    - name: npm install and build
-      run: |
-        npm install
-        npm run build
+      - name: npm install and build
+        run: |
+          npm install
+          npm run build
 
-    - name: Create archives
-      run: |
-        cd dist
-        zip -9 -r ../dist.zip . -x "js/*.map" -x "/*.map"
-        zip -9 -r  ../dist_map.zip .
+      - name: Create archives
+        run: |
+          cd dist
+          zip -9 -r ../dist.zip . -x "js/*.map" -x "/*.map"
+          zip -9 -r  ../dist_map.zip .
 
-    - name: Create Release Notes
-      run: |
-        npm install github-release-notes@0.16.0 -g
-        gren changelog --generate  --config="/.github/workflows/config.grenrc.js"
-      env:
-        GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release Notes
+        run: |
+          npm install github-release-notes@0.16.0 -g
+          gren changelog --generate  --config="/.github/workflows/config.grenrc.js"
+        env:
+          GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Create release
-      uses: ncipollo/release-action@v1
-      with:
-        artifacts: "dist.zip,dist_map.zip"
-        token: ${{ secrets.GITHUB_TOKEN }}
-        bodyFile: "CHANGELOG.md"
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: 'dist.zip,dist_map.zip'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          bodyFile: 'CHANGELOG.md'

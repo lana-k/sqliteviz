@@ -31,7 +31,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       global: {
-        stubs: { 'chart': true, 'icon-button': true },
+        stubs: { chart: true, 'icon-button': true },
         plugins: [store]
       },
       props: {
@@ -56,10 +56,15 @@ describe('Tab.vue', () => {
     })
     await nextTick()
     expect(wrapper.find('.tab-content-container').isVisible()).to.equal(true)
-    expect(wrapper.find('.bottomPane .run-result-panel').exists()).to.equal(true)
-    expect(wrapper.find('.run-result-panel .result-before').isVisible()).to.equal(true)
-    expect(wrapper.find('.above .sql-editor-panel .codemirror-container').text())
-      .to.contain('SELECT * FROM foo')
+    expect(wrapper.find('.bottomPane .run-result-panel').exists()).to.equal(
+      true
+    )
+    expect(
+      wrapper.find('.run-result-panel .result-before').isVisible()
+    ).to.equal(true)
+    expect(
+      wrapper.find('.above .sql-editor-panel .codemirror-container').text()
+    ).to.contain('SELECT * FROM foo')
   })
 
   it("Doesn't render tab when it's not active", async () => {
@@ -74,7 +79,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       global: {
-        stubs: { 'chart': true },
+        stubs: { chart: true },
         plugins: [store]
       },
       props: {
@@ -114,7 +119,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       global: {
-        stubs: { 'chart': true },
+        stubs: { chart: true },
         plugins: [store]
       },
       props: {
@@ -174,7 +179,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       global: {
-        stubs: { 'chart': true },
+        stubs: { chart: true },
         plugins: [store]
       },
       props: {
@@ -219,7 +224,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       global: {
-        stubs: { 'chart': true },
+        stubs: { chart: true },
         plugins: [store]
       },
       props: {
@@ -263,7 +268,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       global: {
-        stubs: { 'chart': true, 'icon-button': true },
+        stubs: { chart: true, 'icon-button': true },
         plugins: [store]
       },
       props: {
@@ -274,7 +279,9 @@ describe('Tab.vue', () => {
 
     store.state.tabs[0].isGettingResults = true
     await nextTick()
-    expect(wrapper.find('.run-result-panel .result-in-progress').exists()).to.equal(true)
+    expect(
+      wrapper.find('.run-result-panel .result-in-progress').exists()
+    ).to.equal(true)
   })
 
   it('Shows error when executing query ends with error', async () => {
@@ -310,7 +317,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       global: {
-        stubs: { 'chart': true, 'icon-button': true, },
+        stubs: { chart: true, 'icon-button': true },
         plugins: [store]
       },
       props: {
@@ -323,10 +330,16 @@ describe('Tab.vue', () => {
       message: 'There is no table foo'
     }
     await nextTick()
-    expect(wrapper.find('.run-result-panel .result-before').isVisible()).to.equal(false)
-    expect(wrapper.find('.run-result-panel .result-in-progress').exists()).to.equal(false)
+    expect(
+      wrapper.find('.run-result-panel .result-before').isVisible()
+    ).to.equal(false)
+    expect(
+      wrapper.find('.run-result-panel .result-in-progress').exists()
+    ).to.equal(false)
     expect(wrapper.findComponent({ name: 'logs' }).isVisible()).to.equal(true)
-    expect(wrapper.findComponent({ name: 'logs' }).text()).to.include('There is no table foo')
+    expect(wrapper.findComponent({ name: 'logs' }).text()).to.include(
+      'There is no table foo'
+    )
   })
 
   it('Passes result to sql-table component', async () => {
@@ -368,7 +381,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       global: {
-        stubs: { 'chart': true },
+        stubs: { chart: true },
         plugins: [store]
       },
       props: {
@@ -378,10 +391,16 @@ describe('Tab.vue', () => {
     await nextTick()
     store.state.tabs[0].result = result
     await nextTick()
-    expect(wrapper.find('.run-result-panel .result-before').isVisible()).to.equal(false)
-    expect(wrapper.find('.run-result-panel .result-in-progress').exists()).to.equal(false)
+    expect(
+      wrapper.find('.run-result-panel .result-before').isVisible()
+    ).to.equal(false)
+    expect(
+      wrapper.find('.run-result-panel .result-in-progress').exists()
+    ).to.equal(false)
     expect(wrapper.findComponent({ name: 'logs' }).exists()).to.equal(false)
-    expect(wrapper.findComponent({ name: 'SqlTable' }).vm.dataSet).to.eql(result)
+    expect(wrapper.findComponent({ name: 'SqlTable' }).vm.dataSet).to.eql(
+      result
+    )
   })
 
   it('Switches views', async () => {
@@ -414,7 +433,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       global: {
-        stubs: { 'chart': true },
+        stubs: { chart: true },
         plugins: [store]
       },
       props: {
@@ -422,33 +441,43 @@ describe('Tab.vue', () => {
       }
     })
 
-    let tableBtn = wrapper.find('.above .side-tool-bar')
+    let tableBtn = wrapper
+      .find('.above .side-tool-bar')
       .findComponent({ ref: 'tableBtn' })
     await tableBtn.vm.$emit('click')
 
-    expect(wrapper.find('.bottomPane .sql-editor-panel').exists()).to.equal(true)
+    expect(wrapper.find('.bottomPane .sql-editor-panel').exists()).to.equal(
+      true
+    )
     expect(wrapper.find('.above .run-result-panel').exists()).to.equal(true)
 
-    const dataViewBtn = wrapper.find('.above .side-tool-bar')
+    const dataViewBtn = wrapper
+      .find('.above .side-tool-bar')
       .findComponent({ ref: 'dataViewBtn' })
     await dataViewBtn.vm.$emit('click')
 
-    expect(wrapper.find('.bottomPane .sql-editor-panel').exists()).to.equal(true)
+    expect(wrapper.find('.bottomPane .sql-editor-panel').exists()).to.equal(
+      true
+    )
     expect(wrapper.find('.above .data-view-panel').exists()).to.equal(true)
 
-    const sqlEditorBtn = wrapper.find('.above .side-tool-bar')
+    const sqlEditorBtn = wrapper
+      .find('.above .side-tool-bar')
       .findComponent({ ref: 'sqlEditorBtn' })
     await sqlEditorBtn.vm.$emit('click')
 
     expect(wrapper.find('.above .sql-editor-panel').exists()).to.equal(true)
     expect(wrapper.find('.bottomPane .data-view-panel').exists()).to.equal(true)
 
-    tableBtn = wrapper.find('.bottomPane .side-tool-bar')
+    tableBtn = wrapper
+      .find('.bottomPane .side-tool-bar')
       .findComponent({ ref: 'tableBtn' })
     await tableBtn.vm.$emit('click')
 
     expect(wrapper.find('.above .sql-editor-panel').exists()).to.equal(true)
-    expect(wrapper.find('.bottomPane .run-result-panel').exists()).to.equal(true)
+    expect(wrapper.find('.bottomPane .run-result-panel').exists()).to.equal(
+      true
+    )
   })
 
   it('Maximize top panel if maximized panel is above', async () => {
@@ -480,7 +509,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       global: {
-        stubs: { 'chart': true },
+        stubs: { chart: true },
         plugins: [store]
       },
       props: {
@@ -489,8 +518,9 @@ describe('Tab.vue', () => {
     })
     await nextTick()
 
-    expect(wrapper.find('.above').element.parentElement.style.height)
-      .to.equal('100%')
+    expect(wrapper.find('.above').element.parentElement.style.height).to.equal(
+      '100%'
+    )
   })
 
   it('Maximize bottom panel if maximized panel is below', async () => {
@@ -522,7 +552,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       global: {
-        stubs: { 'chart': true },
+        stubs: { chart: true },
         plugins: [store]
       },
       props: {
@@ -530,8 +560,9 @@ describe('Tab.vue', () => {
       }
     })
     await nextTick()
-    expect(wrapper.find('.bottomPane').element.parentElement.style.height)
-      .to.equal('100%')
+    expect(
+      wrapper.find('.bottomPane').element.parentElement.style.height
+    ).to.equal('100%')
   })
 
   it('Panel size is 50 if nothing to maximize', async () => {
@@ -562,7 +593,7 @@ describe('Tab.vue', () => {
     const wrapper = mount(Tab, {
       attachTo: place,
       global: {
-        stubs: { 'chart': true },
+        stubs: { chart: true },
         plugins: [store]
       },
       props: {
@@ -571,9 +602,11 @@ describe('Tab.vue', () => {
     })
 
     await nextTick()
-    expect(wrapper.find('.above').element.parentElement.style.height)
-      .to.equal('50%')
-    expect(wrapper.find('.bottomPane').element.parentElement.style.height)
-      .to.equal('50%')
+    expect(wrapper.find('.above').element.parentElement.style.height).to.equal(
+      '50%'
+    )
+    expect(
+      wrapper.find('.bottomPane').element.parentElement.style.height
+    ).to.equal('50%')
   })
 })

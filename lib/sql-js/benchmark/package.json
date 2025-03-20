@@ -2,7 +2,7 @@
   "name": "sqlite-webassembly-microbenchmark",
   "private": true,
   "dependencies": {
-    "@babel/core" : "^7.14.8",
+    "@babel/core": "^7.14.8",
     "babel-loader": "^8.2.2",
     "benchmark": "^2.1.4",
     "lodash": "^4.17.4",
@@ -11,7 +11,7 @@
     "karma": "^6.3.4",
     "karma-chrome-launcher": "^3.1.0",
     "karma-firefox-launcher": "^2.1.1",
-    "karma-json-to-file-reporter" : "^1.0.1",
+    "karma-json-to-file-reporter": "^1.0.1",
     "karma-mocha": "^2.0.1",
     "karma-webpack": "^4.0.2",
     "webpack": "^4.46.0",

@@ -7,16 +7,17 @@ describe('PivotUi.vue', () => {
     const wrapper = mount(PivotUi, {
       props: {
         keyNames: ['foo', 'bar'],
-        'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
+        'onUpdate:modelValue': e => wrapper.setProps({ modelValue: e })
       }
     })
 
     // choose columns
-    await wrapper.findAll('.sqliteviz-select.cols .multiselect__element > span')[0]
+    await wrapper
+      .findAll('.sqliteviz-select.cols .multiselect__element > span')[0]
       .trigger('click')
 
     expect(wrapper.emitted().update.length).to.equal(1)
-   
+
     let value = wrapper.props('modelValue')
     expect(value.rows).to.eql([])
     expect(value.cols).to.eql(['foo'])
@@ -28,7 +29,8 @@ describe('PivotUi.vue', () => {
     expect(value.vals).to.eql([])
 
     // choose rows
-    await wrapper.findAll('.sqliteviz-select.rows .multiselect__element > span')[0]
+    await wrapper
+      .findAll('.sqliteviz-select.rows .multiselect__element > span')[0]
       .trigger('click')
 
     expect(wrapper.emitted().update.length).to.equal(2)
@@ -71,7 +73,8 @@ describe('PivotUi.vue', () => {
     expect(value.vals).to.eql([])
 
     // change aggregator
-    await wrapper.findAll('.sqliteviz-select.aggregator .multiselect__element > span')[12]
+    await wrapper
+      .findAll('.sqliteviz-select.aggregator .multiselect__element > span')[12]
       .trigger('click')
 
     expect(wrapper.emitted().update.length).to.equal(5)
@@ -120,7 +123,8 @@ describe('PivotUi.vue', () => {
     expect(value.vals).to.eql(['foo', 'bar'])
 
     // change renderer
-    await wrapper.findAll('.sqliteviz-select.renderer .multiselect__element > span')[13]
+    await wrapper
+      .findAll('.sqliteviz-select.renderer .multiselect__element > span')[13]
       .trigger('click')
 
     expect(wrapper.emitted().update.length).to.equal(8)
@@ -134,7 +138,8 @@ describe('PivotUi.vue', () => {
     expect(value.vals).to.eql(['foo', 'bar'])
 
     // change aggregator again
-    await wrapper.findAll('.sqliteviz-select.aggregator .multiselect__element > span')[3]
+    await wrapper
+      .findAll('.sqliteviz-select.aggregator .multiselect__element > span')[3]
       .trigger('click')
 
     expect(wrapper.emitted().update.length).to.equal(9)

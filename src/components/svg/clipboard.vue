@@ -1,10 +1,5 @@
 <template>
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 18 18"
-    fill="none"
-  >
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
     <path
       d="M14.1917 1.3851H12.4806V0.703125C12.4806 0.314758 12.1658 0 11.7775 0H6.246C5.85764 0
       5.54288 0.314758 5.54288 0.703125V1.3851H3.83203C2.86276 1.3851 2.07422 2.17365 2.07422
@@ -26,7 +21,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'ClipboardIcon'
 }

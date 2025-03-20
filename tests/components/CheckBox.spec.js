@@ -19,7 +19,7 @@ describe('CheckBox', () => {
     })
     expect(wrapperChecked.find('img.checked').isVisible()).to.equal(true)
     wrapperChecked.unmount()
-    
+
     const wrapperUnchecked = shallowMount(CheckBox, {
       props: { init: false },
       attachTo: document.body
@@ -50,9 +50,13 @@ describe('CheckBox', () => {
       props: { disabled: true }
     })
     expect(wrapper.find('.checkbox-container').classes()).to.include('disabled')
-    expect(wrapper.find('.checkbox-container').classes()).to.not.include('checked')
+    expect(wrapper.find('.checkbox-container').classes()).to.not.include(
+      'checked'
+    )
     await wrapper.trigger('click')
     expect(wrapper.emitted().click).to.equal(undefined)
-    expect(wrapper.find('.checkbox-container').classes()).to.not.include('checked')
+    expect(wrapper.find('.checkbox-container').classes()).to.not.include(
+      'checked'
+    )
   })
 })

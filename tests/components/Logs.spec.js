@@ -31,8 +31,9 @@ describe('Logs.vue', () => {
     })
     await nextTick()
     const height = wrapper.find('.logs-container').element.scrollHeight
-    expect(wrapper.find('.logs-container').element.scrollTop)
-      .to.equal(height - viewHeight)
+    expect(wrapper.find('.logs-container').element.scrollTop).to.equal(
+      height - viewHeight
+    )
     wrapper.unmount()
   })
 
@@ -58,8 +59,9 @@ describe('Logs.vue', () => {
     await nextTick()
     await nextTick()
     const height = wrapper.find('.logs-container').element.scrollHeight
-    expect(wrapper.find('.logs-container').element.scrollTop)
-      .to.equal(height - viewHeight)
+    expect(wrapper.find('.logs-container').element.scrollTop).to.equal(
+      height - viewHeight
+    )
     wrapper.unmount()
   })
 

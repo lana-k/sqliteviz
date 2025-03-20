@@ -1,23 +1,33 @@
 <template>
   <div class="run-result-panel" ref="runResultPanel">
-   <component
-      :is="viewValuePanelVisible ? 'splitpanes':'div'"
+    <component
+      :is="viewValuePanelVisible ? 'splitpanes' : 'div'"
       :before="{ size: 50, max: 100 }"
       :after="{ size: 50, max: 100 }"
       :default="{ before: 50, after: 50 }"
       class="run-result-panel-content"
     >
-      <template  #left-pane>
-        <div :id="'run-result-left-pane-'+tab.id" class="result-set-container"/>
+      <template #left-pane>
+        <div
+          :id="'run-result-left-pane-' + tab.id"
+          class="result-set-container"
+        />
       </template>
-      <div :id="'run-result-result-set-'+tab.id" class="result-set-container"/>
+      <div
+        :id="'run-result-result-set-' + tab.id"
+        class="result-set-container"
+      />
       <template #right-pane v-if="viewValuePanelVisible">
         <div class="value-viewer-container">
           <value-viewer
             v-show="selectedCell"
-            :cellValue="selectedCell
-              ? result.values[result.columns[selectedCell.dataset.col]][selectedCell.dataset.row]
-              : ''"
+            :cellValue="
+              selectedCell
+                ? result.values[result.columns[selectedCell.dataset.col]][
+                    selectedCell.dataset.row
+                  ]
+                : ''
+            "
           />
           <div v-show="!selectedCell" class="table-preview">
             No cell selected to view
@@ -33,7 +43,7 @@
         tooltip-position="top-left"
         @click="exportToCsv"
       >
-        <export-to-csv-icon/>
+        <export-to-csv-icon />
       </icon-button>
 
       <icon-button
@@ -43,7 +53,7 @@
         tooltip-position="top-left"
         @click="prepareCopy"
       >
-        <clipboard-icon/>
+        <clipboard-icon />
       </icon-button>
 
       <icon-button
@@ -54,7 +64,7 @@
         :active="viewRecord"
         @click="toggleViewRecord"
       >
-        <row-icon/>
+        <row-icon />
       </icon-button>
 
       <icon-button
@@ -65,7 +75,7 @@
         :active="viewValuePanelVisible"
         @click="toggleViewValuePanel"
       >
-        <view-cell-value-icon/>
+        <view-cell-value-icon />
       </icon-button>
     </side-tool-bar>
 
@@ -80,50 +90,46 @@
       @cancel="cancelCopy"
     />
 
-    <teleport
-      defer
-      :to="resultSetTeleportTarget"
-      :disabled="!enableTeleport"
-    >
+    <teleport defer :to="resultSetTeleportTarget" :disabled="!enableTeleport">
       <div>
-            <div
-              v-show="result === null && !isGettingResults && !error"
-              class="table-preview result-before"
-            >
-              Run your query and get results here
-            </div>
-            <div v-if="isGettingResults" class="table-preview result-in-progress">
-              <loading-indicator :size="30"/>
-              Fetching results...
-            </div>
-            <div
-              v-show="result === undefined && !isGettingResults && !error"
-              class="table-preview result-empty"
-            >
-              No rows retrieved according to your query
-            </div>
-            <logs v-if="error" :messages="[error]"/>
-            <sql-table
-              v-if="result && !viewRecord"
-              :data-set="result"
-              :time="time"
-              :pageSize="pageSize"
-              :page="defaultPage"
-              :selected-cell-coordinates="defaultSelectedCell"
-              class="straight"
-              @updateSelectedCell="onUpdateSelectedCell"
-            />
+        <div
+          v-show="result === null && !isGettingResults && !error"
+          class="table-preview result-before"
+        >
+          Run your query and get results here
+        </div>
+        <div v-if="isGettingResults" class="table-preview result-in-progress">
+          <loading-indicator :size="30" />
+          Fetching results...
+        </div>
+        <div
+          v-show="result === undefined && !isGettingResults && !error"
+          class="table-preview result-empty"
+        >
+          No rows retrieved according to your query
+        </div>
+        <logs v-if="error" :messages="[error]" />
+        <sql-table
+          v-if="result && !viewRecord"
+          :data-set="result"
+          :time="time"
+          :pageSize="pageSize"
+          :page="defaultPage"
+          :selected-cell-coordinates="defaultSelectedCell"
+          class="straight"
+          @updateSelectedCell="onUpdateSelectedCell"
+        />
 
-            <record
-              ref="recordView"
-              v-if="result && viewRecord"
-              :data-set="result"
-              :time="time"
-              :selected-column-index="selectedCell ? +selectedCell.dataset.col : 0"
-              :rowIndex="selectedCell ? +selectedCell.dataset.row : 0"
-              @updateSelectedCell="onUpdateSelectedCell"
-            />
-          </div>
+        <record
+          ref="recordView"
+          v-if="result && viewRecord"
+          :data-set="result"
+          :time="time"
+          :selected-column-index="selectedCell ? +selectedCell.dataset.col : 0"
+          :rowIndex="selectedCell ? +selectedCell.dataset.row : 0"
+          @updateSelectedCell="onUpdateSelectedCell"
+        />
+      </div>
     </teleport>
   </div>
 </template>
@@ -158,7 +164,7 @@ export default {
     time: [String, Number]
   },
   emits: ['switchTo'],
-  data () {
+  data() {
     return {
       resizeObserver: null,
       pageSize: 20,
@@ -188,44 +194,45 @@ export default {
     Splitpanes
   },
   computed: {
-    resultSetTeleportTarget () {
+    resultSetTeleportTarget() {
       if (!this.enableTeleport) {
         return undefined
       }
-      const base = `#${this.viewValuePanelVisible
-        ? 'run-result-left-pane'
-        : 'run-result-result-set'
+      const base = `#${
+        this.viewValuePanelVisible
+          ? 'run-result-left-pane'
+          : 'run-result-result-set'
       }`
       const tabIdPostfix = `-${this.tab.id}`
       return base + tabIdPostfix
     }
   },
-  activated () {
+  activated() {
     this.enableTeleport = true
   },
-  deactivated () {
+  deactivated() {
     this.enableTeleport = false
   },
-  mounted () {
+  mounted() {
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.runResultPanel)
     this.calculatePageSize()
   },
-  beforeUnmount () {
+  beforeUnmount() {
     this.resizeObserver.unobserve(this.$refs.runResultPanel)
   },
   watch: {
-    result () {
+    result() {
       this.defaultSelectedCell = null
       this.selectedCell = null
     }
   },
   methods: {
-    handleResize () {
+    handleResize() {
       this.calculatePageSize()
     },
 
-    calculatePageSize () {
+    calculatePageSize() {
       const runResultPanel = this.$refs.runResultPanel
       // 27 - table footer hight
       // 5 - padding-bottom of rounded table container
@@ -234,9 +241,10 @@ export default {
       this.pageSize = Math.max(Math.floor(freeSpace / 35), 20)
     },
 
-    exportToCsv () {
+    exportToCsv() {
       if (this.result && this.result.values) {
-        events.send('resultset.export',
+        events.send(
+          'resultset.export',
           this.result.values[this.result.columns[0]].length,
           { to: 'csv' }
         )
@@ -245,9 +253,10 @@ export default {
       fIo.exportToFile(csv.serialize(this.result), 'result_set.csv', 'text/csv')
     },
 
-    async prepareCopy () {
+    async prepareCopy() {
       if (this.result && this.result.values) {
-        events.send('resultset.export',
+        events.send(
+          'resultset.export',
           this.result.values[this.result.columns[0]].length,
           { to: 'clipboard' }
         )
@@ -261,7 +270,7 @@ export default {
         await time.sleep(0)
         this.dataToCopy = csv.serialize(this.result)
         const t1 = performance.now()
-        if ((t1 - t0) < 950) {
+        if (t1 - t0 < 950) {
           this.$modal.hide('prepareCSVCopy')
           this.copyToClipboard()
         } else {
@@ -270,27 +279,27 @@ export default {
       } else {
         alert(
           "Your browser doesn't support copying into the clipboard. " +
-          'If you use Firefox you can enable it ' +
-          'by setting dom.events.asyncClipboard.clipboardItem to true.'
+            'If you use Firefox you can enable it ' +
+            'by setting dom.events.asyncClipboard.clipboardItem to true.'
         )
       }
     },
 
-    copyToClipboard () {
+    copyToClipboard() {
       cIo.copyText(this.dataToCopy, 'CSV copied to clipboard successfully')
       this.$modal.hide('prepareCSVCopy')
     },
 
-    cancelCopy () {
+    cancelCopy() {
       this.dataToCopy = null
       this.$modal.hide('prepareCSVCopy')
     },
 
-    toggleViewValuePanel () {
+    toggleViewValuePanel() {
       this.viewValuePanelVisible = !this.viewValuePanelVisible
     },
 
-    toggleViewRecord () {
+    toggleViewRecord() {
       if (this.viewRecord) {
         this.defaultSelectedCell = {
           row: this.$refs.recordView.currentRowIndex,
@@ -304,7 +313,7 @@ export default {
       this.viewRecord = !this.viewRecord
     },
 
-    onUpdateSelectedCell (e) {
+    onUpdateSelectedCell(e) {
       this.selectedCell = e
     }
   }

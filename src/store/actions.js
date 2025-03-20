@@ -2,7 +2,7 @@ import Tab from '@/lib/tab'
 import { nanoid } from 'nanoid'
 
 export default {
-  async addTab ({ state }, inquiry = {}) {
+  async addTab({ state }, inquiry = {}) {
     // add new tab only if it was not already opened
     if (!state.tabs.some(openedTab => openedTab.id === inquiry.id)) {
       const tab = new Tab(state, JSON.parse(JSON.stringify(inquiry)))
@@ -15,7 +15,7 @@ export default {
 
     return inquiry.id
   },
-  async saveInquiry ({ state }, { inquiryTab, newName }) {
+  async saveInquiry({ state }, { inquiryTab, newName }) {
     const value = {
       id: inquiryTab.isPredefined ? nanoid() : inquiryTab.id,
       query: inquiryTab.query,
@@ -31,7 +31,9 @@ export default {
     if (newName) {
       value.createdAt = new Date()
     } else {
-      var inquiryIndex = myInquiries.findIndex(oldInquiry => oldInquiry.id === inquiryTab.id)
+      var inquiryIndex = myInquiries.findIndex(
+        oldInquiry => oldInquiry.id === inquiryTab.id
+      )
       value.createdAt = myInquiries[inquiryIndex].createdAt
     }
 
@@ -44,10 +46,10 @@ export default {
 
     return value
   },
-  addInquiry ({ state }, newInquiry) {
+  addInquiry({ state }, newInquiry) {
     state.inquiries.push(newInquiry)
   },
-  deleteInquiries ({ state, commit }, inquiryIdSet) {
+  deleteInquiries({ state, commit }, inquiryIdSet) {
     state.inquiries = state.inquiries.filter(
       inquiry => !inquiryIdSet.has(inquiry.id)
     )
@@ -62,9 +64,10 @@ export default {
       i--
     }
   },
-  renameInquiry ({ state, commit }, { inquiryId, newName }) {
-    const renamingInquiry = state.inquiries
-      .find(inquiry => inquiry.id === inquiryId)
+  renameInquiry({ state, commit }, { inquiryId, newName }) {
+    const renamingInquiry = state.inquiries.find(
+      inquiry => inquiry.id === inquiryId
+    )
 
     renamingInquiry.name = newName
 

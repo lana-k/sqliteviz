@@ -1,5 +1,5 @@
 export default {
-  send (name, value, labels) {
+  send(name, value, labels) {
     const event = new CustomEvent('sqliteviz-app-event', {
       detail: {
         name,

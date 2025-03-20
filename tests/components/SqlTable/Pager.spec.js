@@ -12,7 +12,7 @@ describe('Pager.vue', () => {
     const wrapper = mount(Pager, {
       props: {
         pageCount: 5,
-        'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
+        'onUpdate:modelValue': e => wrapper.setProps({ modelValue: e })
       }
     })
 

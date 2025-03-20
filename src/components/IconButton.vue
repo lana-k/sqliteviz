@@ -10,7 +10,12 @@
     <div v-show="loading" class="icon-in-progress">
       <loading-indicator />
     </div>
-    <span v-if="tooltip" class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
+    <span
+      v-if="tooltip"
+      class="icon-tooltip"
+      :style="tooltipStyle"
+      ref="tooltip"
+    >
       {{ tooltip }}
     </span>
   </button>
@@ -27,7 +32,7 @@ export default {
   components: { LoadingIndicator },
   mixins: [tooltipMixin],
   methods: {
-    onClick () {
+    onClick() {
       this.hideTooltip()
       this.$emit('click')
     }
@@ -59,8 +64,8 @@ export default {
   fill: var(--color-accent);
 }
 
-.icon-btn:disabled  .icon :deep(path),
-.icon-btn:disabled  .icon :deep(circle) {
+.icon-btn:disabled .icon :deep(path),
+.icon-btn:disabled .icon :deep(circle) {
   fill: var(--color-border);
 }
 

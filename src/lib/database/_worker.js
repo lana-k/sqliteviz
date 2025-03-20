@@ -3,7 +3,7 @@ import Sql from './_sql'
 
 const sqlReady = Sql.build()
 
-function processMsg (sql) {
+function processMsg(sql) {
   const data = this
   switch (data && data.action) {
     case 'open':
@@ -28,14 +28,12 @@ function processMsg (sql) {
   }
 }
 
-function onError (error) {
+function onError(error) {
   return {
     error: error.message
   }
 }
 
 registerPromiseWorker(data => {
-  return sqlReady
-    .then(processMsg.bind(data))
-    .catch(onError)
+  return sqlReady.then(processMsg.bind(data)).catch(onError)
 })

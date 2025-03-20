@@ -7,7 +7,7 @@ const hintsByCode = {
 }
 
 export default {
-  getResult (source, columns) {
+  getResult(source, columns) {
     const result = {
       columns: columns || []
     }
@@ -52,7 +52,7 @@ export default {
     return result
   },
 
-  prepareForExport (resultSet) {
+  prepareForExport(resultSet) {
     const columns = resultSet.columns
     const rowCount = resultSet.values[columns[0]].length
     const result = {
@@ -61,13 +61,15 @@ export default {
     }
 
     for (let rowNumber = 0; rowNumber < rowCount; rowNumber++) {
-      result.data.push(columns.map(column => resultSet.values[column][rowNumber]))
+      result.data.push(
+        columns.map(column => resultSet.values[column][rowNumber])
+      )
     }
 
     return result
   },
 
-  parse (file, config = {}) {
+  parse(file, config = {}) {
     return new Promise((resolve, reject) => {
       const defaultConfig = {
         delimiter: '', // auto-detect
@@ -122,7 +124,7 @@ export default {
     })
   },
 
-  serialize (resultSet) {
+  serialize(resultSet) {
     return Papa.unparse(this.prepareForExport(resultSet), { delimiter: '\t' })
   }
 }

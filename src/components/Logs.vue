@@ -1,10 +1,17 @@
 <template>
   <div class="logs-container" ref="logsContainer">
     <div v-for="(msg, index) in messages" :key="index" class="msg">
-      <img v-if="msg.type === 'error'" src="~@/assets/images/error.svg">
-      <img v-if="msg.type === 'info'" src="~@/assets/images/info.svg" width="20px">
-      <img v-if="msg.type === 'success'" src="~@/assets/images/success.svg">
-      <loading-indicator v-if="msg.type === 'loading'" :progress="msg.progress" />
+      <img v-if="msg.type === 'error'" src="~@/assets/images/error.svg" />
+      <img
+        v-if="msg.type === 'info'"
+        src="~@/assets/images/info.svg"
+        width="20px"
+      />
+      <img v-if="msg.type === 'success'" src="~@/assets/images/success.svg" />
+      <loading-indicator
+        v-if="msg.type === 'loading'"
+        :progress="msg.progress"
+      />
       <span class="msg-text">{{ serializeMessage(msg) }}</span>
     </div>
   </div>
@@ -21,11 +28,11 @@ export default {
   watch: {
     'messages.length': 'scrollToBottom'
   },
-  mounted () {
+  mounted() {
     this.scrollToBottom()
   },
   methods: {
-    async scrollToBottom () {
+    async scrollToBottom() {
       const container = this.$refs.logsContainer
       if (container) {
         await this.$nextTick()
@@ -33,7 +40,7 @@ export default {
       }
     },
 
-    serializeMessage (msg) {
+    serializeMessage(msg) {
       let result = ''
       if (msg.row !== null && msg.row !== undefined) {
         if (msg.type === 'error') {
@@ -44,7 +51,7 @@ export default {
       }
 
       result += msg.message
-      if (!(/(\.|!|\?)$/.test(result))) {
+      if (!/(\.|!|\?)$/.test(result)) {
         result += '.'
       }
 

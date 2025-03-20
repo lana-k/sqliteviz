@@ -4,10 +4,10 @@ import PivotSortBtn from '@/views/Main/Workspace/Tabs/Tab/DataView/Pivot/PivotUi
 
 describe('PivotSortBtn.vue', () => {
   it('switches order', async () => {
-    const wrapper = shallowMount(PivotSortBtn, { 
+    const wrapper = shallowMount(PivotSortBtn, {
       props: {
         modelValue: 'key_a_to_z',
-        'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e })
+        'onUpdate:modelValue': e => wrapper.setProps({ modelValue: e })
       }
     })
 

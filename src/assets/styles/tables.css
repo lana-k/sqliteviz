@@ -37,7 +37,7 @@
   height: calc(100% - 27px);
 }
 
-@supports (-moz-appearance:none) {
+@supports (-moz-appearance: none) {
   .header-container {
     top: 0;
     padding-left: 6px;
@@ -59,7 +59,8 @@ table.sqliteviz-table {
   margin-top: -35px;
   border-collapse: collapse;
 }
-.sqliteviz-table thead th, .fixed-header {
+.sqliteviz-table thead th,
+.fixed-header {
   font-size: 14px;
   font-weight: 600;
   box-sizing: border-box;
@@ -71,7 +72,7 @@ table.sqliteviz-table {
 }
 .sqliteviz-table tbody td {
   font-size: 13px;
-  background-color:white;
+  background-color: white;
   color: var(--color-text-base);
   box-sizing: border-box;
   border-bottom: 1px solid var(--color-border-light);
@@ -108,8 +109,8 @@ table.sqliteviz-table {
   color: var(--color-text-base);
 }
 
-.sqliteviz-table tbody td[data-isNull="true"],
-.sqliteviz-table tbody td[data-isBlob="true"] {
+.sqliteviz-table tbody td[data-isNull='true'],
+.sqliteviz-table tbody td[data-isBlob='true'] {
   color: var(--color-text-light-2);
   font-style: italic;
 }

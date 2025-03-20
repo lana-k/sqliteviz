@@ -17,7 +17,7 @@
       tooltip-position="top-left"
       @click="$emit('switchTo', 'table')"
     >
-      <table-icon/>
+      <table-icon />
     </icon-button>
 
     <icon-button
@@ -30,9 +30,9 @@
       <data-view-icon />
     </icon-button>
 
-    <div class="side-tool-bar-divider" v-if="$slots.default"/>
+    <div class="side-tool-bar-divider" v-if="$slots.default" />
 
-    <slot/>
+    <slot />
   </div>
 </template>
 

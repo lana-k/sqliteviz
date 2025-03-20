@@ -25,8 +25,9 @@ describe('Record.vue', () => {
     expect(rows[1].findAll('th')[0].text()).to.equals('name')
     expect(rows[1].findAll('td')[0].text()).to.equals('bar')
 
-    const selectedCell = wrapper
-      .find('.sqliteviz-table tbody td[aria-selected="true"]')
+    const selectedCell = wrapper.find(
+      '.sqliteviz-table tbody td[aria-selected="true"]'
+    )
     expect(selectedCell.text()).to.equals('bar')
   })
 
@@ -49,8 +50,9 @@ describe('Record.vue', () => {
     expect(rows).to.have.lengthOf(2)
     expect(rows[0].findAll('td')[0].text()).to.equals('1')
     expect(rows[1].findAll('td')[0].text()).to.equals('foo')
-    let selectedCell = wrapper
-      .find('.sqliteviz-table tbody td[aria-selected="true"]')
+    let selectedCell = wrapper.find(
+      '.sqliteviz-table tbody td[aria-selected="true"]'
+    )
     expect(selectedCell.text()).to.equals('1')
 
     await wrapper.find('.next').trigger('click')
@@ -58,8 +60,9 @@ describe('Record.vue', () => {
     rows = wrapper.findAll('tbody tr')
     expect(rows[0].findAll('td')[0].text()).to.equals('2')
     expect(rows[1].findAll('td')[0].text()).to.equals('bar')
-    selectedCell = wrapper
-      .find('.sqliteviz-table tbody td[aria-selected="true"]')
+    selectedCell = wrapper.find(
+      '.sqliteviz-table tbody td[aria-selected="true"]'
+    )
     expect(selectedCell.text()).to.equals('2')
 
     await wrapper.find('.prev').trigger('click')
@@ -67,8 +70,9 @@ describe('Record.vue', () => {
     rows = wrapper.findAll('tbody tr')
     expect(rows[0].findAll('td')[0].text()).to.equals('1')
     expect(rows[1].findAll('td')[0].text()).to.equals('foo')
-    selectedCell = wrapper
-      .find('.sqliteviz-table tbody td[aria-selected="true"]')
+    selectedCell = wrapper.find(
+      '.sqliteviz-table tbody td[aria-selected="true"]'
+    )
     expect(selectedCell.text()).to.equals('1')
 
     await wrapper.find('.last').trigger('click')
@@ -76,8 +80,9 @@ describe('Record.vue', () => {
     rows = wrapper.findAll('tbody tr')
     expect(rows[0].findAll('td')[0].text()).to.equals('3')
     expect(rows[1].findAll('td')[0].text()).to.equals('baz')
-    selectedCell = wrapper
-      .find('.sqliteviz-table tbody td[aria-selected="true"]')
+    selectedCell = wrapper.find(
+      '.sqliteviz-table tbody td[aria-selected="true"]'
+    )
     expect(selectedCell.text()).to.equals('3')
 
     await wrapper.find('.first').trigger('click')
@@ -85,8 +90,9 @@ describe('Record.vue', () => {
     rows = wrapper.findAll('tbody tr')
     expect(rows[0].findAll('td')[0].text()).to.equals('1')
     expect(rows[1].findAll('td')[0].text()).to.equals('foo')
-    selectedCell = wrapper
-      .find('.sqliteviz-table tbody td[aria-selected="true"]')
+    selectedCell = wrapper.find(
+      '.sqliteviz-table tbody td[aria-selected="true"]'
+    )
     expect(selectedCell.text()).to.equals('1')
   })
 
@@ -105,12 +111,14 @@ describe('Record.vue', () => {
       }
     })
 
-    const selectedCell = wrapper
-      .find('.sqliteviz-table tbody td[aria-selected="true"]')
+    const selectedCell = wrapper.find(
+      '.sqliteviz-table tbody td[aria-selected="true"]'
+    )
     await selectedCell.trigger('click')
 
-    const selectedCellAfterClick = wrapper
-      .find('.sqliteviz-table tbody td[aria-selected="true"]')
+    const selectedCellAfterClick = wrapper.find(
+      '.sqliteviz-table tbody td[aria-selected="true"]'
+    )
     expect(selectedCellAfterClick.exists()).to.equals(false)
   })
 })

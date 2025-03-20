@@ -1,10 +1,5 @@
 <template>
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 18 18"
-    fill="none"
-  >
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
     <path
       fill-rule="evenodd"
       clip-rule="evenodd"
@@ -46,7 +41,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'ChartIcon'
 }

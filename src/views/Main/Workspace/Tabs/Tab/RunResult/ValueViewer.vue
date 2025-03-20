@@ -12,13 +12,7 @@
         {{ format.text }}
       </button>
 
-      <button
-        type="button"
-        class="copy"
-        @click="copyToClipboard"
-      >
-        Copy
-      </button>
+      <button type="button" class="copy" @click="copyToClipboard">Copy</button>
     </div>
     <div class="value-body">
       <codemirror
@@ -30,7 +24,8 @@
       <pre
         v-if="currentFormat === 'text'"
         :class="['text-value', { 'meta-value': isNull || isBlob }]"
-      >{{ cellText }}</pre>
+        >{{ cellText }}</pre
+      >
       <logs
         v-if="messages && messages.length > 0"
         :messages="messages"
@@ -60,7 +55,7 @@ export default {
   props: {
     cellValue: [String, Number, Uint8Array]
   },
-  data () {
+  data() {
     return {
       formats: [
         { text: 'Text', value: 'text' },
@@ -82,13 +77,13 @@ export default {
     }
   },
   computed: {
-    isBlob () {
+    isBlob() {
       return this.cellValue && ArrayBuffer.isView(this.cellValue)
     },
-    isNull () {
+    isNull() {
       return this.cellValue === null
     },
-    cellText () {
+    cellText() {
       const value = this.cellValue
       if (this.isNull) {
         return 'NULL'
@@ -100,14 +95,14 @@ export default {
     }
   },
   watch: {
-    currentFormat () {
+    currentFormat() {
       this.messages = []
       this.formattedJson = ''
       if (this.currentFormat === 'json') {
         this.formatJson(this.cellValue)
       }
     },
-    cellValue () {
+    cellValue() {
       this.messages = []
       if (this.currentFormat === 'json') {
         this.formatJson(this.cellValue)
@@ -115,25 +110,24 @@ export default {
     }
   },
   methods: {
-    formatJson (jsonStr) {
+    formatJson(jsonStr) {
       try {
-        this.formattedJson = JSON.stringify(
-          JSON.parse(jsonStr), null, 4
-        )
+        this.formattedJson = JSON.stringify(JSON.parse(jsonStr), null, 4)
       } catch (e) {
         console.error(e)
         this.formattedJson = ''
-        this.messages = [{
-          type: 'error',
-          message: 'Can\'t parse JSON.'
-        }]
+        this.messages = [
+          {
+            type: 'error',
+            message: "Can't parse JSON."
+          }
+        ]
       }
     },
-    copyToClipboard () {
-      cIo.copyText(this.currentFormat === 'json'
-        ? this.formattedJson
-        : this.cellValue,
-      'The value is copied to clipboard.'
+    copyToClipboard() {
+      cIo.copyText(
+        this.currentFormat === 'json' ? this.formattedJson : this.cellValue,
+        'The value is copied to clipboard.'
       )
     }
   }
@@ -188,7 +182,7 @@ export default {
   background-color: var(--color-bg-light);
 }
 
-.value-viewer-toolbar button[aria-selected="true"] {
+.value-viewer-toolbar button[aria-selected='true'] {
   color: var(--color-accent);
 }
 
