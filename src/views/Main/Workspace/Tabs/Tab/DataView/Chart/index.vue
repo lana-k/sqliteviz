@@ -1,5 +1,5 @@
 <template>
-  <div v-show="visible" class="chart-container" ref="chartContainer">
+  <div class="chart-container" ref="chartContainer">
     <div class="warning chart-warning" v-show="!dataSources && visible">
       There is no data to build a chart. Run your SQL query and make sure the
       result is not empty.
@@ -13,11 +13,7 @@
         :data="state.data"
         :layout="state.layout"
         :frames="state.frames"
-        :config="{
-          editable: true,
-          displaylogo: false,
-          modeBarButtonsToRemove: ['toImage']
-        }"
+        :config="config"
         :dataSources="dataSources"
         :dataSourceOptions="dataSourceOptions"
         :plotly="plotly"
@@ -36,8 +32,7 @@
 import { applyPureReactInVue } from 'veaury'
 import plotly from 'plotly.js'
 import 'react-chart-editor/lib/react-chart-editor.css'
-
-import ReactPlotlyEditor from 'react-chart-editor'
+import ReactPlotlyEditorWithPlotRef from '@/lib/ReactPlotlyEditorWithPlotRef.jsx'
 import chartHelper from '@/lib/chartHelper'
 import * as dereference from 'react-chart-editor/lib/lib/dereference'
 import fIo from '@/lib/utils/fileIo'
@@ -54,15 +49,20 @@ export default {
   ],
   emits: ['update:importToSvgEnabled', 'update', 'loadingImageCompleted'],
   components: {
-    PlotlyEditor: applyPureReactInVue(ReactPlotlyEditor)
+    PlotlyEditor: applyPureReactInVue(ReactPlotlyEditorWithPlotRef)
   },
   data() {
     return {
       plotly,
       state: this.initOptions || {
         data: [],
-        layout: {},
+        layout: { autosize: true },
         frames: []
+      },
+      config: {
+        editable: true,
+        displaylogo: false,
+        modeBarButtonsToRemove: ['toImage']
       },
       visible: true,
       resizeObserver: null,
@@ -120,9 +120,12 @@ export default {
   },
   methods: {
     async handleResize() {
-      this.visible = false
-      await this.$nextTick()
-      this.visible = true
+      const plotComponent = this.$refs.plotlyEditor.plotComponentRef.current
+      this.$refs.plotlyEditor.plotComponentRef.current.updatePlotly(
+        false, // shouldInvokeResizeHandler
+        plotComponent.props.onUpdate, // figureCallbackFunction
+        false // shouldAttachUpdateEvents
+      )
     },
     onRender(data, layout, frames) {
       // TODO: check changes and enable Save button if needed
