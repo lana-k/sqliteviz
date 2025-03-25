@@ -78,8 +78,7 @@ export default {
 input,
 label,
 button,
-.plotly_editor *,
-.CodeMirror pre.CodeMirror-line {
+.plotly_editor * {
   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

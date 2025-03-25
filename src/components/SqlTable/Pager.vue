@@ -55,6 +55,10 @@ export default {
   align-items: center;
   line-height: 10px;
 }
+:deep(a) {
+  cursor: pointer;
+}
+
 :deep(.paginator-page-link) {
   padding: 2px 3px;
   margin: 0 5px;

@@ -136,7 +136,7 @@
 
 <script>
 import Logs from '@/components/Logs'
-import SqlTable from '@/components/SqlTable'
+import SqlTable from '@/components/SqlTable/index.vue'
 import LoadingIndicator from '@/components/LoadingIndicator'
 import SideToolBar from '../SideToolBar'
 import Splitpanes from '@/components/Splitpanes'

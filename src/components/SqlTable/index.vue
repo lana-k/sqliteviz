@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import Pager from './Pager'
+import Pager from './Pager.vue'
 
 export default {
   name: 'SqlTable',
