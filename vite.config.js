@@ -53,6 +53,19 @@ export default defineConfig({
     assetsInlineLimit: 10000,
     commonjsOptions: {
       include: ['sql.js', /sql-wasm.js/, /node_modules/]
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: id => {
+          if (id.includes('maplibre-gl') || id.includes('mapbox-gl')) {
+            return 'maps'
+          } else if (id.includes('node_modules')) {
+            return 'vendor'
+          } else {
+            return null
+          }
+        }
+      }
     }
   }
 })
