@@ -220,5 +220,6 @@ table.sqliteviz-table {
 
 .column-cell {
   max-width: 150px;
+  width: 0;
 }
 </style>
