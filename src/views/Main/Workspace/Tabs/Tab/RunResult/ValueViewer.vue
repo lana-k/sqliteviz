@@ -13,6 +13,14 @@
       </button>
 
       <button type="button" class="copy" @click="copyToClipboard">Copy</button>
+      <button
+        type="button"
+        class="line-wrap"
+        :aria-selected="lineWrapping === true"
+        @click="lineWrapping = !lineWrapping"
+      >
+        Line wrap
+      </button>
     </div>
     <div class="value-body">
       <codemirror
@@ -23,7 +31,11 @@
       />
       <pre
         v-if="currentFormat === 'text'"
-        :class="['text-value', { 'meta-value': isNull || isBlob }]"
+        :class="[
+          'text-value',
+          { 'meta-value': isNull || isBlob },
+          { 'line-wrap': lineWrapping }
+        ]"
         >{{ cellText }}</pre
       >
       <logs
@@ -62,21 +74,25 @@ export default {
         { text: 'JSON', value: 'json' }
       ],
       currentFormat: 'text',
-      cmOptions: {
-        tabSize: 4,
-        mode: { name: 'javascript', json: true },
-        theme: 'neo',
-        lineNumbers: true,
-        line: true,
-        foldGutter: true,
-        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-        readOnly: true
-      },
+      lineWrapping: false,
       formattedJson: '',
       messages: []
     }
   },
   computed: {
+    cmOptions() {
+      return {
+        tabSize: 4,
+        mode: { name: 'javascript', json: true },
+        theme: 'neo',
+        lineNumbers: true,
+        line: true,
+        lineWrapping: this.lineWrapping,
+        foldGutter: true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+        readOnly: true
+      }
+    },
     isBlob() {
       return this.cellValue && ArrayBuffer.isView(this.cellValue)
     },
@@ -162,6 +178,11 @@ export default {
 .text-value.meta-value {
   font-style: italic;
   color: var(--color-text-light-2);
+}
+
+.text-value.line-wrap {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .messages {
