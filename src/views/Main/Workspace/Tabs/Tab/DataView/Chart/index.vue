@@ -115,17 +115,13 @@ export default {
       // https://github.com/plotly/react-chart-editor/issues/948
       if (this.dataSources) {
         dereference.default(this.state.data, this.dataSources)
+        this.updatePlotly()
       }
     }
   },
   methods: {
     async handleResize() {
-      const plotComponent = this.$refs.plotlyEditor.plotComponentRef.current
-      this.$refs.plotlyEditor.plotComponentRef.current.updatePlotly(
-        false, // shouldInvokeResizeHandler
-        plotComponent.props.onUpdate, // figureCallbackFunction
-        false // shouldAttachUpdateEvents
-      )
+      this.updatePlotly()
     },
     onRender(data, layout, frames) {
       // TODO: check changes and enable Save button if needed
@@ -133,6 +129,14 @@ export default {
     update(data, layout, frames) {
       this.state = { data, layout, frames }
       this.$emit('update')
+    },
+    updatePlotly() {
+      const plotComponent = this.$refs.plotlyEditor.plotComponentRef.current
+      plotComponent.updatePlotly(
+        false, // shouldInvokeResizeHandler
+        plotComponent.props.onUpdate, // figureCallbackFunction
+        false // shouldAttachUpdateEvents
+      )
     },
     getOptionsForSave() {
       return chartHelper.getOptionsForSave(this.state, this.dataSources)
