@@ -130,7 +130,6 @@ export default {
       try {
         this.formattedJson = JSON.stringify(JSON.parse(jsonStr), null, 4)
       } catch (e) {
-        console.error(e)
         this.formattedJson = ''
         this.messages = [
           {
