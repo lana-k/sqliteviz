@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart/index.vue'
 import chartHelper from '@/lib/chartHelper'
 import * as dereference from 'react-chart-editor/lib/lib/dereference'
@@ -50,7 +50,6 @@ describe('Chart.vue', () => {
 
     // mount the component
     const wrapper = mount(Chart, {
-      appendTo: document.body,
       props: {
         dataSources,
         initOptions: {
@@ -82,8 +81,7 @@ describe('Chart.vue', () => {
         mocks: { $store }
       }
     })
-    await nextTick()
-    await nextTick()
+    await flushPromises()
 
     expect(wrapper.find('svg.main-svg .overplot text').text()).to.equal('80')
     const newDataSources = {
@@ -92,15 +90,49 @@ describe('Chart.vue', () => {
     }
 
     await wrapper.setProps({ dataSources: newDataSources })
-
-    await nextTick()
-    await nextTick()
-    await nextTick()
-    await nextTick()
-    await nextTick()
-    await nextTick()
+    await flushPromises()
     expect(dereference.default.called).to.equal(true)
     expect(wrapper.find('svg.main-svg .overplot text').text()).to.equal('100')
+  })
+
+  it('the plot resizes when the container resizes', async () => {
+    const wrapper = mount(Chart, {
+      attachTo: document.body,
+      props: {
+        dataSources: null
+      },
+      global: {
+        mocks: { $store }
+      }
+    })
+
+    // don't call flushPromises here, otherwize resize observer will be call to often
+    // which causes ResizeObserver loop completed with undelivered notifications.
+    await nextTick()
+
+    const container =
+      wrapper.find('.chart-container').wrapperElement.parentElement
+    const plot = wrapper.find('.svg-container').wrapperElement
+
+    const initialContainerWidth = container.scrollWidth
+    const initialContainerHeight = container.scrollHeight
+
+    const initialPlotWidth = plot.scrollWidth
+    const initialPlotHeight = plot.scrollHeight
+
+    const newContainerWidth = initialContainerWidth * 2 || 1000
+    const newContainerHeight = initialContainerHeight * 2 || 2000
+
+    wrapper.find('.chart-container').wrapperElement.parentElement.style.width =
+      `${newContainerWidth}px`
+    wrapper.find('.chart-container').wrapperElement.parentElement.style.height =
+      `${newContainerHeight}px`
+
+    await flushPromises()
+
+    expect(plot.scrollWidth).not.to.equal(initialPlotWidth)
+    expect(plot.scrollHeight).not.to.equal(initialPlotHeight)
+
     wrapper.unmount()
   })
 
