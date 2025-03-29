@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { mount, shallowMount } from '@vue/test-utils'
-import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart'
+import { mount } from '@vue/test-utils'
+import Chart from '@/views/Main/Workspace/Tabs/Tab/DataView/Chart/index.vue'
 import chartHelper from '@/lib/chartHelper'
 import * as dereference from 'react-chart-editor/lib/lib/dereference'
 import fIo from '@/lib/utils/fileIo'
@@ -16,7 +16,7 @@ describe('Chart.vue', () => {
 
   it('getOptionsForSave called with proper arguments', () => {
     // mount the component
-    const wrapper = shallowMount(Chart, {
+    const wrapper = mount(Chart, {
       global: {
         mocks: { $store }
       }
@@ -41,28 +41,66 @@ describe('Chart.vue', () => {
     wrapper.unmount()
   })
 
-  it('calls dereference when dataSources is changed', async () => {
-    sinon.stub(dereference, 'default')
+  it('calls dereference and updates chart when dataSources is changed', async () => {
+    sinon.spy(dereference, 'default')
     const dataSources = {
-      id: [1],
-      name: ['foo']
+      name: ['Gryffindor'],
+      points: [80]
     }
 
     // mount the component
-    const wrapper = shallowMount(Chart, {
-      props: { dataSources },
+    const wrapper = mount(Chart, {
+      appendTo: document.body,
+      props: {
+        dataSources,
+        initOptions: {
+          data: [
+            {
+              type: 'bar',
+              mode: 'markers',
+              x: null,
+              xsrc: 'name',
+              meta: {
+                columnNames: {
+                  x: 'name',
+                  y: 'points',
+                  text: 'points'
+                }
+              },
+              orientation: 'v',
+              y: null,
+              ysrc: 'points',
+              text: null,
+              textsrc: 'points'
+            }
+          ],
+          layout: {},
+          frames: []
+        }
+      },
       global: {
         mocks: { $store }
       }
     })
+    await nextTick()
+    await nextTick()
 
+    expect(wrapper.find('svg.main-svg .overplot text').text()).to.equal('80')
     const newDataSources = {
-      id: [2],
-      name: ['bar']
+      name: ['Gryffindor'],
+      points: [100]
     }
 
     await wrapper.setProps({ dataSources: newDataSources })
+
+    await nextTick()
+    await nextTick()
+    await nextTick()
+    await nextTick()
+    await nextTick()
+    await nextTick()
     expect(dereference.default.called).to.equal(true)
+    expect(wrapper.find('svg.main-svg .overplot text').text()).to.equal('100')
     wrapper.unmount()
   })
 
@@ -74,7 +112,7 @@ describe('Chart.vue', () => {
     }
 
     // mount the component
-    const wrapper = shallowMount(Chart, {
+    const wrapper = mount(Chart, {
       props: { dataSources },
       global: {
         mocks: { $store }
@@ -82,7 +120,7 @@ describe('Chart.vue', () => {
     })
 
     await wrapper.setProps({ dataSources: null })
-    expect(dereference.default.called).to.equal(false)
+    expect(dereference.default.calledOnce).to.equal(true)
     wrapper.unmount()
   })
 

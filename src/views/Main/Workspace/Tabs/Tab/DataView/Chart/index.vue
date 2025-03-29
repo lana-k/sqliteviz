@@ -99,6 +99,10 @@ export default {
   mounted() {
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.chartContainer)
+    if (this.dataSources) {
+      dereference.default(this.state.data, this.dataSources)
+      this.updatePlotly()
+    }
   },
   activated() {
     this.useResizeHandler = true
