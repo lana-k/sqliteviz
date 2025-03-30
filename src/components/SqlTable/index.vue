@@ -8,6 +8,7 @@
             class="fixed-header"
             :style="{ width: `${th.width}px` }"
             :key="index"
+            :title="th.name"
           >
             {{ th.name }}
           </div>

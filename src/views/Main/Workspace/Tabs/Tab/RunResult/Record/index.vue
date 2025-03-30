@@ -17,7 +17,9 @@
         </thead>
         <tbody>
           <tr v-for="(col, index) in columns" :key="index">
-            <th class="column-cell">{{ col }}</th>
+            <th class="column-cell" :title="col">
+              {{ col }}
+            </th>
             <td
               :data-col="index"
               :data-row="currentRowIndex"
@@ -190,6 +192,7 @@ table.sqliteviz-table {
 }
 .sqliteviz-table thead tr th {
   border-bottom: 1px solid var(--color-border-light);
+  text-align: left;
 }
 .sqliteviz-table tbody tr th {
   font-size: 14px;
