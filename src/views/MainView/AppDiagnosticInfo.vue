@@ -5,7 +5,7 @@
       src="~@/assets/images/info.svg"
       @click="$modal.show('app-info')"
     />
-    <modal modal-id="app-info" class="dialog" content-class="app-info-modal">
+    <modal modalId="app-info" class="dialog" contentClass="app-info-modal">
       <div class="dialog-header">
         App info
         <close-icon @click="$modal.hide('app-info')" />

@@ -26,7 +26,7 @@
       ref="addCsvJson"
       :file="file"
       :db="$store.state.db"
-      dialog-name="addCsvJson"
+      dialogName="addCsvJson"
     />
   </div>
 </template>

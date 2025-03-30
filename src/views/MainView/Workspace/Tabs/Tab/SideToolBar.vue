@@ -4,7 +4,7 @@
       ref="sqlEditorBtn"
       :active="panel === 'sqlEditor'"
       tooltip="Switch panel to SQL editor"
-      tooltip-position="top-left"
+      tooltipPosition="top-left"
       @click="$emit('switchTo', 'sqlEditor')"
     >
       <sql-editor-icon />
@@ -14,7 +14,7 @@
       ref="tableBtn"
       :active="panel === 'table'"
       tooltip="Switch panel to result set"
-      tooltip-position="top-left"
+      tooltipPosition="top-left"
       @click="$emit('switchTo', 'table')"
     >
       <table-icon />
@@ -24,7 +24,7 @@
       ref="dataViewBtn"
       :active="panel === 'dataView'"
       tooltip="Switch panel to data view"
-      tooltip-position="top-left"
+      tooltipPosition="top-left"
       @click="$emit('switchTo', 'dataView')"
     >
       <data-view-icon />

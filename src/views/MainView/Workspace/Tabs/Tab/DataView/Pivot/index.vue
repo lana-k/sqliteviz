@@ -6,7 +6,7 @@
     </div>
     <pivot-ui
       v-model="pivotOptions"
-      :key-names="columns"
+      :keyNames="columns"
       @update="$emit('update')"
     />
     <div ref="pivotOutput" class="pivot-output" />

@@ -3,7 +3,7 @@
     <icon-button
       :disabled="modelValue === 0"
       tooltip="First row"
-      tooltip-position="top-left"
+      tooltipPosition="top-left"
       class="first"
       @click="$emit('update:modelValue', 0)"
     >
@@ -12,7 +12,7 @@
     <icon-button
       :disabled="modelValue === 0"
       tooltip="Previous row"
-      tooltip-position="top-left"
+      tooltipPosition="top-left"
       class="prev"
       @click="$emit('update:modelValue', modelValue - 1)"
     >
@@ -21,7 +21,7 @@
     <icon-button
       :disabled="modelValue === total - 1"
       tooltip="Next row"
-      tooltip-position="top-left"
+      tooltipPosition="top-left"
       class="next"
       @click="$emit('update:modelValue', modelValue + 1)"
     >
@@ -30,7 +30,7 @@
     <icon-button
       :disabled="modelValue === total - 1"
       tooltip="Last row"
-      tooltip-position="top-left"
+      tooltipPosition="top-left"
       class="last"
       @click="$emit('update:modelValue', total - 1)"
     >

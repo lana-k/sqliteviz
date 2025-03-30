@@ -5,7 +5,7 @@
         ref="cm"
         v-model:value="query"
         :options="cmOptions"
-        :original-style="true"
+        :originalStyle="true"
         @change="onChange"
       />
     </div>
@@ -15,7 +15,7 @@
         :disabled="runDisabled"
         :loading="isGettingResults"
         tooltip="Run SQL query"
-        tooltip-position="top-left"
+        tooltipPosition="top-left"
         @click="$emit('run')"
       >
         <run-icon :disabled="runDisabled" />

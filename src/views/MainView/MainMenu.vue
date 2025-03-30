@@ -25,7 +25,7 @@
     </div>
 
     <!--Save Inquiry dialog  -->
-    <modal modal-id="save" class="dialog" content-style="width: 560px;">
+    <modal modalId="save" class="dialog" contentStyle="width: 560px;">
       <div class="dialog-header">
         Save inquiry
         <close-icon @click="cancelSave" />
@@ -39,7 +39,7 @@
         <text-field
           v-model="name"
           label="Inquiry name"
-          :error-msg="errorMsg"
+          :errorMsg="errorMsg"
           width="100%"
         />
       </div>

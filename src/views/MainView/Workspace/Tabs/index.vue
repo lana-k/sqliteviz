@@ -29,7 +29,7 @@
     </div>
 
     <!--Close tab warning dialog  -->
-    <modal modal-id="close-warn" class="dialog" content-style="width: 560px;">
+    <modal modalId="close-warn" class="dialog" contentStyle="width: 560px;">
       <div class="dialog-header">
         Close tab
         {{

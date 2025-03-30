@@ -14,7 +14,9 @@ module.exports = {
     'vue/no-mutating-props': 'warn',
     'vue/no-reserved-component-names': 'warn',
     'vue/no-v-model-argument': 'off',
-    'vue/require-default-prop': 'off'
+    'vue/require-default-prop': 'off',
+    'vue/custom-event-name-casing': ['error', 'camelCase'],
+    'vue/attribute-hyphenation': ['error', 'never']
   },
   overrides: [
     {

@@ -21,7 +21,7 @@
         <div class="value-viewer-container">
           <value-viewer
             v-show="selectedCell"
-            :cell-value="
+            :cellValue="
               selectedCell
                 ? result.values[result.columns[selectedCell.dataset.col]][
                     selectedCell.dataset.row
@@ -40,7 +40,7 @@
       <icon-button
         :disabled="!result"
         tooltip="Export result set to CSV file"
-        tooltip-position="top-left"
+        tooltipPosition="top-left"
         @click="exportToCsv"
       >
         <export-to-csv-icon />
@@ -50,7 +50,7 @@
         ref="copyToClipboardBtn"
         :disabled="!result"
         tooltip="Copy result set to clipboard"
-        tooltip-position="top-left"
+        tooltipPosition="top-left"
         @click="prepareCopy"
       >
         <clipboard-icon />
@@ -60,7 +60,7 @@
         ref="rowBtn"
         :disabled="!result"
         tooltip="View record"
-        tooltip-position="top-left"
+        tooltipPosition="top-left"
         :active="viewRecord"
         @click="toggleViewRecord"
       >
@@ -71,7 +71,7 @@
         ref="viewCellValueBtn"
         :disabled="!result"
         tooltip="View value"
-        tooltip-position="top-left"
+        tooltipPosition="top-left"
         :active="viewValuePanelVisible"
         @click="toggleViewValuePanel"
       >
@@ -80,9 +80,9 @@
     </side-tool-bar>
 
     <loading-dialog
-      loading-msg="Building CSV..."
-      success-msg="CSV is ready"
-      action-btn-name="Copy"
+      loadingMsg="Building CSV..."
+      successMsg="CSV is ready"
+      actionBtnName="Copy"
       name="prepareCSVCopy"
       title="Copy to clipboard"
       :loading="preparingCopy"
@@ -113,9 +113,9 @@
           v-if="result && !viewRecord"
           :data-set="result"
           :time="time"
-          :page-size="pageSize"
+          :pageSize="pageSize"
           :page="defaultPage"
-          :selected-cell-coordinates="defaultSelectedCell"
+          :selectedCellCoordinates="defaultSelectedCell"
           class="straight"
           @update-selected-cell="onUpdateSelectedCell"
         />
@@ -125,8 +125,8 @@
           ref="recordView"
           :data-set="result"
           :time="time"
-          :selected-column-index="selectedCell ? +selectedCell.dataset.col : 0"
-          :row-index="selectedCell ? +selectedCell.dataset.row : 0"
+          :selectedColumnIndex="selectedCell ? +selectedCell.dataset.col : 0"
+          :rowIndex="selectedCell ? +selectedCell.dataset.row : 0"
           @update-selected-cell="onUpdateSelectedCell"
         />
       </div>

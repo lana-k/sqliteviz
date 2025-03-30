@@ -25,7 +25,7 @@
       <sql-editor
         ref="sqlEditor"
         v-model="tab.query"
-        :is-getting-results="tab.isGettingResults"
+        :isGettingResults="tab.isGettingResults"
         @switch-to="onSwitchView('sqlEditor', $event)"
         @run="tab.execute()"
       />
@@ -39,7 +39,7 @@
       <run-result
         :tab="tab"
         :result="tab.result"
-        :is-getting-results="tab.isGettingResults"
+        :isGettingResults="tab.isGettingResults"
         :error="tab.error"
         :time="tab.time"
         @switch-to="onSwitchView('table', $event)"
@@ -54,8 +54,8 @@
       <data-view
         ref="dataView"
         :data-source="(tab.result && tab.result.values) || null"
-        :init-options="tab.viewOptions"
-        :init-mode="tab.viewType"
+        :initOptions="tab.viewOptions"
+        :initMode="tab.viewType"
         @switch-to="onSwitchView('dataView', $event)"
         @update="onDataViewUpdate"
       />

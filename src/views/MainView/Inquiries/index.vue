@@ -122,7 +122,7 @@
                       <copy-icon @click="duplicateInquiry(index)" />
                       <export-icon
                         tooltip="Export inquiry to file"
-                        tooltip-position="top-left"
+                        tooltipPosition="top-left"
                         @click="exportToFile([inquiry], `${inquiry.name}.json`)"
                       />
                       <delete-icon
@@ -140,7 +140,7 @@
     </div>
 
     <!--Rename Inquiry dialog  -->
-    <modal modal-id="rename" class="dialog" content-style="width: 560px;">
+    <modal modalId="rename" class="dialog" contentStyle="width: 560px;">
       <div class="dialog-header">
         Rename inquiry
         <close-icon @click="$modal.hide('rename')" />
@@ -149,7 +149,7 @@
         <text-field
           v-model="newName"
           label="New inquiry name"
-          :error-msg="errorMsg"
+          :errorMsg="errorMsg"
           width="100%"
         />
       </div>
@@ -160,7 +160,7 @@
     </modal>
 
     <!--Delete Inquiry dialog  -->
-    <modal modal-id="delete" class="dialog" content-style="width: 480px;">
+    <modal modalId="delete" class="dialog" contentStyle="width: 480px;">
       <div class="dialog-header">
         Delete {{ deleteGroup ? 'inquiries' : 'inquiry' }}
         <close-icon @click="$modal.hide('delete')" />

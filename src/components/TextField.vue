@@ -9,7 +9,7 @@
         v-if="hint"
         class="hint"
         :hint="hint"
-        :max-width="maxHintWidth || '149px'"
+        :maxWidth="maxHintWidth || '149px'"
       />
     </div>
     <input

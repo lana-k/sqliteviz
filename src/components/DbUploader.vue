@@ -47,7 +47,7 @@
       ref="addCsvJson"
       :file="file"
       :db="newDb"
-      dialog-name="importFromCsvJson"
+      dialogName="importFromCsvJson"
       @cancel="cancelImport"
       @finish="finish"
     />

@@ -62,7 +62,7 @@
       <pager
         v-show="pageCount > 1"
         v-model="currentPage"
-        :page-count="pageCount"
+        :pageCount="pageCount"
       />
     </div>
   </div>

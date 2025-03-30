@@ -1,10 +1,10 @@
 <template>
   <modal
-    :modal-id="name"
+    :modalId="name"
     class="dialog"
-    :click-to-close="false"
-    :content-transition="{ name: 'loading-dialog' }"
-    :overlay-transition="{ name: 'loading-dialog' }"
+    :clickToClose="false"
+    :contentTransition="{ name: 'loading-dialog' }"
+    :overlayTransition="{ name: 'loading-dialog' }"
   >
     <div class="dialog-header">
       {{ title }}

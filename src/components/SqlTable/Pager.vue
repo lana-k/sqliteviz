@@ -1,19 +1,19 @@
 <template>
   <paginate
     v-model="page"
-    :page-count="pageCount"
-    :page-range="5"
-    :margin-pages="1"
-    :prev-text="chevron"
-    :next-text="chevron"
-    :no-li-surround="true"
-    container-class="paginator-continer"
-    page-link-class="paginator-page-link"
-    active-class="paginator-active-page"
-    break-view-link-class="paginator-break"
-    next-link-class="paginator-next"
-    prev-link-class="paginator-prev"
-    disabled-class="paginator-disabled"
+    :pageCount="pageCount"
+    :pageRange="5"
+    :marginPages="1"
+    :prevText="chevron"
+    :nextText="chevron"
+    :noLiSurround="true"
+    containerClass="paginator-continer"
+    pageLinkClass="paginator-page-link"
+    activeClass="paginator-active-page"
+    breakViewLinkClass="paginator-break"
+    nextLinkClass="paginator-next"
+    prevLinkClass="paginator-prev"
+    disabledClass="paginator-disabled"
   />
 </template>
 

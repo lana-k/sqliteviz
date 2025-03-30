@@ -1,10 +1,10 @@
 <template>
   <modal
-    :modal-id="dialogName"
+    :modalId="dialogName"
     class="dialog"
-    content-class="import-modal"
+    contentClass="import-modal"
     scrollable
-    :click-to-close="false"
+    :clickToClose="false"
   >
     <div class="dialog-header">
       {{ typeName }} import
@@ -17,7 +17,7 @@
         label="Table name"
         width="484px"
         :disabled="disableDialog"
-        :error-msg="tableNameError"
+        :errorMsg="tableNameError"
       />
       <div v-if="!isJson && !isNdJson" class="chars">
         <delimiter-selector
@@ -45,7 +45,7 @@
             The character used to escape the quote character within a field
             (e.g. "column with ""quotes"" in text").
           '
-          max-hint-width="242px"
+          maxHintWidth="242px"
           width="93px"
           :disabled="disableDialog"
           class="char-input"

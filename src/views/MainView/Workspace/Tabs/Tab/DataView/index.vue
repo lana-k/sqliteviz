@@ -4,9 +4,9 @@
       <component
         :is="mode"
         ref="viewComponent"
-        v-model:import-to-png-enabled="importToPngEnabled"
-        v-model:import-to-svg-enabled="importToSvgEnabled"
-        :init-options="mode === initMode ? initOptions : undefined"
+        v-model:importToPngEnabled="importToPngEnabled"
+        v-model:importToSvgEnabled="importToSvgEnabled"
+        :initOptions="mode === initMode ? initOptions : undefined"
         :data-sources="dataSource"
         @loading-image-completed="loadingImage = false"
         @update="$emit('update')"
@@ -16,7 +16,7 @@
       <icon-button
         :active="mode === 'chart'"
         tooltip="Switch to chart"
-        tooltip-position="top-left"
+        tooltipPosition="top-left"
         @click="mode = 'chart'"
       >
         <chart-icon />
@@ -25,7 +25,7 @@
         ref="pivotBtn"
         :active="mode === 'pivot'"
         tooltip="Switch to pivot"
-        tooltip-position="top-left"
+        tooltipPosition="top-left"
         @click="mode = 'pivot'"
       >
         <pivot-icon />
@@ -37,7 +37,7 @@
         :disabled="!importToPngEnabled || loadingImage"
         :loading="loadingImage"
         tooltip="Save as PNG image"
-        tooltip-position="top-left"
+        tooltipPosition="top-left"
         @click="saveAsPng"
       >
         <png-icon />
@@ -46,7 +46,7 @@
         ref="svgExportBtn"
         :disabled="!importToSvgEnabled"
         tooltip="Save as SVG"
-        tooltip-position="top-left"
+        tooltipPosition="top-left"
         @click="saveAsSvg"
       >
         <export-to-svg-icon />
@@ -55,7 +55,7 @@
       <icon-button
         ref="htmlExportBtn"
         tooltip="Save as HTML"
-        tooltip-position="top-left"
+        tooltipPosition="top-left"
         @click="saveAsHtml"
       >
         <HtmlIcon />
@@ -64,7 +64,7 @@
         ref="copyToClipboardBtn"
         :loading="copyingImage"
         tooltip="Copy visualisation to clipboard"
-        tooltip-position="top-left"
+        tooltipPosition="top-left"
         @click="prepareCopy"
       >
         <clipboard-icon />
@@ -72,9 +72,9 @@
     </side-tool-bar>
 
     <loading-dialog
-      loading-msg="Rendering the visualisation..."
-      success-msg="Image is ready"
-      action-btn-name="Copy"
+      loadingMsg="Rendering the visualisation..."
+      successMsg="Image is ready"
+      actionBtnName="Copy"
       name="prepareCopy"
       title="Copy to clipboard"
       :loading="preparingCopy"
