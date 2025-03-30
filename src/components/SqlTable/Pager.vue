@@ -1,5 +1,6 @@
 <template>
   <paginate
+    v-model="page"
     :page-count="pageCount"
     :page-range="5"
     :margin-pages="1"
@@ -13,7 +14,6 @@
     next-link-class="paginator-next"
     prev-link-class="paginator-prev"
     disabled-class="paginator-disabled"
-    v-model="page"
   />
 </template>
 
@@ -23,7 +23,10 @@ import Paginate from 'vuejs-paginate-next'
 export default {
   name: 'Pager',
   components: { Paginate },
-  props: ['pageCount', 'modelValue'],
+  props: {
+    pageCount: Number,
+    modelValue: Number
+  },
   emits: ['update:modelValue'],
   data() {
     return {

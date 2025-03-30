@@ -63,6 +63,10 @@ import events from '@/lib/utils/events'
 
 export default {
   name: 'DbUploader',
+  components: {
+    ChangeDbIcon,
+    CsvJsonImport
+  },
   props: {
     type: {
       type: String,
@@ -79,10 +83,6 @@ export default {
     }
   },
   emits: [],
-  components: {
-    ChangeDbIcon,
-    CsvJsonImport
-  },
   data() {
     return {
       state: '',

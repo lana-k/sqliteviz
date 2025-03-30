@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="rounded-bg">
-      <div class="header-container" ref="header-container">
+      <div ref="header-container" class="header-container">
         <div>
           <div
             v-for="(th, index) in header"
+            :key="index"
             class="fixed-header"
             :style="{ width: `${th.width}px` }"
-            :key="index"
             :title="th.name"
           >
             {{ th.name }}
@@ -15,8 +15,8 @@
         </div>
       </div>
       <div
-        class="table-container"
         ref="table-container"
+        class="table-container"
         @scroll="onScrollTable"
       >
         <table
@@ -36,11 +36,11 @@
             <tr v-for="rowIndex in currentPageData.count" :key="rowIndex">
               <td
                 v-for="(col, colIndex) in columns"
+                :key="colIndex"
                 :data-col="colIndex"
                 :data-row="pageSize * (currentPage - 1) + rowIndex - 1"
                 :data-isNull="isNull(getCellValue(col, rowIndex))"
                 :data-isBlob="isBlob(getCellValue(col, rowIndex))"
-                :key="colIndex"
                 :aria-selected="false"
                 @click="onCellClick"
               >
@@ -61,8 +61,8 @@
       </div>
       <pager
         v-show="pageCount > 1"
-        :page-count="pageCount"
         v-model="currentPage"
+        :page-count="pageCount"
       />
     </div>
   </div>
@@ -125,6 +125,15 @@ export default {
       }
     }
   },
+  watch: {
+    currentPageData() {
+      this.calculateHeadersWidth()
+      this.selectCell(null)
+    },
+    dataSet() {
+      this.currentPage = 1
+    }
+  },
   mounted() {
     this.resizeObserver = new ResizeObserver(this.calculateHeadersWidth)
     this.resizeObserver.observe(this.$refs.table)
@@ -139,6 +148,9 @@ export default {
         this.selectCell(cell)
       }
     }
+  },
+  beforeUnmount() {
+    this.resizeObserver.unobserve(this.$refs.table)
   },
   methods: {
     isBlob(value) {
@@ -251,18 +263,6 @@ export default {
       if (newCell) {
         this.selectCell(newCell)
       }
-    }
-  },
-  beforeUnmount() {
-    this.resizeObserver.unobserve(this.$refs.table)
-  },
-  watch: {
-    currentPageData() {
-      this.calculateHeadersWidth()
-      this.selectCell(null)
-    },
-    dataSet() {
-      this.currentPage = 1
     }
   }
 }

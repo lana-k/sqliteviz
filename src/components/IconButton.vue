@@ -12,9 +12,9 @@
     </div>
     <span
       v-if="tooltip"
+      ref="tooltip"
       class="icon-tooltip"
       :style="tooltipStyle"
-      ref="tooltip"
     >
       {{ tooltip }}
     </span>
@@ -27,10 +27,16 @@ import LoadingIndicator from '@/components/LoadingIndicator'
 
 export default {
   name: 'SideBarButton',
-  props: ['active', 'disabled', 'tooltip', 'tooltipPosition', 'loading'],
-  emits: ['click'],
   components: { LoadingIndicator },
   mixins: [tooltipMixin],
+  props: {
+    active: Boolean,
+    disabled: Boolean,
+    tooltip: String,
+    tooltipPosition: String,
+    loading: Boolean
+  },
+  emits: ['click'],
   methods: {
     onClick() {
       this.hideTooltip()

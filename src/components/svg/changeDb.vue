@@ -21,7 +21,7 @@
         fill="#A2B1C6"
       />
     </svg>
-    <span class="icon-tooltip" :style="tooltipStyle" ref="tooltip">
+    <span ref="tooltip" class="icon-tooltip" :style="tooltipStyle">
       Load another database, CSV, JSON or NDJSON
     </span>
   </div>
@@ -31,7 +31,7 @@
 import tooltipMixin from '@/tooltipMixin'
 
 export default {
-  name: 'changeDbIcon',
+  name: 'ChangeDbIcon',
   mixins: [tooltipMixin],
   emits: ['click'],
   methods: {

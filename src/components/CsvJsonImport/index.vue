@@ -4,20 +4,20 @@
     class="dialog"
     content-class="import-modal"
     scrollable
-    :clickToClose="false"
+    :click-to-close="false"
   >
     <div class="dialog-header">
       {{ typeName }} import
-      <close-icon @click="cancelImport" :disabled="disableDialog" />
+      <close-icon :disabled="disableDialog" @click="cancelImport" />
     </div>
     <div class="dialog-body">
       <text-field
-        label="Table name"
+        id="csv-json-table-name"
         v-model="tableName"
+        label="Table name"
         width="484px"
         :disabled="disableDialog"
         :error-msg="tableNameError"
-        id="csv-json-table-name"
       />
       <div v-if="!isJson && !isNdJson" class="chars">
         <delimiter-selector
@@ -28,27 +28,27 @@
           @input="preview"
         />
         <text-field
+          id="quote-char"
+          v-model="quoteChar"
           label="Quote char"
           hint="The character used to quote fields."
-          v-model="quoteChar"
           width="93px"
           :disabled="disableDialog"
           class="char-input"
-          id="quote-char"
           @input="preview"
         />
         <text-field
+          id="escape-char"
+          v-model="escapeChar"
           label="Escape char"
           hint='
             The character used to escape the quote character within a field
             (e.g. "column with ""quotes"" in text").
           '
           max-hint-width="242px"
-          v-model="escapeChar"
           width="93px"
           :disabled="disableDialog"
           class="char-input"
-          id="escape-char"
           @input="preview"
         />
       </div>
@@ -70,28 +70,28 @@
     </div>
     <div class="dialog-buttons-container">
       <button
+        id="import-cancel"
         class="secondary"
         :disabled="disableDialog"
         @click="cancelImport"
-        id="import-cancel"
       >
         Cancel
       </button>
       <button
         v-show="!importCompleted"
+        id="import-start"
         class="primary"
         :disabled="disableDialog || disableImport"
         @click="loadToDb(file)"
-        id="import-start"
       >
         Import
       </button>
       <button
         v-show="importCompleted"
+        id="import-finish"
         class="primary"
         :disabled="disableDialog"
         @click="finish"
-        id="import-finish"
       >
         Finish
       </button>

@@ -8,13 +8,13 @@
     ]"
   >
     <div
-      class="movable-splitter"
       ref="movableSplitter"
+      class="movable-splitter"
       :style="movableSplitterStyle"
     />
     <div
-      class="splitpanes-pane"
       ref="left"
+      class="splitpanes-pane"
       :size="paneBefore.size"
       max-size="30"
       :style="styles.before"
@@ -64,7 +64,7 @@
       </div>
     </div>
     <!-- splitter end -->
-    <div class="splitpanes-pane" ref="right" :style="styles.after">
+    <div ref="right" class="splitpanes-pane" :style="styles.after">
       <slot name="right-pane" />
     </div>
   </div>
@@ -158,6 +158,9 @@ export default {
       }
     }
   },
+  mounted() {
+    this.container = this.$refs.container
+  },
 
   methods: {
     bindEvents() {
@@ -242,9 +245,6 @@ export default {
         this.paneAfter.size = this.beforeMinimising.after
       }
     }
-  },
-  mounted() {
-    this.container = this.$refs.container
   }
 }
 </script>

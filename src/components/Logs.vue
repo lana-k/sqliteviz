@@ -1,5 +1,5 @@
 <template>
-  <div class="logs-container" ref="logsContainer">
+  <div ref="logsContainer" class="logs-container">
     <div v-for="(msg, index) in messages" :key="index" class="msg">
       <img v-if="msg.type === 'error'" src="~@/assets/images/error.svg" />
       <img
@@ -21,10 +21,10 @@
 import LoadingIndicator from '@/components/LoadingIndicator'
 
 export default {
-  name: 'logs',
-  props: ['messages'],
-  emits: [],
+  name: 'Logs',
   components: { LoadingIndicator },
+  props: { messages: Array },
+  emits: [],
   watch: {
     'messages.length': 'scrollToBottom'
   },

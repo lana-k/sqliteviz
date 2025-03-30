@@ -1,8 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Workspace from '@/views/Main/Workspace'
-import Inquiries from '@/views/Main/Inquiries'
+import Workspace from '@/views/MainView/Workspace'
+import Inquiries from '@/views/MainView/Inquiries'
 import Welcome from '@/views/Welcome'
-import Main from '@/views/Main'
+import MainView from '@/views/MainView'
 import LoadView from '@/views/LoadView'
 import store from '@/store'
 import database from '@/lib/database'
@@ -15,8 +15,8 @@ const routes = [
   },
   {
     path: '/',
-    name: 'Main',
-    component: Main,
+    name: 'MainView',
+    component: MainView,
     children: [
       {
         path: '/workspace',

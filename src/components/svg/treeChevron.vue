@@ -18,7 +18,7 @@
 
 <script>
 export default {
-  name: 'treeChevron',
+  name: 'TreeChevron',
   props: {
     expanded: {
       type: Boolean,

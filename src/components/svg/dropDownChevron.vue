@@ -17,7 +17,7 @@
 <script>
 export default {
   name: 'DropDownChevron',
-  props: ['disabled']
+  props: { disabled: Boolean }
 }
 </script>
 

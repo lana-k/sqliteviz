@@ -23,7 +23,7 @@
 <script>
 export default {
   name: 'ClearIcon',
-  props: ['disabled']
+  props: { disabled: Boolean }
 }
 </script>
 

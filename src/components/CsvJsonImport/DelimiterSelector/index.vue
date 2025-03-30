@@ -8,18 +8,18 @@
     >
       <div class="value">
         <input
-          :class="{ filled: filled }"
           ref="delimiterInput"
+          v-model="inputValue"
+          :class="{ filled: filled }"
           type="text"
           maxlength="1"
-          v-model="inputValue"
-          @click.stop
           :disabled="disabled"
+          @click.stop
         />
         <div class="name">{{ getSymbolName(modelValue) }}</div>
       </div>
       <div class="controls" @click.stop>
-        <clear-icon @click="clear" :disabled="disabled" />
+        <clear-icon :disabled="disabled" @click="clear" />
         <drop-down-chevron
           :disabled="disabled"
           @click="!disabled && (showOptions = !showOptions)"
@@ -30,8 +30,8 @@
       <div
         v-for="(option, index) in options"
         :key="index"
-        @click="chooseOption(option)"
         class="option"
+        @click="chooseOption(option)"
       >
         <pre>{{ option }}</pre>
         <div>{{ getSymbolName(option) }}</div>
@@ -47,9 +47,13 @@ import ClearIcon from '@/components/svg/clear'
 
 export default {
   name: 'DelimiterSelector',
-  props: ['modelValue', 'width', 'disabled'],
-  emits: ['update:modelValue'],
   components: { DropDownChevron, ClearIcon },
+  props: {
+    modelValue: String,
+    width: String,
+    disabled: Boolean
+  },
+  emits: ['update:modelValue'],
   data() {
     return {
       showOptions: false,
@@ -84,7 +88,7 @@ export default {
       this.inputValue = option
       this.showOptions = false
     },
-    onContainerClick(event) {
+    onContainerClick() {
       this.$refs.delimiterInput.focus()
     },
 

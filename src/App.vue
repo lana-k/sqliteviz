@@ -11,9 +11,6 @@ import { ModalsContainer } from 'vue-final-modal'
 
 export default {
   components: { ModalsContainer },
-  created() {
-    this.$store.commit('setInquiries', storedInquiries.getStoredInquiries())
-  },
   computed: {
     inquiries() {
       return this.$store.state.inquiries
@@ -26,6 +23,9 @@ export default {
         storedInquiries.updateStorage(this.inquiries)
       }
     }
+  },
+  created() {
+    this.$store.commit('setInquiries', storedInquiries.getStoredInquiries())
   }
 }
 </script>

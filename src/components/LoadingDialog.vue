@@ -2,13 +2,13 @@
   <modal
     :modal-id="name"
     class="dialog"
-    :clickToClose="false"
-    :contentTransition="{ name: 'loading-dialog' }"
-    :overlayTransition="{ name: 'loading-dialog' }"
+    :click-to-close="false"
+    :content-transition="{ name: 'loading-dialog' }"
+    :overlay-transition="{ name: 'loading-dialog' }"
   >
     <div class="dialog-header">
       {{ title }}
-      <close-icon @click="$emit('cancel')" :disabled="loading" />
+      <close-icon :disabled="loading" @click="$emit('cancel')" />
     </div>
     <div class="dialog-body">
       <div v-if="loading" class="loading-dialog-body">
@@ -49,7 +49,8 @@ import LoadingIndicator from '@/components/LoadingIndicator'
 import CloseIcon from '@/components/svg/close'
 
 export default {
-  name: 'loadingDialog',
+  name: 'LoadingDialog',
+  components: { LoadingIndicator, CloseIcon },
   props: {
     loadingMsg: String,
     successMsg: String,
@@ -66,7 +67,6 @@ export default {
       }
     }
   },
-  components: { LoadingIndicator, CloseIcon },
   methods: {
     cancel() {
       this.$emit('cancel')

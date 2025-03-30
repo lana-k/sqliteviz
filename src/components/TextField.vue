@@ -6,8 +6,8 @@
     >
       {{ label }}
       <hint-icon
-        class="hint"
         v-if="hint"
+        class="hint"
         :hint="hint"
         :max-width="maxHintWidth || '149px'"
       />
@@ -28,18 +28,19 @@
 <script>
 import HintIcon from '@/components/svg/hint'
 export default {
-  name: 'textField',
-  props: [
-    'placeholder',
-    'label',
-    'errorMsg',
-    'modelValue',
-    'width',
-    'hint',
-    'maxHintWidth',
-    'disabled'
-  ],
-  components: { HintIcon }
+  name: 'TextField',
+  components: { HintIcon },
+  props: {
+    placeholder: String,
+    label: String,
+    errorMsg: String,
+    modelValue: String,
+    width: String,
+    hint: String,
+    maxHintWidth: String,
+    disabled: Boolean
+  },
+  emits: ['update:modelValue']
 }
 </script>
 
