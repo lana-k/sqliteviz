@@ -50,6 +50,7 @@ export default defineConfig({
     }
   },
   build: {
+    sourcemap: true,
     assetsInlineLimit: 10000,
     commonjsOptions: {
       include: ['sql.js', /sql-wasm.js/, /node_modules/]
