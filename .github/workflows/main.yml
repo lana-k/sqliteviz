@@ -33,7 +33,7 @@ jobs:
       - name: Create Release Notes
         run: |
           npm install github-release-notes@0.16.0 -g
-          gren changelog --generate  --config="/.github/workflows/config.grenrc.js"
+          gren changelog --generate  --config="/.github/workflows/config.grenrc.cjs"
         env:
           GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
