@@ -35,6 +35,7 @@ import pivotHelper from './pivotHelper'
 import Chart from '@/views/MainView/Workspace/Tabs/Tab/DataView/Chart'
 import chartHelper from '@/lib/chartHelper'
 import events from '@/lib/utils/events'
+import plotly from 'plotly.js'
 
 export default {
   name: 'Pivot',
@@ -130,17 +131,19 @@ export default {
     // We need to detect resizing because plotly doesn't resize when resize its container
     // but it resize on window.resize (we will trigger it manualy in order to make plotly resize)
     this.resizeObserver = new ResizeObserver(this.handleResize)
-    this.resizeObserver.observe(this.$refs.customChartOutput)
+    this.resizeObserver.observe(this.$refs.pivotOutput)
   },
   beforeUnmount() {
-    this.resizeObserver.unobserve(this.$refs.customChartOutput)
+    this.resizeObserver.unobserve(this.$refs.pivotOutput)
   },
   methods: {
     handleResize() {
       // hack: plotly changes size only on window.resize event,
-      // so, we trigger it when container resizes (e.g. when move splitter)
+      // so, we resize it manually when container resizes (e.g. when move splitter)
       if (this.viewStandartChart) {
-        window.dispatchEvent(new Event('resize'))
+        plotly.Plots.resize(
+          this.$refs.pivotOutput.querySelector('.js-plotly-plot')
+        )
       }
     },
 
@@ -184,9 +187,7 @@ export default {
       )
 
       // fix for Firefox: fit plotly renderers just after choosing it in pivotUi
-      if (this.viewStandartChart) {
-        window.dispatchEvent(new Event('resize'))
-      }
+      this.handleResize()
     },
 
     getOptionsForSave() {

@@ -123,10 +123,8 @@ describe('Chart.vue', () => {
     const newContainerWidth = initialContainerWidth * 2 || 1000
     const newContainerHeight = initialContainerHeight * 2 || 2000
 
-    wrapper.find('.chart-container').wrapperElement.parentElement.style.width =
-      `${newContainerWidth}px`
-    wrapper.find('.chart-container').wrapperElement.parentElement.style.height =
-      `${newContainerHeight}px`
+    container.style.width = `${newContainerWidth}px`
+    container.style.height = `${newContainerHeight}px`
 
     await flushPromises()
 
@@ -177,6 +175,36 @@ describe('Chart.vue', () => {
     const url = await wrapper.vm.prepareCopy.returnValues[0]
     expect(wrapper.emitted().loadingImageCompleted.length).to.equal(1)
     expect(fIo.downloadFromUrl.calledOnceWith(url, 'chart'))
+    wrapper.unmount()
+  })
+
+  it('dataSources are passed correctly', async () => {
+    const dataSources = {
+      name: ['Gryffindor'],
+      points: [80]
+    }
+
+    const wrapper = mount(Chart, {
+      attachTo: document.body,
+      props: {
+        dataSources
+      },
+      global: {
+        mocks: { $store }
+      }
+    })
+    await flushPromises()
+    await wrapper.find('button.js-add-button').wrapperElement.click()
+
+    await flushPromises()
+
+    await wrapper
+      .find('.field .dropdown-container .Select__indicator')
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    expect(wrapper.find('.Select__menu').text()).to.contain('name' + 'points')
     wrapper.unmount()
   })
 })

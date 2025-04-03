@@ -1,6 +1,6 @@
 <template>
   <div ref="chartContainer" class="chart-container">
-    <div v-show="!dataSources && visible" class="warning chart-warning">
+    <div v-show="!dataSources" class="warning chart-warning">
       There is no data to build a chart. Run your SQL query and make sure the
       result is not empty.
     </div>
@@ -9,7 +9,6 @@
       :style="{ height: !dataSources ? 'calc(100% - 40px)' : '100%' }"
     >
       <PlotlyEditor
-        v-show="visible"
         ref="plotlyEditor"
         :data="state.data"
         :layout="state.layout"
@@ -64,7 +63,6 @@ export default {
         displaylogo: false,
         modeBarButtonsToRemove: ['toImage']
       },
-      visible: true,
       resizeObserver: null,
       useResizeHandler: this.$store.state.isWorkspaceVisible
     }
@@ -137,7 +135,7 @@ export default {
     updatePlotly() {
       const plotComponent = this.$refs.plotlyEditor.plotComponentRef.current
       plotComponent.updatePlotly(
-        false, // shouldInvokeResizeHandler
+        true, // shouldInvokeResizeHandler
         plotComponent.props.onUpdate, // figureCallbackFunction
         false // shouldAttachUpdateEvents
       )

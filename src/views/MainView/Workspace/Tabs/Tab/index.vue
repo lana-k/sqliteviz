@@ -134,7 +134,6 @@ export default {
       const fromPosition = this.tab.layout[from]
       this.tab.layout[from] = this.tab.layout[to]
       this.tab.layout[to] = fromPosition
-      window.dispatchEvent(new Event('resize'))
 
       events.send('inquiry.panel', null, { panel: to })
     },

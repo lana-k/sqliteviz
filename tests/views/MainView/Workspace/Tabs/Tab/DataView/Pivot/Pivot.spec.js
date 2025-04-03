@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import Pivot from '@/views/MainView/Workspace/Tabs/Tab/DataView/Pivot'
 import chartHelper from '@/lib/chartHelper'
 import fIo from '@/lib/utils/fileIo'
@@ -532,5 +532,58 @@ describe('Pivot.vue', () => {
     expect(
       fIo.downloadFromUrl.calledOnceWith('canvas data url', 'pivot')
     ).to.equal(true)
+  })
+
+  it('resizes standart chart', async () => {
+    const wrapper = mount(Pivot, {
+      global: {
+        mocks: { $store: { state: { isWorkspaceVisible: true } } }
+      },
+      props: {
+        dataSources: {
+          item: ['foo', 'bar', 'bar', 'bar'],
+          year: [2021, 2021, 2020, 2020]
+        },
+        initOptions: {
+          rows: ['item'],
+          cols: ['year'],
+          colOrder: 'key_a_to_z',
+          rowOrder: 'key_a_to_z',
+          aggregatorName: 'Count',
+          vals: [],
+          renderer: $.pivotUtilities.renderers['Bar Chart'],
+          rendererName: 'Bar Chart'
+        }
+      },
+      attachTo: container
+    })
+
+    await flushPromises()
+
+    const plotContainer = wrapper.find('.pivot-output').wrapperElement
+    const plot = wrapper.find('.svg-container').wrapperElement
+
+    const initialContainerWidth = plotContainer.scrollWidth
+    const initialContainerHeight = plotContainer.scrollHeight
+
+    const initialPlotWidth = plot.scrollWidth
+    const initialPlotHeight = plot.scrollHeight
+
+    const newContainerWidth = initialContainerWidth * 2 || 1000
+    const newContainerHeight = initialContainerHeight * 2 || 2000
+
+    plotContainer.style.width = `${newContainerWidth}px`
+    plotContainer.style.height = `${newContainerHeight}px`
+
+    await flushPromises()
+
+    const plotAfterResize = wrapper.find('.svg-container').wrapperElement
+    expect(plotAfterResize.scrollWidth).not.to.equal(initialPlotWidth)
+
+    expect(plotAfterResize.scrollWidth.scrollHeight).not.to.equal(
+      initialPlotHeight
+    )
+
+    wrapper.unmount()
   })
 })
