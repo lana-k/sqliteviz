@@ -30,6 +30,14 @@
       >
         <pivot-icon />
       </icon-button>
+      <icon-button
+        :active="mode === 'graph'"
+        tooltip="Switch to graph"
+        tooltipPosition="top-left"
+        @click="mode = 'graph'"
+      >
+        <graph-icon />
+      </icon-button>
 
       <div class="side-tool-bar-divider" />
 
@@ -87,10 +95,12 @@
 <script>
 import Chart from './Chart/index.vue'
 import Pivot from './Pivot/index.vue'
+import Graph from './Graph/index.vue'
 import SideToolBar from '../SideToolBar'
 import IconButton from '@/components/IconButton'
 import ChartIcon from '@/components/svg/chart'
 import PivotIcon from '@/components/svg/pivot'
+import GraphIcon from '@/components/svg/graph.vue'
 import HtmlIcon from '@/components/svg/html'
 import ExportToSvgIcon from '@/components/svg/exportToSvg'
 import PngIcon from '@/components/svg/png'
@@ -105,10 +115,12 @@ export default {
   components: {
     Chart,
     Pivot,
+    Graph,
     SideToolBar,
     IconButton,
     ChartIcon,
     PivotIcon,
+    GraphIcon,
     ExportToSvgIcon,
     PngIcon,
     HtmlIcon,
