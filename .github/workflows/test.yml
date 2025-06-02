@@ -1,37 +1,37 @@
-name: Run tests
-on:
-  workflow_dispatch:
-  push:
+name: Run tests   # 工作流程名稱：運行測試
+on:               # 觸發條件
+  workflow_dispatch:  # 手動執行
+  push:               # 當有推送到 master 分支時自動執行
     branches:
     - 'master'
-  pull_request:
+  pull_request:       # 當有針對 master 分支的 Pull Request 時自動執行
     branches:
     - 'master'
 
 jobs:
-  test:
-    name: Run tests
-    runs-on: ubuntu-20.04
+  test:               # 定義一個名為 test 的工作
+    name: Run tests   # 工作顯示名稱
+    runs-on: ubuntu-20.04    # 指定執行此工作的虛擬機環境為 Ubuntu 20.04
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2   # 第一步：檢出（下載）你的程式碼到 runner
     - name: Use Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: 16.x
+        node-version: 16.x       # 第二步：設定 Node.js 版本為 16.x
     - name: Install browsers
-      run: |
+      run: |                    # 第三步：安裝瀏覽器（Chromium 及 Firefox），供測試用
         export DEBIAN_FRONTEND=noninteractive
         sudo apt-get update
         sudo apt-get install -y chromium-browser firefox
 
     - name: Update npm
-      run: npm install -g npm@8
+      run: npm install -g npm@8   # 第四步：將 npm 更新到第 8 版
 
     - name: Install the project
-      run: npm install
+      run: npm install            # 第五步：安裝專案依賴（npm install）
 
     - name: Run lint
-      run: npm run lint -- --no-fix
+      run: npm run lint -- --no-fix   # 第六步：執行程式碼靜態檢查（lint），但不自動修正錯誤
 
     - name: Run karma tests
-      run: npm run test
+      run: npm run test               # 第七步：執行測試腳本（通常會用 karma 跑單元測試）
