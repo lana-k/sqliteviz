@@ -1,45 +1,51 @@
 name: Create release
 on:
-  workflow_dispatch:
-  push:
+  workflow_dispatch: # 這個工作流程可以手動觸發
+  push: # 當推送標籤時會自動觸發
     tags:
-    - '*'
+    - '*' # 這裡的意思是匹配所有標籤，例如 v1.0、v2.3.4 等
 
 jobs:
   deploy:
-    name: Create release
-    runs-on: ubuntu-latest    
+    name: Create release # 這個工作的名稱是「建立發布」
+    runs-on: ubuntu-latest # 這個工作會在最新的 Ubuntu 系統上執行
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2 # 第一步：檢出當前倉庫的代碼，類似於執行 `git clone`
+
     - name: Use Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v1 # 第二步：設置 Node.js 環境
       with:
-        node-version: 16.x
+        node-version: 16.x # 使用 Node.js 16.x 版本，適合大多數現代 JavaScript 專案
 
     - name: Update npm
-      run: npm install -g npm@8
+      run: npm install -g npm@8 # 第三步：更新 npm 到版本 8，確保使用最新的包管理工具
+      # 舉例：如果你原本的 npm 是舊版本，這一步會升級它，避免因版本問題導致錯誤
 
     - name: npm install and build
       run: |
-        npm install
-        npm run build
+        npm install # 第四步：安裝專案所需的依賴包，類似於執行 `npm install`
+        npm run build # 然後執行構建腳本，通常會生成最終的產品檔案
+      # 舉例：如果你的專案是前端應用，這一步可能會生成壓縮的 JavaScript 和 CSS 檔案
 
     - name: Create archives
       run: |
-        cd dist
-        zip -9 -r ../dist.zip . -x "js/*.map" -x "/*.map"
-        zip -9 -r  ../dist_map.zip .
+        cd dist # 第五步：進入構建後的輸出目錄（dist）
+        zip -9 -r ../dist.zip . -x "js/*.map" -x "/*.map" # 壓縮 dist 目錄，排除 .map 文件
+        zip -9 -r ../dist_map.zip . # 再壓縮一次，這次包含所有文件
+      # 舉例：dist.zip 是給用戶的最終產品包，而 dist_map.zip 是包含調試用的 .map 文件的完整包
 
     - name: Create Release Notes
       run: |
-        npm install github-release-notes@0.16.0 -g
-        gren changelog --generate  --config="/.github/workflows/config.grenrc.js"
+        npm install github-release-notes@0.16.0 -g # 第六步：安裝一個工具來生成發布說明
+        gren changelog --generate --config="/.github/workflows/config.grenrc.js" # 使用 gren 工具生成變更日誌
       env:
-        GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 使用 GitHub Token 來授權 gren 工具
+      # 舉例：這一步會根據你的提交記錄自動生成一份「這次更新了什麼」的說明文件
 
     - name: Create release
-      uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@v1 # 第七步：使用 release-action 工具來建立 GitHub 發布
       with:
-        artifacts: "dist.zip,dist_map.zip"
-        token: ${{ secrets.GITHUB_TOKEN }}
-        bodyFile: "CHANGELOG.md"
+        artifacts: "dist.zip,dist_map.zip" # 上傳兩個壓縮包作為發布的附件
+        token: ${{ secrets.GITHUB_TOKEN }} # 使用 GitHub Token 來授權發布
+        bodyFile: "CHANGELOG.md" # 發布說明的內容來自剛剛生成的 CHANGELOG.md
+      # 舉例：這一步會在 GitHub 的 Releases 頁面上新增一個版本，並附上壓縮包和更新說明
