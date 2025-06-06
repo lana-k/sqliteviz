@@ -49,130 +49,16 @@
               />
             </Field>
 
-            <Field label="Size">
-              <RadioBlocks
-                :options="nodeSizeTypeOptions"
-                :activeOption="settings.style.nodes.size.type"
-                @option-change="updateNodes('size.type', $event)"
-              />
-
-              <Field>
-                <NumericInput
-                  v-if="settings.style.nodes.size.type === 'constant'"
-                  :value="settings.style.nodes.size.value"
-                  :min="1"
-                  @update="updateNodes('size.value', $event)"
-                />
-                <Dropdown
-                  v-if="settings.style.nodes.size.type === 'variable'"
-                  :options="keysOptions"
-                  :value="settings.style.nodes.size.source"
-                  @change="updateNodes('size.source', $event)"
-                />
-                <Dropdown
-                  v-if="settings.style.nodes.size.type === 'calculated'"
-                  :options="nodeCalculatedSizeMethodOptions"
-                  :value="settings.style.nodes.size.method"
-                  @change="updateNodes('size.method', $event)"
-                />
-              </Field>
-            </Field>
-
-            <template v-if="settings.style.nodes.size.type !== 'constant'">
-              <Field label="Size scale">
-                <NumericInput
-                  :value="settings.style.nodes.size.scale"
-                  @update="updateNodes('size.scale', $event)"
-                />
-              </Field>
-
-              <Field label="Size mode">
-                <RadioBlocks
-                  :options="nodeSizeModeOptions"
-                  :activeOption="settings.style.nodes.size.mode"
-                  @option-change="updateNodes('size.mode', $event)"
-                />
-              </Field>
-
-              <Field label="Minimum size">
-                <NumericInput
-                  :value="settings.style.nodes.size.min"
-                  @update="updateNodes('size.min', $event)"
-                />
-              </Field>
-            </template>
-
-            <Field label="Color">
-              <RadioBlocks
-                :options="nodeColorTypeOptions"
-                :activeOption="settings.style.nodes.color.type"
-                @option-change="updateNodes('color.type', $event)"
-              />
-              <Field v-if="settings.style.nodes.color.type === 'constant'">
-                <ColorPicker
-                  :selectedColor="settings.style.nodes.color.value"
-                  @color-change="updateNodes('color.value', $event)"
-                />
-              </Field>
-              <template v-else>
-                <Field>
-                  <Dropdown
-                    v-if="settings.style.nodes.color.type === 'variable'"
-                    :options="keysOptions"
-                    :value="settings.style.nodes.color.source"
-                    @change="updateNodes('color.source', $event)"
-                  />
-                  <Dropdown
-                    v-if="settings.style.nodes.color.type === 'calculated'"
-                    :options="nodeCalculatedColorMethodOptions"
-                    :value="settings.style.nodes.color.method"
-                    @change="updateNodes('color.method', $event)"
-                  />
-                </Field>
-
-                <Field>
-                  <RadioBlocks
-                    :options="colorSourceUsageOptions"
-                    :activeOption="settings.style.nodes.color.sourceUsage"
-                    @option-change="updateNodes('color.sourceUsage', $event)"
-                  />
-                </Field>
-
-                <Field
-                  v-if="settings.style.nodes.color.sourceUsage === 'map_to'"
-                >
-                  <ColorscalePicker
-                    :selected="settings.style.nodes.color.colorscale"
-                    className="colorscale-picker"
-                    @colorscale-change="updateNodes('color.colorscale', $event)"
-                  />
-                </Field>
-              </template>
-            </Field>
-
-            <Field
-              v-if="settings.style.nodes.color.type !== 'constant'"
-              label="Color as"
-            >
-              <RadioBlocks
-                :options="сolorAsOptions"
-                :activeOption="settings.style.nodes.color.mode"
-                @option-change="updateNodes('color.mode', $event)"
-              />
-            </Field>
-
-            <Field
-              v-if="settings.style.nodes.color.type !== 'constant'"
-              label="Colorscale direction"
-            >
-              <RadioBlocks
-                :options="сolorscaleDirections"
-                :activeOption="settings.style.nodes.color.colorscaleDirection"
-                @option-change="
-                  updateNodes('color.colorscaleDirection', $event)
-                "
-              />
-            </Field>
+            <NodeSizeSettings
+              v-model="settings.style.nodes.size"
+              :keyOptions="keysOptions"
+              @update:model-value="updateNodes('size', $event)"
+            />
+            <NodeColorSettings
+              v-model="settings.style.nodes.color"
+              :keyOptions="keysOptions"
+              @update:model-value="updateNodes('color', $event)"
+            />
           </Fold>
         </Panel>
 
@@ -194,110 +80,17 @@
               />
             </Field>
 
-            <Field label="Size">
-              <RadioBlocks
-                :options="edgeSizeTypeOptions"
-                :activeOption="settings.style.edges.size.type"
-                @option-change="updateEdges('size.type', $event)"
-              />
+            <EdgeSizeSettings
+              v-model="settings.style.edges.size"
+              :keyOptions="keysOptions"
+              @update:model-value="updateEdges('size', $event)"
+            />
 
-              <Field>
-                <NumericInput
-                  v-if="settings.style.edges.size.type === 'constant'"
-                  :value="settings.style.edges.size.value"
-                  :min="1"
-                  @update="updateEdges('size.value', $event)"
-                />
-                <Dropdown
-                  v-if="settings.style.edges.size.type === 'variable'"
-                  :options="keysOptions"
-                  :value="settings.style.edges.size.source"
-                  @change="updateEdges('size.source', $event)"
-                />
-              </Field>
-            </Field>
-
-            <template v-if="settings.style.edges.size.type !== 'constant'">
-              <Field label="Size scale">
-                <NumericInput
-                  :value="settings.style.edges.size.scale"
-                  @update="updateEdges('size.scale', $event)"
-                />
-              </Field>
-
-              <Field label="Minimum size">
-                <NumericInput
-                  :value="settings.style.edges.size.min"
-                  @update="updateEdges('size.min', $event)"
-                />
-              </Field>
-            </template>
-
-            <Field label="Color">
-              <RadioBlocks
-                :options="edgeColorTypeOptions"
-                :activeOption="settings.style.edges.color.type"
-                @option-change="updateEdges('color.type', $event)"
-              />
-              <Field v-if="settings.style.edges.color.type === 'constant'">
-                <ColorPicker
-                  :selectedColor="settings.style.edges.color.value"
-                  @color-change="updateEdges('color.value', $event)"
-                />
-              </Field>
-              <template v-else>
-                <Field>
-                  <Dropdown
-                    v-if="settings.style.edges.color.type === 'variable'"
-                    :options="keysOptions"
-                    :value="settings.style.edges.color.source"
-                    @change="updateEdges('color.source', $event)"
-                  />
-                </Field>
-
-                <Field>
-                  <RadioBlocks
-                    :options="colorSourceUsageOptions"
-                    :activeOption="settings.style.edges.color.sourceUsage"
-                    @option-change="updateEdges('color.sourceUsage', $event)"
-                  />
-                </Field>
-
-                <Field
-                  v-if="settings.style.edges.color.sourceUsage === 'map_to'"
-                >
-                  <ColorscalePicker
-                    :selected="settings.style.edges.color.colorscale"
-                    className="colorscale-picker"
-                    @colorscale-change="updateEdges('color.colorscale', $event)"
-                  />
-                </Field>
-              </template>
-            </Field>
-
-            <Field
-              v-if="settings.style.edges.color.type !== 'constant'"
-              label="Color as"
-            >
-              <RadioBlocks
-                :options="сolorAsOptions"
-                :activeOption="settings.style.edges.color.mode"
-                @option-change="updateEdges('color.mode', $event)"
-              />
-            </Field>
-
-            <Field
-              v-if="settings.style.edges.color.type !== 'constant'"
-              label="Colorscale direction"
-            >
-              <RadioBlocks
-                :options="сolorscaleDirections"
-                :activeOption="settings.style.edges.color.colorscaleDirection"
-                @option-change="
-                  updateEdges('color.colorscaleDirection', $event)
-                "
-              />
-            </Field>
+            <EdgeColorSettings
+              v-model="settings.style.edges.color"
+              :keyOptions="keysOptions"
+              @update:model-value="updateEdges('color', $event)"
+            />
           </Fold>
         </Panel>
         <Panel group="Style" name="Layout">
@@ -350,17 +143,14 @@ import { markRaw } from 'vue'
 import { applyPureReactInVue } from 'veaury'
 import GraphEditorControls from '@/lib/GraphEditorControls.jsx'
 import { PanelMenuWrapper, Panel, Fold, Section } from 'react-chart-editor'
-import NumericInput from 'react-chart-editor/lib/components/widgets/NumericInput'
+import 'react-chart-editor/lib/react-chart-editor.css'
 import Dropdown from 'react-chart-editor/lib/components/widgets/Dropdown'
 import RadioBlocks from 'react-chart-editor/lib/components/widgets/RadioBlocks'
 import Button from 'react-chart-editor/lib/components/widgets/Button'
-import ColorscalePicker from 'react-chart-editor/lib/components/widgets/ColorscalePicker'
-import ColorPicker from 'react-chart-editor/lib/components/widgets/ColorPicker'
 import Field from 'react-chart-editor/lib/components/fields/Field'
 import RandomLayoutSettings from '@/components/Graph/RandomLayoutSettings.vue'
 import ForceAtlasLayoutSettings from '@/components/Graph/ForceAtlasLayoutSettings.vue'
 import CirclePackLayoutSettings from '@/components/Graph/CirclePackLayoutSettings.vue'
-import 'react-chart-editor/lib/react-chart-editor.css'
 import FA2Layout from 'graphology-layout-forceatlas2/worker'
 import forceAtlas2 from 'graphology-layout-forceatlas2'
 import RunIcon from '@/components/svg/run.vue'
@@ -375,6 +165,10 @@ import Graph from 'graphology'
 import { circular, random, circlepack } from 'graphology-layout'
 import Sigma from 'sigma'
 import seedrandom from 'seedrandom'
+import NodeColorSettings from '@/components/Graph/NodeColorSettings.vue'
+import NodeSizeSettings from '@/components/Graph/NodeSizeSettings.vue'
+import EdgeSizeSettings from '@/components/Graph/EdgeSizeSettings.vue'
+import EdgeColorSettings from '@/components/Graph/EdgeColorSettings.vue'
 
 export default {
   components: {
@@ -383,17 +177,18 @@ export default {
     Panel: applyPureReactInVue(Panel),
     PanelSection: applyPureReactInVue(Section),
     Dropdown: applyPureReactInVue(Dropdown),
-    NumericInput: applyPureReactInVue(NumericInput),
     RadioBlocks: applyPureReactInVue(RadioBlocks),
     Field: applyPureReactInVue(Field),
     Fold: applyPureReactInVue(Fold),
-    ColorscalePicker: applyPureReactInVue(ColorscalePicker),
-    ColorPicker: applyPureReactInVue(ColorPicker),
     Button: applyPureReactInVue(Button),
     RunIcon,
     StopIcon,
     RandomLayoutSettings,
-    CirclePackLayoutSettings
+    CirclePackLayoutSettings,
+    NodeColorSettings,
+    NodeSizeSettings,
+    EdgeSizeSettings,
+    EdgeColorSettings
   },
   props: {
     dataSources: Object
@@ -404,50 +199,6 @@ export default {
       renderer: null,
       fa2Layout: null,
       fa2Running: false,
-      nodeSizeTypeOptions: markRaw([
-        { label: 'Constant', value: 'constant' },
-        { label: 'Variable', value: 'variable' },
-        { label: 'Calculated', value: 'calculated' }
-      ]),
-      edgeSizeTypeOptions: markRaw([
-        { label: 'Constant', value: 'constant' },
-        { label: 'Variable', value: 'variable' }
-      ]),
-      nodeCalculatedSizeMethodOptions: markRaw([
-        { label: 'Degree', value: 'degree' },
-        { label: 'In degree', value: 'inDegree' },
-        { label: 'Out degree', value: 'outDegree' }
-      ]),
-      nodeSizeModeOptions: markRaw([
-        { label: 'Area', value: 'area' },
-        { label: 'Diameter', value: 'diameter' }
-      ]),
-      nodeColorTypeOptions: markRaw([
-        { label: 'Constant', value: 'constant' },
-        { label: 'Variable', value: 'variable' },
-        { label: 'Calculated', value: 'calculated' }
-      ]),
-      edgeColorTypeOptions: markRaw([
-        { label: 'Constant', value: 'constant' },
-        { label: 'Variable', value: 'variable' }
-      ]),
-      nodeCalculatedColorMethodOptions: markRaw([
-        { label: 'Degree', value: 'degree' },
-        { label: 'In degree', value: 'inDegree' },
-        { label: 'Out degree', value: 'outDegree' }
-      ]),
-      сolorAsOptions: markRaw([
-        { label: 'Continious', value: 'continious' },
-        { label: 'Categorical', value: 'categorical' }
-      ]),
-      сolorscaleDirections: markRaw([
-        { label: 'Normal', value: 'normal' },
-        { label: 'Recersed', value: 'reversed' }
-      ]),
-      colorSourceUsageOptions: markRaw([
-        { label: 'Direct', value: 'direct' },
-        { label: 'Map to', value: 'map_to' }
-      ]),
       visibilityOptions: markRaw([
         { label: 'Show', value: true },
         { label: 'Hide', value: false }
