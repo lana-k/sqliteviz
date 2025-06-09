@@ -13,6 +13,7 @@
     "format": "prettier .  --write"
   },
   "dependencies": {
+    "@sigma/export-image": "^3.0.0",
     "buffer": "^6.0.3",
     "codemirror": "^5.65.18",
     "codemirror-editor-vue3": "^2.8.0",

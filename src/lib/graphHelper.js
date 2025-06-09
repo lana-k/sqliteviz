@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid'
 import { COLOR_PICKER_CONSTANTS } from 'react-colorscales'
 import tinycolor from 'tinycolor2'
 
@@ -17,7 +16,8 @@ export function buildNodes(graph, dataSources, options) {
 
     nodes.forEach(node => {
       graph.addNode(node[nodeId], {
-        data: node
+        data: node,
+        labelColor: options.style.nodes.label.color
       })
     })
   }
@@ -37,7 +37,8 @@ export function buildEdges(graph, dataSources, options) {
       const target = edge[edgeTarget]
       if (graph.hasNode(source) && graph.hasNode(target)) {
         graph.addEdge(source, target, {
-          data: edge
+          data: edge,
+          labelColor: options.style.edges.label.color
         })
       }
     })
@@ -97,10 +98,11 @@ export function updateEdges(graph, attributeUpdates) {
 }
 
 function getUpdateLabelMethod(labelSettings) {
-  const { source } = labelSettings
+  const { source, color } = labelSettings
   return attributes => {
     const label = attributes.data[source] ?? ''
     attributes.label = label.toString()
+    attributes.labelColor = color
   }
 }
 
@@ -301,64 +303,6 @@ export function getOptionsFromDataSources(dataSources) {
   }))
 }
 
-export function getOptionsForSave(state, dataSources) {
-  // we don't need to save the data, only settings
-  // so we modify state.data using dereference
-  const stateCopy = JSON.parse(JSON.stringify(state))
-  const emptySources = {}
-  for (const key in dataSources) {
-    emptySources[key] = []
-  }
-  dereference.default(stateCopy.data, emptySources)
-  return stateCopy
-}
-
-export async function getImageDataUrl(element, type) {
-  const chartElement = element.querySelector('.js-plotly-plot')
-  return await plotly.toImage(chartElement, {
-    format: type,
-    width: null,
-    height: null
-  })
-}
-
-export function getChartData(element) {
-  const chartElement = element.querySelector('.js-plotly-plot')
-  return {
-    data: chartElement.data,
-    layout: chartElement.layout
-  }
-}
-
-export function getHtml(options) {
-  const chartId = nanoid()
-  return `
-      <script src="https://cdn.plot.ly/plotly-latest.js" charset="UTF-8"></script>
-      <div id="${chartId}"></div>
-      <script>
-        const el = document.getElementById("${chartId}")
-        
-        let timeout
-        function debounceResize() {
-          clearTimeout(timeout)
-          timeout = setTimeout(() => {
-            var r = el.getBoundingClientRect()
-            Plotly.relayout(el, {width: r.width, height: r.height})
-          }, 200)
-        }
-        
-        const resizeObserver = new ResizeObserver(debounceResize)
-        resizeObserver.observe(el)
-      
-        Plotly.newPlot(el, ${JSON.stringify(options.data)}, ${JSON.stringify(options.layout)})
-      </script>
-  `
-}
-
 export default {
-  getOptionsFromDataSources,
-  getOptionsForSave,
-  getImageDataUrl,
-  getHtml,
-  getChartData
+  getOptionsFromDataSources
 }

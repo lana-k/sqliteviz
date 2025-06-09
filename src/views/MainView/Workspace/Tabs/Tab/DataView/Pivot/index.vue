@@ -46,14 +46,15 @@ export default {
   props: {
     dataSources: Object,
     initOptions: Object,
-    importToPngEnabled: Boolean,
-    importToSvgEnabled: Boolean
+    exportToPngEnabled: Boolean,
+    exportToSvgEnabled: Boolean
   },
   emits: [
     'loadingImageCompleted',
     'update',
-    'update:importToSvgEnabled',
-    'update:importToPngEnabled'
+    'update:exportToSvgEnabled',
+    'update:exportToPngEnabled',
+    'update:exportToHtmlEnabled'
   ],
   data() {
     return {
@@ -110,11 +111,11 @@ export default {
       immediate: true,
       handler() {
         this.$emit(
-          'update:importToPngEnabled',
+          'update:exportToPngEnabled',
           this.pivotOptions.rendererName !== 'TSV Export'
         )
         this.$emit(
-          'update:importToSvgEnabled',
+          'update:exportToSvgEnabled',
           this.viewStandartChart || this.viewCustomChart
         )
         events.send('viz_pivot.render', null, {
@@ -125,6 +126,9 @@ export default {
     pivotOptions() {
       this.show()
     }
+  },
+  created() {
+    this.$emit('update:exportToHtmlEnabled', true)
   },
   mounted() {
     this.show()

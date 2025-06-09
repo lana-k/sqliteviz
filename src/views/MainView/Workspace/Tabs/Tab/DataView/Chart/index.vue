@@ -45,11 +45,16 @@ export default {
   props: {
     dataSources: Object,
     initOptions: Object,
-    importToPngEnabled: Boolean,
-    importToSvgEnabled: Boolean,
+    exportToPngEnabled: Boolean,
+    exportToSvgEnabled: Boolean,
     forPivot: Boolean
   },
-  emits: ['update:importToSvgEnabled', 'update', 'loadingImageCompleted'],
+  emits: [
+    'update:exportToSvgEnabled',
+    'update:exportToHtmlEnabled',
+    'update',
+    'loadingImageCompleted'
+  ],
   data() {
     return {
       plotly,
@@ -102,7 +107,8 @@ export default {
       },
       { deep: true }
     )
-    this.$emit('update:importToSvgEnabled', true)
+    this.$emit('update:exportToSvgEnabled', true)
+    this.$emit('update:exportToHtmlEnabled', true)
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(this.handleResize)

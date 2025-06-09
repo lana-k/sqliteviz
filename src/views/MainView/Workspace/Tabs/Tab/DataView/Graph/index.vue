@@ -7,20 +7,22 @@
     <div
       class="graph"
       :style="{
-        height: !dataSources ? 'calc(100% - 40px)' : '100%',
-        'background-color': 'white'
+        height: !dataSources ? 'calc(100% - 40px)' : '100%'
       }"
     >
-      <GraphEditor :dataSources="dataSources" />
+      <GraphEditor
+        ref="graphEditor"
+        :dataSources="dataSources"
+        :initOptions="initOptions"
+        @update="$emit('update')"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import 'react-chart-editor/lib/react-chart-editor.css'
-import fIo from '@/lib/utils/fileIo'
 import events from '@/lib/utils/events'
-
 import GraphEditor from './GraphEditor.vue'
 
 export default {
@@ -29,30 +31,49 @@ export default {
   props: {
     dataSources: Object,
     initOptions: Object,
-    importToPngEnabled: Boolean,
-    importToSvgEnabled: Boolean
+    exportToPngEnabled: Boolean,
+    exportToSvgEnabled: Boolean,
+    exportToHtmlEnabled: Boolean
   },
-  emits: ['update:importToSvgEnabled', 'update', 'loadingImageCompleted'],
+  emits: [
+    'update:exportToSvgEnabled',
+    'update:exportToHtmlEnabled',
+    'update',
+    'loadingImageCompleted'
+  ],
+  data() {
+    return {
+      resizeObserver: null
+    }
+  },
 
   created() {
-    this.$emit('update:importToSvgEnabled', true)
+    this.$emit('update:exportToSvgEnabled', false)
+    this.$emit('update:exportToHtmlEnabled', false)
   },
-  mounted() {},
+  mounted() {
+    this.resizeObserver = new ResizeObserver(this.handleResize)
+    this.resizeObserver.observe(this.$refs.graphContainer)
+  },
+  beforeUnmount() {
+    this.resizeObserver.unobserve(this.$refs.graphContainer)
+  },
   methods: {
-    getOptionsForSave() {},
+    getOptionsForSave() {
+      return this.$refs.graphEditor.settings
+    },
     async saveAsPng() {
-      const url = await this.prepareCopy()
+      await this.$refs.graphEditor.saveAsPng()
       this.$emit('loadingImageCompleted')
-      fIo.downloadFromUrl(url, 'chart')
     },
-
-    async saveAsSvg() {
-      const url = await this.prepareCopy('svg')
-      fIo.downloadFromUrl(url, 'chart')
+    async prepareCopy() {
+      return await this.$refs.graphEditor.prepareCopy()
     },
-
-    saveAsHtml() {},
-    async prepareCopy(type = 'png') {}
+    async handleResize() {
+      const renderer = this.$refs.graphEditor.renderer
+      renderer.refresh()
+      renderer.getCamera().setState({ x: 0.5, y: 0.5 })
+    }
   }
 }
 </script>

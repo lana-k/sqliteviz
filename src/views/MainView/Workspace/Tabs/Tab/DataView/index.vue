@@ -4,9 +4,10 @@
       <component
         :is="mode"
         ref="viewComponent"
-        v-model:importToPngEnabled="importToPngEnabled"
-        v-model:importToSvgEnabled="importToSvgEnabled"
-        :initOptions="mode === initMode ? initOptions : undefined"
+        v-model:exportToPngEnabled="exportToPngEnabled"
+        v-model:exportToSvgEnabled="exportToSvgEnabled"
+        v-model:exportToHtmlEnabled="exportToHtmlEnabled"
+        :initOptions="initOptionsByMode[mode]"
         :data-sources="dataSource"
         @loading-image-completed="loadingImage = false"
         @update="$emit('update')"
@@ -42,7 +43,7 @@
       <div class="side-tool-bar-divider" />
 
       <icon-button
-        :disabled="!importToPngEnabled || loadingImage"
+        :disabled="!exportToPngEnabled || loadingImage"
         :loading="loadingImage"
         tooltip="Save as PNG image"
         tooltipPosition="top-left"
@@ -52,7 +53,7 @@
       </icon-button>
       <icon-button
         ref="svgExportBtn"
-        :disabled="!importToSvgEnabled"
+        :disabled="!exportToSvgEnabled"
         tooltip="Save as SVG"
         tooltipPosition="top-left"
         @click="saveAsSvg"
@@ -62,6 +63,7 @@
 
       <icon-button
         ref="htmlExportBtn"
+        :disabled="!exportToHtmlEnabled"
         tooltip="Save as HTML"
         tooltipPosition="top-left"
         @click="saveAsHtml"
@@ -136,12 +138,18 @@ export default {
   data() {
     return {
       mode: this.initMode || 'chart',
-      importToPngEnabled: true,
-      importToSvgEnabled: true,
+      exportToPngEnabled: true,
+      exportToSvgEnabled: true,
+      exportToHtmlEnabled: true,
       loadingImage: false,
       copyingImage: false,
       preparingCopy: false,
       dataToCopy: null,
+      initOptionsByMode: {
+        chart: this.initMode === 'chart' ? this.initOptions : null,
+        pivot: this.initMode === 'pivot' ? this.initOptions : null,
+        graph: this.initMode === 'graph' ? this.initOptions : null
+      },
       showLoadingDialog: false
     }
   },
@@ -151,9 +159,10 @@ export default {
     }
   },
   watch: {
-    mode() {
+    mode(newMode, oldMode) {
       this.$emit('update')
-      this.importToPngEnabled = true
+      this.exportToPngEnabled = true
+      this.initOptionsByMode[oldMode] = this.getOptionsForSave()
     }
   },
   methods: {

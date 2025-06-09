@@ -68,7 +68,7 @@ import Splitpanes from '@/components/Splitpanes'
 import SqlEditor from './SqlEditor'
 import DataView from './DataView'
 import RunResult from './RunResult'
-import { nextTick } from 'vue'
+import { nextTick, computed } from 'vue'
 
 import events from '@/lib/utils/events'
 
@@ -79,6 +79,11 @@ export default {
     DataView,
     RunResult,
     Splitpanes
+  },
+  provide() {
+    return {
+      tabLayout: computed(() => this.tab.layout)
+    }
   },
   props: {
     tab: Object
