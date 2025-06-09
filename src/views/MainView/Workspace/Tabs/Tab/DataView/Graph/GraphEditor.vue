@@ -39,6 +39,16 @@
             </Field>
           </Fold>
         </Panel>
+        <Panel group="Style" name="General">
+          <Fold name="General">
+            <Field label="Background color">
+              <ColorPicker
+                :selectedColor="settings.style.backgroundColor"
+                @color-change="settings.style.backgroundColor = $event"
+              />
+            </Field>
+          </Fold>
+        </Panel>
         <Panel group="Style" name="Nodes">
           <Fold name="Nodes">
             <Field label="Label">
@@ -46,6 +56,13 @@
                 :options="keysOptions"
                 :value="settings.style.nodes.label.source"
                 @change="updateNodes('label.source', $event)"
+              />
+            </Field>
+
+            <Field label="Label color">
+              <ColorPicker
+                :selectedColor="settings.style.nodes.label.color"
+                @color-change="updateNodes('label.color', $event)"
               />
             </Field>
 
@@ -77,6 +94,13 @@
                 :options="keysOptions"
                 :value="settings.style.edges.label.source"
                 @change="updateEdges('label.source', $event)"
+              />
+            </Field>
+
+            <Field label="Label color">
+              <ColorPicker
+                :selectedColor="settings.style.edges.label.color"
+                @color-change="updateEdges('label.color', $event)"
               />
             </Field>
 
@@ -132,7 +156,8 @@
       ref="graph"
       :style="{
         height: '100%',
-        width: '100%'
+        width: '100%',
+        backgroundColor: settings.style.backgroundColor
       }"
     />
   </div>
@@ -146,6 +171,7 @@ import { PanelMenuWrapper, Panel, Fold, Section } from 'react-chart-editor'
 import 'react-chart-editor/lib/react-chart-editor.css'
 import Dropdown from 'react-chart-editor/lib/components/widgets/Dropdown'
 import RadioBlocks from 'react-chart-editor/lib/components/widgets/RadioBlocks'
+import ColorPicker from 'react-chart-editor/lib/components/widgets/ColorPicker'
 import Button from 'react-chart-editor/lib/components/widgets/Button'
 import Field from 'react-chart-editor/lib/components/fields/Field'
 import RandomLayoutSettings from '@/components/Graph/RandomLayoutSettings.vue'
@@ -155,6 +181,7 @@ import FA2Layout from 'graphology-layout-forceatlas2/worker'
 import forceAtlas2 from 'graphology-layout-forceatlas2'
 import RunIcon from '@/components/svg/run.vue'
 import StopIcon from '@/components/svg/stop.vue'
+import { downloadAsPNG, drawOnCanvas } from '@sigma/export-image'
 import {
   buildNodes,
   buildEdges,
@@ -181,6 +208,7 @@ export default {
     Field: applyPureReactInVue(Field),
     Fold: applyPureReactInVue(Fold),
     Button: applyPureReactInVue(Button),
+    ColorPicker: applyPureReactInVue(ColorPicker),
     RunIcon,
     StopIcon,
     RandomLayoutSettings,
@@ -190,9 +218,12 @@ export default {
     EdgeSizeSettings,
     EdgeColorSettings
   },
+  inject: ['tabLayout'],
   props: {
-    dataSources: Object
+    dataSources: Object,
+    initOptions: Object
   },
+  emits: ['update'],
   data() {
     return {
       graph: new Graph(),
@@ -215,7 +246,7 @@ export default {
         forceAtlas2: ForceAtlasLayoutSettings
       }),
 
-      settings: {
+      settings: this.initOptions || {
         structure: {
           nodeId: null,
           objectType: null,
@@ -223,50 +254,34 @@ export default {
           edgeTarget: null
         },
         style: {
+          backgroundColor: 'white',
           nodes: {
             size: {
               type: 'constant',
-              value: 16,
-              source: null,
-              scale: 1,
-              mode: 'diameter',
-              method: 'degree',
-              min: 0
+              value: 4
             },
             color: {
               type: 'constant',
-              value: '#1F77B4',
-              source: null,
-              sourceUsage: 'map_to',
-              colorscale: null,
-              colorscaleDirection: 'normal',
-              method: 'degree',
-              mode: 'continious'
+              value: '#1F77B4'
             },
             label: {
-              source: null
+              source: null,
+              color: '#444444'
             }
           },
           edges: {
             showDirection: true,
             size: {
               type: 'constant',
-              value: 2,
-              source: null,
-              scale: 1,
-              min: 0
+              value: 2
             },
             color: {
               type: 'constant',
-              value: '#a2b1c6',
-              source: null,
-              sourceUsage: 'map_to',
-              colorscale: null,
-              colorscaleDirection: 'normal',
-              mode: 'continious'
+              value: '#a2b1c6'
             },
             label: {
-              source: null
+              source: null,
+              color: '#a2b1c6'
             }
           }
         },
@@ -287,9 +302,15 @@ export default {
       if (!this.dataSources) {
         return []
       }
-      return this.dataSources[Object.keys(this.dataSources)[0] || 'doc'].map(
-        json => JSON.parse(json)
-      )
+      try {
+        return (
+          this.dataSources[Object.keys(this.dataSources)[0] || 'doc'].map(
+            json => JSON.parse(json)
+          ) || []
+        )
+      } catch {
+        return []
+      }
     },
     keysOptions() {
       if (!this.dataSources) {
@@ -309,11 +330,30 @@ export default {
         this.buildGraph()
       }
     },
+    settings: {
+      deep: true,
+      handler() {
+        this.$emit('update')
+      }
+    },
     'settings.structure': {
       deep: true,
       handler() {
         this.buildGraph()
       }
+    },
+    tabLayout: {
+      deep: true,
+      handler() {
+        if (this.tabLayout.dataView !== 'hidden' && this.renderer) {
+          this.renderer.scheduleRender()
+        }
+      }
+    }
+  },
+  mounted() {
+    if (this.dataSources) {
+      this.buildGraph()
     }
   },
   methods: {
@@ -333,7 +373,9 @@ export default {
       circular.assign(this.graph)
       this.renderer = new Sigma(this.graph, this.$refs.graph, {
         renderEdgeLabels: true,
-        allowInvalidContainer: true
+        allowInvalidContainer: true,
+        labelColor: { attribute: 'labelColor', color: '#444444' },
+        edgeLabelColor: { attribute: 'labelColor', color: '#a2b1c6' }
       })
     },
     updateStructure(attributeName, value) {
@@ -469,6 +511,16 @@ export default {
         this.fa2Running = true
         this.fa2Layout.start()
       }
+    },
+    saveAsPng() {
+      return downloadAsPNG(this.renderer, {
+        backgroundColor: this.settings.style.backgroundColor
+      })
+    },
+    prepareCopy() {
+      return drawOnCanvas(this.renderer, {
+        backgroundColor: this.settings.style.backgroundColor
+      })
     }
   }
 }
