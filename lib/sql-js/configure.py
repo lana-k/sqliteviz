@@ -30,7 +30,7 @@ extension_urls = (
     ('https://sqlite.org/src/raw/228d47e9?at=decimal.c', 'sqlite3_decimal_init'),
     # Third-party extension
     # =====================
-    ('https://github.com/jakethaw/pivot_vtab/raw/9323ef93/pivot_vtab.c', 'sqlite3_pivotvtab_init'),
+    ('https://github.com/jakethaw/pivot_vtab/raw/e7705f34/pivot_vtab.c', 'sqlite3_pivotvtab_init'),
     ('https://github.com/nalgeon/sqlean/raw/95e8d21a/src/pearson.c', 'sqlite3_pearson_init'),
     # Third-party extension with own dependencies
     # ===========================================
