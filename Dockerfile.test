@@ -3,7 +3,7 @@
 #     docker build -t sqliteviz/test -f Dockerfile.test .
 #
 
-FROM node:12.22-buster
+FROM node:12.22-bullseye
 
 RUN set -ex; \
     apt update; \

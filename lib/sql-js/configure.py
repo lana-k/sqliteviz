@@ -10,7 +10,7 @@ from pathlib import Path
 from urllib import request
 
 
-amalgamation_url = 'https://sqlite.org/2023/sqlite-amalgamation-3410000.zip'
+amalgamation_url = 'https://sqlite.org/2025/sqlite-amalgamation-3500300.zip'
 
 # Extension-functions
 # ===================
@@ -22,15 +22,15 @@ contrib_functions_url = 'https://sqlite.org/contrib/download/extension-functions
 extension_urls = (
     # Miscellaneous extensions
     # ========================
-    ('https://sqlite.org/src/raw/8d79354f?at=series.c', 'sqlite3_series_init'),
-    ('https://sqlite.org/src/raw/dbfd8543?at=closure.c', 'sqlite3_closure_init'),
+    ('https://sqlite.org/src/raw/e212edb2?at=series.c', 'sqlite3_series_init'),
+    ('https://sqlite.org/src/raw/5559daf1?at=closure.c', 'sqlite3_closure_init'),
     ('https://sqlite.org/src/raw/5bb2264c?at=uuid.c', 'sqlite3_uuid_init'),
-    ('https://sqlite.org/src/raw/5853b0e5?at=regexp.c', 'sqlite3_regexp_init'),
-    ('https://sqlite.org/src/raw/b9086e22?at=percentile.c', 'sqlite3_percentile_init'),
-    ('https://sqlite.org/src/raw/09f967dc?at=decimal.c', 'sqlite3_decimal_init'),
+    ('https://sqlite.org/src/raw/388e7f23?at=regexp.c', 'sqlite3_regexp_init'),
+    ('https://sqlite.org/src/raw/72e05a21?at=percentile.c', 'sqlite3_percentile_init'),
+    ('https://sqlite.org/src/raw/228d47e9?at=decimal.c', 'sqlite3_decimal_init'),
     # Third-party extension
     # =====================
-    ('https://github.com/jakethaw/pivot_vtab/raw/9323ef93/pivot_vtab.c', 'sqlite3_pivotvtab_init'),
+    ('https://github.com/jakethaw/pivot_vtab/raw/e7705f34/pivot_vtab.c', 'sqlite3_pivotvtab_init'),
     ('https://github.com/nalgeon/sqlean/raw/95e8d21a/src/pearson.c', 'sqlite3_pearson_init'),
     # Third-party extension with own dependencies
     # ===========================================

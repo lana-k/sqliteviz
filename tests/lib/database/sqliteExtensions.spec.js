@@ -413,7 +413,7 @@ describe('SQLite extensions', function () {
         WHERE ip.id <= p.id
       ) AS path
       FROM tmp, json_each(filename_array) AS p
-      WHERE p.id > 1  -- because the filenames start with the separator
+      WHERE p.key > 0  -- because the filenames start with the separator
     `)
     expect(actual.values).to.eql({
       path: [
