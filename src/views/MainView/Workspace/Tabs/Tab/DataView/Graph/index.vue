@@ -71,8 +71,10 @@ export default {
     },
     async handleResize() {
       const renderer = this.$refs.graphEditor.renderer
-      renderer.refresh()
-      renderer.getCamera().setState({ x: 0.5, y: 0.5 })
+      if (renderer) {
+        renderer.refresh()
+        renderer.getCamera().setState({ x: 0.5, y: 0.5 })
+      }
     }
   }
 }

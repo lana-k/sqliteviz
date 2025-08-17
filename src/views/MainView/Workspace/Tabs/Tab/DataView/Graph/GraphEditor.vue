@@ -133,8 +133,19 @@
               :keyOptions="keysOptions"
               @update:model-value="updateLayout(settings.layout.type)"
             />
-
-            <Field v-if="settings.layout.type === 'forceAtlas2'">
+          </Fold>
+          <template v-if="settings.layout.type === 'forceAtlas2'">
+            <Fold name="Advanced layout settings">
+              <AdvancedForceAtlasLayoutSettings
+                v-model="settings.layout.options"
+                :keyOptions="keysOptions"
+                @update:model-value="updateLayout(settings.layout.type)"
+              />
+            </Fold>
+            <div class="force-atlas-buttons">
+              <Button variant="secondary" @click="resetFA2LayoutSettings">
+                Reset
+              </Button>
               <Button variant="primary" @click="toggleFA2Layout">
                 <template #node:icon>
                   <div
@@ -143,12 +154,13 @@
                     }"
                   >
                     <RunIcon v-if="!fa2Running" />
-                    <StopIcon v-else /></div
-                ></template>
+                    <StopIcon v-else />
+                  </div>
+                </template>
                 {{ fa2Running ? 'Stop' : 'Start' }}
               </Button>
-            </Field>
-          </Fold>
+            </div>
+          </template>
         </Panel>
       </PanelMenuWrapper>
     </GraphEditorControls>
@@ -176,6 +188,7 @@ import Button from 'react-chart-editor/lib/components/widgets/Button'
 import Field from 'react-chart-editor/lib/components/fields/Field'
 import RandomLayoutSettings from '@/components/Graph/RandomLayoutSettings.vue'
 import ForceAtlasLayoutSettings from '@/components/Graph/ForceAtlasLayoutSettings.vue'
+import AdvancedForceAtlasLayoutSettings from '@/components/Graph/AdvancedForceAtlasLayoutSettings.vue'
 import CirclePackLayoutSettings from '@/components/Graph/CirclePackLayoutSettings.vue'
 import FA2Layout from 'graphology-layout-forceatlas2/worker'
 import forceAtlas2 from 'graphology-layout-forceatlas2'
@@ -216,7 +229,8 @@ export default {
     NodeColorSettings,
     NodeSizeSettings,
     EdgeSizeSettings,
-    EdgeColorSettings
+    EdgeColorSettings,
+    AdvancedForceAtlasLayoutSettings
   },
   inject: ['tabLayout'],
   props: {
@@ -226,10 +240,11 @@ export default {
   emits: ['update'],
   data() {
     return {
-      graph: new Graph(),
+      graph: new Graph({ multi: true, allowSelfLoops: true }),
       renderer: null,
       fa2Layout: null,
       fa2Running: false,
+      checkIteration: null,
       visibilityOptions: markRaw([
         { label: 'Show', value: true },
         { label: 'Hide', value: false }
@@ -246,50 +261,52 @@ export default {
         forceAtlas2: ForceAtlasLayoutSettings
       }),
 
-      settings: this.initOptions || {
-        structure: {
-          nodeId: null,
-          objectType: null,
-          edgeSource: null,
-          edgeTarget: null
-        },
-        style: {
-          backgroundColor: 'white',
-          nodes: {
-            size: {
-              type: 'constant',
-              value: 4
+      settings: this.initOptions
+        ? JSON.parse(JSON.stringify(this.initOptions))
+        : {
+            structure: {
+              nodeId: null,
+              objectType: null,
+              edgeSource: null,
+              edgeTarget: null
             },
-            color: {
-              type: 'constant',
-              value: '#1F77B4'
+            style: {
+              backgroundColor: 'white',
+              nodes: {
+                size: {
+                  type: 'constant',
+                  value: 4
+                },
+                color: {
+                  type: 'constant',
+                  value: '#1F77B4'
+                },
+                label: {
+                  source: null,
+                  color: '#444444'
+                }
+              },
+              edges: {
+                showDirection: true,
+                size: {
+                  type: 'constant',
+                  value: 2
+                },
+                color: {
+                  type: 'constant',
+                  value: '#a2b1c6'
+                },
+                label: {
+                  source: null,
+                  color: '#a2b1c6'
+                }
+              }
             },
-            label: {
-              source: null,
-              color: '#444444'
+            layout: {
+              type: 'circular',
+              options: null
             }
           },
-          edges: {
-            showDirection: true,
-            size: {
-              type: 'constant',
-              value: 2
-            },
-            color: {
-              type: 'constant',
-              value: '#a2b1c6'
-            },
-            label: {
-              source: null,
-              color: '#a2b1c6'
-            }
-          }
-        },
-        layout: {
-          type: 'circular',
-          options: null
-        }
-      },
       layoutOptionsArchive: {
         random: null,
         circlepack: null,
@@ -370,13 +387,16 @@ export default {
       updateNodes(this.graph, this.settings.style.nodes)
       updateEdges(this.graph, this.settings.style.edges)
 
-      circular.assign(this.graph)
+      this.updateLayout(this.settings.layout.type)
       this.renderer = new Sigma(this.graph, this.$refs.graph, {
         renderEdgeLabels: true,
         allowInvalidContainer: true,
         labelColor: { attribute: 'labelColor', color: '#444444' },
         edgeLabelColor: { attribute: 'labelColor', color: '#a2b1c6' }
       })
+      if (this.settings.layout.type === 'forceAtlas2') {
+        this.autoRunFA2Layout()
+      }
     },
     updateStructure(attributeName, value) {
       this.settings.structure[attributeName] = value
@@ -410,39 +430,31 @@ export default {
       })
     },
     updateLayout(layoutType) {
-      if (layoutType !== this.settings.layout.type) {
-        const prevLayout = this.settings.layout.type
+      const prevLayout = this.settings.layout.type
+
+      // Change layout type? - restore layout settings or set default settings
+      if (layoutType !== prevLayout) {
         this.layoutOptionsArchive[prevLayout] = this.settings.layout.options
         this.settings.layout.options = this.layoutOptionsArchive[layoutType]
 
-        if (layoutType === 'forceAtlas2' && !this.settings.layout.options) {
-          const sensibleSettings = forceAtlas2.inferSettings(this.graph)
-          this.settings.layout.options = {
-            adjustSizes: false,
-            barnesHutOptimize: false,
-            barnesHutTheta: 0.5,
-            edgeWeightInfluence: 1,
-            gravity: 1,
-            linLogMode: false,
-            outboundAttractionDistribution: false,
-            scalingRatio: 1,
-            slowDown: 1,
-            strongGravityMode: false,
-            ...sensibleSettings
-          }
-        } else if (layoutType === 'random' && !this.settings.layout.options) {
-          this.settings.layout.options = {
-            seedValue: 1
-          }
-        } else if (
-          layoutType === 'circlepack' &&
-          !this.settings.layout.options
-        ) {
-          this.settings.layout.options = {
-            seedValue: 1
+        if (!this.settings.layout.options) {
+          if (layoutType === 'forceAtlas2') {
+            this.setRecommendedFA2Settings()
+          } else if (['random', 'circlepack'].includes(layoutType)) {
+            this.settings.layout.options = {
+              seedValue: 1
+            }
           }
         }
         this.settings.layout.type = layoutType
+      }
+
+      // In any case kill FA2 if it exists
+      if (this.fa2Layout) {
+        if (this.fa2Layout.isRunning()) {
+          this.stopFA2Layout()
+        }
+        this.fa2Layout.kill()
       }
 
       if (layoutType === 'circular') {
@@ -491,26 +503,98 @@ export default {
       }
 
       if (layoutType === 'forceAtlas2') {
-        if (this.fa2Layout) {
-          this.fa2Layout.kill()
+        if (
+          !this.graph.someNode(
+            (nodeKey, attributes) =>
+              typeof attributes.x === 'number' &&
+              typeof attributes.y === 'number'
+          )
+        ) {
+          circular.assign(this.graph)
         }
+
         this.fa2Layout = markRaw(
           new FA2Layout(this.graph, {
             getEdgeWeight: (_, attr) =>
-              attr.data[this.settings.layout.options.weightSource || 'weight'],
+              this.settings.layout.options.weightSource
+                ? attr.data[this.settings.layout.options.weightSource]
+                : 1,
             settings: this.settings.layout.options
           })
         )
+        if (layoutType !== prevLayout) {
+          this.autoRunFA2Layout()
+        }
       }
     },
     toggleFA2Layout() {
       if (this.fa2Layout.isRunning()) {
-        this.fa2Running = false
-        this.fa2Layout.stop()
+        this.stopFA2Layout()
       } else {
         this.fa2Running = true
         this.fa2Layout.start()
       }
+    },
+    stopFA2Layout() {
+      this.fa2Running = false
+      this.fa2Layout.stop()
+      if (this.checkIteration) {
+        this.fa2Layout.worker.removeEventListener(
+          'message',
+          this.checkIteration
+        )
+        this.checkIteration = null
+      }
+    },
+    autoRunFA2Layout() {
+      if (this.fa2Layout.isRunning()) {
+        this.stopFA2Layout()
+      }
+
+      let iteration = 1
+      this.checkIteration = () => {
+        if (
+          iteration === this.settings.layout.options.initialIterationsAmount
+        ) {
+          this.stopFA2Layout()
+        }
+        iteration++
+      }
+      this.fa2Layout.worker.addEventListener('message', this.checkIteration)
+      this.fa2Running = true
+      this.fa2Layout.start()
+    },
+    setRecommendedFA2Settings() {
+      const sensibleSettings = forceAtlas2.inferSettings(this.graph)
+      this.settings.layout.options = {
+        initialIterationsAmount: 50,
+        adjustSizes: false,
+        barnesHutOptimize: false,
+        barnesHutTheta: 0.5,
+        edgeWeightInfluence: 0,
+        gravity: 1,
+        linLogMode: false,
+        outboundAttractionDistribution: false,
+        scalingRatio: 1,
+        slowDown: 1,
+        strongGravityMode: false,
+        ...sensibleSettings
+      }
+      if (
+        [Infinity, -Infinity].includes(this.settings.layout.options.slowDown)
+      ) {
+        this.settings.layout.options.slowDown = 1
+      }
+    },
+    resetFA2LayoutSettings() {
+      if (this.initOptions?.layout.type === 'forceAtlas2') {
+        this.settings.layout = JSON.parse(
+          JSON.stringify(this.initOptions.layout)
+        )
+      } else {
+        this.setRecommendedFA2Settings()
+      }
+      this.updateLayout(this.settings.layout.type)
     },
     saveAsPng() {
       return downloadAsPNG(this.renderer, {
@@ -533,5 +617,15 @@ export default {
 
 :deep(.customPickerContainer) {
   float: right;
+}
+.force-atlas-buttons {
+  display: flex;
+  width: 100%;
+  gap: 16px;
+}
+
+.force-atlas-buttons :deep(button) {
+  flex-grow: 1;
+  flex-basis: 0;
 }
 </style>

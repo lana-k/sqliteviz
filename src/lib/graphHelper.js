@@ -13,7 +13,6 @@ export function buildNodes(graph, dataSources, options) {
     const nodes = dataSources[docColumn]
       .map(json => JSON.parse(json))
       .filter(item => item[objectType] === TYPE_NODE)
-
     nodes.forEach(node => {
       graph.addNode(node[nodeId], {
         data: node,
@@ -89,8 +88,8 @@ export function updateEdges(graph, attributeUpdates) {
   }
 
   graph.forEachEdge((edgeId, attributes, source, target) => {
-    graph.updateEdge(source, target, attributes => {
-      const newAttributes = { ...attributes }
+    graph.updateEdgeWithKey(edgeId, source, target, attr => {
+      const newAttributes = { ...attr }
       changeMethods.forEach(method => method(newAttributes, edgeId))
       return newAttributes
     })
