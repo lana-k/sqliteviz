@@ -1,31 +1,33 @@
 [{
-	"sections": [{
-			"title": "For users",
-			"items": [
-				"/docs/",
-				"/docs/installation/",
-				"/docs/basic-usage/",
-				"/docs/multiple-csv-file-import/",
-				"/docs/manage-inquiries/",
-				"/docs/export-current-database/",
-				"/docs/pivot-table/",
-				"/docs/predefined-inquiries/",
-				"/docs/diagnostic-information/"
-			]
-		},
-		{
-			"title": "Examples and tutorials",
-			"items": [
-				"/docs/how-to-migrate-to-sqliteviz-dot-com/",
-				"/docs/how-to-build-a-pivot-table-in-sq-lite/",
-				"/docs/how-to-rename-tables-and-columns-after-csv-import/"
-			]
-		},
-		{
-			"title": "For developers",
-			"items": [
-				"/docs/integrate-predefined-inquiries/"
-			]
-		}
-	]
+  "sections": [
+    {
+      "title": "For users",
+      "items": [
+        "/docs/",
+        "/docs/installation/",
+        "/docs/basic-usage/",
+        "/docs/multiple-csv-file-import/",
+        "/docs/manage-inquiries/",
+        "/docs/export-current-database/",
+        "/docs/pivot-table/",
+        "/docs/predefined-inquiries/",
+        "/docs/diagnostic-information/"
+      ]
+    },
+    {
+      "title": "Examples and tutorials",
+      "items": [
+        "/docs/how-to-migrate-to-sqliteviz-dot-com/",
+        "/docs/how-to-build-a-pivot-table-in-sq-lite/",
+        "/docs/how-to-rename-tables-and-columns-after-csv-import/",
+        "/docs/how-to-work-with-plotly-interactive-selection/"
+      ]
+    },
+    {
+      "title": "For developers",
+      "items": [
+        "/docs/integrate-predefined-inquiries/"
+      ]
+    }
+  ]
 }]
