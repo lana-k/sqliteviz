@@ -15,13 +15,14 @@ export default {
 
     return inquiry.id
   },
-  async saveInquiry({ state }, { inquiryTab, newName, overwrite }) {
+  async saveInquiry({ state }, { inquiryTab, newName }) {
     const value = {
-      id: inquiryTab.isPredefined || !overwrite ? nanoid() : inquiryTab.id,
+      id: inquiryTab.isPredefined || newName ? nanoid() : inquiryTab.id,
       query: inquiryTab.query,
       viewType: inquiryTab.dataView.mode,
       viewOptions: inquiryTab.dataView.getOptionsForSave(),
-      name: newName || inquiryTab.name
+      name: newName || inquiryTab.name,
+      updatedAt: new Date().toJSON()
     }
 
     // Get inquiries from local storage

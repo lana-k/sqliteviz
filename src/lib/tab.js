@@ -28,6 +28,7 @@ export default class Tab {
 
     this.isSaved = !!inquiry.id
     this.state = state
+    this.updatedAt = inquiry.updatedAt
   }
 
   async execute() {

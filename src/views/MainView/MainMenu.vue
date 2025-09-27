@@ -10,16 +10,16 @@
     </div>
     <div id="nav-buttons">
       <button
-        v-show="currentInquiry && $route.path === '/workspace'"
+        v-show="currentInquiryTab && $route.path === '/workspace'"
         id="save-btn"
         class="primary"
         :disabled="isSaved"
-        @click="onSave"
+        @click="onSave(false)"
       >
         Save
       </button>
       <button
-        v-show="currentInquiry && $route.path === '/workspace'"
+        v-show="currentInquiryTab && $route.path === '/workspace'"
         id="save-as-btn"
         class="primary"
         @click="onSaveAs"
@@ -58,6 +58,31 @@
         </button>
       </div>
     </modal>
+
+    <!-- Inquiery saving conflict dialog -->
+    <modal
+      modalId="inquiry-conflict"
+      class="dialog"
+      contentStyle="width: 560px;"
+    >
+      <div class="dialog-header">
+        Inquiry saving conflict
+        <close-icon @click="cancelSave" />
+      </div>
+      <div class="dialog-body">
+        <div id="save-note">
+          <img src="~@/assets/images/info.svg" />
+          This inquiry has been modified in the mean time. This can happen if an
+          inquiry is saved in another window or browser tab. Do you want to
+          overwrite that changes or save the current state as a new inquiry?
+        </div>
+      </div>
+      <div class="dialog-buttons-container">
+        <button class="secondary" @click="cancelSave">Cancel</button>
+        <button class="primary" @click="onSave(true)">Overwrite</button>
+        <button class="primary" @click="onSaveAs">Save as new</button>
+      </div>
+    </modal>
   </nav>
 </template>
 
@@ -79,24 +104,26 @@ export default {
   data() {
     return {
       name: '',
-      errorMsg: null,
-      overwrite: false
+      errorMsg: null
     }
   },
   computed: {
-    currentInquiry() {
+    inquiries() {
+      return this.$store.state.inquiries
+    },
+    currentInquiryTab() {
       return this.$store.state.currentTab
     },
     isSaved() {
-      return this.currentInquiry && this.currentInquiry.isSaved
+      return this.currentInquiryTab && this.currentInquiryTab.isSaved
     },
     isPredefined() {
-      return this.currentInquiry && this.currentInquiry.isPredefined
+      return this.currentInquiryTab && this.currentInquiryTab.isPredefined
     },
     runDisabled() {
       return (
-        this.currentInquiry &&
-        (!this.$store.state.db || !this.currentInquiry.query)
+        this.currentInquiryTab &&
+        (!this.$store.state.db || !this.currentInquiryTab.query)
       )
     }
   },
@@ -121,24 +148,35 @@ export default {
     },
     cancelSave() {
       this.$modal.hide('save')
+      this.$modal.hide('inquiry-conflict')
       eventBus.$off('inquirySaved')
     },
-    onSave() {
-      this.overwrite = true
-      if (storedInquiries.isTabNeedName(this.currentInquiry)) {
+    onSave(skipConcurrentEditingCheck = false) {
+      this.errorMsg = null
+      this.name = ''
+      if (storedInquiries.isTabNeedName(this.currentInquiryTab)) {
         this.openSaveModal()
-      } else {
-        this.saveInquiry()
+        return
       }
+
+      if (!skipConcurrentEditingCheck) {
+        const inquiryInStore = this.inquiries.find(
+          inquiry => inquiry.id === this.currentInquiryTab.id
+        )
+
+        if (inquiryInStore?.updatedAt !== this.currentInquiryTab?.updatedAt) {
+          this.$modal.show('inquiry-conflict')
+          return
+        }
+      }
+      this.saveInquiry()
     },
     onSaveAs() {
-      console.log('save as')
-      this.overwrite = false
+      this.errorMsg = null
+      this.name = ''
       this.openSaveModal()
     },
     openSaveModal() {
-      this.errorMsg = null
-      this.name = ''
       this.$modal.show('save')
     },
     validateSaveFormAndSaveInquiry() {
@@ -149,26 +187,26 @@ export default {
       this.saveInquiry()
     },
     async saveInquiry() {
-      const dataSet = this.currentInquiry.result
-      const tabView = this.currentInquiry.view
+      const dataSet = this.currentInquiryTab.result
+      const tabView = this.currentInquiryTab.view
 
       // Save inquiry
       const value = await this.$store.dispatch('saveInquiry', {
-        inquiryTab: this.currentInquiry,
-        newName: this.name,
-        overwrite: this.overwrite
+        inquiryTab: this.currentInquiryTab,
+        newName: this.name
       })
 
       // Update tab in store
       this.$store.commit('updateTab', {
-        tab: this.currentInquiry,
+        tab: this.currentInquiryTab,
         newValues: {
           name: value.name,
           id: value.id,
           query: value.query,
           viewType: value.viewType,
           viewOptions: value.viewOptions,
-          isSaved: true
+          isSaved: true,
+          updatedAt: value.updatedAt
         }
       })
 
@@ -178,12 +216,13 @@ export default {
       // it will be without sql result and has default view - table.
       // That's why we need to restore data and view
       this.$nextTick(() => {
-        this.currentInquiry.result = dataSet
-        this.currentInquiry.view = tabView
+        this.currentInquiryTab.result = dataSet
+        this.currentInquiryTab.view = tabView
       })
 
-      // Hide dialog
+      // Hide dialogs
       this.$modal.hide('save')
+      this.$modal.hide('inquiry-conflict')
 
       // Signal about saving
       eventBus.$emit('inquirySaved')
@@ -195,7 +234,7 @@ export default {
         if ((e.key === 'r' || e.key === 'Enter') && (e.ctrlKey || e.metaKey)) {
           e.preventDefault()
           if (!this.runDisabled) {
-            this.currentInquiry.execute()
+            this.currentInquiryTab.execute()
           }
           return
         }

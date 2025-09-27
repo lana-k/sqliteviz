@@ -26,6 +26,11 @@ export default {
   },
   created() {
     this.$store.commit('setInquiries', storedInquiries.getStoredInquiries())
+    addEventListener('storage', event => {
+      if (event.key === storedInquiries.myInquiriesKey) {
+        this.$store.commit('setInquiries', storedInquiries.getStoredInquiries())
+      }
+    })
   }
 }
 </script>

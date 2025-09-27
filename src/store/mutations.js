@@ -7,7 +7,8 @@ export default {
   },
 
   updateTab(state, { tab, newValues }) {
-    const { name, id, query, viewType, viewOptions, isSaved } = newValues
+    const { name, id, query, viewType, viewOptions, isSaved, updatedAt } =
+      newValues
     const oldId = tab.id
 
     if (id && state.currentTabId === oldId) {
@@ -35,6 +36,9 @@ export default {
     if (isSaved) {
       // Saved inquiry is not predefined
       delete tab.isPredefined
+    }
+    if (updatedAt) {
+      tab.updatedAt = updatedAt
     }
   },
 

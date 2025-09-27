@@ -4,11 +4,13 @@ import events from '@/lib/utils/events'
 import migration from './_migrations'
 
 const migrate = migration._migrate
+const myInquiriesKey = 'myInquiries'
 
 export default {
   version: 2,
+  myInquiriesKey,
   getStoredInquiries() {
-    let myInquiries = JSON.parse(localStorage.getItem('myInquiries'))
+    let myInquiries = JSON.parse(localStorage.getItem(myInquiriesKey))
     if (!myInquiries) {
       const oldInquiries = localStorage.getItem('myQueries')
       if (oldInquiries) {
@@ -26,7 +28,8 @@ export default {
     const newInquiry = JSON.parse(JSON.stringify(baseInquiry))
     newInquiry.name = newInquiry.name + ' Copy'
     newInquiry.id = nanoid()
-    newInquiry.createdAt = new Date()
+    newInquiry.createdAt = new Date().toJSON()
+    newInquiry.updatedAt = new Date().toJSON()
     delete newInquiry.isPredefined
 
     return newInquiry
@@ -38,7 +41,7 @@ export default {
 
   updateStorage(inquiries) {
     localStorage.setItem(
-      'myInquiries',
+      myInquiriesKey,
       JSON.stringify({ version: this.version, inquiries })
     )
   },
