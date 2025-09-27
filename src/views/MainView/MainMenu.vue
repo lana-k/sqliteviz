@@ -14,9 +14,17 @@
         id="save-btn"
         class="primary"
         :disabled="isSaved"
-        @click="checkInquiryBeforeSave"
+        @click="onSave"
       >
         Save
+      </button>
+      <button
+        v-show="currentInquiry && $route.path === '/workspace'"
+        id="save-as-btn"
+        class="primary"
+        @click="onSaveAs"
+      >
+        Save as ...
       </button>
       <button id="create-btn" class="primary" @click="createNewInquiry">
         Create
@@ -45,7 +53,9 @@
       </div>
       <div class="dialog-buttons-container">
         <button class="secondary" @click="cancelSave">Cancel</button>
-        <button class="primary" @click="saveInquiry">Save</button>
+        <button class="primary" @click="validateSaveFormAndSaveInquiry">
+          Save
+        </button>
       </div>
     </modal>
   </nav>
@@ -69,7 +79,8 @@ export default {
   data() {
     return {
       name: '',
-      errorMsg: null
+      errorMsg: null,
+      overwrite: false
     }
   },
   computed: {
@@ -91,7 +102,7 @@ export default {
   },
   created() {
     eventBus.$on('createNewInquiry', this.createNewInquiry)
-    eventBus.$on('saveInquiry', this.checkInquiryBeforeSave)
+    eventBus.$on('saveInquiry', this.onSave)
     document.addEventListener('keydown', this._keyListener)
   },
   beforeUnmount() {
@@ -112,29 +123,40 @@ export default {
       this.$modal.hide('save')
       eventBus.$off('inquirySaved')
     },
-    checkInquiryBeforeSave() {
-      this.errorMsg = null
-      this.name = ''
-
+    onSave() {
+      this.overwrite = true
       if (storedInquiries.isTabNeedName(this.currentInquiry)) {
-        this.$modal.show('save')
+        this.openSaveModal()
       } else {
         this.saveInquiry()
       }
     },
-    async saveInquiry() {
-      const isNeedName = storedInquiries.isTabNeedName(this.currentInquiry)
-      if (isNeedName && !this.name) {
+    onSaveAs() {
+      console.log('save as')
+      this.overwrite = false
+      this.openSaveModal()
+    },
+    openSaveModal() {
+      this.errorMsg = null
+      this.name = ''
+      this.$modal.show('save')
+    },
+    validateSaveFormAndSaveInquiry() {
+      if (!this.name) {
         this.errorMsg = "Inquiry name can't be empty"
         return
       }
+      this.saveInquiry()
+    },
+    async saveInquiry() {
       const dataSet = this.currentInquiry.result
       const tabView = this.currentInquiry.view
 
       // Save inquiry
       const value = await this.$store.dispatch('saveInquiry', {
         inquiryTab: this.currentInquiry,
-        newName: this.name
+        newName: this.name,
+        overwrite: this.overwrite
       })
 
       // Update tab in store
@@ -179,11 +201,17 @@ export default {
         }
 
         // Save inquiry Ctrl+S
-        if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+        if (e.key === 's' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
           e.preventDefault()
           if (!this.isSaved) {
-            this.checkInquiryBeforeSave()
+            this.onSave()
           }
+          return
+        }
+        // Save inquiry as Ctrl+Shift+S
+        if (e.key === 'S' && (e.ctrlKey || e.metaKey) && e.shiftKey) {
+          e.preventDefault()
+          this.onSaveAs()
           return
         }
       }

@@ -15,9 +15,9 @@ export default {
 
     return inquiry.id
   },
-  async saveInquiry({ state }, { inquiryTab, newName }) {
+  async saveInquiry({ state }, { inquiryTab, newName, overwrite }) {
     const value = {
-      id: inquiryTab.isPredefined ? nanoid() : inquiryTab.id,
+      id: inquiryTab.isPredefined || !overwrite ? nanoid() : inquiryTab.id,
       query: inquiryTab.query,
       viewType: inquiryTab.dataView.mode,
       viewOptions: inquiryTab.dataView.getOptionsForSave(),
