@@ -72,10 +72,10 @@
     </side-tool-bar>
 
     <loading-dialog
+      v-model="showLoadingDialog"
       loadingMsg="Rendering the visualisation..."
       successMsg="Image is ready"
       actionBtnName="Copy"
-      name="prepareCopy"
       title="Copy to clipboard"
       :loading="preparingCopy"
       @action="copyToClipboard"
@@ -85,8 +85,8 @@
 </template>
 
 <script>
-import Chart from './Chart'
-import Pivot from './Pivot'
+import Chart from './Chart/index.vue'
+import Pivot from './Pivot/index.vue'
 import SideToolBar from '../SideToolBar'
 import IconButton from '@/components/IconButton'
 import ChartIcon from '@/components/svg/chart'
@@ -96,7 +96,7 @@ import ExportToSvgIcon from '@/components/svg/exportToSvg'
 import PngIcon from '@/components/svg/png'
 import ClipboardIcon from '@/components/svg/clipboard'
 import cIo from '@/lib/utils/clipboardIo'
-import loadingDialog from '@/components/LoadingDialog'
+import loadingDialog from '@/components/LoadingDialog.vue'
 import time from '@/lib/utils/time'
 import events from '@/lib/utils/events'
 
@@ -129,7 +129,8 @@ export default {
       loadingImage: false,
       copyingImage: false,
       preparingCopy: false,
-      dataToCopy: null
+      dataToCopy: null,
+      showLoadingDialog: false
     }
   },
   computed: {
@@ -170,14 +171,13 @@ export default {
     async prepareCopy() {
       if ('ClipboardItem' in window) {
         this.preparingCopy = true
-        this.$modal.show('prepareCopy')
+        this.showLoadingDialog = true
         const t0 = performance.now()
 
         await time.sleep(0)
         this.dataToCopy = await this.$refs.viewComponent.prepareCopy()
         const t1 = performance.now()
         if (t1 - t0 < 950) {
-          this.$modal.hide('prepareCopy')
           this.copyToClipboard()
         } else {
           this.preparingCopy = false
@@ -190,14 +190,13 @@ export default {
         )
       }
     },
-    async copyToClipboard() {
+    copyToClipboard() {
       cIo.copyImage(this.dataToCopy)
-      this.$modal.hide('prepareCopy')
+      this.showLoadingDialog = false
       this.exportSignal('clipboard')
     },
     cancelCopy() {
       this.dataToCopy = null
-      this.$modal.hide('prepareCopy')
     },
 
     saveAsSvg() {

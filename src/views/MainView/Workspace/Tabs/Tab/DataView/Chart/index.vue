@@ -161,11 +161,8 @@ export default {
         'text/html'
       )
     },
-    async prepareCopy(type = 'png') {
-      return await chartHelper.getImageDataUrl(
-        this.$refs.plotlyEditor.$el,
-        type
-      )
+    prepareCopy(type = 'png') {
+      return chartHelper.getImageDataUrl(this.$refs.plotlyEditor.$el, type)
     }
   }
 }

@@ -80,10 +80,10 @@
     </side-tool-bar>
 
     <loading-dialog
+      v-model="showLoadingDialog"
       loadingMsg="Building CSV..."
       successMsg="CSV is ready"
       actionBtnName="Copy"
-      name="prepareCSVCopy"
       title="Copy to clipboard"
       :loading="preparingCopy"
       @action="copyToClipboard"
@@ -190,7 +190,8 @@ export default {
       viewRecord: false,
       defaultPage: 1,
       defaultSelectedCell: null,
-      enableTeleport: this.$store.state.isWorkspaceVisible
+      enableTeleport: this.$store.state.isWorkspaceVisible,
+      showLoadingDialog: false
     }
   },
   computed: {
@@ -264,14 +265,13 @@ export default {
 
       if ('ClipboardItem' in window) {
         this.preparingCopy = true
-        this.$modal.show('prepareCSVCopy')
+        this.showLoadingDialog = true
         const t0 = performance.now()
 
         await time.sleep(0)
         this.dataToCopy = csv.serialize(this.result)
         const t1 = performance.now()
         if (t1 - t0 < 950) {
-          this.$modal.hide('prepareCSVCopy')
           this.copyToClipboard()
         } else {
           this.preparingCopy = false
@@ -287,12 +287,11 @@ export default {
 
     copyToClipboard() {
       cIo.copyText(this.dataToCopy, 'CSV copied to clipboard successfully')
-      this.$modal.hide('prepareCSVCopy')
+      this.showLoadingDialog = false
     },
 
     cancelCopy() {
       this.dataToCopy = null
-      this.$modal.hide('prepareCSVCopy')
     },
 
     toggleViewValuePanel() {

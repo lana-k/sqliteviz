@@ -1,14 +1,15 @@
 <template>
   <modal
-    :modalId="name"
+    v-model="show"
     class="dialog"
     :clickToClose="false"
     :contentTransition="{ name: 'loading-dialog' }"
     :overlayTransition="{ name: 'loading-dialog' }"
+    @update:modelValue="$emit('update:modelValue', $event)"
   >
     <div class="dialog-header">
       {{ title }}
-      <close-icon :disabled="loading" @click="$emit('cancel')" />
+      <close-icon :disabled="loading" @click="cancel" />
     </div>
     <div class="dialog-body">
       <div v-if="loading" class="loading-dialog-body">
@@ -28,7 +29,7 @@
         class="secondary"
         type="button"
         :disabled="loading"
-        @click="$emit('cancel')"
+        @click="cancel"
       >
         Cancel
       </button>
@@ -52,24 +53,33 @@ export default {
   name: 'LoadingDialog',
   components: { LoadingIndicator, CloseIcon },
   props: {
+    modelValue: Boolean,
     loadingMsg: String,
     successMsg: String,
     actionBtnName: String,
-    name: String,
     title: String,
     loading: Boolean
   },
-  emits: ['cancel', 'action'],
+  data() {
+    return {
+      show: this.modelValue
+    }
+  },
+  emits: ['cancel', 'action', 'update:modelValue'],
   watch: {
+    modelValue() {
+      this.show = this.modelValue
+    },
     loading() {
       if (this.loading) {
-        this.$modal.show(this.name)
+        this.$emit('update:modelValue', true)
       }
     }
   },
   methods: {
     cancel() {
       this.$emit('cancel')
+      this.$emit('update:modelValue', false)
     }
   }
 }
