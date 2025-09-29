@@ -164,7 +164,10 @@ export default {
           inquiry => inquiry.id === this.currentInquiryTab.id
         )
 
-        if (inquiryInStore?.updatedAt !== this.currentInquiryTab?.updatedAt) {
+        if (
+          inquiryInStore &&
+          inquiryInStore.updatedAt !== this.currentInquiryTab.updatedAt
+        ) {
           this.$modal.show('inquiry-conflict')
           return
         }

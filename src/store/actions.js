@@ -27,19 +27,21 @@ export default {
 
     // Get inquiries from local storage
     const myInquiries = state.inquiries
-
+    let inquiryIndex
     // Set createdAt
     if (newName) {
       value.createdAt = new Date()
     } else {
-      var inquiryIndex = myInquiries.findIndex(
+      inquiryIndex = myInquiries.findIndex(
         oldInquiry => oldInquiry.id === inquiryTab.id
       )
-      value.createdAt = myInquiries[inquiryIndex].createdAt
+
+      value.createdAt =
+        inquiryIndex !== -1 ? myInquiries[inquiryIndex].createdAt : new Date()
     }
 
     // Insert in inquiries list
-    if (newName) {
+    if (newName || inquiryIndex === -1) {
       myInquiries.push(value)
     } else {
       myInquiries.splice(inquiryIndex, 1, value)
