@@ -332,7 +332,7 @@ describe('MainMenu.vue', () => {
     expect(wrapper.vm.createNewInquiry.callCount).to.equal(4)
   })
 
-  it('Ctrl S calls checkInquiryBeforeSave if the tab is unsaved and route path is /workspace', async () => {
+  it('Ctrl S calls onSave if the tab is unsaved and route path is /workspace', async () => {
     const tab = {
       query: 'SELECT * FROM foo',
       execute: sinon.stub(),
@@ -353,30 +353,30 @@ describe('MainMenu.vue', () => {
         plugins: [store]
       }
     })
-    sinon.stub(wrapper.vm, 'checkInquiryBeforeSave')
+    sinon.stub(wrapper.vm, 'onSave')
 
     const ctrlS = new KeyboardEvent('keydown', { key: 's', ctrlKey: true })
     const metaS = new KeyboardEvent('keydown', { key: 's', metaKey: true })
     // tab is unsaved and route is /workspace
     document.dispatchEvent(ctrlS)
-    expect(wrapper.vm.checkInquiryBeforeSave.calledOnce).to.equal(true)
+    expect(wrapper.vm.onSave.calledOnce).to.equal(true)
     document.dispatchEvent(metaS)
-    expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
+    expect(wrapper.vm.onSave.calledTwice).to.equal(true)
 
     // tab is saved and route is /workspace
     store.state.tabs[0].isSaved = true
     document.dispatchEvent(ctrlS)
-    expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
+    expect(wrapper.vm.onSave.calledTwice).to.equal(true)
     document.dispatchEvent(metaS)
-    expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
+    expect(wrapper.vm.onSave.calledTwice).to.equal(true)
 
     // tab is unsaved and route is not /workspace
     wrapper.vm.$route.path = '/inquiries'
     store.state.tabs[0].isSaved = false
     document.dispatchEvent(ctrlS)
-    expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
+    expect(wrapper.vm.onSave.calledTwice).to.equal(true)
     document.dispatchEvent(metaS)
-    expect(wrapper.vm.checkInquiryBeforeSave.calledTwice).to.equal(true)
+    expect(wrapper.vm.onSave.calledTwice).to.equal(true)
   })
 
   it('Saves the inquiry when no need the new name', async () => {
@@ -384,11 +384,20 @@ describe('MainMenu.vue', () => {
       id: 1,
       name: 'foo',
       query: 'SELECT * FROM foo',
+      updatedAt: '2025-05-15T15:30:00Z',
       execute: sinon.stub(),
       isSaved: false
     }
     const state = {
       currentTab: tab,
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: 'SELECT * FROM foo',
+          updatedAt: '2025-05-15T15:30:00Z'
+        }
+      ],
       tabs: [tab],
       db: {}
     }

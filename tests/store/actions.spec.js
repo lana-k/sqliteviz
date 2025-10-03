@@ -166,11 +166,12 @@ describe('actions', () => {
         newName: 'foo'
       }
     )
-    expect(value.id).to.equal(tab.id)
+    expect(value.id).not.to.equal(tab.id)
     expect(value.name).to.equal('foo')
     expect(value.query).to.equal(tab.query)
     expect(value.viewOptions).to.eql(['chart'])
-    expect(value).to.have.property('createdAt').which.within(now, nowPlusMinute)
+    expect(value).to.have.property('createdAt')
+    expect(new Date(value.createdAt)).within(now, nowPlusMinute)
     expect(state.inquiries).to.eql([value])
   })
 
@@ -202,7 +203,8 @@ describe('actions', () => {
     )
 
     tab.name = 'foo'
-    tab.query = 'select * from foo'
+    tab.query = 'select * from bar'
+    tab.id = first.id
     await saveInquiry({ state }, { inquiryTab: tab })
     const inquiries = state.inquiries
     const second = inquiries[0]
@@ -211,9 +213,7 @@ describe('actions', () => {
     expect(second.name).to.equal(first.name)
     expect(second.query).to.equal(tab.query)
     expect(second.viewOptions).to.eql(['chart'])
-    expect(new Date(second.createdAt).getTime()).to.equal(
-      first.createdAt.getTime()
-    )
+    expect(second.createdAt).to.equal(first.createdAt)
   })
 
   it("save adds a new inquiry with new id if it's based on predefined inquiry", async () => {

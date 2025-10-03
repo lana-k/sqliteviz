@@ -78,7 +78,7 @@ describe('RunResult.vue', () => {
     await nextTick()
 
     // The dialog is shown...
-    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(true)
     expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
       'Copy to clipboard'
     )
@@ -91,7 +91,7 @@ describe('RunResult.vue', () => {
     await nextTick()
 
     // The dialog is shown...
-    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(true)
 
     // ... with Ready message...
     expect(wrapper.find('.dialog-body').text()).to.equal('CSV is ready')
@@ -104,7 +104,7 @@ describe('RunResult.vue', () => {
 
     // The dialog is not shown...
     await clock.tick(100)
-    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(false)
     wrapper.unmount()
   })
 
@@ -143,7 +143,7 @@ describe('RunResult.vue', () => {
 
     // The dialog is not shown...
     await clock.tick(100)
-    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(false)
     // copyToClipboard is called
     expect(wrapper.vm.copyToClipboard.calledOnce).to.equal(true)
     wrapper.unmount()
@@ -188,7 +188,7 @@ describe('RunResult.vue', () => {
       .trigger('click')
     // The dialog is not shown...
     await clock.tick(100)
-    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(false)
     // copyToClipboard is not called
     expect(wrapper.vm.copyToClipboard.calledOnce).to.equal(false)
     wrapper.unmount()

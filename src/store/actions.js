@@ -30,14 +30,16 @@ export default {
     let inquiryIndex
     // Set createdAt
     if (newName) {
-      value.createdAt = new Date()
+      value.createdAt = new Date().toJSON()
     } else {
       inquiryIndex = myInquiries.findIndex(
         oldInquiry => oldInquiry.id === inquiryTab.id
       )
 
       value.createdAt =
-        inquiryIndex !== -1 ? myInquiries[inquiryIndex].createdAt : new Date()
+        inquiryIndex !== -1
+          ? myInquiries[inquiryIndex].createdAt
+          : new Date().toJSON()
     }
 
     // Insert in inquiries list

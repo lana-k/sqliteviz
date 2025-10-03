@@ -71,7 +71,7 @@ describe('storedInquiries.js', () => {
       query: 'SELECT * from foo',
       viewType: 'chart',
       viewOptions: [],
-      createdAt: new Date(2021, 0, 1),
+      createdAt: new Date(2021, 0, 1).toJSON(),
       isPredefined: true
     }
 
@@ -83,7 +83,8 @@ describe('storedInquiries.js', () => {
     expect(copy).to.have.property('query').which.equal(base.query)
     expect(copy).to.have.property('viewType').which.equal(base.viewType)
     expect(copy).to.have.property('viewOptions').which.eql(base.viewOptions)
-    expect(copy).to.have.property('createdAt').which.within(now, nowPlusMinute)
+    expect(copy).to.have.property('createdAt')
+    expect(new Date(copy.createdAt)).within(now, nowPlusMinute)
     expect(copy).to.not.have.property('isPredefined')
   })
 

@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import DataView from '@/views/MainView/Workspace/Tabs/Tab/DataView'
 import sinon from 'sinon'
 import { nextTick } from 'vue'
+import cIo from '@/lib/utils/clipboardIo'
 
 describe('DataView.vue', () => {
   const $store = { state: { isWorkspaceVisible: true } }
@@ -64,7 +65,7 @@ describe('DataView.vue', () => {
 
     // Find chart and spy the method
     const chart = wrapper.findComponent({ name: 'Chart' }).vm
-    sinon.spy(chart, 'saveAsSvg')
+    sinon.stub(chart, 'saveAsSvg')
 
     // Export to svg
     const svgBtn = wrapper.findComponent({ ref: 'svgExportBtn' })
@@ -77,7 +78,7 @@ describe('DataView.vue', () => {
 
     // Find pivot and spy the method
     const pivot = wrapper.findComponent({ name: 'pivot' }).vm
-    sinon.spy(pivot, 'saveAsSvg')
+    sinon.stub(pivot, 'saveAsSvg')
 
     // Switch to Custom Chart renderer
     pivot.pivotOptions.rendererName = 'Custom chart'
@@ -146,6 +147,7 @@ describe('DataView.vue', () => {
 
   it('copy to clipboard more than 1 sec', async () => {
     sinon.stub(window.navigator.clipboard, 'write').resolves()
+    sinon.stub(cIo, 'copyImage')
     const clock = sinon.useFakeTimers()
     const wrapper = mount(DataView, {
       attachTo: document.body,
@@ -165,7 +167,7 @@ describe('DataView.vue', () => {
     await copyBtn.trigger('click')
 
     // The dialog is shown...
-    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(true)
     expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
       'Copy to clipboard'
     )
@@ -184,7 +186,7 @@ describe('DataView.vue', () => {
     await nextTick()
 
     // The dialog is shown...
-    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(true)
 
     // ... with Ready message...
     expect(wrapper.find('.dialog-body').text()).to.equal('Image is ready')
@@ -196,12 +198,13 @@ describe('DataView.vue', () => {
 
     // The dialog is not shown...
     await clock.tick(100)
-    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(false)
     wrapper.unmount()
   })
 
   it('copy to clipboard less than 1 sec', async () => {
     sinon.stub(window.navigator.clipboard, 'write').resolves()
+    sinon.stub(cIo, 'copyImage')
     const clock = sinon.useFakeTimers()
     const wrapper = mount(DataView, {
       attachTo: document.body,
@@ -229,7 +232,7 @@ describe('DataView.vue', () => {
     await nextTick()
     // The dialog is not shown...
     await clock.tick(100)
-    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(false)
     // copyToClipboard is called
     expect(wrapper.vm.copyToClipboard.calledOnce).to.equal(true)
     wrapper.unmount()
@@ -270,7 +273,7 @@ describe('DataView.vue', () => {
 
     // The dialog is not shown...
     await clock.tick(100)
-    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(false)
     // copyToClipboard is not called
     expect(wrapper.vm.copyToClipboard.calledOnce).to.equal(false)
     wrapper.unmount()

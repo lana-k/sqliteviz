@@ -1,16 +1,13 @@
 <template>
   <div id="app">
     <router-view />
-    <modals-container />
   </div>
 </template>
 
 <script>
 import storedInquiries from '@/lib/storedInquiries'
-import { ModalsContainer } from 'vue-final-modal'
 
 export default {
-  components: { ModalsContainer },
   computed: {
     inquiries() {
       return this.$store.state.inquiries
