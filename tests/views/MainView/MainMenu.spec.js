@@ -26,7 +26,7 @@ describe('MainMenu.vue', () => {
     wrapper.unmount()
   })
 
-  it('Create and Save are visible only on /workspace page', async () => {
+  it('Create, Save and Save as are visible only on /workspace page', async () => {
     const state = {
       currentTab: { query: '', execute: sinon.stub() },
       tabs: [{}],
@@ -45,6 +45,8 @@ describe('MainMenu.vue', () => {
     })
     expect(wrapper.find('#save-btn').exists()).to.equal(true)
     expect(wrapper.find('#save-btn').isVisible()).to.equal(true)
+    expect(wrapper.find('#save-as-btn').exists()).to.equal(true)
+    expect(wrapper.find('#save-as-btn').isVisible()).to.equal(true)
     expect(wrapper.find('#create-btn').exists()).to.equal(true)
     expect(wrapper.find('#create-btn').isVisible()).to.equal(true)
     wrapper.unmount()
@@ -65,7 +67,7 @@ describe('MainMenu.vue', () => {
     expect(wrapper.find('#create-btn').isVisible()).to.equal(true)
   })
 
-  it('Save is not visible if there is no tabs', () => {
+  it('Save and Save as are not visible if there is no tabs', () => {
     const state = {
       currentTab: null,
       tabs: [],
@@ -83,6 +85,8 @@ describe('MainMenu.vue', () => {
     })
     expect(wrapper.find('#save-btn').exists()).to.equal(true)
     expect(wrapper.find('#save-btn').isVisible()).to.equal(false)
+    expect(wrapper.find('#save-as-btn').exists()).to.equal(true)
+    expect(wrapper.find('#save-as-btn').isVisible()).to.equal(false)
     expect(wrapper.find('#create-btn').exists()).to.equal(true)
     expect(wrapper.find('#create-btn').isVisible()).to.equal(true)
   })
@@ -111,10 +115,12 @@ describe('MainMenu.vue', () => {
     })
     const vm = wrapper.vm
     expect(wrapper.find('#save-btn').element.disabled).to.equal(false)
+    expect(wrapper.find('#save-as-btn').element.disabled).to.equal(false)
 
     store.state.tabs[0].isSaved = true
     await vm.$nextTick()
     expect(wrapper.find('#save-btn').element.disabled).to.equal(true)
+    expect(wrapper.find('#save-as-btn').element.disabled).to.equal(false)
   })
 
   it('Creates a tab', async () => {
@@ -379,7 +385,70 @@ describe('MainMenu.vue', () => {
     expect(wrapper.vm.onSave.calledTwice).to.equal(true)
   })
 
-  it('Saves the inquiry when no need the new name', async () => {
+  it('Ctrl Shift S calls onSaveAs if route path is /workspace', async () => {
+    const tab = {
+      query: 'SELECT * FROM foo',
+      execute: sinon.stub(),
+      isSaved: false
+    }
+    const state = {
+      currentTab: tab,
+      tabs: [tab],
+      db: {}
+    }
+    const store = createStore({ state })
+    const $route = { path: '/workspace' }
+
+    wrapper = shallowMount(MainMenu, {
+      global: {
+        mocks: { $route },
+        stubs: ['router-link'],
+        plugins: [store]
+      }
+    })
+    sinon.stub(wrapper.vm, 'onSaveAs')
+
+    const ctrlS = new KeyboardEvent('keydown', {
+      key: 'S',
+      ctrlKey: true,
+      shiftKey: true
+    })
+    const metaS = new KeyboardEvent('keydown', {
+      key: 'S',
+      metaKey: true,
+      shiftKey: true
+    })
+    // tab is unsaved and route is /workspace
+    document.dispatchEvent(ctrlS)
+    expect(wrapper.vm.onSaveAs.calledOnce).to.equal(true)
+    document.dispatchEvent(metaS)
+    expect(wrapper.vm.onSaveAs.calledTwice).to.equal(true)
+
+    // tab is saved and route is /workspace
+    store.state.tabs[0].isSaved = true
+    document.dispatchEvent(ctrlS)
+    expect(wrapper.vm.onSaveAs.calledThrice).to.equal(true)
+    document.dispatchEvent(metaS)
+    expect(wrapper.vm.onSaveAs.callCount).to.equal(4)
+
+    // tab is unsaved and route is not /workspace
+    wrapper.vm.$route.path = '/inquiries'
+    store.state.tabs[0].isSaved = false
+    document.dispatchEvent(ctrlS)
+    expect(wrapper.vm.onSaveAs.callCount).to.equal(4)
+    document.dispatchEvent(metaS)
+    expect(wrapper.vm.onSaveAs.callCount).to.equal(4)
+
+    // tab is saved and route is not /workspace
+    wrapper.vm.$route.path = '/inquiries'
+    store.state.tabs[0].isSaved = true
+    document.dispatchEvent(ctrlS)
+    expect(wrapper.vm.onSaveAs.callCount).to.equal(4)
+    document.dispatchEvent(metaS)
+    expect(wrapper.vm.onSaveAs.callCount).to.equal(4)
+  })
+
+  it('Saves the inquiry when no need the new name and no update conflict', async () => {
     const tab = {
       id: 1,
       name: 'foo',
@@ -395,7 +464,8 @@ describe('MainMenu.vue', () => {
           id: 1,
           name: 'foo',
           query: 'SELECT * FROM foo',
-          updatedAt: '2025-05-15T15:30:00Z'
+          updatedAt: '2025-05-15T15:30:00Z',
+          createdAt: '2025-05-14T15:30:00Z'
         }
       ],
       tabs: [tab],
@@ -410,7 +480,8 @@ describe('MainMenu.vue', () => {
         id: 1,
         query: 'SELECT * FROM foo',
         viewType: 'chart',
-        viewOptions: []
+        viewOptions: [],
+        updatedAt: '2025-05-16T15:30:00Z'
       })
     }
     const store = createStore({ state, mutations, actions })
@@ -455,7 +526,8 @@ describe('MainMenu.vue', () => {
             query: 'SELECT * FROM foo',
             viewType: 'chart',
             viewOptions: [],
-            isSaved: true
+            isSaved: true,
+            updatedAt: '2025-05-16T15:30:00Z'
           }
         })
       )
@@ -465,6 +537,303 @@ describe('MainMenu.vue', () => {
     expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
   })
 
+  it('Inquiry conflict: overwrite', async () => {
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo',
+      updatedAt: '2025-05-15T15:30:00Z',
+      execute: sinon.stub(),
+      isSaved: false
+    }
+    const state = {
+      currentTab: tab,
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: 'SELECT * FROM bar',
+          updatedAt: '2025-05-15T16:30:00Z',
+          createdAt: '2025-05-14T15:30:00Z'
+        }
+      ],
+      tabs: [tab],
+      db: {}
+    }
+    const mutations = {
+      updateTab: sinon.stub()
+    }
+    const actions = {
+      saveInquiry: sinon.stub().returns({
+        name: 'foo',
+        id: 1,
+        query: 'SELECT * FROM foo',
+        viewType: 'chart',
+        viewOptions: [],
+        updatedAt: '2025-05-16T17:30:00Z',
+        createdAt: '2025-05-14T15:30:00Z'
+      })
+    }
+    const store = createStore({ state, mutations, actions })
+    const $route = { path: '/workspace' }
+    sinon.stub(storedInquiries, 'isTabNeedName').returns(false)
+
+    wrapper = mount(MainMenu, {
+      attachTo: document.body,
+      global: {
+        mocks: { $route },
+        stubs: {
+          'router-link': true,
+          'app-diagnostic-info': true,
+          teleport: true,
+          transition: false
+        },
+        plugins: [store]
+      }
+    })
+
+    await wrapper.find('#save-btn').trigger('click')
+
+    // check that the conflict dialog is open
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Inquiry saving conflict'
+    )
+
+    // find Overwrite in the dialog and click
+    await wrapper
+      .findAll('.dialog-buttons-container button')
+      .find(button => button.text() === 'Overwrite')
+      .trigger('click')
+
+    await nextTick()
+
+    // check that the dialog is closed
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+
+    // check that the inquiry was saved via saveInquiry (newName='')
+    expect(actions.saveInquiry.calledOnce).to.equal(true)
+    expect(actions.saveInquiry.args[0][1]).to.eql({
+      inquiryTab: state.currentTab,
+      newName: ''
+    })
+
+    // check that the tab was updated
+    expect(
+      mutations.updateTab.calledOnceWith(
+        state,
+        sinon.match({
+          tab,
+          newValues: {
+            name: 'foo',
+            id: 1,
+            query: 'SELECT * FROM foo',
+            viewType: 'chart',
+            viewOptions: [],
+            isSaved: true,
+            updatedAt: '2025-05-16T17:30:00Z'
+          }
+        })
+      )
+    ).to.equal(true)
+
+    // check that 'inquirySaved' event was triggered on eventBus
+    expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
+  })
+
+  it('Inquiry conflict: save as new', async () => {
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo',
+      updatedAt: '2025-05-15T15:30:00Z',
+      execute: sinon.stub(),
+      isSaved: false
+    }
+    const state = {
+      currentTab: tab,
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: 'SELECT * FROM bar',
+          updatedAt: '2025-05-15T16:30:00Z',
+          createdAt: '2025-05-14T15:30:00Z'
+        }
+      ],
+      tabs: [tab],
+      db: {}
+    }
+    const mutations = {
+      updateTab: sinon.stub()
+    }
+    const actions = {
+      saveInquiry: sinon.stub().returns({
+        name: 'foo_new',
+        id: 2,
+        query: 'SELECT * FROM foo',
+        viewType: 'chart',
+        viewOptions: [],
+        updatedAt: '2025-05-16T17:30:00Z',
+        createdAt: '2025-05-16T17:30:00Z'
+      })
+    }
+    const store = createStore({ state, mutations, actions })
+    const $route = { path: '/workspace' }
+    sinon.stub(storedInquiries, 'isTabNeedName').returns(false)
+
+    wrapper = mount(MainMenu, {
+      attachTo: document.body,
+      global: {
+        mocks: { $route },
+        stubs: {
+          'router-link': true,
+          'app-diagnostic-info': true,
+          teleport: true,
+          transition: false
+        },
+        plugins: [store]
+      }
+    })
+
+    await wrapper.find('#save-btn').trigger('click')
+
+    // check that the conflict dialog is open
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Inquiry saving conflict'
+    )
+
+    // find "Save as new" in the dialog and click
+    await wrapper
+      .findAll('.dialog-buttons-container button')
+      .find(button => button.text() === 'Save as new')
+      .trigger('click')
+
+    await nextTick()
+    await clock.tick(100)
+
+    // enter the new name
+    await wrapper.find('.dialog-body input').setValue('foo_new')
+
+    // find Save in the dialog and click
+    await wrapper
+      .findAll('.dialog-buttons-container button')
+      .find(button => button.text() === 'Save')
+      .trigger('click')
+
+    await nextTick()
+
+    // check that the dialog is closed
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+
+    // check that the inquiry was saved via saveInquiry (newName='foo_new')
+    expect(actions.saveInquiry.calledOnce).to.equal(true)
+    expect(actions.saveInquiry.args[0][1]).to.eql({
+      inquiryTab: state.currentTab,
+      newName: 'foo_new'
+    })
+
+    // check that the tab was updated
+    expect(
+      mutations.updateTab.calledOnceWith(
+        state,
+        sinon.match({
+          tab,
+          newValues: {
+            name: 'foo_new',
+            id: 2,
+            query: 'SELECT * FROM foo',
+            viewType: 'chart',
+            viewOptions: [],
+            isSaved: true,
+            updatedAt: '2025-05-16T17:30:00Z'
+          }
+        })
+      )
+    ).to.equal(true)
+
+    // check that 'inquirySaved' event was triggered on eventBus
+    expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
+  })
+
+  it('Inquiry conflict: cancel', async () => {
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo',
+      updatedAt: '2025-05-15T15:30:00Z',
+      execute: sinon.stub(),
+      isSaved: false
+    }
+    const state = {
+      currentTab: tab,
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: 'SELECT * FROM bar',
+          updatedAt: '2025-05-15T16:30:00Z',
+          createdAt: '2025-05-14T15:30:00Z'
+        }
+      ],
+      tabs: [tab],
+      db: {}
+    }
+    const mutations = {
+      updateTab: sinon.stub()
+    }
+    const actions = {
+      saveInquiry: sinon.stub()
+    }
+    const store = createStore({ state, mutations, actions })
+    const $route = { path: '/workspace' }
+    sinon.stub(storedInquiries, 'isTabNeedName').returns(false)
+
+    wrapper = mount(MainMenu, {
+      attachTo: document.body,
+      global: {
+        mocks: { $route },
+        stubs: {
+          'router-link': true,
+          'app-diagnostic-info': true,
+          teleport: true,
+          transition: false
+        },
+        plugins: [store]
+      }
+    })
+
+    await wrapper.find('#save-btn').trigger('click')
+
+    // check that the conflict dialog is open
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Inquiry saving conflict'
+    )
+
+    // find Cancel in the dialog and click
+    await wrapper
+      .findAll('.dialog-buttons-container button')
+      .find(button => button.text() === 'Cancel')
+      .trigger('click')
+
+    // check that the dialog is closed
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+
+    // check that the inquiry was not saved via storedInquiries.save
+    expect(actions.saveInquiry.called).to.equal(false)
+
+    // check that the tab was not updated
+    expect(mutations.updateTab.called).to.equal(false)
+
+    // check that 'inquirySaved' event is not listened on eventBus
+    expect(eventBus.$off.calledOnceWith('inquirySaved')).to.equal(true)
+  })
+
   it('Shows en error when the new name is needed but not specifyied', async () => {
     const tab = {
       id: 1,
@@ -472,7 +841,8 @@ describe('MainMenu.vue', () => {
       tempName: 'Untitled',
       query: 'SELECT * FROM foo',
       execute: sinon.stub(),
-      isSaved: false
+      isSaved: false,
+      updatedAt: '2025-05-15T15:30:00Z'
     }
     const state = {
       currentTab: tab,
@@ -488,7 +858,8 @@ describe('MainMenu.vue', () => {
         id: 1,
         query: 'SELECT * FROM foo',
         viewType: 'chart',
-        viewOptions: []
+        viewOptions: [],
+        updatedAt: '2025-05-16T15:30:00Z'
       })
     }
     const store = createStore({ state, mutations, actions })
@@ -531,14 +902,15 @@ describe('MainMenu.vue', () => {
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
   })
 
-  it('Saves the inquiry with a new name', async () => {
+  it('Saves the new inquiry with a new name', async () => {
     const tab = {
       id: 1,
       name: null,
       tempName: 'Untitled',
       query: 'SELECT * FROM foo',
       execute: sinon.stub(),
-      isSaved: false
+      isSaved: false,
+      updatedAt: undefined
     }
     const state = {
       currentTab: tab,
@@ -551,10 +923,11 @@ describe('MainMenu.vue', () => {
     const actions = {
       saveInquiry: sinon.stub().returns({
         name: 'foo',
-        id: 1,
+        id: 2,
         query: 'SELECT * FROM foo',
         viewType: 'chart',
-        viewOptions: []
+        viewOptions: [],
+        updatedAt: '2025-05-15T15:30:00Z'
       })
     }
     const store = createStore({ state, mutations, actions })
@@ -613,11 +986,12 @@ describe('MainMenu.vue', () => {
           tab,
           newValues: {
             name: 'foo',
-            id: 1,
+            id: 2,
             query: 'SELECT * FROM foo',
             viewType: 'chart',
             viewOptions: [],
-            isSaved: true
+            isSaved: true,
+            updatedAt: '2025-05-15T15:30:00Z'
           }
         })
       )
@@ -659,7 +1033,8 @@ describe('MainMenu.vue', () => {
         id: 2,
         query: 'SELECT * FROM foo',
         viewType: 'chart',
-        viewOptions: []
+        viewOptions: [],
+        updatedAt: '2025-05-15T15:30:00Z'
       })
     }
     const store = createStore({ state, mutations, actions })
@@ -725,7 +1100,8 @@ describe('MainMenu.vue', () => {
             query: 'SELECT * FROM foo',
             viewType: 'chart',
             viewOptions: [],
-            isSaved: true
+            isSaved: true,
+            updatedAt: '2025-05-15T15:30:00Z'
           }
         })
       )
@@ -817,5 +1193,113 @@ describe('MainMenu.vue', () => {
 
     // check that 'inquirySaved' event is not listened on eventBus
     expect(eventBus.$off.calledOnceWith('inquirySaved')).to.equal(true)
+  })
+
+  it('Save the inquiry as new', async () => {
+    const tab = {
+      id: 1,
+      name: 'foo',
+      query: 'SELECT * FROM foo',
+      updatedAt: '2025-05-15T15:30:00Z',
+      execute: sinon.stub(),
+      isSaved: true
+    }
+    const state = {
+      currentTab: tab,
+      inquiries: [
+        {
+          id: 1,
+          name: 'foo',
+          query: 'SELECT * FROM bar',
+          updatedAt: '2025-05-15T16:30:00Z',
+          createdAt: '2025-05-14T15:30:00Z'
+        }
+      ],
+      tabs: [tab],
+      db: {}
+    }
+    const mutations = {
+      updateTab: sinon.stub()
+    }
+    const actions = {
+      saveInquiry: sinon.stub().returns({
+        name: 'foo_new',
+        id: 2,
+        query: 'SELECT * FROM foo',
+        viewType: 'chart',
+        viewOptions: [],
+        updatedAt: '2025-05-16T17:30:00Z',
+        createdAt: '2025-05-16T17:30:00Z'
+      })
+    }
+    const store = createStore({ state, mutations, actions })
+    const $route = { path: '/workspace' }
+    sinon.stub(storedInquiries, 'isTabNeedName').returns(false)
+
+    wrapper = mount(MainMenu, {
+      attachTo: document.body,
+      global: {
+        mocks: { $route },
+        stubs: {
+          'router-link': true,
+          'app-diagnostic-info': true,
+          teleport: true,
+          transition: false
+        },
+        plugins: [store]
+      }
+    })
+
+    await wrapper.find('#save-as-btn').trigger('click')
+
+    // check that Save dialog is open
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Save inquiry'
+    )
+
+    // enter the new name
+    await wrapper.find('.dialog-body input').setValue('foo_new')
+
+    // find Save in the dialog and click
+    await wrapper
+      .findAll('.dialog-buttons-container button')
+      .find(button => button.text() === 'Save')
+      .trigger('click')
+
+    await nextTick()
+
+    // check that the dialog is closed
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+
+    // check that the inquiry was saved via saveInquiry (newName='foo_new')
+    expect(actions.saveInquiry.calledOnce).to.equal(true)
+    expect(actions.saveInquiry.args[0][1]).to.eql({
+      inquiryTab: state.currentTab,
+      newName: 'foo_new'
+    })
+
+    // check that the tab was updated
+    expect(
+      mutations.updateTab.calledOnceWith(
+        state,
+        sinon.match({
+          tab,
+          newValues: {
+            name: 'foo_new',
+            id: 2,
+            query: 'SELECT * FROM foo',
+            viewType: 'chart',
+            viewOptions: [],
+            isSaved: true,
+            updatedAt: '2025-05-16T17:30:00Z'
+          }
+        })
+      )
+    ).to.equal(true)
+
+    // check that 'inquirySaved' event was triggered on eventBus
+    expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
   })
 })

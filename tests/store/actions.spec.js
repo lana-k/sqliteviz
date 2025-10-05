@@ -19,7 +19,8 @@ describe('actions', () => {
       tempName: 'Untitled',
       viewType: 'chart',
       viewOptions: undefined,
-      isSaved: false
+      isSaved: false,
+      updatedAt: undefined
     })
     expect(state.untitledLastIndex).to.equal(1)
 
@@ -30,7 +31,8 @@ describe('actions', () => {
       tempName: 'Untitled 1',
       viewType: 'chart',
       viewOptions: undefined,
-      isSaved: false
+      isSaved: false,
+      updatedAt: undefined
     })
     expect(state.untitledLastIndex).to.equal(2)
   })
@@ -40,16 +42,16 @@ describe('actions', () => {
       tabs: [],
       untitledLastIndex: 0
     }
-    const tab = {
+    const inquiry = {
       id: 1,
       name: 'test',
       query: 'SELECT * from foo',
       viewType: 'chart',
       viewOptions: 'an object with view options',
-      isSaved: true
+      updatedAt: '2025-05-16T20:15:00Z'
     }
-    await addTab({ state }, tab)
-    expect(state.tabs[0]).to.include(tab)
+    await addTab({ state }, inquiry)
+    expect(state.tabs[0]).to.include(inquiry)
     expect(state.untitledLastIndex).to.equal(0)
   })
 
@@ -172,16 +174,20 @@ describe('actions', () => {
     expect(value.viewOptions).to.eql(['chart'])
     expect(value).to.have.property('createdAt')
     expect(new Date(value.createdAt)).within(now, nowPlusMinute)
+    expect(new Date(value.updatedAt)).within(now, nowPlusMinute)
     expect(state.inquiries).to.eql([value])
   })
 
-  it('save updates existing inquiry in the storage', async () => {
+  it('saveInquiry updates existing inquiry in the storage', async () => {
+    const now = new Date()
+    const nowPlusMinute = new Date(now.getTime() + 60 * 1000)
     const tab = {
       id: 1,
       query: 'select * from foo',
       viewType: 'chart',
       viewOptions: [],
-      name: null,
+      name: 'foo',
+      updatedAt: '2025-05-16T20:15:00Z',
       dataView: {
         getOptionsForSave() {
           return ['chart']
@@ -190,33 +196,34 @@ describe('actions', () => {
     }
 
     const state = {
-      inquiries: [],
+      inquiries: [
+        {
+          id: 1,
+          query: 'select * from foo',
+          viewType: 'chart',
+          viewOptions: [],
+          name: 'foo',
+          createdAt: '2025-05-15T16:30:00Z',
+          updatedAt: '2025-05-16T20:15:00Z'
+        }
+      ],
       tabs: [tab]
     }
 
-    const first = await saveInquiry(
-      { state },
-      {
-        inquiryTab: tab,
-        newName: 'foo'
-      }
-    )
-
-    tab.name = 'foo'
     tab.query = 'select * from bar'
-    tab.id = first.id
-    await saveInquiry({ state }, { inquiryTab: tab })
+    await saveInquiry({ state }, { inquiryTab: tab, newName: '' })
     const inquiries = state.inquiries
-    const second = inquiries[0]
+    const updatedTab = inquiries[0]
     expect(inquiries).has.lengthOf(1)
-    expect(second.id).to.equal(first.id)
-    expect(second.name).to.equal(first.name)
-    expect(second.query).to.equal(tab.query)
-    expect(second.viewOptions).to.eql(['chart'])
-    expect(second.createdAt).to.equal(first.createdAt)
+    expect(updatedTab.id).to.equal(updatedTab.id)
+    expect(updatedTab.name).to.equal(updatedTab.name)
+    expect(updatedTab.query).to.equal(tab.query)
+    expect(updatedTab.viewOptions).to.eql(['chart'])
+    expect(updatedTab.createdAt).to.equal('2025-05-15T16:30:00Z')
+    expect(new Date(updatedTab.updatedAt)).to.be.within(now, nowPlusMinute)
   })
 
-  it("save adds a new inquiry with new id if it's based on predefined inquiry", async () => {
+  it("saveInquiry adds a new inquiry with new id if it's based on predefined inquiry", async () => {
     const now = new Date()
     const nowPlusMinute = new Date(now.getTime() + 60 * 1000)
     const tab = {
@@ -252,6 +259,95 @@ describe('actions', () => {
     expect(inquiries[0].name).to.equal('foo')
     expect(inquiries[0].query).to.equal(tab.query)
     expect(inquiries[0].viewOptions).to.eql(['chart'])
+    expect(new Date(inquiries[0].updatedAt)).to.be.within(now, nowPlusMinute)
     expect(new Date(inquiries[0].createdAt)).to.be.within(now, nowPlusMinute)
+  })
+
+  it('saveInquiry adds new inquiry if newName is provided', async () => {
+    const now = new Date()
+    const nowPlusMinute = new Date(now.getTime() + 60 * 1000)
+
+    const tab = {
+      id: 1,
+      query: 'select * from foo',
+      viewType: 'chart',
+      viewOptions: [],
+      name: 'foo',
+      updatedAt: '2025-05-16T20:15:00Z',
+      dataView: {
+        getOptionsForSave() {
+          return ['chart']
+        }
+      }
+    }
+    const inquiry = {
+      id: 1,
+      query: 'select * from foo',
+      viewType: 'chart',
+      viewOptions: [],
+      name: 'foo',
+      createdAt: '2025-05-15T16:30:00Z',
+      updatedAt: '2025-05-16T20:15:00Z'
+    }
+    const state = {
+      inquiries: [inquiry],
+      tabs: [tab]
+    }
+
+    const value = await saveInquiry(
+      { state },
+      {
+        inquiryTab: tab,
+        newName: 'foo_new'
+      }
+    )
+    expect(value.id).not.to.equal(tab.id)
+    expect(value.name).to.equal('foo_new')
+    expect(value.query).to.equal(tab.query)
+    expect(value.viewOptions).to.eql(['chart'])
+    expect(value).to.have.property('createdAt')
+    expect(new Date(value.createdAt)).within(now, nowPlusMinute)
+    expect(new Date(value.updatedAt)).within(now, nowPlusMinute)
+    expect(state.inquiries).to.eql([inquiry, value])
+  })
+
+  it('saveInquiry adds new inquiry if the inquiry is not in the storeage anymore', async () => {
+    const now = new Date()
+    const nowPlusMinute = new Date(now.getTime() + 60 * 1000)
+
+    const tab = {
+      id: 1,
+      query: 'select * from foo',
+      viewType: 'chart',
+      viewOptions: [],
+      name: 'foo',
+      updatedAt: '2025-05-16T20:15:00Z',
+      dataView: {
+        getOptionsForSave() {
+          return ['chart']
+        }
+      }
+    }
+
+    const state = {
+      inquiries: [],
+      tabs: [tab]
+    }
+
+    const value = await saveInquiry(
+      { state },
+      {
+        inquiryTab: tab,
+        newName: ''
+      }
+    )
+    expect(value.id).to.equal(tab.id)
+    expect(value.name).to.equal('foo')
+    expect(value.query).to.equal(tab.query)
+    expect(value.viewOptions).to.eql(['chart'])
+    expect(value).to.have.property('createdAt')
+    expect(new Date(value.createdAt)).within(now, nowPlusMinute)
+    expect(new Date(value.updatedAt)).within(now, nowPlusMinute)
+    expect(state.inquiries).to.eql([value])
   })
 })

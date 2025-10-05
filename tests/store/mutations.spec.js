@@ -34,7 +34,8 @@ describe('mutations', () => {
       viewType: 'chart',
       viewOptions: { here_are: 'chart settings' },
       isSaved: false,
-      isPredefined: false
+      isPredefined: false,
+      updatedAt: '2025-05-15T15:30:00Z'
     }
 
     const newValues = {
@@ -43,6 +44,7 @@ describe('mutations', () => {
       query: 'SELECT * from bar',
       viewType: 'pivot',
       viewOptions: { here_are: 'pivot settings' },
+      updatedAt: '2025-05-15T16:30:00Z',
       isSaved: true
     }
 
@@ -58,6 +60,7 @@ describe('mutations', () => {
       query: 'SELECT * from bar',
       viewType: 'pivot',
       viewOptions: { here_are: 'pivot settings' },
+      updatedAt: '2025-05-15T16:30:00Z',
       isSaved: true
     })
   })

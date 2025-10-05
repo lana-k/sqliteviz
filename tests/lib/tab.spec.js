@@ -15,6 +15,7 @@ describe('tab.js', () => {
       query: undefined,
       viewOptions: undefined,
       isPredefined: undefined,
+      updatedAt: undefined,
       viewType: 'chart',
       result: null,
       isGettingResults: false,
@@ -42,7 +43,8 @@ describe('tab.js', () => {
       viewType: 'pivot',
       viewOptions: 'this is view options object',
       name: 'Foo inquiry',
-      createdAt: '2022-12-05T18:30:30'
+      createdAt: '2022-12-05T18:30:30',
+      updatedAt: '2022-12-06T18:30:30'
     }
 
     const newTab = new Tab(state, inquiry)
@@ -53,6 +55,7 @@ describe('tab.js', () => {
       query: 'SELECT * from foo',
       viewOptions: 'this is view options object',
       isPredefined: undefined,
+      updatedAt: '2022-12-06T18:30:30',
       viewType: 'pivot',
       result: null,
       isGettingResults: false,
