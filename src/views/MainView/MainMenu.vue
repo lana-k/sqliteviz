@@ -147,13 +147,13 @@ export default {
       events.send('inquiry.create', null, { auto: false })
     },
     cancelSave() {
+      this.errorMsg = null
+      this.name = ''
       this.$modal.hide('save')
       this.$modal.hide('inquiry-conflict')
       eventBus.$off('inquirySaved')
     },
     onSave(skipConcurrentEditingCheck = false) {
-      this.errorMsg = null
-      this.name = ''
       if (storedInquiries.isTabNeedName(this.currentInquiryTab)) {
         this.openSaveModal()
         return
@@ -175,11 +175,11 @@ export default {
       this.saveInquiry()
     },
     onSaveAs() {
-      this.errorMsg = null
-      this.name = ''
       this.openSaveModal()
     },
     openSaveModal() {
+      this.errorMsg = null
+      this.name = ''
       this.$modal.show('save')
     },
     validateSaveFormAndSaveInquiry() {
@@ -192,6 +192,10 @@ export default {
     async saveInquiry() {
       const dataSet = this.currentInquiryTab.result
       const tabView = this.currentInquiryTab.view
+      const eventName =
+        this.currentInquiryTab.name && this.name
+          ? 'inquiry.saveAs'
+          : 'inquiry.save'
 
       // Save inquiry
       const value = await this.$store.dispatch('saveInquiry', {
@@ -229,7 +233,7 @@ export default {
 
       // Signal about saving
       eventBus.$emit('inquirySaved')
-      events.send('inquiry.save')
+      events.send(eventName)
     },
     _keyListener(e) {
       if (this.$route.path === '/workspace') {
