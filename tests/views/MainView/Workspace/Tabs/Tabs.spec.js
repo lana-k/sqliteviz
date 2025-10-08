@@ -5,6 +5,9 @@ import mutations from '@/store/mutations'
 import { createStore } from 'vuex'
 import Tabs from '@/views/MainView/Workspace/Tabs'
 import eventBus from '@/lib/eventBus'
+import { nextTick } from 'vue'
+import cIo from '@/lib/utils/clipboardIo'
+import csv from '@/lib/csv'
 
 describe('Tabs.vue', () => {
   let clock
@@ -46,7 +49,7 @@ describe('Tabs.vue', () => {
           id: 1,
           name: 'foo',
           query: 'select * from foo',
-          chart: [],
+          viewType: 'chart',
           isSaved: true
         },
         {
@@ -54,7 +57,7 @@ describe('Tabs.vue', () => {
           name: null,
           tempName: 'Untitled',
           query: '',
-          chart: [],
+          viewType: 'chart',
           isSaved: false
         }
       ],
@@ -97,7 +100,7 @@ describe('Tabs.vue', () => {
           id: 1,
           name: 'foo',
           query: 'select * from foo',
-          chart: [],
+          viewType: 'chart',
           isSaved: true
         },
         {
@@ -105,7 +108,7 @@ describe('Tabs.vue', () => {
           name: null,
           tempName: 'Untitled',
           query: '',
-          chart: [],
+          viewType: 'chart',
           isSaved: false
         }
       ],
@@ -436,7 +439,7 @@ describe('Tabs.vue', () => {
           id: 1,
           name: 'foo',
           query: 'select * from foo',
-          chart: [],
+          viewType: 'chart',
           isSaved: true
         },
         {
@@ -444,7 +447,7 @@ describe('Tabs.vue', () => {
           name: null,
           tempName: 'Untitled',
           query: '',
-          chart: [],
+          viewType: 'chart',
           isSaved: false
         }
       ],
@@ -477,7 +480,7 @@ describe('Tabs.vue', () => {
           id: 1,
           name: 'foo',
           query: 'select * from foo',
-          chart: [],
+          viewType: 'chart',
           isSaved: true
         }
       ],
@@ -499,6 +502,218 @@ describe('Tabs.vue', () => {
     wrapper.vm.leavingSqliteviz(event)
 
     expect(event.preventDefault.calledOnce).to.equal(false)
+    wrapper.unmount()
+  })
+
+  it('Copy image to clipboard dialog works in the context of the tab', async () => {
+    // mock store state - 2 inquiries open
+    const state = {
+      tabs: [
+        {
+          id: 1,
+          name: 'foo',
+          query: 'select * from foo',
+          viewType: 'chart',
+          viewOptions: undefined,
+          layout: {
+            sqlEditor: 'above',
+            table: 'hidden',
+            dataView: 'bottom'
+          },
+          isSaved: true
+        },
+        {
+          id: 2,
+          name: null,
+          tempName: 'Untitled',
+          query: '',
+          viewType: 'chart',
+          viewOptions: undefined,
+          layout: {
+            sqlEditor: 'above',
+            table: 'hidden',
+            dataView: 'bottom'
+          },
+          isSaved: false
+        }
+      ],
+      currentTabId: 2
+    }
+    const store = createStore({ state })
+    sinon.stub(cIo, 'copyImage')
+
+    // mount the component
+    const wrapper = mount(Tabs, {
+      attachTo: document.body,
+      global: {
+        stubs: { teleport: true, transition: true, RouterLink: true },
+        plugins: [store]
+      }
+    })
+    const firstTabDataView = wrapper
+      .findAllComponents({ name: 'Tab' })[0]
+      .findComponent({ name: 'DataView' })
+
+    const secondTabDataView = wrapper
+      .findAllComponents({ name: 'Tab' })[1]
+      .findComponent({ name: 'DataView' })
+
+    // Stub prepareCopy method so it takes long and copy dialog will be shown
+    sinon
+      .stub(firstTabDataView.vm.$refs.viewComponent, 'prepareCopy')
+      .callsFake(async () => {
+        await clock.tick(5000)
+        return 'prepareCopy result in tab 1'
+      })
+
+    sinon
+      .stub(secondTabDataView.vm.$refs.viewComponent, 'prepareCopy')
+      .callsFake(async () => {
+        await clock.tick(5000)
+        return 'prepareCopy result in tab 2'
+      })
+
+    // Click Copy to clipboard button in the second tab
+    const copyBtn = secondTabDataView.findComponent({
+      ref: 'copyToClipboardBtn'
+    })
+    await copyBtn.trigger('click')
+
+    // The dialog is shown...
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Copy to clipboard'
+    )
+
+    // Switch to microtasks (let prepareCopy run)
+    await clock.tick(0)
+    // Wait untill prepareCopy is finished
+    await secondTabDataView.vm.$refs.viewComponent.prepareCopy.returnValues[0]
+
+    await nextTick()
+
+    // Click copy button in the dialog
+    await wrapper
+      .find('.dialog-buttons-container button.primary')
+      .trigger('click')
+
+    // The dialog is not shown...
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(false)
+
+    // copyImage is called with prepare copy result calculated in tab 2, not null
+    // i.e. the dialog works in the tab 2 context
+    expect(
+      cIo.copyImage.calledOnceWith('prepareCopy result in tab 2')
+    ).to.equal(true)
+
+    wrapper.unmount()
+  })
+
+  it('Copy CSV to clipboard dialog works in the context of the tab', async () => {
+    // mock store state - 2 inquiries open
+    const state = {
+      tabs: [
+        {
+          id: 1,
+          name: 'foo',
+          query: 'select * from foo',
+          viewType: 'chart',
+          viewOptions: undefined,
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          result: {
+            columns: ['id', 'name'],
+            values: {
+              id: [1, 2, 3],
+              name: ['Gryffindor', 'Hufflepuff']
+            }
+          },
+          isSaved: true
+        },
+        {
+          id: 2,
+          name: null,
+          tempName: 'Untitled',
+          query: '',
+          viewType: 'chart',
+          viewOptions: undefined,
+          layout: {
+            sqlEditor: 'above',
+            table: 'bottom',
+            dataView: 'hidden'
+          },
+          result: {
+            columns: ['name', 'points'],
+            values: {
+              name: ['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin'],
+              points: [100, 90, 95, 80]
+            }
+          },
+          isSaved: false
+        }
+      ],
+      currentTabId: 2
+    }
+    const store = createStore({ state })
+    sinon.stub(cIo, 'copyText')
+
+    // mount the component
+    const wrapper = mount(Tabs, {
+      attachTo: document.body,
+      global: {
+        stubs: { teleport: true, transition: true, RouterLink: true },
+        plugins: [store]
+      }
+    })
+
+    const secondTabRunResult = wrapper
+      .findAllComponents({ name: 'Tab' })[1]
+      .findComponent({ name: 'RunResult' })
+
+    // Stub prepareCopy method so it takes long and copy dialog will be shown
+    sinon.stub(csv, 'serialize').callsFake(() => {
+      clock.tick(5000)
+      return 'csv serialize result'
+    })
+
+    // Click Copy to clipboard button in the second tab
+    const copyBtn = secondTabRunResult.findComponent({
+      ref: 'copyToClipboardBtn'
+    })
+    await copyBtn.trigger('click')
+
+    // The dialog is shown...
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Copy to clipboard'
+    )
+
+    // Switch to microtasks (let prepareCopy run)
+    await clock.tick(0)
+    await nextTick()
+
+    // Click copy button in the dialog
+    await wrapper
+      .find('.dialog-buttons-container button.primary')
+      .trigger('click')
+
+    // The dialog is not shown...
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(false)
+
+    // copyText is called with 'csv serialize result' calculated in tab 2, not null
+    // i.e. the dialog works in the tab 2 context
+    expect(
+      cIo.copyText.calledOnceWith(
+        'csv serialize result',
+        'CSV copied to clipboard successfully'
+      )
+    ).to.equal(true)
+
     wrapper.unmount()
   })
 })

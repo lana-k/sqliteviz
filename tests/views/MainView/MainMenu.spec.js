@@ -1146,7 +1146,7 @@ describe('MainMenu.vue', () => {
         name: 'bar',
         id: 2,
         query: 'SELECT * FROM foo',
-        chart: []
+        viewType: 'chart'
       })
     }
     const store = createStore({ state, mutations, actions })

@@ -183,7 +183,6 @@ describe('DataView.vue', () => {
     await wrapper.vm.$refs.viewComponent.prepareCopy.returnValues[0]
 
     await nextTick()
-    await nextTick()
 
     // The dialog is shown...
     expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(true)
