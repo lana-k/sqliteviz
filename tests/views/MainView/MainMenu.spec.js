@@ -6,6 +6,8 @@ import MainMenu from '@/views/MainView/MainMenu'
 import storedInquiries from '@/lib/storedInquiries'
 import { nextTick } from 'vue'
 import eventBus from '@/lib/eventBus'
+import actions from '@/store/actions'
+import mutations from '@/store/mutations'
 
 let wrapper = null
 
@@ -640,6 +642,101 @@ describe('MainMenu.vue', () => {
 
     // check that 'inquirySaved' event was triggered on eventBus
     expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
+  })
+
+  it('Inquiry conflict after saving new inquiry: overwrite', async () => {
+    const tab = {
+      id: 1,
+      name: null,
+      query: 'SELECT * FROM foo',
+      updatedAt: undefined,
+      execute: sinon.stub(),
+      dataView: { getOptionsForSave: sinon.stub() },
+      isSaved: false
+    }
+    const state = {
+      currentTab: tab,
+      inquiries: [],
+      tabs: [tab],
+      db: {}
+    }
+    const store = createStore({ state, mutations, actions })
+    const $route = { path: '/workspace' }
+
+    wrapper = mount(MainMenu, {
+      attachTo: document.body,
+      global: {
+        mocks: { $route },
+        stubs: {
+          'router-link': true,
+          'app-diagnostic-info': true,
+          teleport: true,
+          transition: false
+        },
+        plugins: [store]
+      }
+    })
+
+    await wrapper.find('#save-btn').trigger('click')
+
+    // check that Save dialog is open
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Save inquiry'
+    )
+
+    // enter the name
+    await wrapper.find('.dialog-body input').setValue('foo')
+
+    // find Save in the dialog and click
+    await wrapper
+      .findAll('.dialog-buttons-container button')
+      .find(button => button.text() === 'Save')
+      .trigger('click')
+
+    await nextTick()
+
+    // check that the dialog is closed
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+
+    // check that now there is one inquiry saved
+    expect(state.inquiries.length).to.equal(1)
+    expect(state.inquiries[0].name).to.equal('foo')
+    expect(state.tabs[0].name).to.equal('foo')
+
+    // change the inquiry in store (like it's updated in another tab)
+    store.state.inquiries[0].query = 'SELECT * FROM foo_updated_in_another_tab'
+    store.state.inquiries[0].updatedAt = '2025-05-15T00:00:10Z'
+    store.state.currentTab.query = 'SELECT * FROM foo_new'
+    store.state.currentTab.isSaved = false
+    await nextTick()
+    await wrapper.find('#save-btn').trigger('click')
+
+    // check that the conflict dialog is open
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
+    expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
+      'Inquiry saving conflict'
+    )
+
+    // find Overwrite in the dialog and click
+    await wrapper
+      .findAll('.dialog-buttons-container button')
+      .find(button => button.text() === 'Overwrite')
+      .trigger('click')
+
+    await nextTick()
+
+    // check that the dialog is closed
+    await clock.tick(100)
+    expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
+
+    // check that it's still one inquiry saved
+    expect(state.inquiries.length).to.equal(1)
+    expect(state.inquiries[0].name).to.equal('foo')
+    expect(state.tabs[0].name).to.equal('foo')
+    expect(state.inquiries[0].query).to.equal('SELECT * FROM foo_new')
+    expect(state.tabs[0].query).to.equal('SELECT * FROM foo_new')
   })
 
   it('Inquiry conflict: save as new', async () => {

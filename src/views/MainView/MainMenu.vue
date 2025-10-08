@@ -24,7 +24,7 @@
         class="primary"
         @click="onSaveAs"
       >
-        Save as ...
+        Save as
       </button>
       <button id="create-btn" class="primary" @click="createNewInquiry">
         Create
@@ -230,6 +230,8 @@ export default {
       // Hide dialogs
       this.$modal.hide('save')
       this.$modal.hide('inquiry-conflict')
+      this.errorMsg = null
+      this.name = ''
 
       // Signal about saving
       eventBus.$emit('inquirySaved')
