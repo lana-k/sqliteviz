@@ -1206,19 +1206,6 @@ describe('MainMenu.vue', () => {
 
     // check that 'inquirySaved' event was triggered on eventBus
     expect(eventBus.$emit.calledOnceWith('inquirySaved')).to.equal(true)
-
-    // We saved predefined inquiry, so the tab will be created again
-    // (because of new id) and it will be without sql result and has default view - table.
-    // That's why we need to restore data and view.
-    // Check that result and view are preserved in the currentTab:
-    expect(state.currentTab.viewType).to.equal('chart')
-    expect(state.currentTab.result).to.eql({
-      columns: ['id', 'name'],
-      values: [
-        [1, 'Harry Potter'],
-        [2, 'Drako Malfoy']
-      ]
-    })
   })
 
   it('Cancel saving', async () => {

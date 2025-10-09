@@ -217,16 +217,6 @@ export default {
         }
       })
 
-      // Restore data:
-      // e.g. if we save predefined inquiry the tab will be created again
-      // (because of new id) and
-      // it will be without sql result and has default view - table.
-      // That's why we need to restore data and view
-      this.$nextTick(() => {
-        this.currentInquiryTab.result = dataSet
-        this.currentInquiryTab.view = tabView
-      })
-
       // Hide dialogs
       this.$modal.hide('save')
       this.$modal.hide('inquiry-conflict')
