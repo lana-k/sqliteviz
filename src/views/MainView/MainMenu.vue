@@ -178,6 +178,7 @@ export default {
       this.openSaveModal()
     },
     openSaveModal() {
+      this.$modal.hide('inquiry-conflict')
       this.errorMsg = null
       this.name = ''
       this.$modal.show('save')
@@ -190,8 +191,6 @@ export default {
       this.saveInquiry()
     },
     async saveInquiry() {
-      const dataSet = this.currentInquiryTab.result
-      const tabView = this.currentInquiryTab.view
       const eventName =
         this.currentInquiryTab.name && this.name
           ? 'inquiry.saveAs'

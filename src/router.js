@@ -7,7 +7,7 @@ import LoadView from '@/views/LoadView'
 import store from '@/store'
 import database from '@/lib/database'
 
-const routes = [
+export const routes = [
   {
     path: '/',
     name: 'Welcome',

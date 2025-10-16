@@ -759,8 +759,7 @@ describe('MainMenu.vue', () => {
           createdAt: '2025-05-14T15:30:00Z'
         }
       ],
-      tabs: [tab],
-      db: {}
+      tabs: [tab]
     }
     const mutations = {
       updateTab: sinon.stub()
@@ -802,14 +801,16 @@ describe('MainMenu.vue', () => {
       'Inquiry saving conflict'
     )
 
+    await nextTick()
+    await clock.tick(100)
+
+    // check that only one dialog open
+    expect(wrapper.findAll('.dialog.vfm').length).to.equal(1)
     // find "Save as new" in the dialog and click
     await wrapper
       .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Save as new')
       .trigger('click')
-
-    await nextTick()
-    await clock.tick(100)
 
     // enter the new name
     await wrapper.find('.dialog-body input').setValue('foo_new')
@@ -821,7 +822,6 @@ describe('MainMenu.vue', () => {
       .trigger('click')
 
     await nextTick()
-
     // check that the dialog is closed
     await clock.tick(100)
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
