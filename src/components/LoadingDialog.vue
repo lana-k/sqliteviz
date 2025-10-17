@@ -5,7 +5,7 @@
     :clickToClose="false"
     :contentTransition="{ name: 'loading-dialog' }"
     :overlayTransition="{ name: 'loading-dialog' }"
-    @update:modelValue="$emit('update:modelValue', $event)"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <div class="dialog-header">
       {{ title }}
@@ -60,12 +60,12 @@ export default {
     title: String,
     loading: Boolean
   },
+  emits: ['cancel', 'action', 'update:modelValue'],
   data() {
     return {
       show: this.modelValue
     }
   },
-  emits: ['cancel', 'action', 'update:modelValue'],
   watch: {
     modelValue() {
       this.show = this.modelValue
