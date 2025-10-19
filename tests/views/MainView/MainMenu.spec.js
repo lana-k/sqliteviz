@@ -608,8 +608,6 @@ describe('MainMenu.vue', () => {
       .find(button => button.text() === 'Overwrite')
       .trigger('click')
 
-    await nextTick()
-
     // check that the dialog is closed
     await clock.tick(100)
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
@@ -694,8 +692,6 @@ describe('MainMenu.vue', () => {
       .find(button => button.text() === 'Save')
       .trigger('click')
 
-    await nextTick()
-
     // check that the dialog is closed
     await clock.tick(100)
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
@@ -724,8 +720,6 @@ describe('MainMenu.vue', () => {
       .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Overwrite')
       .trigger('click')
-
-    await nextTick()
 
     // check that the dialog is closed
     await clock.tick(100)
@@ -794,24 +788,29 @@ describe('MainMenu.vue', () => {
     })
 
     await wrapper.find('#save-btn').trigger('click')
-
     // check that the conflict dialog is open
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
     expect(wrapper.find('.dialog.vfm .dialog-header').text()).to.contain(
       'Inquiry saving conflict'
     )
 
-    await nextTick()
     await clock.tick(100)
 
-    // check that only one dialog open
-    expect(wrapper.findAll('.dialog.vfm').length).to.equal(1)
     // find "Save as new" in the dialog and click
+
     await wrapper
       .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Save as new')
       .trigger('click')
 
+    // Hiding any dialog is done with tiny animation. Give time to finish it:
+    await clock.tick(100)
+    // Note: don't call nextTick before clock.tick. That leads to extra trap in
+    // trapStack and the test fails with focus-trap error in afterEach hook
+    // when unmount the component
+
+    // check that only one dialog open
+    expect(wrapper.findAll('.dialog.vfm').length).to.equal(1)
     // enter the new name
     await wrapper.find('.dialog-body input').setValue('foo_new')
 
@@ -821,7 +820,6 @@ describe('MainMenu.vue', () => {
       .find(button => button.text() === 'Save')
       .trigger('click')
 
-    await nextTick()
     // check that the dialog is closed
     await clock.tick(100)
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
@@ -1062,8 +1060,6 @@ describe('MainMenu.vue', () => {
       .find(button => button.text() === 'Save')
       .trigger('click')
 
-    await nextTick()
-
     // check that the dialog is closed
     await clock.tick(100)
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(false)
@@ -1171,8 +1167,6 @@ describe('MainMenu.vue', () => {
       .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Save')
       .trigger('click')
-
-    await nextTick()
 
     // check that the dialog is closed
     await clock.tick(100)
@@ -1350,8 +1344,6 @@ describe('MainMenu.vue', () => {
       .findAll('.dialog-buttons-container button')
       .find(button => button.text() === 'Save')
       .trigger('click')
-
-    await nextTick()
 
     // check that the dialog is closed
     await clock.tick(100)

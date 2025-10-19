@@ -228,7 +228,6 @@ describe('DataView.vue', () => {
     // Wait untill prepareCopy is finished
     await wrapper.vm.$refs.viewComponent.prepareCopy.returnValues[0]
 
-    await nextTick()
     // The dialog is not shown...
     await clock.tick(100)
     expect(wrapper.find('.dialog.vfm .vfm__content').exists()).to.equal(false)

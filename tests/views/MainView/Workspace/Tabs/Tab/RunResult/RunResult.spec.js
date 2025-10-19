@@ -139,7 +139,6 @@ describe('RunResult.vue', () => {
 
     // Switch to microtasks (let serialize run)
     await clock.tick(0)
-    await nextTick()
 
     // The dialog is not shown...
     await clock.tick(100)
