@@ -9,6 +9,7 @@
         v-model:exportToHtmlEnabled="exportToHtmlEnabled"
         :initOptions="initOptionsByMode[mode]"
         :data-sources="dataSource"
+        :showViewSettings="showViewSettings"
         @loading-image-completed="loadingImage = false"
         @update="$emit('update')"
       />
@@ -38,6 +39,18 @@
         @click="mode = 'graph'"
       >
         <graph-icon />
+      </icon-button>
+
+      <div class="side-tool-bar-divider" />
+
+      <icon-button
+        ref="settingsBtn"
+        :active="showViewSettings"
+        tooltip="Toggle visualisation settings visibility"
+        tooltipPosition="top-left"
+        @click="showViewSettings = !showViewSettings"
+      >
+        <settings-icon />
       </icon-button>
 
       <div class="side-tool-bar-divider" />
@@ -103,6 +116,7 @@ import IconButton from '@/components/IconButton'
 import ChartIcon from '@/components/svg/chart'
 import PivotIcon from '@/components/svg/pivot'
 import GraphIcon from '@/components/svg/graph.vue'
+import SettingsIcon from '@/components/svg/settings.vue'
 import HtmlIcon from '@/components/svg/html'
 import ExportToSvgIcon from '@/components/svg/exportToSvg'
 import PngIcon from '@/components/svg/png'
@@ -123,6 +137,7 @@ export default {
     ChartIcon,
     PivotIcon,
     GraphIcon,
+    SettingsIcon,
     ExportToSvgIcon,
     PngIcon,
     HtmlIcon,
@@ -150,7 +165,8 @@ export default {
         pivot: this.initMode === 'pivot' ? this.initOptions : null,
         graph: this.initMode === 'graph' ? this.initOptions : null
       },
-      showLoadingDialog: false
+      showLoadingDialog: false,
+      showViewSettings: true
     }
   },
   computed: {

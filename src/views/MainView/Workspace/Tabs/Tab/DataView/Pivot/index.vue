@@ -5,6 +5,7 @@
       result is not empty.
     </div>
     <pivot-ui
+      v-show="showViewSettings"
       v-model="pivotOptions"
       :keyNames="columns"
       @update="$emit('update')"
@@ -47,7 +48,8 @@ export default {
     dataSources: Object,
     initOptions: Object,
     exportToPngEnabled: Boolean,
-    exportToSvgEnabled: Boolean
+    exportToSvgEnabled: Boolean,
+    showViewSettings: Boolean
   },
   emits: [
     'loadingImageCompleted',
@@ -125,6 +127,9 @@ export default {
     },
     pivotOptions() {
       this.show()
+    },
+    showViewSettings() {
+      this.handleResize()
     }
   },
   created() {

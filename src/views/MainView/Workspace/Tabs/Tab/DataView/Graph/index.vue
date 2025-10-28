@@ -1,5 +1,5 @@
 <template>
-  <div ref="graphContainer" class="chart-container">
+  <div ref="graphContainer" class="graph-container">
     <div v-show="!dataSources" class="warning chart-warning">
       There is no data to build a graph. Run your SQL query and make sure the
       result is not empty.
@@ -14,6 +14,7 @@
         ref="graphEditor"
         :dataSources="dataSources"
         :initOptions="initOptions"
+        :showViewSettings="showViewSettings"
         @update="$emit('update')"
       />
     </div>
@@ -33,7 +34,8 @@ export default {
     initOptions: Object,
     exportToPngEnabled: Boolean,
     exportToSvgEnabled: Boolean,
-    exportToHtmlEnabled: Boolean
+    exportToHtmlEnabled: Boolean,
+    showViewSettings: Boolean
   },
   emits: [
     'update:exportToSvgEnabled',
@@ -58,6 +60,12 @@ export default {
   beforeUnmount() {
     this.resizeObserver.unobserve(this.$refs.graphContainer)
   },
+  watch: {
+    async showViewSettings() {
+      await this.$nextTick()
+      this.handleResize()
+    }
+  },
   methods: {
     getOptionsForSave() {
       return this.$refs.graphEditor.settings
@@ -73,7 +81,7 @@ export default {
       const renderer = this.$refs.graphEditor.renderer
       if (renderer) {
         renderer.refresh()
-        renderer.getCamera().setState({ x: 0.5, y: 0.5 })
+        renderer.getCamera().animatedReset({ duration: 600 })
       }
     }
   }
@@ -81,7 +89,7 @@ export default {
 </script>
 
 <style scoped>
-.chart-container {
+.graph-container {
   height: 100%;
 }
 
@@ -92,7 +100,7 @@ export default {
   box-sizing: border-box;
 }
 
-.chart {
+.graph {
   min-height: 242px;
 }
 

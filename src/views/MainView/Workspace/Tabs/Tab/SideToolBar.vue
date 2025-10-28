@@ -63,7 +63,9 @@ export default {
   border-left: 1px solid var(--color-border-light);
   padding: 6px;
 }
+</style>
 
+<style>
 .side-tool-bar-divider {
   width: 26px;
   height: 1px;

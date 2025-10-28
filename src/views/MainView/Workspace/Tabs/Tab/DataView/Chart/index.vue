@@ -20,6 +20,7 @@
         :useResizeHandler="useResizeHandler"
         :debug="true"
         :advancedTraceTypeSelector="true"
+        :hideControls="!showViewSettings"
         @update="update"
         @render="onRender"
       />
@@ -47,7 +48,8 @@ export default {
     initOptions: Object,
     exportToPngEnabled: Boolean,
     exportToSvgEnabled: Boolean,
-    forPivot: Boolean
+    forPivot: Boolean,
+    showViewSettings: Boolean
   },
   emits: [
     'update:exportToSvgEnabled',
@@ -85,6 +87,9 @@ export default {
         dereference.default(this.state.data, this.dataSources)
         this.updatePlotly()
       }
+    },
+    showViewSettings() {
+      this.handleResize()
     }
   },
   created() {

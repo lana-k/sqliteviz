@@ -1,17 +1,24 @@
 <template>
-  <div class="plotly_editor">
-    <GraphEditorControls>
+  <div :class="['plotly_editor', { with_controls: showViewSettings }]">
+    <GraphEditorControls v-show="showViewSettings">
       <PanelMenuWrapper>
         <Panel group="Structure" name="Graph">
           <Fold name="Graph">
-            <Field>Choose keys explanation...</Field>
+            <Field>
+              Map your result set records to node and edge properties required
+              to build a graph. Learn more about result set requirements in the
+              documentation.
+            </Field>
             <Field label="Object type">
               <Dropdown
                 :options="keysOptions"
                 :value="settings.structure.objectType"
                 @change="updateStructure('objectType', $event)"
               />
-              <Field>0 - node; 1 - edge</Field>
+              <Field>
+                A field indicating if the record is node (value&nbsp;0) or edge
+                (value&nbsp;1).
+              </Field>
             </Field>
 
             <Field label="Node Id">
@@ -20,6 +27,7 @@
                 :value="settings.structure.nodeId"
                 @change="updateStructure('nodeId', $event)"
               />
+              <Field> A field keeping unique node identifier. </Field>
             </Field>
 
             <Field label="Edge source">
@@ -28,6 +36,9 @@
                 :value="settings.structure.edgeSource"
                 @change="updateStructure('edgeSource', $event)"
               />
+              <Field>
+                A field keeping a node identifier where the edge starts.
+              </Field>
             </Field>
 
             <Field label="Edge target">
@@ -36,6 +47,9 @@
                 :value="settings.structure.edgeTarget"
                 @change="updateStructure('edgeTarget', $event)"
               />
+              <Field>
+                A field keeping a node identifier where the edge ends.
+              </Field>
             </Field>
           </Fold>
         </Panel>
@@ -164,6 +178,7 @@
         </Panel>
       </PanelMenuWrapper>
     </GraphEditorControls>
+
     <div
       ref="graph"
       :style="{
@@ -235,7 +250,8 @@ export default {
   inject: ['tabLayout'],
   props: {
     dataSources: Object,
-    initOptions: Object
+    initOptions: Object,
+    showViewSettings: Boolean
   },
   emits: ['update'],
   data() {
@@ -611,7 +627,7 @@ export default {
 </script>
 
 <style scoped>
-.plotly_editor > div {
+.plotly_editor.with_controls > div {
   display: flex !important;
 }
 

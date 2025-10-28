@@ -1,137 +1,132 @@
 <template>
   <div class="pivot-ui">
-    <div :class="{ collapsed }">
-      <div class="row">
-        <label>Columns</label>
-        <multiselect
-          v-model="cols"
-          class="sqliteviz-select cols"
-          :options="colsToSelect"
-          :disabled="colsToSelect.length === 0"
-          :multiple="true"
-          :hideSelected="true"
-          :closeOnSelect="true"
-          :showLabels="false"
-          :max="colsToSelect.length"
-          openDirection="bottom"
-          placeholder=""
-        >
-          <template #maxElements>
-            <span class="no-results">No Results</span>
-          </template>
+    <div class="row">
+      <label>Columns</label>
+      <multiselect
+        v-model="cols"
+        class="sqliteviz-select cols"
+        :options="colsToSelect"
+        :disabled="colsToSelect.length === 0"
+        :multiple="true"
+        :hideSelected="true"
+        :closeOnSelect="true"
+        :showLabels="false"
+        :max="colsToSelect.length"
+        openDirection="bottom"
+        placeholder=""
+      >
+        <template #maxElements>
+          <span class="no-results">No Results</span>
+        </template>
 
-          <template #placeholder>Choose columns</template>
+        <template #placeholder>Choose columns</template>
 
-          <template #noResult>
-            <span class="no-results">No Results</span>
-          </template>
-        </multiselect>
-        <pivot-sort-btn v-model="colOrder" class="sort-btn" direction="col" />
-      </div>
-
-      <div class="row">
-        <label>Rows</label>
-        <multiselect
-          v-model="rows"
-          class="sqliteviz-select rows"
-          :options="rowsToSelect"
-          :disabled="rowsToSelect.length === 0"
-          :multiple="true"
-          :hideSelected="true"
-          :closeOnSelect="true"
-          :showLabels="false"
-          :max="rowsToSelect.length"
-          :optionHeight="29"
-          openDirection="bottom"
-          placeholder=""
-        >
-          <template #maxElements>
-            <span class="no-results">No Results</span>
-          </template>
-
-          <template #placeholder>Choose rows</template>
-
-          <template #noResult>
-            <span class="no-results">No Results</span>
-          </template>
-        </multiselect>
-        <pivot-sort-btn v-model="rowOrder" class="sort-btn" direction="row" />
-      </div>
-
-      <div class="row aggregator">
-        <label>Aggregator</label>
-        <multiselect
-          v-model="aggregator"
-          class="sqliteviz-select short aggregator"
-          :options="aggregators"
-          label="name"
-          trackBy="name"
-          :closeOnSelect="true"
-          :showLabels="false"
-          :hideSelected="true"
-          :optionHeight="29"
-          openDirection="bottom"
-          placeholder="Choose a function"
-        >
-          <template #noResult>
-            <span class="no-results">No Results</span>
-          </template>
-        </multiselect>
-
-        <multiselect
-          v-show="valCount > 0"
-          v-model="val1"
-          class="sqliteviz-select aggr-arg"
-          :options="keyNames"
-          :disabled="keyNames.length === 0"
-          :closeOnSelect="true"
-          :showLabels="false"
-          :hideSelected="true"
-          :optionHeight="29"
-          openDirection="bottom"
-          placeholder="Choose an argument"
-        />
-
-        <multiselect
-          v-show="valCount > 1"
-          v-model="val2"
-          class="sqliteviz-select aggr-arg"
-          :options="keyNames"
-          :disabled="keyNames.length === 0"
-          :closeOnSelect="true"
-          :showLabels="false"
-          :hideSelected="true"
-          :optionHeight="29"
-          openDirection="bottom"
-          placeholder="Choose a second argument"
-        />
-      </div>
-
-      <div class="row">
-        <label>View</label>
-        <multiselect
-          v-model="renderer"
-          class="sqliteviz-select short renderer"
-          :options="renderers"
-          label="name"
-          trackBy="name"
-          :closeOnSelect="true"
-          :allowEmpty="false"
-          :showLabels="false"
-          :hideSelected="true"
-          :optionHeight="29"
-          openDirection="bottom"
-          placeholder="Choose a view"
-        >
-          <template #noResult>
-            <span class="no-results">No Results</span>
-          </template>
-        </multiselect>
-      </div>
+        <template #noResult>
+          <span class="no-results">No Results</span>
+        </template>
+      </multiselect>
+      <pivot-sort-btn v-model="colOrder" class="sort-btn" direction="col" />
     </div>
-    <span class="switcher" @click="collapsed = !collapsed">
-      {{ collapsed ? 'Show pivot settings' : 'Hide pivot settings' }}
-    </span>
+
+    <div class="row">
+      <label>Rows</label>
+      <multiselect
+        v-model="rows"
+        class="sqliteviz-select rows"
+        :options="rowsToSelect"
+        :disabled="rowsToSelect.length === 0"
+        :multiple="true"
+        :hideSelected="true"
+        :closeOnSelect="true"
+        :showLabels="false"
+        :max="rowsToSelect.length"
+        :optionHeight="29"
+        openDirection="bottom"
+        placeholder=""
+      >
+        <template #maxElements>
+          <span class="no-results">No Results</span>
+        </template>
+
+        <template #placeholder>Choose rows</template>
+
+        <template #noResult>
+          <span class="no-results">No Results</span>
+        </template>
+      </multiselect>
+      <pivot-sort-btn v-model="rowOrder" class="sort-btn" direction="row" />
+    </div>
+
+    <div class="row aggregator">
+      <label>Aggregator</label>
+      <multiselect
+        v-model="aggregator"
+        class="sqliteviz-select short aggregator"
+        :options="aggregators"
+        label="name"
+        trackBy="name"
+        :closeOnSelect="true"
+        :showLabels="false"
+        :hideSelected="true"
+        :optionHeight="29"
+        openDirection="bottom"
+        placeholder="Choose a function"
+      >
+        <template #noResult>
+          <span class="no-results">No Results</span>
+        </template>
+      </multiselect>
+
+      <multiselect
+        v-show="valCount > 0"
+        v-model="val1"
+        class="sqliteviz-select aggr-arg"
+        :options="keyNames"
+        :disabled="keyNames.length === 0"
+        :closeOnSelect="true"
+        :showLabels="false"
+        :hideSelected="true"
+        :optionHeight="29"
+        openDirection="bottom"
+        placeholder="Choose an argument"
+      />
+
+      <multiselect
+        v-show="valCount > 1"
+        v-model="val2"
+        class="sqliteviz-select aggr-arg"
+        :options="keyNames"
+        :disabled="keyNames.length === 0"
+        :closeOnSelect="true"
+        :showLabels="false"
+        :hideSelected="true"
+        :optionHeight="29"
+        openDirection="bottom"
+        placeholder="Choose a second argument"
+      />
+    </div>
+
+    <div class="row">
+      <label>View</label>
+      <multiselect
+        v-model="renderer"
+        class="sqliteviz-select short renderer"
+        :options="renderers"
+        label="name"
+        trackBy="name"
+        :closeOnSelect="true"
+        :allowEmpty="false"
+        :showLabels="false"
+        :hideSelected="true"
+        :optionHeight="29"
+        openDirection="bottom"
+        placeholder="Choose a view"
+      >
+        <template #noResult>
+          <span class="no-results">No Results</span>
+        </template>
+      </multiselect>
+    </div>
   </div>
 </template>
 
@@ -163,7 +158,6 @@ export default {
     const rendererName =
       (this.modelValue && this.modelValue.rendererName) || 'Table'
     return {
-      collapsed: false,
       renderer: {
         name: rendererName,
         fun: $.pivotUtilities.renderers[rendererName]
@@ -290,9 +284,6 @@ export default {
 .pivot-ui .row .sort-btn {
   margin-left: 12px;
   flex-shrink: 0;
-}
-.collapsed {
-  display: none;
 }
 
 .switcher {
