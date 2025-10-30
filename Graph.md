@@ -13,7 +13,7 @@ To build a graph, a result set must follow the following requirements:
 - each JSON representing a node has a common key with a node id
 - each JSON representing an edge has a common key with the edge source and a common key with the edge target
 
-Each JSON can have more fields used for graph styling (read more in [Graph styling][#graph-styling]).
+Each JSON can have more fields used for graph styling (read more in [Graph styling](#graph-styling).
 
 ## Graph settings
 
