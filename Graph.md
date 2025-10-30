@@ -13,7 +13,7 @@ To build a graph, a result set must follow the following requirements:
 - each JSON representing a node has a common key with a node id
 - each JSON representing an edge has a common key with the edge source and a common key with the edge target
 
-Each JSON can have more fields used for graph styling (read more in [Graph styling](#graph-styling).
+Each JSON can have more fields used for graph styling (read more in [Graph styling](#graph-styling)).
 
 ## Graph settings
 
@@ -27,10 +27,6 @@ Go to `Structure` -> 'Graph' and set the following fields:
 
 ![Fig. 1: Table](./img/Screenshot_pivot_table.png)
 
-![Fig. 2: Heatmap](./img/Screenshot_pivot_heatmap.png)
-
-![Fig. 3: Horizontal Stacked Bar Chart](./img/Screenshot_pivot_barchart.png)
-
 There are several built-in chart views for a pivot. But you can build your own
 with `Custom chart` view (fig. 4).
 
@@ -40,7 +36,6 @@ with `Custom chart` view (fig. 4).
 > all your custom chart settings will be remembered. But if you switch the
 > visualisation mode from pivot to any other mode, unsaved changes will be lost.
 
-You can save any visualisation as an image by clicking ![](./img/camera.svg).
 
 ## Pivot table SQL
 
