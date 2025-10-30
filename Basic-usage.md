@@ -37,20 +37,20 @@ Press `Create` button in the top toolbar or use `Ctrl+b` (`Cmd+b` for MacOS)
 keyboard shortcut to open a new tab for an inquiry. An inquiry consists of three
 parts: SQL query, result set (result of the query execution) and visualisation
 of the result set. A tab consists of two panels. Each of them can show one of
-the three parts of inquiry. By default the top panel shows SQL query editor and
+the three parts of inquiry. By default, the top panel shows SQL query editor and
 the bottom panel shows the result set. You can switch any panel to any other
-view with corresponding buttons in the right side toolbar.
+view with the  corresponding buttons in the right side toolbar.
 
 * ![](./img/sql.svg) – Switch the panel to an SQL query editor. In that
-  editor you can specify and run not only a `SELECT` statement for getting data
+  editor, you can specify and run not only a `SELECT` statement for getting data
   but also DDL/DML statements for modifying the database.
 * ![](./img/table.svg) – Switch the panel to the result set. Here you
   can see the result of the query execution.
 * ![](./img/visualisation.svg) – Switch the panel to visualisation. This
-  panel allows building a pivot table and charts from the result set.
+  panel allows building a pivot table, a graph or charts from the result set.
 
 > **Note:** The query editor can show you hints: SQL keywords, table and column
-> names. In a common case column names are shown in the hint if you specify the
+> names. In a common case, column names are shown in the hint if you specify the
 > table name, e.g. `SELECT table_name.`. But if there is only one table in your
 > database column names will be always available in the hint. Press `Ctrl+Space`
 > to show a hint explicitly.
@@ -59,7 +59,7 @@ view with corresponding buttons in the right side toolbar.
 
 Press ![](./img/run.svg) button in the right side toolbar of an SQL
 editor panel or use `Ctrl+r` or `Ctrl+Enter` (`Cmd+r` or `Cmd+Enter` for MacOS)
-keyboard shortcut to execute a query in the current opened tab.
+keyboard shortcut to execute a query in the current open tab.
 
 > **Note:**  Running is not available if a query for the current tab is not
 > specified.
@@ -74,13 +74,14 @@ visualisation panel.
 
 * ![](./img/chart.svg) – Switch to a chart type visualisation.
 * ![](./img/pivot.svg) – Switch to a pivot type visualisation.
-
-> **Note:**  All unsaved changes in the current visualisation will be lost when
-> you switch to the other visualisation type.
+* ![](./img/graph.svg) – Switch to a graph type visualisation.
 
 A pivot table can be represented as a regular or multi-header table or
 visualised with a chart.
 Read more details of working with pivot in [Pivot tables][2].
+
+There are some requirements for the result set to build a graph. 
+Read more in [Graph][3].
 
 All customised charts in sqliteviz are created with a `react-chart-editor`
 component (fig. 5). The same component with some additional features is used in
@@ -104,3 +105,4 @@ After that, the inquiry will be in the list on `Inquiries` page.
 
 [1]: https://plotly.com/chart-studio-help/tutorials/#basic
 [2]: ../Pivot-table
+[3]: ../Graph
