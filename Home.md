@@ -6,10 +6,11 @@ Welcome to the sqliteviz wiki!
 3. [Multiple file import][9]
 4. [Manage inquiries][2]
 5. [Export current database][4]
-6. [Pivot table][3]
-7. [Predefined inquiries][5]
-8. [Sharing][11]
-9. [Diagnostic information][6]
+6. [Graph][13]
+7. [Pivot table][3]
+8. [Predefined inquiries][5]
+9. [Sharing][11]
+10. [Diagnostic information][6]
 
 ## Examples and tutorials
 1. [How to rename tables and columns after CSV import][8]
@@ -32,3 +33,4 @@ Welcome to the sqliteviz wiki!
 [10]: How-to-build-a-pivot-table-in-SQLite
 [11]: Sharing
 [12]: How-to-rename-tables-and-columns-after-csv-import
+[13]: Graph
