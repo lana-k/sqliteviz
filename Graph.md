@@ -1,23 +1,29 @@
 # Graph
 
-## Pivot table UI
+Sqliteviz allows building a graph. To build a graph run a query to get data. 
+Then open visualisation panel by clicking ![](./img/visualisation.svg)
+in any of the two side toolbars and choose a graph mode by clicking ![](./img/graph.svg).
 
-Sqliteviz allows building pivot tables and visualizing them. To build a graph
-run a query to get data. Then open visualisation panel by clicking ![](./img/visualisation.svg)
-in any of the two side toolbars and choose a pivot mode by clicking ![](./img/graph.svg).
+## Requirements for result set
 
-A pivot visualisation has the following settings:
+To build a graph, a result set must follow the following requirements:
 
-- Columns – choose one or more column names from the result set. The values in
-  the chosen columns will be column names of the pivot table.
-- Rows – choose one or more column names from the result set. The values in the
-  chosen columns will be row names of the pivot table.
-- Order of columns and rows.
-- Aggregator and its arguments – a function which will be used for pivot cell
-  calculation. An aggregator can have from zero to two arguments. An aggregator
-  argument is one of the columns of the result set.
-- View – pivot table visualisation. It can be a table, a heatmap, a chart,
-  etc. See some examples of different views of the same pivot table below.
+- the first column must contain JSONs (the rest columns in the result set will be ignored)
+- each JSON has a common key indicating if the record represents a node (value 0) or an edge (value 1)
+- each JSON representing a node has a common key with a node id
+- each JSON representing an edge has a common key with the edge source and a common key with the edge target
+
+Each JSON can have more fields used for graph styling (read more in [Graph styling][#graph-styling]).
+
+## Graph settings
+
+Start building a graph by setting a mapping from your records to nodes and edge properties.
+Go to `Structure` -> 'Graph' and set the following fields:
+
+- Object type – a field containing 0 for node records and 1 for edge records.
+- Node Id – a field containing node identifier
+- Edge source - a field keeping a node identifier where the edge starts.
+- Edge target - a field keeping a node identifier where the edge ends.
 
 ![Fig. 1: Table](./img/Screenshot_pivot_table.png)
 
