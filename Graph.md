@@ -27,7 +27,7 @@ Go to `Structure` > `Graph` and set the following fields:
 
 This is already enough to build a graph with default styling and circular layout.
 
-![Fig. 1: Graph structure settings](./img/Screenshot_graph_structure.png)  
+![Fig. 1: Graph structure settings](./img/Screenshot_graph_structure.png)
 
 ## Graph styling
 
@@ -158,16 +158,20 @@ In this layout all nodes are just placed along a circle.
 This layout places nodes randomly for each seed value. The seed value allows you to restore the random layout you liked
 when you open the inquiry and run the query next time.
 
+![Fig. 2: Random layout](./img/Screenshot_graph_random.png)
+
 #### Circle pack
 Arranges nodes as a bubble chart according to specified attributes. You can choose multiple hierarchy attributes used to group nodes.
 
-#### Force Atlas 2
+![Fig. 3: Circle pack layout](./img/Screenshot_graph_circle_pack.png)
+
+#### ForceAtlas2
 A continuous graph layout algorithm. Read more details about the algorithm and its settings in the [article][4].
-The algorithm works in iterations. When you choose Force Atlas 2 layout or run the query, it will automatically run 50 iterations of the algorithm.
+The algorithm works in iterations. When you choose ForceAtlas2 layout or run the query, it will automatically run 50 iterations of the algorithm.
 You can change the amount of steps run automatically in `Initial Iterations`. 
 You can also run and stop the algorithm manually by clicking `Start`/`Stop` button.
 
-
+![Fig. 3: ForceAtlas2 layout](./img/Screenshot_graph_force_atlas2.png)
 [How to build a pivot table in SQL(ite)][1] explores two options with static
 (or beforehand-known) and dynamic columns.
 
