@@ -53,6 +53,7 @@ There are the following settings in `Style` > `Nodes` panel:
 
   For variable and calculated sizing it's also possible to set scale, the minimum size and the sizing mode - area or diameter.
   In the diameter mode the difference between node sizes will be more noticeable.
+  
 - Color - set a node color. There are 3 modes of node color: constant, variable and calculated.
 
   `Constant` means that all nodes have the same color.
@@ -60,7 +61,7 @@ There are the following settings in `Style` > `Nodes` panel:
   `Variable` allows you to choose a field by which the color will be determined.
   With this option you can also choose if the color value should be taken directly or mapped to a color palette.
   `Direct` mode means that in JSON representing a node, the value available by the selected field will be used as a color.
-  The color value can be set in different ways:
+  The color value in the JSON can be set in different ways:
 
   **As Hex, 8-digit (RGBA) Hex**
   ```
@@ -100,6 +101,7 @@ There are the following settings in `Style` > `Nodes` panel:
   ```
 
   **Named colors**
+  
   Case insenstive names are accepted, using the list of [colors in the CSS spec][3].
   ```
   "RED"
@@ -108,13 +110,61 @@ There are the following settings in `Style` > `Nodes` panel:
   ```
 
   When `Map to` option is selected, the value by the selected field can be anything because it won't be used directly as a color.
-  In this case each distinct value instead will be mapped to a certain color, so nodes with the same value will have the same color.
-  You can choose a palette used in color mapping.
+  In this case each distinct value will be mapped to a certain color, so nodes with the same value will have the same color.
+  Click on a color palette to open a palette selector.
   
   `Calculated` color mode allows to choose a method that will be used to determine a color.
-  Currently, 3 methods are available: total node degree, degree by in-edges and degree by out-edges.
+  Currently, 3 methods are available: total node degree, degree by in-edges and degree by out-edges. You can also choose a color palette
+  that will be used in a mapping of calculated values into an actual color.
 
+- Color As - defines how color mapping should work - continuously or categorically.
   
+    Continuous mode is more suitable when the mapped values have a meaningful order. It looks more informative with sequential palettes.
+    In that case the lowest value corresponds to the first color in the palette and the highest value - to the last color.
+    The color of each intermediate value reflects the position of that value in the range.
+
+    Categorical mode just uses the next color in the palette for each new distinct value.
+
+- Colorscale Direction - use a selected palette as is or reverse it.  
+
+### Edges
+
+There are the following settings in `Style` > `Edges` panel:
+
+- Direction - show an edges with or without arrows
+- Label - a field containing an edge label. Note that if the graph has too many edges,
+  some labels can be visible only at a certain zoom level.
+- Label Color - a color of edge labels
+- Size - set an edge thickness. There are 2 modes of edge sizing: constant and variable.
+
+  `Constant` means that all edges have the same thickness.
+  
+  `Variable` allows you to choose a field where the edge size will be taken.
+
+  For variable sizing it's also possible to set scale and the minimum size.
+  
+- Color - set an edge color. There are 2 modes of edge color: constant and variable. They work similar to node color modes.
+
+- Color As - defines how color mapping should work - continuously or categorically, similar to the same node color setting.
+
+- Colorscale Direction - use a selected palette as is or reverse it.  
+
+### Layout
+
+#### Circular
+In this layout all nodes are just placed along a circle.
+
+#### Random
+This layout places nodes randomly for each seed value. The seed value allows you to restore the random layout you liked
+when you open the inquiry and run the query next time.
+
+#### Circle pack
+Arranges nodes as a bubble chart according to specified attributes. You can choose multiple hierarchy attributes used to group nodes.
+
+#### Force Atlas 2
+Arranges nodes as a bubble chart according to specified attributes. You can choose multiple hierarchy attributes used to group nodes.
+
+
 [How to build a pivot table in SQL(ite)][1] explores two options with static
 (or beforehand-known) and dynamic columns.
 
