@@ -162,7 +162,10 @@ when you open the inquiry and run the query next time.
 Arranges nodes as a bubble chart according to specified attributes. You can choose multiple hierarchy attributes used to group nodes.
 
 #### Force Atlas 2
-Arranges nodes as a bubble chart according to specified attributes. You can choose multiple hierarchy attributes used to group nodes.
+A continuous graph layout algorithm. Read more details about the algorithm and its settings in the [article][4].
+The algorithm works in iterations. When you choose Force Atlas 2 layout or run the query, it will automatically run 50 iterations of the algorithm.
+You can change the amount of steps run automatically in `Initial Iterations`. 
+You can also run and stop the algorithm manually by clicking `Start`/`Stop` button.
 
 
 [How to build a pivot table in SQL(ite)][1] explores two options with static
@@ -171,4 +174,5 @@ Arranges nodes as a bubble chart according to specified attributes. You can choo
 [1]: ../How-to-build-a-pivot-table-in-SQ-Lite
 [2]: https://github.com/bgrins/TinyColor?tab=readme-ov-file#accepted-string-input
 [3]: https://www.w3.org/TR/css-color-4/#named-colors
+[4]: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0098679
 
