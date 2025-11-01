@@ -13,8 +13,10 @@ To build a graph, a result set must follow the following requirements:
 - each JSON representing a node has a common key with a node id
 - each JSON representing an edge has a common key with the edge source and a common key with the edge target
 
-Each JSON can have more fields used for graph styling (read more in [Graph styling](#graph-styling)).
+That is the minimum required to a graph but each JSON can have more fields used in graph styling 
+(read [Graph styling](#graph-styling)).
 
+See also an example in [How to get result set suitable for graph visualisation][1].
 
 ## Graph structure
 
@@ -176,6 +178,7 @@ You can also run and stop the algorithm manually by clicking `Start`/`Stop` butt
 [How to build a pivot table in SQL(ite)][1] explores two options with static
 (or beforehand-known) and dynamic columns.
 
+[1]: ./How-to-get-result-set-suitable-for-graph-visualisation
 [2]: https://github.com/bgrins/TinyColor?tab=readme-ov-file#accepted-string-input
 [3]: https://www.w3.org/TR/css-color-4/#named-colors
 [4]: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0098679
