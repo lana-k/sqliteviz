@@ -15,6 +15,105 @@ To build a graph, a result set must follow the following requirements:
 
 Each JSON can have more fields used for graph styling (read more in [Graph styling](#graph-styling)).
 
+### Example
+Let's say, you have 2 tables:
+
+house:
+| name       | points |
+| ---------- | ------ |
+| Gryffindor | 100    |
+| Hufflepuff | 90     |
+| Ravenclaw  | 95     |
+| Slytherin  | 80     |
+
+student:
+| id | name           | house      |
+| -- | -------------- | ---------- |
+| 1  | Harry Potter   | Gryffindor |
+| 2  | Ron Weasley    | Gryffindor |
+| 3  | Draco Malfoy'  | Slytherin  |
+| 4  | Luna Lovegood  | Ravenclaw  |
+| 5  | Cedric Diggory | Hufflepuff |
+
+Each student belongs to a certain house. 
+Let's say you want to build a graph with houses and students as nodes and where each house has a link to its students.
+
+We are going to use [json_object][1] function to form JSONs. The result set should contain both nodes and edges and we have to provide a field indicating that (0 - for nodes and 1 - for edges). Let's provide it as 'object_type':
+
+```sql
+SELECT json_object('object_type', 0)
+FROM house
+UNION ALL
+SELECT json_object('object_type', 0)
+FROM student
+UNION ALL
+SELECT json_object('object_type', 1)
+FROM student
+```
+Note that we included `student` table twice. That is because the table contains not only students but also their relationship to houses. 
+So the first union will be used as node records and the second one - as edges.
+
+Then we need to provide an ID for each node. For students - `id` and for houses - `name`: 
+
+```sql
+SELECT json_object('object_type', 0, 'node_id', name)
+FROM house
+UNION ALL
+SELECT json_object('object_type', 0, 'node_id', id)
+FROM student
+UNION ALL
+SELECT json_object('object_type', 1)
+FROM student
+```
+
+Each edge record must specify where it starts and where it ends. Let's provide it as `source` and `target`.
+Provide values that are used as node IDs. In our case it's house names and student IDs:
+
+```sql
+SELECT json_object('object_type', 0, 'node_id', name)
+FROM house
+UNION ALL
+SELECT json_object('object_type', 0, 'node_id', id)
+FROM student
+UNION ALL
+SELECT json_object('object_type', 1, 'source', house, 'target', id)
+FROM student
+```
+Basically, that is enough to build a graph. But it won't be meaningfull without lables.
+Also, it would be nice to distinguish house nodes from student nodes e.g. by color.
+Let's put additional fields - `label` and `type` that can be used in graph styling.
+
+```sql
+SELECT json_object('object_type', 0, 'node_id', name, 'label', name, 'type', 'house')
+FROM house
+UNION ALL
+SELECT json_object('object_type', 0, 'node_id', id, 'label', name, 'type', 'student')
+FROM student
+UNION ALL
+SELECT json_object('object_type', 1, 'source', house, 'target', id)
+FROM student
+```
+
+Run the query, the result set will look like this:
+
+| json_object('object_type', 0, 'node_id', name, 'label', name, 'type', 'house') |
+| ------------------------------------------------------------------------------ |
+| {"object_type":0,"node_id":"Gryffindor","label":"Gryffindor","type":"house"}   |
+| {"object_type":0,"node_id":"Hufflepuff","label":"Hufflepuff","type":"house"}   |
+| {"object_type":0,"node_id":"Ravenclaw","label":"Ravenclaw","type":"house"}     |
+| {"object_type":0,"node_id":"Slytherin","label":"Slytherin","type":"house"}     |
+| {"object_type":0,"node_id":1,"label":"Harry Potter","type":"student"}          |
+| {"object_type":0,"node_id":2,"label":"Ron Weasley","type":"student"}           |
+| {"object_type":0,"node_id":3,"label":"Draco Malfoy","type":"student"}          |
+| {"object_type":0,"node_id":4,"label":"Luna Lovegood","type":"student"}         |
+| {"object_type":0,"node_id":5,"label":"Cedric Diggory","type":"student"}        |
+| {"object_type":1,"node_source":"Gryffindor","target":1}                        |
+| {"object_type":1,"node_source":"Gryffindor","target":2}                        |
+| {"object_type":1,"node_source":"Slytherin","target":3}                         |
+| {"object_type":1,"node_source":"Ravenclaw","target":4}                         |
+| {"object_type":1,"node_source":"Hufflepuff","target":5}                        |
+
+
 ## Graph structure
 
 Start building a graph by setting a mapping from your records to nodes and edge properties.
@@ -39,8 +138,8 @@ Set a background color of the graph in `Style` > `General` panel.
 
 There are the following settings in `Style` > `Nodes` panel:
 
-- Label - a field containing a node label. Note that if the graph has too many nodes,
-  some labels can be visible only at a certain zoom level.
+- Label - a field containing a node label. Note that if the graph has too many nodes or the node size
+  is too small, some labels can be visible only at a certain zoom level.
 - Label Color - a color of node labels
 - Size - set a node size. There are 3 modes of node sizing: constant, variable and calculated.
 
@@ -175,7 +274,7 @@ You can also run and stop the algorithm manually by clicking `Start`/`Stop` butt
 [How to build a pivot table in SQL(ite)][1] explores two options with static
 (or beforehand-known) and dynamic columns.
 
-[1]: ../How-to-build-a-pivot-table-in-SQ-Lite
+[1]: https://sqlite.org/json1.html#jobj
 [2]: https://github.com/bgrins/TinyColor?tab=readme-ov-file#accepted-string-input
 [3]: https://www.w3.org/TR/css-color-4/#named-colors
 [4]: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0098679
