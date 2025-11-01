@@ -101,5 +101,10 @@ Run the query, the result set will look like this:
 | {"object_type":1,"node_source":"Ravenclaw","target":4}                         |
 | {"object_type":1,"node_source":"Hufflepuff","target":5}                        |
 
+Now in the graph editor, we can set mapping of the result set records into node and edge properties,
+set graph styles and get the following visualisation:
+
+
+
 [1]: ./graph#requirements-for-result-set
 [2]: https://sqlite.org/json1.html#jobj
