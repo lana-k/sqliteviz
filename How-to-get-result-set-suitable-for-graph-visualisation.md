@@ -26,7 +26,8 @@ Each student belongs to a certain house.
 Let's say you want to build a graph with houses and students as nodes, where each house is linked with its students.
 
 We are going to use [json_object][2] function to form JSONs. The result set should contain both nodes and edges 
-and we have to provide a field indicating that (0 - for nodes and 1 - for edges). Let's provide it as 'object_type':
+and we have to provide a field indicating if the record represents a node (0) or and edge (1).
+Let's provide it as 'object_type':
 
 ```sql
 SELECT json_object('object_type', 0)
@@ -104,6 +105,7 @@ Run the query, the result set will look like this:
 Now in the graph editor, we can set mapping of the result set records into node and edge properties,
 set graph styles and get the following visualisation:
 
+![Fig. 1: Graph visualisation example](./img/Screenshot_potter_example.png)
 
 
 [1]: ./graph#requirements-for-result-set
