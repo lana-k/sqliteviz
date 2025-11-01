@@ -1,6 +1,6 @@
 # How to get result set suitable for graph visualisation
 
-There are some [requirements][1] for result sets if you want to build a graph.
+There are some [requirements for result sets][1] if you want to build a graph.
 Here is an example of building a query that returns a result set appropriate for graph visualisation.
 
 Let's say, you have 2 tables:
@@ -39,9 +39,10 @@ SELECT json_object('object_type', 1)
 FROM student
 ```
 Note that we included `student` table twice. That is because the table contains not only students but also their relationship to houses. 
-So the first union will be used as node records and the second one - as edges.
+So the records from the first union of `student` will be used as nodes and from the second one - as edges.
 
-Then we need to provide an ID for each node. For students - `id` and for houses - `name`: 
+Then we need to provide an ID for each node. Let's put it in `node_id` field. 
+The `node_id` value for students is taken from `id` column and for houses - from `name`: 
 
 ```sql
 SELECT json_object('object_type', 0, 'node_id', name)
@@ -54,8 +55,7 @@ SELECT json_object('object_type', 1)
 FROM student
 ```
 
-Each edge record must specify where it starts and where it ends. Let's provide it as `source` and `target`.
-Provide values that are used as node IDs. In our case it's house names and student IDs:
+Each edge record must provide a node id where the edge starts and where it ends. Let's put it in `source` and `target`:
 
 ```sql
 SELECT json_object('object_type', 0, 'node_id', name)
@@ -67,9 +67,9 @@ UNION ALL
 SELECT json_object('object_type', 1, 'source', house, 'target', id)
 FROM student
 ```
-Basically, that is enough to build a graph. But it won't be meaningfull without lables.
-Also, it would be nice to distinguish house nodes from student nodes e.g. by color.
-Let's put additional fields - `label` and `type` that can be used in graph styling.
+Basically, that is enough to build a graph. But it won't be meaningful without labels.
+Also, it would be nice to distinguish house nodes from student nodes by color.
+Let's put additional fields `label` and `type` that can be used in graph styling.
 
 ```sql
 SELECT json_object('object_type', 0, 'node_id', name, 'label', name, 'type', 'house')
@@ -101,5 +101,5 @@ Run the query, the result set will look like this:
 | {"object_type":1,"node_source":"Ravenclaw","target":4}                         |
 | {"object_type":1,"node_source":"Hufflepuff","target":5}                        |
 
-[1]: ./graph
+[1]: ./graph#requirements-for-result-set
 [2]: https://sqlite.org/json1.html#jobj
