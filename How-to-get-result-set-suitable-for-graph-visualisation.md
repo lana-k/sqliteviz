@@ -1,6 +1,6 @@
 # How to get result set suitable for graph visualisation
 
-There are some requirements for result sets if you want to build a graph.
+There are some [requirements][1] for result sets if you want to build a graph.
 Here is an example of building a query that returns a result set appropriate for graph visualisation.
 
 Let's say, you have 2 tables:
@@ -25,7 +25,8 @@ student:
 Each student belongs to a certain house. 
 Let's say you want to build a graph with houses and students as nodes, where each house is linked with its students.
 
-We are going to use [json_object][1] function to form JSONs. The result set should contain both nodes and edges and we have to provide a field indicating that (0 - for nodes and 1 - for edges). Let's provide it as 'object_type':
+We are going to use [json_object][2] function to form JSONs. The result set should contain both nodes and edges 
+and we have to provide a field indicating that (0 - for nodes and 1 - for edges). Let's provide it as 'object_type':
 
 ```sql
 SELECT json_object('object_type', 0)
@@ -99,3 +100,6 @@ Run the query, the result set will look like this:
 | {"object_type":1,"node_source":"Slytherin","target":3}                         |
 | {"object_type":1,"node_source":"Ravenclaw","target":4}                         |
 | {"object_type":1,"node_source":"Hufflepuff","target":5}                        |
+
+[1]: ./graph
+[2]: https://sqlite.org/json1.html#jobj
