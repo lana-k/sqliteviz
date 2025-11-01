@@ -176,7 +176,6 @@ You can also run and stop the algorithm manually by clicking `Start`/`Stop` butt
 [How to build a pivot table in SQL(ite)][1] explores two options with static
 (or beforehand-known) and dynamic columns.
 
-[1]: https://sqlite.org/json1.html#jobj
 [2]: https://github.com/bgrins/TinyColor?tab=readme-ov-file#accepted-string-input
 [3]: https://www.w3.org/TR/css-color-4/#named-colors
 [4]: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0098679
