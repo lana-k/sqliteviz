@@ -5,6 +5,7 @@ import store from '@/store'
 import { createVfm, VueFinalModal, useVfm } from 'vue-final-modal'
 
 import '@/assets/styles/variables.css'
+import '@/assets/styles/typography.css'
 import '@/assets/styles/buttons.css'
 import '@/assets/styles/tables.css'
 import '@/assets/styles/dialogs.css'

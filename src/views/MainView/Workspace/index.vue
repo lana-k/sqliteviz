@@ -42,8 +42,8 @@ export default {
     ) {
       const stmt = [
         '/*',
-        ' * Your database is empty. In order to start building charts',
-        ' * you should create a table and insert data into it.',
+        ' * Your database is empty. In order to start building data visualisations',
+        ' * you should create tables and insert data into them.',
         ' */',
         'CREATE TABLE house',
         '(',
@@ -54,7 +54,20 @@ export default {
         "('Gryffindor', 100),",
         "('Hufflepuff', 90),",
         "('Ravenclaw', 95),",
-        "('Slytherin', 80);"
+        "('Slytherin', 80);",
+        '',
+        'CREATE TABLE student',
+        '(',
+        '  id INTEGER,',
+        '  name TEXT,',
+        '  house TEXT',
+        ');',
+        'INSERT INTO student VALUES',
+        "(1, 'Harry Potter', 'Gryffindor'),",
+        "(2, 'Ron Weasley', 'Gryffindor'),",
+        "(3, 'Draco Malfoy', 'Slytherin'),",
+        "(4, 'Luna Lovegood', 'Ravenclaw'),",
+        "(5, 'Cedric Diggory', 'Hufflepuff');"
       ].join('\n')
 
       const tabId = await this.$store.dispatch('addTab', { query: stmt })

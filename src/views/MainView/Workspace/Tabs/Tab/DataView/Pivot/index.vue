@@ -326,4 +326,8 @@ export default {
 .pivot-output:empty {
   flex-grow: 0;
 }
+
+:deep(.js-plotly-plot) {
+  height: 100%;
+}
 </style>

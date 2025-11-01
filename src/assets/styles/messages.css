@@ -4,3 +4,10 @@
   font-size: 13px;
   padding: 0 24px;
 }
+
+.data-view-warning {
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid var(--color-border);
+  box-sizing: border-box;
+}

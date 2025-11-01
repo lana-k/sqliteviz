@@ -1,13 +1,20 @@
 <template>
   <div ref="graphContainer" class="graph-container">
-    <div v-show="!dataSources" class="warning chart-warning">
+    <div v-show="!dataSources" class="warning data-view-warning">
       There is no data to build a graph. Run your SQL query and make sure the
       result is not empty.
+    </div>
+    <div v-show="!dataSourceIsValid" class="warning data-view-warning">
+      Result set is invalid for graph visualisation. Learn more in
+      <a href="https://sqliteviz.com/docs/graph/" target="_blank">
+        documentation</a
+      >.
     </div>
     <div
       class="graph"
       :style="{
-        height: !dataSources ? 'calc(100% - 40px)' : '100%'
+        height:
+          !dataSources || !dataSourceIsValid ? 'calc(100% - 40px)' : '100%'
       }"
     >
       <GraphEditor
@@ -25,6 +32,7 @@
 import 'react-chart-editor/lib/react-chart-editor.css'
 import events from '@/lib/utils/events'
 import GraphEditor from './GraphEditor.vue'
+import { dataSourceIsValid } from '@/lib/graphHelper'
 
 export default {
   name: 'Graph',
@@ -48,7 +56,6 @@ export default {
       resizeObserver: null
     }
   },
-
   created() {
     this.$emit('update:exportToSvgEnabled', false)
     this.$emit('update:exportToHtmlEnabled', false)
@@ -64,6 +71,11 @@ export default {
     async showViewSettings() {
       await this.$nextTick()
       this.handleResize()
+    }
+  },
+  computed: {
+    dataSourceIsValid() {
+      return !this.dataSources || dataSourceIsValid(this.dataSources)
     }
   },
   methods: {
@@ -91,13 +103,6 @@ export default {
 <style scoped>
 .graph-container {
   height: 100%;
-}
-
-.chart-warning {
-  height: 40px;
-  line-height: 40px;
-  border-bottom: 1px solid var(--color-border);
-  box-sizing: border-box;
 }
 
 .graph {

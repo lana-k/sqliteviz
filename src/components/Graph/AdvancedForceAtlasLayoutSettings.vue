@@ -1,5 +1,12 @@
 <template>
-  <Field label="Adjust sizes">
+  <Field label="Scaling ratio">
+    <NumericInput
+      :value="modelValue.scalingRatio"
+      @update="update('scalingRatio', $event)"
+    />
+  </Field>
+
+  <Field label="Prevent overlapping">
     <RadioBlocks
       :options="booleanOptions"
       :activeOption="modelValue.adjustSizes"
@@ -19,13 +26,6 @@
     <NumericInput
       :value="modelValue.barnesHutTheta"
       @update="update('barnesHutTheta', $event)"
-    />
-  </Field>
-
-  <Field label="Gravity">
-    <NumericInput
-      :value="modelValue.gravity"
-      @update="update('gravity', $event)"
     />
   </Field>
 

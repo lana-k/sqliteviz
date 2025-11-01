@@ -1,6 +1,6 @@
 <template>
   <div ref="chartContainer" class="chart-container">
-    <div v-show="!dataSources" class="warning chart-warning">
+    <div v-show="!dataSources" class="warning data-view-warning">
       There is no data to build a chart. Run your SQL query and make sure the
       result is not empty.
     </div>
@@ -182,13 +182,6 @@ export default {
 <style scoped>
 .chart-container {
   height: 100%;
-}
-
-.chart-warning {
-  height: 40px;
-  line-height: 40px;
-  border-bottom: 1px solid var(--color-border);
-  box-sizing: border-box;
 }
 
 .chart {

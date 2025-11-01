@@ -7,10 +7,10 @@
     />
   </Field>
 
-  <Field label="Scaling ratio">
+  <Field label="Gravity">
     <NumericInput
-      :value="modelValue.scalingRatio"
-      @update="update('scalingRatio', $event)"
+      :value="modelValue.gravity"
+      @update="update('gravity', $event)"
     />
   </Field>
 </template>

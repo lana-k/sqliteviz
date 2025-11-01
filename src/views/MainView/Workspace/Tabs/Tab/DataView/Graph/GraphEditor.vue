@@ -7,7 +7,9 @@
             <Field>
               Map your result set records to node and edge properties required
               to build a graph. Learn more about result set requirements in the
-              documentation.
+              <a href="https://sqliteviz.com/docs/graph/" target="_blank">
+                documentation</a
+              >.
             </Field>
             <Field label="Object type">
               <Dropdown
@@ -291,7 +293,7 @@ export default {
               nodes: {
                 size: {
                   type: 'constant',
-                  value: 4
+                  value: 10
                 },
                 color: {
                   type: 'constant',

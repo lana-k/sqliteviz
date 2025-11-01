@@ -5,8 +5,39 @@ const TYPE_NODE = 0
 const TYPE_EDGE = 1
 const DEFAULT_SCALE = COLOR_PICKER_CONSTANTS.DEFAULT_SCALE
 
+export function dataSourceIsValid(dataSources) {
+  const docColumn = Object.keys(dataSources)[0]
+  if (!docColumn) {
+    return false
+  }
+  try {
+    const records = dataSources[docColumn].slice(0, 10)
+    records.forEach(record => {
+      const parsedRec = JSON.parse(record)
+      if (Object.keys(parsedRec).length < 2) {
+        throw new Error('The records must have at least 2 keys')
+      }
+    })
+    const firstRecord = JSON.parse(records[0])
+    if (
+      !Object.keys(firstRecord).some(key => {
+        return records
+          .map(record => JSON.parse(record)[key])
+          .every(value => value === 0 || value === 1)
+      })
+    ) {
+      throw new Error(
+        'There must be a common key used as object type: 0 - node, 1 - edge'
+      )
+    }
+    return true
+  } catch (err) {
+    return false
+  }
+}
+
 export function buildNodes(graph, dataSources, options) {
-  const docColumn = Object.keys(dataSources)[0] || 'doc'
+  const docColumn = Object.keys(dataSources)[0]
   const { objectType, nodeId } = options.structure
 
   if (objectType && nodeId) {
@@ -110,10 +141,23 @@ function getUpdateSizeMethod(graph, sizeSettings) {
   if (type === 'constant') {
     return attributes => (attributes.size = value)
   } else if (type === 'variable') {
-    return getVariabledSizeMethod(mode, source, scale, min)
+    return attributes => {
+      attributes.size = getVariabledSize(
+        mode,
+        attributes.data[source],
+        scale,
+        min
+      )
+    }
   } else {
-    return (attributes, nodeId) =>
-      (attributes.size = Math.max(graph[method](nodeId) * scale, min))
+    return (attributes, nodeId) => {
+      attributes.size = getVariabledSize(
+        mode,
+        graph[method](nodeId),
+        scale,
+        min
+      )
+    }
   }
 }
 
@@ -184,22 +228,13 @@ function getUpdateEdgeColorMethod(graph, colorSettings) {
   }
 }
 
-function getVariabledSizeMethod(mode, source, scale, min) {
+function getVariabledSize(mode, value, scale, min) {
   if (mode === 'diameter') {
-    return attributes =>
-      (attributes.size = Math.max(
-        (attributes.data[source] / 2) * scale,
-        min / 2
-      ))
+    return Math.max((value / 2) * scale, min / 2)
   } else if (mode === 'area') {
-    return attributes =>
-      (attributes.size = Math.max(
-        Math.sqrt((attributes.data[source] / 2) * scale),
-        min / 2
-      ))
+    return Math.max(Math.sqrt((value / 2) * scale), min / 2)
   } else {
-    return attributes =>
-      (attributes.size = Math.max(attributes.data[source] * scale, min))
+    return Math.max(value * scale, min)
   }
 }
 

@@ -27,7 +27,7 @@
         />
       </Field>
 
-      <Field>
+      <Field v-if="modelValue.type === 'variable'">
         <RadioBlocks
           :options="colorSourceUsageOptions"
           :activeOption="modelValue.sourceUsage"
@@ -45,7 +45,10 @@
     </template>
   </Field>
 
-  <Field v-if="modelValue.type !== 'constant'" label="Color as">
+  <Field
+    v-if="modelValue.type !== 'constant' && modelValue.sourceUsage === 'map_to'"
+    label="Color as"
+  >
     <RadioBlocks
       :options="сolorAsOptions"
       :activeOption="modelValue.mode"
@@ -53,7 +56,10 @@
     />
   </Field>
 
-  <Field v-if="modelValue.type !== 'constant'" label="Colorscale direction">
+  <Field
+    v-if="modelValue.type !== 'constant' && modelValue.sourceUsage === 'map_to'"
+    label="Colorscale direction"
+  >
     <RadioBlocks
       :options="сolorscaleDirections"
       :activeOption="modelValue.colorscaleDirection"
