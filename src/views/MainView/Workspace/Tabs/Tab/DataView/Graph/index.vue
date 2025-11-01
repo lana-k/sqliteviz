@@ -30,7 +30,6 @@
 
 <script>
 import 'react-chart-editor/lib/react-chart-editor.css'
-import events from '@/lib/utils/events'
 import GraphEditor from './GraphEditor.vue'
 import { dataSourceIsValid } from '@/lib/graphHelper'
 

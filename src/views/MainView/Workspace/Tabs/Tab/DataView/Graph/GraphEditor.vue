@@ -226,6 +226,7 @@ import NodeColorSettings from '@/components/Graph/NodeColorSettings.vue'
 import NodeSizeSettings from '@/components/Graph/NodeSizeSettings.vue'
 import EdgeSizeSettings from '@/components/Graph/EdgeSizeSettings.vue'
 import EdgeColorSettings from '@/components/Graph/EdgeColorSettings.vue'
+import events from '@/lib/utils/events'
 
 export default {
   components: {
@@ -375,6 +376,14 @@ export default {
       deep: true,
       handler() {
         this.buildGraph()
+      }
+    },
+    'settings.layout.type': {
+      immediate: true,
+      handler() {
+        events.send('viz_graph.render', null, {
+          layout: this.settings.layout.type
+        })
       }
     },
     tabLayout: {

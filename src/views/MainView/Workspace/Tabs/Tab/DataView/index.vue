@@ -254,7 +254,9 @@ export default {
       events.send(
         this.mode === 'chart' || this.plotlyInPivot
           ? 'viz_plotly.export'
-          : 'viz_pivot.export',
+          : this.mode === 'graph'
+            ? 'viz_graph.export'
+            : 'viz_pivot.export',
         null,
         eventLabels
       )
