@@ -45,10 +45,12 @@ export function buildNodes(graph, dataSources, options) {
       .map(json => JSON.parse(json))
       .filter(item => item[objectType] === TYPE_NODE)
     nodes.forEach(node => {
-      graph.addNode(node[nodeId], {
-        data: node,
-        labelColor: options.style.nodes.label.color
-      })
+      if (node[nodeId]) {
+        graph.addNode(node[nodeId], {
+          data: node,
+          labelColor: options.style.nodes.label.color
+        })
+      }
     })
   }
 }
