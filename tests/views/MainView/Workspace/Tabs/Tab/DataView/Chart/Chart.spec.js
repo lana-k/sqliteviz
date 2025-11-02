@@ -187,7 +187,8 @@ describe('Chart.vue', () => {
     const wrapper = mount(Chart, {
       attachTo: document.body,
       props: {
-        dataSources
+        dataSources,
+        showViewSettings: true
       },
       global: {
         mocks: { $store }

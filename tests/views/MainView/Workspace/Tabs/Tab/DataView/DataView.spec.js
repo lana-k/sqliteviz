@@ -15,7 +15,7 @@ describe('DataView.vue', () => {
   it('emits update on mode changing', async () => {
     const wrapper = mount(DataView, {
       global: {
-        stubs: { chart: true }
+        mocks: { $store }
       }
     })
 
