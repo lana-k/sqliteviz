@@ -66,7 +66,8 @@ There are the following settings in `Style` > `Nodes` panel:
   - `Variable` allows you to choose a field by which the color is determined.
     With this option you can also choose if the color value should be taken directly or mapped to a
     color palette.
-  - `Direct` mode means that in the JSON document representing the node, the value in the selected
+    
+    `Direct` mode means that in the JSON document representing the node, the value in the selected
     field is used as a color. The color value in the JSON document can be set in different
     ways:
 
@@ -132,10 +133,10 @@ There are the following settings in `Style` > `Nodes` panel:
        darkblue
        ```
 
-  When `Map to` option is selected, the value by the selected field can be anything because it
-  won't be used directly as a color. In this case each distinct value will be mapped to a certain
-  color, so nodes with the same value will have the same color. Click on a color palette to open a
-  palette selector.
+    When `Map to` option is selected, the value by the selected field can be anything because it
+    won't be used directly as a color. In this case each distinct value will be mapped to a certain
+    color, so nodes with the same value will have the same color. Click on a color palette to open a
+    palette selector.
 
   `Calculated` color mode allows to choose a method that will be used to determine a color.
   Currently, 3 methods are available: total node degree, degree by in-edges and degree by
