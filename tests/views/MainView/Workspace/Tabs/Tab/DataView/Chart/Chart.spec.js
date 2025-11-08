@@ -15,7 +15,6 @@ describe('Chart.vue', () => {
   })
 
   it('getOptionsForSave called with proper arguments', () => {
-    // mount the component
     const wrapper = mount(Chart, {
       global: {
         mocks: { $store }
@@ -30,7 +29,6 @@ describe('Chart.vue', () => {
   })
 
   it('emits update when plotly updates', async () => {
-    // mount the component
     const wrapper = mount(Chart, {
       global: {
         mocks: { $store }
@@ -48,7 +46,6 @@ describe('Chart.vue', () => {
       points: [80]
     }
 
-    // mount the component
     const wrapper = mount(Chart, {
       props: {
         dataSources,
@@ -206,6 +203,42 @@ describe('Chart.vue', () => {
       )
 
     expect(wrapper.find('.Select__menu').text()).to.contain('name' + 'points')
+    wrapper.unmount()
+  })
+
+  it('hides and shows controls depending on showViewSettings and resizes the plot', async () => {
+    const wrapper = mount(Chart, {
+      attachTo: document.body,
+      props: {
+        dataSources: null
+      },
+      global: {
+        mocks: { $store }
+      }
+    })
+
+    // don't call flushPromises here, otherwize resize observer will be call to often
+    // which causes ResizeObserver loop completed with undelivered notifications.
+    await nextTick()
+
+    const plot = wrapper.find('.svg-container').wrapperElement
+
+    const initialPlotWidth = plot.scrollWidth
+    const initialPlotHeight = plot.scrollHeight
+
+    expect(wrapper.find('.plotly_editor .editor_controls').exists()).to.equal(
+      false
+    )
+
+    await wrapper.setProps({ showViewSettings: true })
+
+    await flushPromises()
+
+    expect(plot.scrollWidth).not.to.equal(initialPlotWidth)
+    expect(plot.scrollHeight).not.to.equal(initialPlotHeight)
+    expect(wrapper.find('.plotly_editor .editor_controls').exists()).to.equal(
+      true
+    )
     wrapper.unmount()
   })
 })

@@ -35,7 +35,12 @@
         />
       </Field>
 
-      <Field v-if="modelValue.sourceUsage === 'map_to'">
+      <Field
+        v-if="
+          modelValue.sourceUsage === 'map_to' ||
+          modelValue.type === 'calculated'
+        "
+      >
         <ColorscalePicker
           :selected="modelValue.colorscale"
           className="colorscale-picker"
@@ -46,7 +51,9 @@
   </Field>
 
   <Field
-    v-if="modelValue.type !== 'constant' && modelValue.sourceUsage === 'map_to'"
+    v-if="
+      modelValue.sourceUsage === 'map_to' || modelValue.type === 'calculated'
+    "
     label="Color as"
   >
     <RadioBlocks
@@ -57,7 +64,9 @@
   </Field>
 
   <Field
-    v-if="modelValue.type !== 'constant' && modelValue.sourceUsage === 'map_to'"
+    v-if="
+      modelValue.sourceUsage === 'map_to' || modelValue.type === 'calculated'
+    "
     label="Colorscale direction"
   >
     <RadioBlocks
@@ -126,7 +135,6 @@ export default {
         },
         calculated: {
           method: 'degree',
-          sourceUsage: 'map_to',
           colorscale: null,
           mode: 'continious',
           colorscaleDirection: 'normal'

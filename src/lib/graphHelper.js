@@ -47,8 +47,7 @@ export function buildNodes(graph, dataSources, options) {
     nodes.forEach(node => {
       if (node[nodeId]) {
         graph.addNode(node[nodeId], {
-          data: node,
-          labelColor: options.style.nodes.label.color
+          data: node
         })
       }
     })
@@ -56,7 +55,7 @@ export function buildNodes(graph, dataSources, options) {
 }
 
 export function buildEdges(graph, dataSources, options) {
-  const docColumn = Object.keys(dataSources)[0] || 'doc'
+  const docColumn = Object.keys(dataSources)[0]
   const { objectType, edgeSource, edgeTarget } = options.structure
 
   if (objectType && edgeSource && edgeTarget) {
@@ -69,8 +68,7 @@ export function buildEdges(graph, dataSources, options) {
       const target = edge[edgeTarget]
       if (graph.hasNode(source) && graph.hasNode(target)) {
         graph.addEdge(source, target, {
-          data: edge,
-          labelColor: options.style.edges.label.color
+          data: edge
         })
       }
     })
@@ -261,7 +259,6 @@ function getColorMethod(
         colorscale[index % colorscale.length]
       ])
     )
-
     return (attributes, nodeId) => {
       const category = sourceGetter(nodeId, attributes)
       attributes.color = colorMap[category]
@@ -277,6 +274,7 @@ function getColorMethod(
       const value = sourceGetter(nodeId, attributes)
       const normalizedValue = (value - min) / (max - min)
       if (isNaN(normalizedValue)) {
+        attributes.color = '#000000'
         return
       }
       const exactMatch = normalizedColorscale.find(
@@ -288,9 +286,9 @@ function getColorMethod(
       }
 
       const rightColorIndex = normalizedColorscale.findIndex(
-        ([value]) => value >= normalizedValue
+        ([value]) => value > normalizedValue
       )
-      const leftColorIndex = (rightColorIndex || 1) - 1
+      const leftColorIndex = rightColorIndex - 1
       const right = normalizedColorscale[rightColorIndex]
       const left = normalizedColorscale[leftColorIndex]
       const interpolationFactor =
@@ -326,19 +324,4 @@ function getEdgeValueScale(graph, sourceGetter) {
     return res
   }, new Set())
   return Array.from(scaleSet).sort((a, b) => a - b)
-}
-
-export function getOptionsFromDataSources(dataSources) {
-  if (!dataSources) {
-    return []
-  }
-
-  return Object.keys(dataSources).map(name => ({
-    value: name,
-    label: name
-  }))
-}
-
-export default {
-  getOptionsFromDataSources
 }

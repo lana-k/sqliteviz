@@ -586,4 +586,48 @@ describe('Pivot.vue', () => {
 
     wrapper.unmount()
   })
+
+  it('hides or shows controlls depending on showViewSettings and resizes standart chart', async () => {
+    const wrapper = mount(Pivot, {
+      global: {
+        mocks: { $store: { state: { isWorkspaceVisible: true } } }
+      },
+      props: {
+        dataSources: {
+          item: ['foo', 'bar', 'bar', 'bar'],
+          year: [2021, 2021, 2020, 2020]
+        },
+        initOptions: {
+          rows: ['item'],
+          cols: ['year'],
+          colOrder: 'key_a_to_z',
+          rowOrder: 'key_a_to_z',
+          aggregatorName: 'Count',
+          vals: [],
+          renderer: $.pivotUtilities.renderers['Bar Chart'],
+          rendererName: 'Bar Chart'
+        }
+      },
+      attachTo: container
+    })
+
+    expect(wrapper.find('.pivot-ui').isVisible()).to.equal(false)
+
+    await flushPromises()
+
+    const plot = wrapper.find('.svg-container').wrapperElement
+    const initialPlotHeight = plot.scrollHeight
+
+    await wrapper.setProps({ showViewSettings: true })
+    expect(wrapper.find('.pivot-ui').isVisible()).to.equal(true)
+
+    await flushPromises()
+    const plotAfterResize = wrapper.find('.svg-container').wrapperElement
+
+    expect(plotAfterResize.scrollWidth.scrollHeight).not.to.equal(
+      initialPlotHeight
+    )
+
+    wrapper.unmount()
+  })
 })
