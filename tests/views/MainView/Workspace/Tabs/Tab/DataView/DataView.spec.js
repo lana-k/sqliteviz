@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { mount } from '@vue/test-utils'
-import DataView from '@/views/MainView/Workspace/Tabs/Tab/DataView'
+import DataView from '@/views/MainView/Workspace/Tabs/Tab/DataView/index.vue'
 import sinon from 'sinon'
 import { nextTick } from 'vue'
 import cIo from '@/lib/utils/clipboardIo'
@@ -29,7 +29,10 @@ describe('DataView.vue', () => {
   it('method getOptionsForSave calls the same method of the current view component', async () => {
     const wrapper = mount(DataView, {
       global: {
-        mocks: { $store }
+        mocks: { $store },
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
       }
     })
 
@@ -53,13 +56,28 @@ describe('DataView.vue', () => {
     expect(wrapper.vm.getOptionsForSave()).to.eql({
       here_are: 'pivot_settings'
     })
+
+    const graphBtn = wrapper.findComponent({ ref: 'graphBtn' })
+    await graphBtn.trigger('click')
+
+    const graph = wrapper.findComponent({ name: 'graph' }).vm
+    sinon
+      .stub(graph, 'getOptionsForSave')
+      .returns({ here_are: 'graph_settings' })
+
+    expect(wrapper.vm.getOptionsForSave()).to.eql({
+      here_are: 'graph_settings'
+    })
     wrapper.unmount()
   })
 
   it('method saveAsSvg calls the same method of the current view component', async () => {
     const wrapper = mount(DataView, {
       global: {
-        mocks: { $store }
+        mocks: { $store },
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
       }
     })
 
@@ -87,13 +105,22 @@ describe('DataView.vue', () => {
     // Export to svg
     await svgBtn.trigger('click')
     expect(pivot.saveAsSvg.calledOnce).to.equal(true)
+
+    // Switch to graph - svg disabled
+    const graphBtn = wrapper.findComponent({ ref: 'graphBtn' })
+    await graphBtn.trigger('click')
+    expect(svgBtn.attributes('disabled')).to.not.equal(undefined)
+
     wrapper.unmount()
   })
 
   it('method saveAsHtml calls the same method of the current view component', async () => {
     const wrapper = mount(DataView, {
       global: {
-        mocks: { $store }
+        mocks: { $store },
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
       }
     })
 
@@ -114,9 +141,71 @@ describe('DataView.vue', () => {
     const pivot = wrapper.findComponent({ name: 'pivot' }).vm
     sinon.spy(pivot, 'saveAsHtml')
 
-    // Export to svg
+    // Export to html
     await htmlBtn.trigger('click')
     expect(pivot.saveAsHtml.calledOnce).to.equal(true)
+
+    // Switch to graph - htmlBtn disabled
+    const graphBtn = wrapper.findComponent({ ref: 'graphBtn' })
+    await graphBtn.trigger('click')
+    expect(htmlBtn.attributes('disabled')).to.not.equal(undefined)
+
+    wrapper.unmount()
+  })
+
+  it('method saveAsPng calls the same method of the current view component', async () => {
+    const clock = sinon.useFakeTimers()
+    const wrapper = mount(DataView, {
+      global: {
+        mocks: { $store },
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    // Find chart and stub the method
+    const chart = wrapper.findComponent({ name: 'Chart' }).vm
+    sinon.stub(chart, 'saveAsPng').callsFake(() => {
+      chart.$emit('loadingImageCompleted')
+    })
+
+    // Export to png
+    const pngBtn = wrapper.findComponent({ ref: 'pngExportBtn' })
+    await pngBtn.trigger('click')
+    await clock.tick(0)
+    expect(chart.saveAsPng.calledOnce).to.equal(true)
+
+    // Switch to pivot
+    const pivotBtn = wrapper.findComponent({ ref: 'pivotBtn' })
+    await pivotBtn.trigger('click')
+
+    // Find pivot and stub the method
+    const pivot = wrapper.findComponent({ name: 'pivot' }).vm
+    sinon.stub(pivot, 'saveAsPng').callsFake(() => {
+      pivot.$emit('loadingImageCompleted')
+    })
+
+    // Export to png
+    await pngBtn.trigger('click')
+    await clock.tick(0)
+    expect(pivot.saveAsPng.calledOnce).to.equal(true)
+
+    // Switch to graph
+    const graphBtn = wrapper.findComponent({ ref: 'graphBtn' })
+    await graphBtn.trigger('click')
+
+    // Find graph and stub the method
+    const graph = wrapper.findComponent({ name: 'graph' }).vm
+    sinon.stub(graph, 'saveAsPng').callsFake(() => {
+      graph.$emit('loadingImageCompleted')
+    })
+
+    // Export to png
+    await pngBtn.trigger('click')
+    await clock.tick(0)
+    expect(graph.saveAsPng.calledOnce).to.equal(true)
+
     wrapper.unmount()
   })
 
@@ -275,5 +364,53 @@ describe('DataView.vue', () => {
     // copyToClipboard is not called
     expect(wrapper.vm.copyToClipboard.calledOnce).to.equal(false)
     wrapper.unmount()
+  })
+
+  it('saves visualisation options and restores them when switch between modes', async () => {
+    const wrapper = mount(DataView, {
+      props: {
+        initMode: 'graph',
+        initOptions: { test_options: 'graph_options_from_inquiery' }
+      },
+      global: {
+        mocks: { $store },
+        stubs: {
+          chart: true,
+          graph: true,
+          pivot: true
+        }
+      }
+    })
+    const getOptionsForSaveStub = sinon.stub(wrapper.vm, 'getOptionsForSave')
+
+    expect(
+      wrapper.findComponent({ name: 'graph' }).props('initOptions')
+    ).to.eql({ test_options: 'graph_options_from_inquiery' })
+
+    getOptionsForSaveStub.returns({ test_options: 'latest_graph_options' })
+    const chartBtn = wrapper.findComponent({ ref: 'chartBtn' })
+    await chartBtn.trigger('click')
+
+    getOptionsForSaveStub.returns({ test_options: 'chart_settings' })
+
+    const pivotBtn = wrapper.findComponent({ ref: 'pivotBtn' })
+    await pivotBtn.trigger('click')
+
+    getOptionsForSaveStub.returns({ test_options: 'pivot_settings' })
+    await chartBtn.trigger('click')
+    expect(
+      wrapper.findComponent({ name: 'chart' }).props('initOptions')
+    ).to.eql({ test_options: 'chart_settings' })
+
+    await pivotBtn.trigger('click')
+    expect(
+      wrapper.findComponent({ name: 'pivot' }).props('initOptions')
+    ).to.eql({ test_options: 'pivot_settings' })
+
+    const graphBtn = wrapper.findComponent({ ref: 'graphBtn' })
+    await graphBtn.trigger('click')
+    expect(
+      wrapper.findComponent({ name: 'graph' }).props('initOptions')
+    ).to.eql({ test_options: 'latest_graph_options' })
   })
 })

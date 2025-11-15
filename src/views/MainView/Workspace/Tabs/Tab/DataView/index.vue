@@ -16,6 +16,7 @@
     </div>
     <side-tool-bar panel="dataView" @switch-to="$emit('switchTo', $event)">
       <icon-button
+        ref="chartBtn"
         :active="mode === 'chart'"
         tooltip="Switch to chart"
         tooltipPosition="top-left"
@@ -33,6 +34,7 @@
         <pivot-icon />
       </icon-button>
       <icon-button
+        ref="graphBtn"
         :active="mode === 'graph'"
         tooltip="Switch to graph"
         tooltipPosition="top-left"
@@ -56,6 +58,7 @@
       <div class="side-tool-bar-divider" />
 
       <icon-button
+        ref="pngExportBtn"
         :disabled="!exportToPngEnabled || loadingImage"
         :loading="loadingImage"
         tooltip="Save as PNG image"

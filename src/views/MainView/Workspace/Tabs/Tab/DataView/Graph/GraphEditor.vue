@@ -338,11 +338,10 @@ export default {
       if (!this.dataSources) {
         return []
       }
+      const firstColumnName = Object.keys(this.dataSources)[0]
       try {
         return (
-          this.dataSources[Object.keys(this.dataSources)[0] || 'doc'].map(
-            json => JSON.parse(json)
-          ) || []
+          this.dataSources[firstColumnName].map(json => JSON.parse(json)) || []
         )
       } catch {
         return []

@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { mount, flushPromises } from '@vue/test-utils'
-import Pivot from '@/views/MainView/Workspace/Tabs/Tab/DataView/Pivot'
+import Pivot from '@/views/MainView/Workspace/Tabs/Tab/DataView/Pivot/index.vue'
 import chartHelper from '@/lib/chartHelper'
 import fIo from '@/lib/utils/fileIo'
 import $ from 'jquery'
