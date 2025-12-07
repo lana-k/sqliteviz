@@ -120,8 +120,8 @@ export default {
     this.resizeObserver.observe(this.$refs.chartContainer)
     if (this.dataSources) {
       dereference.default(this.state.data, this.dataSources)
-      this.updatePlotly()
     }
+    this.handleResize()
   },
   activated() {
     this.useResizeHandler = true
@@ -134,6 +134,10 @@ export default {
   },
   methods: {
     async handleResize() {
+      // Call updatePlotly twice because there is a small gap (for scrolling?)
+      //  on right and bottom of the plot.
+      // After the second call it's good.
+      this.updatePlotly()
       this.updatePlotly()
     },
     onRender() {

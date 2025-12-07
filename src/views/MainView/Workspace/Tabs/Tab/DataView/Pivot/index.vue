@@ -227,12 +227,12 @@ export default {
 
     async prepareCopy() {
       if (this.viewCustomChart) {
-        return await this.$refs.customChart.prepareCopy()
+        return this.$refs.customChart.prepareCopy()
       }
       if (this.viewStandartChart) {
-        return await chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
+        return chartHelper.getImageDataUrl(this.$refs.pivotOutput, 'png')
       }
-      return await pivotHelper.getPivotCanvas(this.$refs.pivotOutput)
+      return pivotHelper.getPivotCanvas(this.$refs.pivotOutput)
     },
 
     async saveAsSvg() {

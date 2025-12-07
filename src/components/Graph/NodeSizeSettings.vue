@@ -1,16 +1,17 @@
 <template>
-  <Field label="Size">
+  <Field label="Size" fieldContainerClassName="test_node_size">
     <RadioBlocks
       :options="nodeSizeTypeOptions"
       :activeOption="modelValue.type"
       @option-change="updateSizeType"
     />
 
-    <Field>
+    <Field fieldContainerClassName="test_node_size_value">
       <NumericInput
         v-if="modelValue.type === 'constant'"
         :value="modelValue.value"
         :min="1"
+        class="test_node_size_value"
         @update="updateSettings('value', $event)"
       />
       <Dropdown
@@ -23,20 +24,21 @@
         v-if="modelValue.type === 'calculated'"
         :options="nodeCalculatedSizeMethodOptions"
         :value="modelValue.method"
+        :clearable="false"
         @change="updateSettings('method', $event)"
       />
     </Field>
   </Field>
 
   <template v-if="modelValue.type !== 'constant'">
-    <Field label="Size scale">
+    <Field label="Size scale" fieldContainerClassName="test_node_size_scale">
       <NumericInput
         :value="modelValue.scale"
         @update="updateSettings('scale', $event)"
       />
     </Field>
 
-    <Field label="Size mode">
+    <Field label="Size mode" fieldContainerClassName="test_node_size_mode">
       <RadioBlocks
         :options="nodeSizeModeOptions"
         :activeOption="modelValue.mode"
@@ -44,7 +46,7 @@
       />
     </Field>
 
-    <Field label="Minimum size">
+    <Field label="Minimum size" fieldContainerClassName="test_node_size_min">
       <NumericInput
         :value="modelValue.min"
         @update="updateSettings('min', $event)"

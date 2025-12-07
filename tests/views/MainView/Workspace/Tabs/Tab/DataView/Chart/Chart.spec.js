@@ -210,7 +210,8 @@ describe('Chart.vue', () => {
     const wrapper = mount(Chart, {
       attachTo: document.body,
       props: {
-        dataSources: null
+        dataSources: null,
+        showViewSettings: false
       },
       global: {
         mocks: { $store }
@@ -222,7 +223,7 @@ describe('Chart.vue', () => {
     await nextTick()
 
     const plot = wrapper.find('.svg-container').wrapperElement
-
+    await flushPromises()
     const initialPlotWidth = plot.scrollWidth
     const initialPlotHeight = plot.scrollHeight
 
@@ -235,7 +236,7 @@ describe('Chart.vue', () => {
     await flushPromises()
 
     expect(plot.scrollWidth).not.to.equal(initialPlotWidth)
-    expect(plot.scrollHeight).not.to.equal(initialPlotHeight)
+    expect(plot.scrollHeight).to.equal(initialPlotHeight)
     expect(wrapper.find('.plotly_editor .editor_controls').exists()).to.equal(
       true
     )

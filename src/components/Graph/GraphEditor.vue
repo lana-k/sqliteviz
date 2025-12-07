@@ -11,10 +11,11 @@
                 documentation</a
               >.
             </Field>
-            <Field label="Object type">
+            <Field label="Object type" ref="objectTypeField">
               <Dropdown
                 :options="keysOptions"
                 :value="settings.structure.objectType"
+                className="test_object_type_select"
                 @change="updateStructure('objectType', $event)"
               />
               <Field>
@@ -27,6 +28,7 @@
               <Dropdown
                 :options="keysOptions"
                 :value="settings.structure.nodeId"
+                className="test_node_id_select"
                 @change="updateStructure('nodeId', $event)"
               />
               <Field> A field keeping unique node identifier. </Field>
@@ -36,6 +38,7 @@
               <Dropdown
                 :options="keysOptions"
                 :value="settings.structure.edgeSource"
+                className="test_edge_source_select"
                 @change="updateStructure('edgeSource', $event)"
               />
               <Field>
@@ -47,6 +50,7 @@
               <Dropdown
                 :options="keysOptions"
                 :value="settings.structure.edgeTarget"
+                className="test_edge_target_select"
                 @change="updateStructure('edgeTarget', $event)"
               />
               <Field>
@@ -71,6 +75,7 @@
               <Dropdown
                 :options="keysOptions"
                 :value="settings.style.nodes.label.source"
+                className="test_label_select"
                 @change="updateNodes('label.source', $event)"
               />
             </Field>
@@ -97,7 +102,10 @@
 
         <Panel group="Style" name="Edges">
           <Fold name="Edges">
-            <Field label="Direction">
+            <Field
+              label="Direction"
+              fieldContainerClassName="test_edge_direction"
+            >
               <RadioBlocks
                 :options="visibilityOptions"
                 :activeOption="settings.style.edges.showDirection"
@@ -109,6 +117,7 @@
               <Dropdown
                 :options="keysOptions"
                 :value="settings.style.edges.label.source"
+                className="test_edge_label_select"
                 @change="updateEdges('label.source', $event)"
               />
             </Field>
@@ -139,6 +148,7 @@
               <Dropdown
                 :options="layoutOptions"
                 :value="settings.layout.type"
+                :clearable="false"
                 @change="updateLayout($event)"
               />
             </Field>
@@ -183,6 +193,7 @@
 
     <div
       ref="graph"
+      class="test_graph_output"
       :style="{
         height: '100%',
         width: '100%',
@@ -416,9 +427,7 @@ export default {
       this.updateLayout(this.settings.layout.type)
       this.renderer = new Sigma(this.graph, this.$refs.graph, {
         renderEdgeLabels: true,
-        allowInvalidContainer: true,
-        labelColor: { attribute: 'labelColor', color: '#444444' },
-        edgeLabelColor: { attribute: 'labelColor', color: '#a2b1c6' }
+        allowInvalidContainer: true
       })
       if (this.settings.layout.type === 'forceAtlas2') {
         this.autoRunFA2Layout()

@@ -1,18 +1,21 @@
 <template>
-  <Field label="Color">
+  <Field label="Color" fieldContainerClassName="test_node_color">
     <RadioBlocks
       :options="nodeColorTypeOptions"
       :activeOption="modelValue.type"
       @option-change="updateColorType"
     />
-    <Field v-if="modelValue.type === 'constant'">
+    <Field
+      v-if="modelValue.type === 'constant'"
+      fieldContainerClassName="test_node_color_value"
+    >
       <ColorPicker
         :selectedColor="modelValue.value"
         @color-change="updateSettings('value', $event)"
       />
     </Field>
     <template v-else>
-      <Field>
+      <Field fieldContainerClassName="test_node_color_value">
         <Dropdown
           v-if="modelValue.type === 'variable'"
           :options="keyOptions"
@@ -23,11 +26,15 @@
           v-if="modelValue.type === 'calculated'"
           :options="nodeCalculatedColorMethodOptions"
           :value="modelValue.method"
+          :clearable="false"
           @change="updateSettings('method', $event)"
         />
       </Field>
 
-      <Field v-if="modelValue.type === 'variable'">
+      <Field
+        v-if="modelValue.type === 'variable'"
+        fieldContainerClassName="test_node_color_mapping_mode"
+      >
         <RadioBlocks
           :options="colorSourceUsageOptions"
           :activeOption="modelValue.sourceUsage"
@@ -55,6 +62,7 @@
       modelValue.sourceUsage === 'map_to' || modelValue.type === 'calculated'
     "
     label="Color as"
+    fieldContainerClassName="test_node_color_as"
   >
     <RadioBlocks
       :options="сolorAsOptions"
@@ -68,6 +76,7 @@
       modelValue.sourceUsage === 'map_to' || modelValue.type === 'calculated'
     "
     label="Colorscale direction"
+    fieldContainerClassName="test_node_color_colorscale_direction"
   >
     <RadioBlocks
       :options="сolorscaleDirections"

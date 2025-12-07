@@ -1,12 +1,12 @@
 <template>
-  <Field label="Size">
+  <Field label="Size" fieldContainerClassName="test_edge_size">
     <RadioBlocks
       :options="edgeSizeTypeOptions"
       :activeOption="modelValue.type"
       @option-change="updateSizeType"
     />
 
-    <Field>
+    <Field fieldContainerClassName="test_edge_size_value">
       <NumericInput
         v-if="modelValue.type === 'constant'"
         :value="modelValue.value"
@@ -23,14 +23,14 @@
   </Field>
 
   <template v-if="modelValue.type !== 'constant'">
-    <Field label="Size scale">
+    <Field label="Size scale" fieldContainerClassName="test_edge_size_scale">
       <NumericInput
         :value="modelValue.scale"
         @update="updateSettings('scale', $event)"
       />
     </Field>
 
-    <Field label="Minimum size">
+    <Field label="Minimum size" fieldContainerClassName="test_edge_size_min">
       <NumericInput
         :value="modelValue.min"
         @update="updateSettings('min', $event)"

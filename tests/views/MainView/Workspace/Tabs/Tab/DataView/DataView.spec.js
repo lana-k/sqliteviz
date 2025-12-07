@@ -195,6 +195,11 @@ describe('DataView.vue', () => {
     const graphBtn = wrapper.findComponent({ ref: 'graphBtn' })
     await graphBtn.trigger('click')
 
+    // Save as png is disabled because there is no data
+    expect(pngBtn.attributes('disabled')).to.not.equal(undefined)
+
+    await wrapper.setProps({ dataSource: { doc: [] } })
+
     // Find graph and stub the method
     const graph = wrapper.findComponent({ name: 'graph' }).vm
     sinon.stub(graph, 'saveAsPng').callsFake(() => {

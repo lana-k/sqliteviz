@@ -1,18 +1,21 @@
 <template>
-  <Field label="Color">
+  <Field label="Color" fieldContainerClassName="test_edge_color">
     <RadioBlocks
       :options="edgeColorTypeOptions"
       :activeOption="modelValue.type"
       @option-change="updateColorType"
     />
-    <Field v-if="modelValue.type === 'constant'">
+    <Field
+      v-if="modelValue.type === 'constant'"
+      fieldContainerClassName="test_edge_color_value"
+    >
       <ColorPicker
         :selectedColor="modelValue.value"
         @color-change="updateSettings('value', $event)"
       />
     </Field>
     <template v-else>
-      <Field>
+      <Field fieldContainerClassName="test_edge_color_value">
         <Dropdown
           v-if="modelValue.type === 'variable'"
           :options="keyOptions"
@@ -21,7 +24,7 @@
         />
       </Field>
 
-      <Field>
+      <Field fieldContainerClassName="test_edge_color_mapping_mode">
         <RadioBlocks
           :options="colorSourceUsageOptions"
           :activeOption="modelValue.sourceUsage"
@@ -42,6 +45,7 @@
   <Field
     v-if="modelValue.type !== 'constant' && modelValue.sourceUsage === 'map_to'"
     label="Color as"
+    fieldContainerClassName="test_edge_color_as"
   >
     <RadioBlocks
       :options="сolorAsOptions"
@@ -53,6 +57,7 @@
   <Field
     v-if="modelValue.type !== 'constant' && modelValue.sourceUsage === 'map_to'"
     label="Colorscale direction"
+    fieldContainerClassName="test_edge_color_colorscale_direction"
   >
     <RadioBlocks
       :options="сolorscaleDirections"

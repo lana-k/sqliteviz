@@ -1,10 +1,13 @@
 <template>
   <div ref="graphContainer" class="graph-container">
-    <div v-show="!dataSources" class="warning data-view-warning">
+    <div v-show="!dataSources" class="warning data-view-warning no-data">
       There is no data to build a graph. Run your SQL query and make sure the
       result is not empty.
     </div>
-    <div v-show="!dataSourceIsValid" class="warning data-view-warning">
+    <div
+      v-show="!dataSourceIsValid"
+      class="warning data-view-warning invalid-data"
+    >
       Result set is invalid for graph visualisation. Learn more in
       <a href="https://sqliteviz.com/docs/graph/" target="_blank">
         documentation</a
@@ -30,7 +33,7 @@
 
 <script>
 import 'react-chart-editor/lib/react-chart-editor.css'
-import GraphEditor from './GraphEditor.vue'
+import GraphEditor from '@/components/Graph/GraphEditor.vue'
 import { dataSourceIsValid } from '@/lib/graphHelper'
 
 export default {
@@ -47,6 +50,8 @@ export default {
   emits: [
     'update:exportToSvgEnabled',
     'update:exportToHtmlEnabled',
+    'update:exportToPngEnabled',
+    'update:exportToClipboardEnabled',
     'update',
     'loadingImageCompleted'
   ],
@@ -58,6 +63,8 @@ export default {
   created() {
     this.$emit('update:exportToSvgEnabled', false)
     this.$emit('update:exportToHtmlEnabled', false)
+    this.$emit('update:exportToPngEnabled', !!this.dataSources)
+    this.$emit('update:exportToClipboardEnabled', !!this.dataSources)
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(this.handleResize)
@@ -70,6 +77,10 @@ export default {
     async showViewSettings() {
       await this.$nextTick()
       this.handleResize()
+    },
+    dataSources() {
+      this.$emit('update:exportToPngEnabled', !!this.dataSources)
+      this.$emit('update:exportToClipboardEnabled', !!this.dataSources)
     }
   },
   computed: {
@@ -85,8 +96,8 @@ export default {
       await this.$refs.graphEditor.saveAsPng()
       this.$emit('loadingImageCompleted')
     },
-    async prepareCopy() {
-      return await this.$refs.graphEditor.prepareCopy()
+    prepareCopy() {
+      return this.$refs.graphEditor.prepareCopy()
     },
     async handleResize() {
       const renderer = this.$refs.graphEditor.renderer

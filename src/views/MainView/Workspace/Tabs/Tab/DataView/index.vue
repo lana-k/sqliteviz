@@ -7,6 +7,7 @@
         v-model:exportToPngEnabled="exportToPngEnabled"
         v-model:exportToSvgEnabled="exportToSvgEnabled"
         v-model:exportToHtmlEnabled="exportToHtmlEnabled"
+        v-model:exportToClipboardEnabled="exportToClipboardEnabled"
         :initOptions="initOptionsByMode[mode]"
         :data-sources="dataSource"
         :showViewSettings="showViewSettings"
@@ -88,6 +89,7 @@
       </icon-button>
       <icon-button
         ref="copyToClipboardBtn"
+        :disabled="!exportToClipboardEnabled"
         :loading="copyingImage"
         tooltip="Copy visualisation to clipboard"
         tooltipPosition="top-left"
@@ -159,6 +161,7 @@ export default {
       exportToPngEnabled: true,
       exportToSvgEnabled: true,
       exportToHtmlEnabled: true,
+      exportToClipboardEnabled: true,
       loadingImage: false,
       copyingImage: false,
       preparingCopy: false,
@@ -181,6 +184,7 @@ export default {
     mode(newMode, oldMode) {
       this.$emit('update')
       this.exportToPngEnabled = true
+      this.exportToClipboardEnabled = true
       this.initOptionsByMode[oldMode] = this.getOptionsForSave()
     }
   },
