@@ -149,6 +149,7 @@
                 :options="layoutOptions"
                 :value="settings.layout.type"
                 :clearable="false"
+                className="test_layout_algorithm_select"
                 @change="updateLayout($event)"
               />
             </Field>

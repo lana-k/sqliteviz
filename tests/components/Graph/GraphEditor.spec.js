@@ -572,6 +572,7 @@ describe('GraphEditor', () => {
     await variable.trigger('click')
 
     expect(graph.export().edges[0].attributes.type).to.equal('line')
+    wrapper.unmount()
   })
 
   it('sets edge labels', async () => {
@@ -886,6 +887,307 @@ describe('GraphEditor', () => {
     expect(graph.export().edges[0].attributes.color).to.equal('#ff00ff')
     expect(graph.export().edges[1].attributes.color).to.equal('#ff00ff')
     expect(graph.export().edges[2].attributes.color).to.equal('#ff00ff')
+
+    wrapper.unmount()
+  })
+
+  it('sets random layout with seed value', async () => {
+    const wrapper = mount(GraphEditor, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"type": 0, "node_id": 1}',
+            '{"type": 0, "node_id": 2}',
+            '{"type": 0, "node_id": 3}',
+            '{"type": 0, "node_id": 4}'
+          ]
+        },
+        initOptions: {
+          ...defaultInitOptions,
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          }
+        },
+        showViewSettings: true
+      },
+      global: {
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const graph = wrapper.vm.graph
+
+    const initialCoordinates = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    const styleMenuItem = wrapper.findAll('.sidebar__group__title')[1]
+    await styleMenuItem.trigger('click')
+
+    const layoutMenuItem = wrapper.findAll('.sidebar__item')[4]
+    await layoutMenuItem.trigger('click')
+
+    // Set random layout
+    await wrapper
+      .find(
+        '.test_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[1].trigger('click')
+
+    const randomCoordinatesSeed1 = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(initialCoordinates).to.not.equal(randomCoordinatesSeed1)
+
+    // Set another seed value
+    const seedInput = wrapper.find('input.numeric-input__number ')
+    await seedInput.setValue(2)
+    seedInput.wrapperElement.dispatchEvent(new Event('blur', { bubbles: true }))
+    await nextTick()
+
+    const randomCoordinatesSeed2 = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(randomCoordinatesSeed2).to.not.equal(randomCoordinatesSeed1)
+
+    // Set previous seed value
+    await seedInput.setValue(1)
+    seedInput.wrapperElement.dispatchEvent(new Event('blur', { bubbles: true }))
+    await nextTick()
+
+    const randomCoordinatesSeed1After = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(randomCoordinatesSeed1After).to.equal(randomCoordinatesSeed1)
+
+    wrapper.unmount()
+  })
+
+  it('sets circle pack layout with seed value', async () => {
+    const wrapper = mount(GraphEditor, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"type": 0, "node_id": 1, "size": 20}',
+            '{"type": 0, "node_id": 2, "size": 2}',
+            '{"type": 0, "node_id": 3, "size": 2}',
+            '{"type": 0, "node_id": 4, "size": 2}'
+          ]
+        },
+        initOptions: {
+          ...defaultInitOptions,
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          },
+          style: {
+            ...defaultInitOptions.style,
+            nodes: {
+              size: {
+                type: 'variable',
+                source: 'size',
+                scale: 2,
+                mode: 'diameter',
+                min: 1
+              },
+              color: {
+                type: 'constant',
+                value: '#1F77B4'
+              },
+              label: {
+                source: null,
+                color: '#444444'
+              }
+            }
+          }
+        },
+        showViewSettings: true
+      },
+      global: {
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const graph = wrapper.vm.graph
+    const initialCoordinates = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    const styleMenuItem = wrapper.findAll('.sidebar__group__title')[1]
+    await styleMenuItem.trigger('click')
+
+    const layoutMenuItem = wrapper.findAll('.sidebar__item')[4]
+    await layoutMenuItem.trigger('click')
+
+    // Set circle pack layout
+    await wrapper
+      .find(
+        '.test_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[2].trigger('click')
+
+    const circlePackCoordinatesSeed1 = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(initialCoordinates).to.not.equal(circlePackCoordinatesSeed1)
+
+    // Set another seed value
+    const seedInput = wrapper.find('input.numeric-input__number ')
+    await seedInput.setValue(2)
+    seedInput.wrapperElement.dispatchEvent(new Event('blur', { bubbles: true }))
+    await nextTick()
+
+    const circlePackCoordinatesSeed2 = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(circlePackCoordinatesSeed2).to.not.equal(circlePackCoordinatesSeed1)
+
+    // Set previous seed value
+    await seedInput.setValue(1)
+    seedInput.wrapperElement.dispatchEvent(new Event('blur', { bubbles: true }))
+    await nextTick()
+
+    const circlePackCoordinatesSeed1After = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(circlePackCoordinatesSeed1After).to.equal(circlePackCoordinatesSeed1)
+
+    wrapper.unmount()
+  })
+
+  it('sets different hierarchy in circle pack', async () => {
+    const wrapper = mount(GraphEditor, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"type": 0, "node_id": 1, "size": 20}',
+            '{"type": 0, "node_id": 2, "size": 2}',
+            '{"type": 0, "node_id": 3, "size": 2}',
+            '{"type": 0, "node_id": 4, "size": 2}'
+          ]
+        },
+        initOptions: {
+          ...defaultInitOptions,
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          },
+          style: {
+            ...defaultInitOptions.style,
+            nodes: {
+              size: {
+                type: 'variable',
+                source: 'size',
+                scale: 2,
+                mode: 'diameter',
+                min: 1
+              },
+              color: {
+                type: 'constant',
+                value: '#1F77B4'
+              },
+              label: {
+                source: null,
+                color: '#444444'
+              }
+            }
+          }
+        },
+        showViewSettings: true
+      },
+      global: {
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const graph = wrapper.vm.graph
+    const initialCoordinates = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    const styleMenuItem = wrapper.findAll('.sidebar__group__title')[1]
+    await styleMenuItem.trigger('click')
+
+    const layoutMenuItem = wrapper.findAll('.sidebar__item')[4]
+    await layoutMenuItem.trigger('click')
+
+    // Set circle pack layout
+    await wrapper
+      .find(
+        '.test_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[2].trigger('click')
+
+    const circlePackCoordinatesNoHierarchy = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(initialCoordinates).to.not.equal(circlePackCoordinatesNoHierarchy)
+
+    // Set another hierarchy
+    const hierarchyInput = wrapper.find(
+      '.multiselect.sqliteviz-select .multiselect__select'
+    )
+    await hierarchyInput.trigger('mousedown')
+    await wrapper
+      .find('ul.multiselect__content')
+      .findAll('li')[2]
+      .find('span')
+      .trigger('click')
+    await nextTick()
+
+    const circlePackCoordinatesWithHierarchy = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(circlePackCoordinatesWithHierarchy).to.not.equal(
+      circlePackCoordinatesNoHierarchy
+    )
 
     wrapper.unmount()
   })
