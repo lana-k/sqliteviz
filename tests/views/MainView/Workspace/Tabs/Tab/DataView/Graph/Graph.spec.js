@@ -3,6 +3,27 @@ import sinon from 'sinon'
 import { mount, flushPromises } from '@vue/test-utils'
 import Graph from '@/views/MainView/Workspace/Tabs/Tab/DataView/Graph/index.vue'
 
+function getPixels(canvas) {
+  const context = canvas.getContext('webgl2')
+  const width = context.canvas.width
+  const height = context.canvas.height
+
+  // Create arrays to hold the pixel data
+  const pixels = new Uint8Array(width * height * 4)
+
+  // Read pixels from canvas
+  context.readPixels(
+    0,
+    0,
+    width,
+    height,
+    context.RGBA,
+    context.UNSIGNED_BYTE,
+    pixels
+  )
+  return pixels.join(' ')
+}
+
 describe('Graph.vue', () => {
   const $store = { state: { isWorkspaceVisible: true } }
 
@@ -138,6 +159,88 @@ describe('Graph.vue', () => {
 
     expect(canvas.scrollWidth).not.to.equal(initialCanvasWidth)
     expect(canvas.scrollHeight).not.to.equal(initialCanvasHeight)
+
+    wrapper.unmount()
+  })
+
+  it('nodes and edges are rendered', async () => {
+    const wrapper = mount(Graph, {
+      attachTo: document.body,
+      props: {
+        showViewSettings: true,
+        dataSources: {
+          doc: [
+            '{"object_type": 0, "node_id": 1}',
+            '{"object_type": 0, "node_id": 2}',
+            '{"object_type": 1, "source": 1, "target": 2}'
+          ]
+        }
+      },
+      global: {
+        mocks: { $store },
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const container =
+      wrapper.find('.graph-container').wrapperElement.parentElement
+    container.style.height = '400px'
+
+    await wrapper
+      .find('.test_object_type_select.dropdown-container .Select__indicator')
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    let options = wrapper.findAll('.Select__menu .Select__option')
+
+    await options[0].trigger('click')
+
+    const nodeCanvasPixelsBefore = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-nodes').wrapperElement
+    )
+    const edgeCanvasPixelsBefore = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-edges').wrapperElement
+    )
+
+    await wrapper
+      .find('.test_node_id_select.dropdown-container .Select__indicator')
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    options = wrapper.findAll('.Select__menu .Select__option')
+    await options[1].trigger('click')
+
+    await wrapper
+      .find('.test_edge_source_select.dropdown-container .Select__indicator')
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    options = wrapper.findAll('.Select__menu .Select__option')
+    await options[2].trigger('click')
+
+    await wrapper
+      .find('.test_edge_target_select.dropdown-container .Select__indicator')
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    options = wrapper.findAll('.Select__menu .Select__option')
+    await options[3].trigger('click')
+
+    const nodeCanvasPixelsAfter = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-nodes').wrapperElement
+    )
+    const edgeCanvasPixelsAfter = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-edges').wrapperElement
+    )
+
+    expect(nodeCanvasPixelsBefore).not.equal(nodeCanvasPixelsAfter)
+    expect(edgeCanvasPixelsBefore).not.equal(edgeCanvasPixelsAfter)
 
     wrapper.unmount()
   })
