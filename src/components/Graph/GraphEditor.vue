@@ -170,10 +170,18 @@
               />
             </Fold>
             <div class="force-atlas-buttons">
-              <Button variant="secondary" @click="resetFA2LayoutSettings">
+              <Button
+                variant="secondary"
+                @click="resetFA2LayoutSettings"
+                class="test_fa2_reset"
+              >
                 Reset
               </Button>
-              <Button variant="primary" @click="toggleFA2Layout">
+              <Button
+                variant="primary"
+                @click="toggleFA2Layout"
+                class="test_fa2_toggle"
+              >
                 <template #node:icon>
                   <div
                     :style="{

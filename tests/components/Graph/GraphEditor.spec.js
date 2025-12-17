@@ -2,6 +2,10 @@ import { expect } from 'chai'
 import { mount } from '@vue/test-utils'
 import GraphEditor from '@/components/Graph/GraphEditor.vue'
 import { nextTick } from 'vue'
+import FA2Layout from 'graphology-layout-forceatlas2/worker'
+import sinon from 'sinon'
+import { waitCondition } from '/tests/testUtils'
+import time from '@/lib/utils/time'
 
 const defaultInitOptions = {
   structure: {
@@ -49,6 +53,9 @@ const defaultInitOptions = {
 }
 
 describe('GraphEditor', () => {
+  afterEach(() => {
+    sinon.restore()
+  })
   it('sets graph structure', async () => {
     const wrapper = mount(GraphEditor, {
       attachTo: document.body,
@@ -1187,6 +1194,448 @@ describe('GraphEditor', () => {
 
     expect(circlePackCoordinatesWithHierarchy).to.not.equal(
       circlePackCoordinatesNoHierarchy
+    )
+
+    wrapper.unmount()
+  })
+
+  it('FA2: runs and stops automatically when switch to FA2', async () => {
+    const stopSpy = sinon.spy(FA2Layout.prototype, 'stop')
+    const startSpy = sinon.spy(FA2Layout.prototype, 'start')
+    const wrapper = mount(GraphEditor, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"type": 0, "node_id": 1, "size": 20}',
+            '{"type": 0, "node_id": 2, "size": 2}',
+            '{"type": 0, "node_id": 3, "size": 2}',
+            '{"type": 0, "node_id": 4, "size": 2}'
+          ]
+        },
+        initOptions: {
+          ...defaultInitOptions,
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          }
+        },
+        showViewSettings: true
+      },
+      global: {
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const graph = wrapper.vm.graph
+    const initialCoordinates = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    const styleMenuItem = wrapper.findAll('.sidebar__group__title')[1]
+    await styleMenuItem.trigger('click')
+
+    const layoutMenuItem = wrapper.findAll('.sidebar__item')[4]
+    await layoutMenuItem.trigger('click')
+
+    // Set FA2 pack layout
+    await wrapper
+      .find(
+        '.test_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[3].trigger('click')
+
+    expect(startSpy.calledOnce).to.equal(true)
+    await waitCondition(() => stopSpy.callCount === 1)
+    expect(wrapper.text()).to.contain('Start')
+
+    const coordinates = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(coordinates).not.to.equal(initialCoordinates)
+
+    wrapper.unmount()
+  })
+
+  it('FA2: starts, stops and resets parameters to initial', async () => {
+    const stopSpy = sinon.spy(FA2Layout.prototype, 'stop')
+    const startSpy = sinon.spy(FA2Layout.prototype, 'start')
+    const wrapper = mount(GraphEditor, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"type": 0, "node_id": 1, "size": 20}',
+            '{"type": 0, "node_id": 2, "size": 2}',
+            '{"type": 0, "node_id": 3, "size": 2}',
+            '{"type": 0, "node_id": 4, "size": 2}',
+            '{"type": 1, "source": 1, "target": 3, "wgt": 20}',
+            '{"type": 1, "source": 1, "target": 2, "wgt": 15}',
+            '{"type": 1, "source": 1, "target": 4, "wgt": 5}'
+          ]
+        },
+        initOptions: {
+          ...defaultInitOptions,
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          },
+          layout: {
+            type: 'forceAtlas2',
+            options: {
+              initialIterationsAmount: 55,
+              gravity: 1.5,
+              scalingRatio: 1.2,
+              adjustSizes: true,
+              barnesHutOptimize: true,
+              barnesHutTheta: 0.5,
+              strongGravityMode: false,
+              linLogMode: true,
+              outboundAttractionDistribution: false,
+              slowDown: 1,
+              weightSource: 'wgt',
+              edgeWeightInfluence: 0.5
+            }
+          }
+        },
+        showViewSettings: true
+      },
+      global: {
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const graph = wrapper.vm.graph
+
+    const styleMenuItem = wrapper.findAll('.sidebar__group__title')[1]
+    await styleMenuItem.trigger('click')
+
+    const layoutMenuItem = wrapper.findAll('.sidebar__item')[4]
+    await layoutMenuItem.trigger('click')
+
+    expect(startSpy.calledOnce).to.equal(true)
+    await waitCondition(() => stopSpy.callCount === 1)
+    expect(wrapper.text()).to.contain('Start')
+
+    const initialCoordinates = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    // Change gravity
+    const gravityInput = wrapper.find('.test_fa2_gravity input')
+    await gravityInput.setValue(12)
+    gravityInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    // Call nextTick after setting number input,
+    // otherwise the value will be changed beck to initial for some reason
+    await nextTick()
+
+    expect(wrapper.vm.settings.layout.options.gravity).to.equal(12)
+
+    // Algorithm wasn't called
+    expect(startSpy.calledOnce).to.equal(true)
+
+    // Change scaling ratio
+    const scalingInput = wrapper.find('.test_fa2_scaling input')
+    await scalingInput.setValue(2)
+    scalingInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+    expect(wrapper.vm.settings.layout.options.scalingRatio).to.equal(2)
+
+    // Change Prevent overlaping (adjustSizes)
+    await wrapper
+      .findAll('.test_fa2_adjustSizes .radio-block__option')[1]
+      .trigger('click')
+    await nextTick()
+    expect(wrapper.vm.settings.layout.options.adjustSizes).to.equal(false)
+
+    // Change barnes-hut theta
+    const barnesThetaInput = wrapper.find('.test_fa2_barnes_theta input')
+    await barnesThetaInput.setValue(2)
+    barnesThetaInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+    expect(wrapper.vm.settings.layout.options.barnesHutTheta).to.equal(2)
+
+    // Disable barnes-hut
+    await wrapper
+      .findAll('.test_fa2_barnes_hut .radio-block__option')[1]
+      .trigger('click')
+    await nextTick()
+    expect(wrapper.vm.settings.layout.options.barnesHutOptimize).to.equal(false)
+    expect(wrapper.find('.test_fa2_barnes_theta').isVisible()).to.equal(false)
+
+    // Enable strong gravity
+    await wrapper
+      .findAll('.test_fa2_strong_gravity .radio-block__option')[0]
+      .trigger('click')
+    await nextTick()
+    expect(wrapper.vm.settings.layout.options.strongGravityMode).to.equal(true)
+
+    // Disable LinLog
+    await wrapper
+      .findAll('.test_fa2_lin_log .radio-block__option')[1]
+      .trigger('click')
+    await nextTick()
+    expect(wrapper.vm.settings.layout.options.linLogMode).to.equal(false)
+
+    // Enable outbound attraction
+    await wrapper
+      .findAll('.test_fa2_outbound_attraction .radio-block__option')[0]
+      .trigger('click')
+    await nextTick()
+    expect(
+      wrapper.vm.settings.layout.options.outboundAttractionDistribution
+    ).to.equal(true)
+
+    // Change slow down
+    const slowDownInput = wrapper.find('.test_fa2_slow_down input')
+    await slowDownInput.setValue(0.1)
+    slowDownInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+    expect(wrapper.vm.settings.layout.options.slowDown).to.equal(0.1)
+
+    // Change weight influence
+    const weightInfluenceInput = wrapper.find(
+      '.test_fa2_weight_influence input'
+    )
+    await weightInfluenceInput.setValue(0.8)
+    weightInfluenceInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+    expect(wrapper.vm.settings.layout.options.edgeWeightInfluence).to.equal(0.8)
+
+    // Clear weight source
+    await wrapper
+      .find('.test_fa2_weight_source .dropdown-container .Select__indicator')
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    expect(wrapper.vm.settings.layout.options.weightSource).to.equal(null)
+    expect(wrapper.find('.test_fa2_weight_influence').isVisible()).to.equal(
+      false
+    )
+
+    // Click Start
+    const toggleButton = wrapper.find('button.test_fa2_toggle')
+    await toggleButton.trigger('click')
+    expect(toggleButton.text()).to.contain('Stop')
+    expect(startSpy.callCount).to.equal(2)
+
+    // Wait a bit and click Stop
+    await time.sleep(500)
+    await toggleButton.trigger('click')
+    expect(stopSpy.callCount).to.equal(2)
+
+    const coordinates = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(coordinates).not.to.equal(initialCoordinates)
+
+    // Click Reset
+    await wrapper.find('button.test_fa2_reset').trigger('click')
+    expect(toggleButton.text()).to.contain('Start')
+    expect(startSpy.callCount).to.equal(2)
+    expect(wrapper.vm.settings.layout.options).to.eql({
+      initialIterationsAmount: 55,
+      gravity: 1.5,
+      scalingRatio: 1.2,
+      adjustSizes: true,
+      barnesHutOptimize: true,
+      barnesHutTheta: 0.5,
+      strongGravityMode: false,
+      linLogMode: true,
+      outboundAttractionDistribution: false,
+      slowDown: 1,
+      weightSource: 'wgt',
+      edgeWeightInfluence: 0.5
+    })
+
+    wrapper.unmount()
+  })
+
+  it('FA2: resets parameters to default', async () => {
+    const wrapper = mount(GraphEditor, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"type": 0, "node_id": 1, "size": 20}',
+            '{"type": 0, "node_id": 2, "size": 2}',
+            '{"type": 0, "node_id": 3, "size": 2}',
+            '{"type": 0, "node_id": 4, "size": 2}',
+            '{"type": 1, "source": 1, "target": 3, "wgt": 20}',
+            '{"type": 1, "source": 1, "target": 2, "wgt": 15}',
+            '{"type": 1, "source": 1, "target": 4, "wgt": 5}'
+          ]
+        },
+        initOptions: {
+          ...defaultInitOptions,
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          }
+        },
+        showViewSettings: true
+      },
+      global: {
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const styleMenuItem = wrapper.findAll('.sidebar__group__title')[1]
+    await styleMenuItem.trigger('click')
+
+    const layoutMenuItem = wrapper.findAll('.sidebar__item')[4]
+    await layoutMenuItem.trigger('click')
+
+    // Set FA2 pack layout
+    await wrapper
+      .find(
+        '.test_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[3].trigger('click')
+
+    const defaultRecommendedSettings = JSON.stringify(
+      wrapper.vm.settings.layout.options
+    )
+
+    // Change initial iteration amount
+    const iterationInput = wrapper.find('.test_fa2_iteration_amount input')
+    await iterationInput.setValue(120)
+    iterationInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+
+    // Change gravity
+    const gravityInput = wrapper.find('.test_fa2_gravity input')
+    await gravityInput.setValue(12)
+    gravityInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+
+    // Change scaling ratio
+    const scalingInput = wrapper.find('.test_fa2_scaling input')
+    await scalingInput.setValue(2)
+    scalingInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+
+    // Change Prevent overlaping (adjustSizes)
+    await wrapper
+      .findAll('.test_fa2_adjustSizes .radio-block__option')[0]
+      .trigger('click')
+
+    // Enable barnes-hut
+    await wrapper
+      .findAll('.test_fa2_barnes_hut .radio-block__option')[0]
+      .trigger('click')
+
+    // Change barnes-hut theta
+    const barnesThetaInput = wrapper.find('.test_fa2_barnes_theta input')
+    await barnesThetaInput.setValue(0.8)
+    barnesThetaInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+
+    // Disable strong gravity
+    await wrapper
+      .findAll('.test_fa2_strong_gravity .radio-block__option')[1]
+      .trigger('click')
+
+    // Enable LinLog
+    await wrapper
+      .findAll('.test_fa2_lin_log .radio-block__option')[0]
+      .trigger('click')
+
+    // Disable outbound attraction
+    await wrapper
+      .findAll('.test_fa2_outbound_attraction .radio-block__option')[1]
+      .trigger('click')
+
+    // Change slow down
+    const slowDownInput = wrapper.find('.test_fa2_slow_down input')
+    await slowDownInput.setValue(3.5)
+    slowDownInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+
+    // Set weight source
+    await wrapper
+      .find('.test_fa2_weight_source .dropdown-container .Select__indicator')
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+    await wrapper.findAll('.Select__menu .Select__option')[5].trigger('click')
+
+    // Change weight influence
+    const weightInfluenceInput = wrapper.find(
+      '.test_fa2_weight_influence input'
+    )
+    await weightInfluenceInput.setValue(0.8)
+    weightInfluenceInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+
+    expect(wrapper.vm.settings.layout.options).to.eql({
+      initialIterationsAmount: 120,
+      gravity: 12,
+      scalingRatio: 2,
+      adjustSizes: true,
+      barnesHutOptimize: true,
+      barnesHutTheta: 0.8,
+      strongGravityMode: false,
+      linLogMode: true,
+      outboundAttractionDistribution: false,
+      slowDown: 3.5,
+      weightSource: 'wgt',
+      edgeWeightInfluence: 0.8
+    })
+
+    // Click Reset
+    await wrapper.find('button.test_fa2_reset').trigger('click')
+    expect(wrapper.vm.settings.layout.options).to.eql(
+      JSON.parse(defaultRecommendedSettings)
     )
 
     wrapper.unmount()

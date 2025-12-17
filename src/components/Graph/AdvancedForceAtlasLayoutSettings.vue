@@ -1,12 +1,15 @@
 <template>
-  <Field label="Scaling ratio">
+  <Field label="Scaling ratio" fieldContainerClassName="test_fa2_scaling">
     <NumericInput
       :value="modelValue.scalingRatio"
       @update="update('scalingRatio', $event)"
     />
   </Field>
 
-  <Field label="Prevent overlapping">
+  <Field
+    label="Prevent overlapping"
+    fieldContainerClassName="test_fa2_adjustSizes"
+  >
     <RadioBlocks
       :options="booleanOptions"
       :activeOption="modelValue.adjustSizes"
@@ -14,7 +17,10 @@
     />
   </Field>
 
-  <Field label="Barnes-Hut optimize">
+  <Field
+    label="Barnes-Hut optimize"
+    fieldContainerClassName="test_fa2_barnes_hut"
+  >
     <RadioBlocks
       :options="booleanOptions"
       :activeOption="modelValue.barnesHutOptimize"
@@ -22,14 +28,21 @@
     />
   </Field>
 
-  <Field v-show="modelValue.barnesHutOptimize" label="Barnes-Hut Theta">
+  <Field
+    v-show="modelValue.barnesHutOptimize"
+    label="Barnes-Hut Theta"
+    fieldContainerClassName="test_fa2_barnes_theta"
+  >
     <NumericInput
       :value="modelValue.barnesHutTheta"
       @update="update('barnesHutTheta', $event)"
     />
   </Field>
 
-  <Field label="Strong gravity mode">
+  <Field
+    label="Strong gravity mode"
+    fieldContainerClassName="test_fa2_strong_gravity"
+  >
     <RadioBlocks
       :options="booleanOptions"
       :activeOption="modelValue.strongGravityMode"
@@ -37,7 +50,10 @@
     />
   </Field>
 
-  <Field label="Noack's LinLog model">
+  <Field
+    label="Noack's LinLog model"
+    fieldContainerClassName="test_fa2_lin_log"
+  >
     <RadioBlocks
       :options="booleanOptions"
       :activeOption="modelValue.linLogMode"
@@ -45,7 +61,10 @@
     />
   </Field>
 
-  <Field label="Out bound attraction distribution">
+  <Field
+    label="Outbound attraction distribution"
+    fieldContainerClassName="test_fa2_outbound_attraction"
+  >
     <RadioBlocks
       :options="booleanOptions"
       :activeOption="modelValue.outboundAttractionDistribution"
@@ -53,7 +72,7 @@
     />
   </Field>
 
-  <Field label="Slow down">
+  <Field label="Slow down" fieldContainerClassName="test_fa2_slow_down">
     <NumericInput
       :value="modelValue.slowDown"
       :min="0"
@@ -65,10 +84,15 @@
     <Dropdown
       :options="keyOptions"
       :value="modelValue.weightSource"
+      className="test_fa2_weight_source"
       @change="update('weightSource', $event)"
     />
   </Field>
-  <Field v-show="modelValue.weightSource" label="Edge weight influence">
+  <Field
+    v-show="modelValue.weightSource"
+    label="Edge weight influence"
+    fieldContainerClassName="test_fa2_weight_influence"
+  >
     <NumericInput
       :value="modelValue.edgeWeightInfluence"
       @update="update('edgeWeightInfluence', $event)"

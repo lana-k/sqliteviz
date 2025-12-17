@@ -1,5 +1,8 @@
 <template>
-  <Field label="Initial iterations">
+  <Field
+    label="Initial iterations"
+    fieldContainerClassName="test_fa2_iteration_amount"
+  >
     <NumericInput
       :value="modelValue.initialIterationsAmount"
       :min="1"
@@ -7,7 +10,7 @@
     />
   </Field>
 
-  <Field label="Gravity">
+  <Field label="Gravity" fieldContainerClassName="test_fa2_gravity">
     <NumericInput
       :value="modelValue.gravity"
       @update="update('gravity', $event)"
