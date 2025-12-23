@@ -245,6 +245,113 @@ describe('Graph.vue', () => {
     wrapper.unmount()
   })
 
+  it('rerenders when dataSource changes but does not rerender if dataSources is empty', async () => {
+    const wrapper = mount(Graph, {
+      attachTo: document.body,
+      props: {
+        showViewSettings: true,
+        dataSources: {
+          doc: [
+            '{"object_type": 0, "node_id": 1}',
+            '{"object_type": 0, "node_id": 2}',
+            '{"object_type": 1, "source": 1, "target": 2}'
+          ]
+        }
+      },
+      global: {
+        mocks: { $store },
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const container =
+      wrapper.find('.graph-container').wrapperElement.parentElement
+    container.style.height = '400px'
+
+    await wrapper
+      .find('.test_object_type_select.dropdown-container .Select__indicator')
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    let options = wrapper.findAll('.Select__menu .Select__option')
+
+    await options[0].trigger('click')
+
+    await wrapper
+      .find('.test_node_id_select.dropdown-container .Select__indicator')
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    options = wrapper.findAll('.Select__menu .Select__option')
+    await options[1].trigger('click')
+
+    await wrapper
+      .find('.test_edge_source_select.dropdown-container .Select__indicator')
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    options = wrapper.findAll('.Select__menu .Select__option')
+    await options[2].trigger('click')
+
+    await wrapper
+      .find('.test_edge_target_select.dropdown-container .Select__indicator')
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    options = wrapper.findAll('.Select__menu .Select__option')
+    await options[3].trigger('click')
+
+    const nodeCanvasPixelsBefore = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-nodes').wrapperElement
+    )
+    const edgeCanvasPixelsBefore = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-edges').wrapperElement
+    )
+    await wrapper.setProps({
+      dataSources: {
+        doc: [
+          '{"object_type": 0, "node_id": 1}',
+          '{"object_type": 0, "node_id": 2}',
+          '{"object_type": 0, "node_id": 3}',
+          '{"object_type": 1, "source": 1, "target": 2}',
+          '{"object_type": 1, "source": 1, "target": 3}'
+        ]
+      }
+    })
+
+    const nodeCanvasPixelsAfter = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-nodes').wrapperElement
+    )
+    const edgeCanvasPixelsAfter = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-edges').wrapperElement
+    )
+
+    expect(nodeCanvasPixelsBefore).not.equal(nodeCanvasPixelsAfter)
+    expect(edgeCanvasPixelsBefore).not.equal(edgeCanvasPixelsAfter)
+
+    await wrapper.setProps({
+      dataSources: null
+    })
+
+    const nodeCanvasPixelsAfterEmtyData = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-nodes').wrapperElement
+    )
+    const edgeCanvasPixelsAfterEmtyData = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-edges').wrapperElement
+    )
+
+    expect(nodeCanvasPixelsAfterEmtyData).equal(nodeCanvasPixelsAfter)
+    expect(edgeCanvasPixelsAfterEmtyData).equal(edgeCanvasPixelsAfter)
+
+    wrapper.unmount()
+  })
+
   it('saveAsPng', async () => {
     const wrapper = mount(Graph, {
       props: {

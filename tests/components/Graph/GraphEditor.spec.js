@@ -1,11 +1,12 @@
 import { expect } from 'chai'
 import { mount } from '@vue/test-utils'
 import GraphEditor from '@/components/Graph/GraphEditor.vue'
-import { nextTick } from 'vue'
+import { nextTick, ref } from 'vue'
 import FA2Layout from 'graphology-layout-forceatlas2/worker'
 import sinon from 'sinon'
 import { waitCondition } from '/tests/testUtils'
 import time from '@/lib/utils/time'
+import * as forceAtlas2 from 'graphology-layout-forceatlas2'
 
 const defaultInitOptions = {
   structure: {
@@ -1101,10 +1102,10 @@ describe('GraphEditor', () => {
       props: {
         dataSources: {
           doc: [
-            '{"type": 0, "node_id": 1, "size": 20}',
-            '{"type": 0, "node_id": 2, "size": 2}',
-            '{"type": 0, "node_id": 3, "size": 2}',
-            '{"type": 0, "node_id": 4, "size": 2}'
+            '{"type": 0, "node_id": 1, "size": 20, "color": "red"}',
+            '{"type": 0, "node_id": 2, "size": 2, "color": "blue"}',
+            '{"type": 0, "node_id": 3, "size": 2, "color": "red"}',
+            '{"type": 0, "node_id": 4, "size": 2, "color": "green"}'
           ]
         },
         initOptions: {
@@ -1187,14 +1188,42 @@ describe('GraphEditor', () => {
       .trigger('click')
     await nextTick()
 
-    const circlePackCoordinatesWithHierarchy = graph
-      .export()
-      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+    let nodes = graph.export().nodes
+    const circlePackCoordinatesWithHierarchy = nodes
+      .map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
       .join()
 
     expect(circlePackCoordinatesWithHierarchy).to.not.equal(
       circlePackCoordinatesNoHierarchy
     )
+    expect(nodes[0].attributes.hierarchyAttribute0).to.equal(20)
+    expect(nodes[1].attributes.hierarchyAttribute0).to.equal(2)
+    expect(nodes[2].attributes.hierarchyAttribute0).to.equal(2)
+    expect(nodes[3].attributes.hierarchyAttribute0).to.equal(2)
+
+    // Set another hierarchy
+    await wrapper.find('.multiselect__tag-icon').trigger('mousedown')
+    await nextTick()
+    await hierarchyInput.trigger('mousedown')
+    await wrapper
+      .find('ul.multiselect__content')
+      .findAll('li')[3]
+      .find('span')
+      .trigger('click')
+    await nextTick()
+
+    nodes = graph.export().nodes
+    const circlePackCoordinatesWithAnotherHierarchy = nodes
+      .map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(circlePackCoordinatesWithHierarchy).to.not.equal(
+      circlePackCoordinatesWithAnotherHierarchy
+    )
+    expect(nodes[0].attributes.hierarchyAttribute0).to.equal('red')
+    expect(nodes[1].attributes.hierarchyAttribute0).to.equal('blue')
+    expect(nodes[2].attributes.hierarchyAttribute0).to.equal('red')
+    expect(nodes[3].attributes.hierarchyAttribute0).to.equal('green')
 
     wrapper.unmount()
   })
@@ -1637,6 +1666,208 @@ describe('GraphEditor', () => {
     expect(wrapper.vm.settings.layout.options).to.eql(
       JSON.parse(defaultRecommendedSettings)
     )
+
+    wrapper.unmount()
+  })
+
+  it('calls scheduleRendering when tab becomes visible', async () => {
+    const tabLayout = ref({ dataView: 'hidden' })
+    const wrapper = mount(GraphEditor, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: ['{"type": 0, "node_id": 1}', '{"type": 0, "node_id": 2}']
+        },
+        initOptions: {
+          ...defaultInitOptions,
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          }
+        },
+        showViewSettings: true
+      },
+      global: {
+        provide: {
+          tabLayout
+        }
+      }
+    })
+
+    sinon.spy(wrapper.vm.renderer, 'scheduleRender')
+
+    tabLayout.value = { dataView: 'above' }
+    await nextTick()
+    expect(wrapper.vm.renderer.scheduleRender.calledOnce).to.equal(true)
+
+    tabLayout.value = { dataView: 'hidden' }
+    await nextTick()
+    expect(wrapper.vm.renderer.scheduleRender.calledOnce).to.equal(true)
+    wrapper.unmount()
+  })
+
+  it('FA2: stops running and auto run when data changes', async () => {
+    const stopSpy = sinon.spy(FA2Layout.prototype, 'stop')
+    const startSpy = sinon.spy(FA2Layout.prototype, 'start')
+    const wrapper = mount(GraphEditor, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"type": 0, "node_id": 1}',
+            '{"type": 0, "node_id": 2}',
+            '{"type": 1, "source": 1, "target": 2}'
+          ]
+        },
+        initOptions: {
+          ...defaultInitOptions,
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          },
+          layout: {
+            type: 'forceAtlas2',
+            options: {
+              initialIterationsAmount: 50,
+              gravity: 1.5,
+              scalingRatio: 1.2,
+              adjustSizes: true,
+              barnesHutOptimize: true,
+              barnesHutTheta: 0.5,
+              strongGravityMode: false,
+              linLogMode: true,
+              outboundAttractionDistribution: false,
+              slowDown: 1,
+              edgeWeightInfluence: 0
+            }
+          }
+        },
+        showViewSettings: true
+      },
+      global: {
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const styleMenuItem = wrapper.findAll('.sidebar__group__title')[1]
+    await styleMenuItem.trigger('click')
+
+    const layoutMenuItem = wrapper.findAll('.sidebar__item')[4]
+    await layoutMenuItem.trigger('click')
+
+    expect(startSpy.calledOnce).to.equal(true)
+    await waitCondition(() => stopSpy.callCount === 1)
+
+    // Click Start
+    const toggleButton = wrapper.find('button.test_fa2_toggle')
+    await toggleButton.trigger('click')
+    expect(startSpy.callCount).to.equal(2)
+
+    await time.sleep(10)
+
+    await wrapper.setProps({
+      dataSources: {
+        doc: [
+          '{"type": 0, "node_id": 1}',
+          '{"type": 0, "node_id": 2}',
+          '{"type": 0, "node_id": 3}',
+          '{"type": 1, "source": 1, "target": 2}',
+          '{"type": 1, "source": 1, "target": 3}'
+        ]
+      }
+    })
+    expect(stopSpy.calledTwice).to.equal(true)
+    expect(startSpy.callCount).to.equal(3)
+    await waitCondition(() => stopSpy.callCount === 3)
+
+    wrapper.unmount()
+  })
+
+  it('FA2: replaces recommended slowdown with 1 if it is Infinity', async () => {
+    const stopSpy = sinon.spy(FA2Layout.prototype, 'stop')
+    const startSpy = sinon.spy(FA2Layout.prototype, 'start')
+
+    sinon.stub(forceAtlas2.default, 'inferSettings').returns({
+      initialIterationsAmount: 1,
+      adjustSizes: false,
+      barnesHutOptimize: false,
+      barnesHutTheta: 0.9,
+      edgeWeightInfluence: 0,
+      gravity: 0.5,
+      linLogMode: true,
+      outboundAttractionDistribution: false,
+      scalingRatio: 1.5,
+      slowDown: -Infinity,
+      strongGravityMode: false
+    })
+    const wrapper = mount(GraphEditor, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"type": 0, "node_id": 1, "size": 20}',
+            '{"type": 0, "node_id": 2, "size": 2}',
+            '{"type": 0, "node_id": 3, "size": 2}',
+            '{"type": 0, "node_id": 4, "size": 2}'
+          ]
+        },
+        initOptions: {
+          ...defaultInitOptions,
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          }
+        },
+        showViewSettings: true
+      },
+      global: {
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const graph = wrapper.vm.graph
+    const initialCoordinates = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    const styleMenuItem = wrapper.findAll('.sidebar__group__title')[1]
+    await styleMenuItem.trigger('click')
+
+    const layoutMenuItem = wrapper.findAll('.sidebar__item')[4]
+    await layoutMenuItem.trigger('click')
+
+    // Set FA2 pack layout
+    await wrapper
+      .find(
+        '.test_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[3].trigger('click')
+
+    expect(startSpy.calledOnce).to.equal(true)
+    await waitCondition(() => stopSpy.callCount === 1)
+    expect(wrapper.text()).to.contain('Start')
+
+    const coordinates = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(coordinates).not.to.equal(initialCoordinates)
 
     wrapper.unmount()
   })

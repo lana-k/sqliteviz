@@ -228,7 +228,7 @@ import ForceAtlasLayoutSettings from '@/components/Graph/ForceAtlasLayoutSetting
 import AdvancedForceAtlasLayoutSettings from '@/components/Graph/AdvancedForceAtlasLayoutSettings.vue'
 import CirclePackLayoutSettings from '@/components/Graph/CirclePackLayoutSettings.vue'
 import FA2Layout from 'graphology-layout-forceatlas2/worker'
-import forceAtlas2 from 'graphology-layout-forceatlas2'
+import * as forceAtlas2 from 'graphology-layout-forceatlas2'
 import RunIcon from '@/components/svg/run.vue'
 import StopIcon from '@/components/svg/stop.vue'
 import { downloadAsPNG, drawOnCanvas } from '@sigma/export-image'
@@ -508,7 +508,7 @@ export default {
 
       if (layoutType === 'random') {
         random.assign(this.graph, {
-          rng: seedrandom(this.settings.layout.options.seedValue || 1)
+          rng: seedrandom(this.settings.layout.options.seedValue)
         })
         return
       }
@@ -541,7 +541,7 @@ export default {
             this.settings.layout.options.hierarchyAttributes?.map(
               (_, index) => 'hierarchyAttribute' + index
             ) || [],
-          rng: seedrandom(this.settings.layout.options.seedValue || 1)
+          rng: seedrandom(this.settings.layout.options.seedValue)
         })
         return
       }
@@ -591,10 +591,6 @@ export default {
       }
     },
     autoRunFA2Layout() {
-      if (this.fa2Layout.isRunning()) {
-        this.stopFA2Layout()
-      }
-
       let iteration = 1
       this.checkIteration = () => {
         if (
@@ -609,7 +605,7 @@ export default {
       this.fa2Layout.start()
     },
     setRecommendedFA2Settings() {
-      const sensibleSettings = forceAtlas2.inferSettings(this.graph)
+      const sensibleSettings = forceAtlas2.default.inferSettings(this.graph)
       this.settings.layout.options = {
         initialIterationsAmount: 50,
         adjustSizes: false,
