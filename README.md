@@ -9,7 +9,7 @@ of SQLite databases, CSV, JSON or NDJSON files.
 
 With sqliteviz you can:
 
-- run SQL queries against a SQLite database and create [Plotly][11] charts and pivot tables based on the result sets
+- run SQL queries against a SQLite database and create [Plotly][11] charts, graphs and pivot tables based on the result sets
 - import a CSV/JSON/NDJSON file into a SQLite database and visualize imported data
 - export result set to CSV file
 - manage inquiries and run them against different databases
@@ -33,7 +33,9 @@ It's a kind of middleground between [Plotly Falcon][1] and [Redash][2].
 
 ## Components
 
-It is built on top of [react-chart-editor][3], [PivotTable.js][12], [sql.js][4] and [Vue-Codemirror][8] in [Vue.js][5]. CSV parsing is performed with [Papa Parse][9].
+It is built on top of [react-chart-editor][3], [PivotTable.js][12], [sql.js][4]
+and [Vue-Codemirror][8] in [Vue.js][5]. CSV parsing is performed with [Papa Parse][9].
+Graphs are visualized with [Sigma.js][13] and [Graphology][14].
 
 [1]: https://github.com/plotly/falcon
 [2]: https://github.com/getredash/redash
@@ -47,3 +49,5 @@ It is built on top of [react-chart-editor][3], [PivotTable.js][12], [sql.js][4] 
 [10]: https://github.com/lana-k/sqliteviz/wiki/Predefined-queries
 [11]: https://github.com/plotly/plotly.js
 [12]: https://github.com/nicolaskruchten/pivottable
+[13]: https://www.sigmajs.org/
+[14]: https://graphology.github.io/
