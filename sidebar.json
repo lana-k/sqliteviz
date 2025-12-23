@@ -9,8 +9,10 @@
         "/docs/multiple-csv-file-import/",
         "/docs/manage-inquiries/",
         "/docs/export-current-database/",
+  			"/docs/graph/",
         "/docs/pivot-table/",
         "/docs/predefined-inquiries/",
+        "/docs/sharing/",
         "/docs/diagnostic-information/"
       ]
     },
