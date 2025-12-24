@@ -26,10 +26,6 @@ jobs:
           sudo apt-get install -y \
             chromium-browser \
             firefox-esr \
-            libgl1 \
-            libgl1-mesa-dri \
-            libegl1 \
-            mesa-utils \
             xvfb
 
       - name: Update npm
