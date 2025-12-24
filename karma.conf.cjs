@@ -87,8 +87,7 @@ module.exports = function (config) {
 
     customLaunchers: {
       FirefoxHeadlessTouch: {
-        base: 'Firefox',
-        flags: ['-headless'],
+        base: 'FirefoxHeadless',
         prefs: {
           'dom.w3c_touch_events.enabled': 1,
           'dom.events.asyncClipboard.clipboardItem': true,
