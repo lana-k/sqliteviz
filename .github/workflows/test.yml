@@ -31,6 +31,9 @@ jobs:
             libegl1 \
             mesa-utils
 
+      - name: Force software rendering
+        run: echo "LIBGL_ALWAYS_SOFTWARE=1" >> $GITHUB_ENV
+
       - name: Update npm
         run: npm install -g npm@10
 
