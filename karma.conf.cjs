@@ -90,7 +90,8 @@ module.exports = function (config) {
         base: 'FirefoxHeadless',
         prefs: {
           'dom.w3c_touch_events.enabled': 1,
-          'dom.events.asyncClipboard.clipboardItem': true
+          'dom.events.asyncClipboard.clipboardItem': true,
+          'webgl.disabled': false
         }
       }
     },
