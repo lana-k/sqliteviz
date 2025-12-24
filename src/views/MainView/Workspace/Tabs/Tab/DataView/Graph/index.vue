@@ -60,6 +60,21 @@ export default {
       resizeObserver: null
     }
   },
+  computed: {
+    dataSourceIsValid() {
+      return !this.dataSources || dataSourceIsValid(this.dataSources)
+    }
+  },
+  watch: {
+    async showViewSettings() {
+      await this.$nextTick()
+      this.handleResize()
+    },
+    dataSources() {
+      this.$emit('update:exportToPngEnabled', !!this.dataSources)
+      this.$emit('update:exportToClipboardEnabled', !!this.dataSources)
+    }
+  },
   created() {
     this.$emit('update:exportToSvgEnabled', false)
     this.$emit('update:exportToHtmlEnabled', false)
@@ -72,21 +87,6 @@ export default {
   },
   beforeUnmount() {
     this.resizeObserver.unobserve(this.$refs.graphContainer)
-  },
-  watch: {
-    async showViewSettings() {
-      await this.$nextTick()
-      this.handleResize()
-    },
-    dataSources() {
-      this.$emit('update:exportToPngEnabled', !!this.dataSources)
-      this.$emit('update:exportToClipboardEnabled', !!this.dataSources)
-    }
-  },
-  computed: {
-    dataSourceIsValid() {
-      return !this.dataSources || dataSourceIsValid(this.dataSources)
-    }
   },
   methods: {
     getOptionsForSave() {

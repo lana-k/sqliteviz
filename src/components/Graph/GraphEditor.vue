@@ -11,7 +11,7 @@
                 documentation</a
               >.
             </Field>
-            <Field label="Object type" ref="objectTypeField">
+            <Field ref="objectTypeField" label="Object type">
               <Dropdown
                 :options="keysOptions"
                 :value="settings.structure.objectType"
@@ -172,15 +172,15 @@
             <div class="force-atlas-buttons">
               <Button
                 variant="secondary"
-                @click="resetFA2LayoutSettings"
                 class="test_fa2_reset"
+                @click="resetFA2LayoutSettings"
               >
                 Reset
               </Button>
               <Button
                 variant="primary"
-                @click="toggleFA2Layout"
                 class="test_fa2_toggle"
+                @click="toggleFA2Layout"
               >
                 <template #node:icon>
                   <div
@@ -225,6 +225,7 @@ import Button from 'react-chart-editor/lib/components/widgets/Button'
 import Field from 'react-chart-editor/lib/components/fields/Field'
 import RandomLayoutSettings from '@/components/Graph/RandomLayoutSettings.vue'
 import ForceAtlasLayoutSettings from '@/components/Graph/ForceAtlasLayoutSettings.vue'
+// eslint-disable-next-line max-len
 import AdvancedForceAtlasLayoutSettings from '@/components/Graph/AdvancedForceAtlasLayoutSettings.vue'
 import CirclePackLayoutSettings from '@/components/Graph/CirclePackLayoutSettings.vue'
 import FA2Layout from 'graphology-layout-forceatlas2/worker'
