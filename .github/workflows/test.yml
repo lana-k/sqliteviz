@@ -26,8 +26,9 @@ jobs:
           sudo apt-get install -y \
             chromium-browser \
             firefox-esr \
+            libgl1 \
             libgl1-mesa-dri \
-            libgl1-mesa-glx \
+            libegl1 \
             mesa-utils
 
       - name: Update npm
