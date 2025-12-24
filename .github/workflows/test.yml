@@ -29,7 +29,8 @@ jobs:
             libgl1 \
             libgl1-mesa-dri \
             libegl1 \
-            mesa-utils
+            mesa-utils \
+            xvfb
 
       - name: Force software rendering
         run: echo "LIBGL_ALWAYS_SOFTWARE=1" >> $GITHUB_ENV
@@ -44,4 +45,4 @@ jobs:
         run: npm run lint -- --no-fix
 
       - name: Run karma tests
-        run: npm run test
+        run: xvfb-run -a npm test
