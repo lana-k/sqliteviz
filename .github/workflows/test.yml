@@ -23,7 +23,12 @@ jobs:
           export DEBIAN_FRONTEND=noninteractive
           sudo add-apt-repository -y ppa:mozillateam/ppa
           sudo apt-get update
-          sudo apt-get install -y chromium-browser firefox-esr
+          sudo apt-get install -y \
+            chromium-browser \
+            firefox-esr \
+            libgl1-mesa-dri \
+            libgl1-mesa-glx \
+            mesa-utils
 
       - name: Update npm
         run: npm install -g npm@10
