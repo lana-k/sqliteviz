@@ -66,7 +66,7 @@ There are the following settings in `Style` > `Nodes` panel:
   - `Variable` allows you to choose a field by which the color is determined.
     With this option you can also choose if the color value should be taken directly or mapped to a
     color palette.
-    
+
     `Direct` mode means that in the JSON document representing the node, the value in the selected
     field is used as a color. The color value in the JSON document can be set in different
     ways:
@@ -207,6 +207,6 @@ clicking `Start`/`Stop` button.
 
 ![Fig. 3: ForceAtlas2 layout](./img/Screenshot_graph_force_atlas2.png)
 
-[1]: ./How-to-get-result-set-suitable-for-graph-visualisation
+[1]: ../How-to-get-result-set-suitable-for-graph-visualisation
 [2]: https://www.w3.org/TR/css-color-4/#named-colors
 [3]: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0098679
