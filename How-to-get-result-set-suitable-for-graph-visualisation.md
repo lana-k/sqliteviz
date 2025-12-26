@@ -1,7 +1,7 @@
 # How to get a result set suitable for graph visualisation
 
 There are some [requirements for result sets][1] if you want to make a graph.
-Here is an example of building a query that returns a result set appropriate for graph 
+Here is an example of building a query that returns a result set appropriate for graph
 visualisation.
 
 Let's say, you have 2 tables:
@@ -17,20 +17,20 @@ Let's say, you have 2 tables:
 
 2. `student`:
 
-   | id | name           | house      |
-   | -- | -------------- | ---------- |
-   | 1  | Harry Potter   | Gryffindor |
-   | 2  | Ron Weasley    | Gryffindor |
-   | 3  | Draco Malfoy'  | Slytherin  |
-   | 4  | Luna Lovegood  | Ravenclaw  |
-   | 5  | Cedric Diggory | Hufflepuff |
+   | id  | name           | house      |
+   | --- | -------------- | ---------- |
+   | 1   | Harry Potter   | Gryffindor |
+   | 2   | Ron Weasley    | Gryffindor |
+   | 3   | Draco Malfoy'  | Slytherin  |
+   | 4   | Luna Lovegood  | Ravenclaw  |
+   | 5   | Cedric Diggory | Hufflepuff |
 
-Each student belongs to a certain house. 
-Let's say you want to build a graph with houses and students as nodes, where each house is linked 
+Each student belongs to a certain house.
+Let's say you want to build a graph with houses and students as nodes, where each house is linked
 with its students.
 
-We are going to use [json_object][2] function to form JSON documents. The result set should contain 
-both nodes and edges and we have to provide a field indicating if the document represents a node 
+We are going to use [json_object][2] function to form JSON documents. The result set should contain
+both nodes and edges and we have to provide a field indicating if the document represents a node
 (0) or and edge (1). Let's provide it as `object_type`:
 
 ```sql
@@ -44,12 +44,12 @@ SELECT json_object('object_type', 1)
 FROM student
 ```
 
-Note that we included `student` table twice. That is because the table contains not only students 
-but also their relationship to houses. So the records from the first union of `student` are used 
+Note that we included `student` table twice. That is because the table contains not only students
+but also their relationship to houses. So the records from the first union of `student` are used
 as nodes and from the second one - as edges.
 
-Then we need to provide an ID for each node. Let's put it in `node_id` field. The `node_id` value 
-for students is taken from `id` column and for houses - from `name`: 
+Then we need to provide an ID for each node. Let's put it in `node_id` field. The `node_id` value
+for students is taken from `id` column and for houses - from `name`:
 
 ```sql
 SELECT json_object('object_type', 0, 'node_id', name)
@@ -93,28 +93,27 @@ FROM student
 
 Run the query, the result set will look like this:
 
-| graph_object                                                                   |
-| ------------------------------------------------------------------------------ |
-| {"object_type":0,"node_id":"Gryffindor","label":"Gryffindor","type":"house"}   |
-| {"object_type":0,"node_id":"Hufflepuff","label":"Hufflepuff","type":"house"}   |
-| {"object_type":0,"node_id":"Ravenclaw","label":"Ravenclaw","type":"house"}     |
-| {"object_type":0,"node_id":"Slytherin","label":"Slytherin","type":"house"}     |
-| {"object_type":0,"node_id":1,"label":"Harry Potter","type":"student"}          |
-| {"object_type":0,"node_id":2,"label":"Ron Weasley","type":"student"}           |
-| {"object_type":0,"node_id":3,"label":"Draco Malfoy","type":"student"}          |
-| {"object_type":0,"node_id":4,"label":"Luna Lovegood","type":"student"}         |
-| {"object_type":0,"node_id":5,"label":"Cedric Diggory","type":"student"}        |
-| {"object_type":1,"node_source":"Gryffindor","target":1}                        |
-| {"object_type":1,"node_source":"Gryffindor","target":2}                        |
-| {"object_type":1,"node_source":"Slytherin","target":3}                         |
-| {"object_type":1,"node_source":"Ravenclaw","target":4}                         |
-| {"object_type":1,"node_source":"Hufflepuff","target":5}                        |
+| graph_object                                                                 |
+| ---------------------------------------------------------------------------- |
+| {"object_type":0,"node_id":"Gryffindor","label":"Gryffindor","type":"house"} |
+| {"object_type":0,"node_id":"Hufflepuff","label":"Hufflepuff","type":"house"} |
+| {"object_type":0,"node_id":"Ravenclaw","label":"Ravenclaw","type":"house"}   |
+| {"object_type":0,"node_id":"Slytherin","label":"Slytherin","type":"house"}   |
+| {"object_type":0,"node_id":1,"label":"Harry Potter","type":"student"}        |
+| {"object_type":0,"node_id":2,"label":"Ron Weasley","type":"student"}         |
+| {"object_type":0,"node_id":3,"label":"Draco Malfoy","type":"student"}        |
+| {"object_type":0,"node_id":4,"label":"Luna Lovegood","type":"student"}       |
+| {"object_type":0,"node_id":5,"label":"Cedric Diggory","type":"student"}      |
+| {"object_type":1,"node_source":"Gryffindor","target":1}                      |
+| {"object_type":1,"node_source":"Gryffindor","target":2}                      |
+| {"object_type":1,"node_source":"Slytherin","target":3}                       |
+| {"object_type":1,"node_source":"Ravenclaw","target":4}                       |
+| {"object_type":1,"node_source":"Hufflepuff","target":5}                      |
 
-Now in the graph editor, we can set mapping of the result set documents into node and edge 
+Now in the graph editor, we can set mapping of the result set documents into node and edge
 properties, set graph styles and get the following visualisation:
 
 ![Fig. 1: Graph visualisation example](./img/Screenshot_potter_example.png)
 
-
-[1]: ./graph#requirements-for-result-set
+[1]: ../graph#requirements-for-result-set
 [2]: https://sqlite.org/json1.html#jobj
