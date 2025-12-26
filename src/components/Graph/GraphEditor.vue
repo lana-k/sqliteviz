@@ -437,7 +437,9 @@ export default {
       this.updateLayout(this.settings.layout.type)
       this.renderer = new Sigma(this.graph, this.$refs.graph, {
         renderEdgeLabels: true,
-        allowInvalidContainer: true
+        allowInvalidContainer: true,
+        labelColor: { attribute: 'labelColor', color: '#444444' },
+        edgeLabelColor: { attribute: 'labelColor', color: '#a2b1c6' }
       })
       if (this.settings.layout.type === 'forceAtlas2') {
         this.autoRunFA2Layout()
