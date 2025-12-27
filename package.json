@@ -1,6 +1,6 @@
 {
   "name": "sqliteviz",
-  "version": "0.28.1",
+  "version": "0.28.2",
   "license": "Apache-2.0",
   "private": true,
   "type": "module",
@@ -36,6 +36,7 @@
     "sigma": "^3.0.1",
     "sql.js": "file:./lib/sql-js",
     "tiny-emitter": "^2.1.0",
+    "tinycolor2": "^1.4.2",
     "veaury": "^2.5.1",
     "vue": "^3.5.11",
     "vue-final-modal": "^4.5.5",
