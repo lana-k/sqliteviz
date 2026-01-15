@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Workspace from '@/views/MainView/Workspace'
-import Inquiries from '@/views/MainView/Inquiries'
+import Workspace from '@/views/Workspace'
+import Inquiries from '@/views/Inquiries'
 import Welcome from '@/views/Welcome'
 import MainView from '@/views/MainView'
 import LoadView from '@/views/LoadView'

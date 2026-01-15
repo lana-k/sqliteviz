@@ -15,7 +15,7 @@
 <script>
 import fu from '@/lib/utils/fileIo'
 import database from '@/lib/database'
-import Logs from '@/components/Logs'
+import Logs from '@/components/Common/Logs'
 import events from '@/lib/utils/events'
 
 export default {
