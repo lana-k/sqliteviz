@@ -57,10 +57,20 @@
     </template>
   </Field>
 
+  <Field label="Opacity" fieldContainerClassName="test_node_opacity">
+    <NumericInput
+      :value="modelValue.opacity"
+      :showSlider="true"
+      :integerOnly="true"
+      :max="100"
+      :min="0"
+      units="%"
+      @update="updateSettings('opacity', $event)"
+    />
+  </Field>
+
   <Field
-    v-if="
-      modelValue.sourceUsage === 'map_to' || modelValue.type === 'calculated'
-    "
+    v-if="modelValue.type === 'map_to' || modelValue.type === 'calculated'"
     label="Color as"
     fieldContainerClassName="test_node_color_as"
   >
@@ -89,6 +99,7 @@
 <script>
 import { markRaw } from 'vue'
 import { applyPureReactInVue } from 'veaury'
+import NumericInput from 'react-chart-editor/lib/components/widgets/NumericInput'
 import Dropdown from 'react-chart-editor/lib/components/widgets/Dropdown'
 import RadioBlocks from 'react-chart-editor/lib/components/widgets/RadioBlocks'
 import ColorscalePicker from 'react-chart-editor/lib/components/widgets/ColorscalePicker'
@@ -98,6 +109,7 @@ import 'react-chart-editor/lib/react-chart-editor.css'
 
 export default {
   components: {
+    NumericInput: applyPureReactInVue(NumericInput),
     Dropdown: applyPureReactInVue(Dropdown),
     RadioBlocks: applyPureReactInVue(RadioBlocks),
     Field: applyPureReactInVue(Field),
@@ -134,19 +146,21 @@ export default {
         { label: 'Map to', value: 'map_to' }
       ]),
       defaultColorSettings: {
-        constant: { value: '#1F77B4' },
+        constant: { value: '#1F77B4', opacity: 100 },
         variable: {
           source: null,
           sourceUsage: 'map_to',
           colorscale: null,
           mode: 'categorical',
-          colorscaleDirection: 'normal'
+          colorscaleDirection: 'normal',
+          opacity: 100
         },
         calculated: {
           method: 'degree',
           colorscale: null,
           mode: 'continious',
-          colorscaleDirection: 'normal'
+          colorscaleDirection: 'normal',
+          opacity: 100
         }
       }
     }

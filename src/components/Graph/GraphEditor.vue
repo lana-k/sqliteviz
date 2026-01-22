@@ -319,7 +319,8 @@ export default {
                 },
                 color: {
                   type: 'constant',
-                  value: '#1F77B4'
+                  value: '#1F77B4',
+                  opacity: 100
                 },
                 label: {
                   source: null,

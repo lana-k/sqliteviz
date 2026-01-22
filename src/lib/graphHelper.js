@@ -161,9 +161,14 @@ function getUpdateSizeMethod(graph, sizeSettings) {
   }
 }
 
-function getDirectVariableColorUpdateMethod(source) {
-  return attributes =>
-    (attributes.color = tinycolor(attributes.data[source]).toHexString())
+function getDirectVariableColorUpdateMethod(source, opacity = 100) {
+  return attributes => {
+    const color = tinycolor(attributes.data[source])
+    const colorOpacity = color.getAlpha()
+    attributes.color = color
+      .setAlpha((opacity / 100) * colorOpacity)
+      .toHex8String()
+  }
 }
 
 function getUpdateNodeColorMethod(graph, colorSettings) {
@@ -175,10 +180,16 @@ function getUpdateNodeColorMethod(graph, colorSettings) {
     colorscale,
     colorscaleDirection,
     mode,
-    method
+    method,
+    opacity
   } = colorSettings
   if (type === 'constant') {
-    return attributes => (attributes.color = value)
+    const color = tinycolor(value)
+    const colorOpacity = color.getAlpha()
+    return attributes =>
+      (attributes.color = color
+        .setAlpha((opacity / 100) * colorOpacity)
+        .toHex8String())
   } else if (type === 'variable') {
     return sourceUsage === 'map_to'
       ? getColorMethod(
@@ -187,9 +198,10 @@ function getUpdateNodeColorMethod(graph, colorSettings) {
           (nodeId, attributes) => attributes.data[source],
           colorscale,
           colorscaleDirection,
-          getNodeValueScale
+          getNodeValueScale,
+          opacity
         )
-      : getDirectVariableColorUpdateMethod(source)
+      : getDirectVariableColorUpdateMethod(source, opacity)
   } else {
     return getColorMethod(
       graph,
@@ -197,7 +209,8 @@ function getUpdateNodeColorMethod(graph, colorSettings) {
       nodeId => graph[method](nodeId),
       colorscale,
       colorscaleDirection,
-      getNodeValueScale
+      getNodeValueScale,
+      opacity
     )
   }
 }
@@ -244,8 +257,10 @@ function getColorMethod(
   sourceGetter,
   selectedColorscale,
   colorscaleDirection,
-  valueScaleGetter
+  valueScaleGetter,
+  opacity = 100
 ) {
+  const opacityFactor = opacity / 100
   const valueScale = valueScaleGetter(graph, sourceGetter)
   let colorscale = selectedColorscale || DEFAULT_SCALE
   if (colorscaleDirection === 'reversed') {
@@ -261,7 +276,9 @@ function getColorMethod(
     )
     return (attributes, nodeId) => {
       const category = sourceGetter(nodeId, attributes)
-      attributes.color = colorMap[category]
+      attributes.color = tinycolor(colorMap[category])
+        .setAlpha(opacityFactor)
+        .toHex8String()
     }
   } else {
     const min = valueScale[0]
@@ -274,14 +291,18 @@ function getColorMethod(
       const value = sourceGetter(nodeId, attributes)
       const normalizedValue = (value - min) / (max - min)
       if (isNaN(normalizedValue)) {
-        attributes.color = '#000000'
+        attributes.color = tinycolor('#000000')
+          .setAlpha(opacityFactor)
+          .toHex8String()
         return
       }
       const exactMatch = normalizedColorscale.find(
         ([value]) => value === normalizedValue
       )
       if (exactMatch) {
-        attributes.color = tinycolor(exactMatch[1]).toHexString()
+        attributes.color = tinycolor(exactMatch[1])
+          .setAlpha(opacityFactor)
+          .toHex8String()
         return
       }
 
@@ -305,7 +326,9 @@ function getColorMethod(
         r: r0 + interpolationFactor * (r1 - r0),
         g: g0 + interpolationFactor * (g1 - g0),
         b: b0 + interpolationFactor * (b1 - b0)
-      }).toHexString()
+      })
+        .setAlpha(opacityFactor)
+        .toHex8String()
     }
   }
 }

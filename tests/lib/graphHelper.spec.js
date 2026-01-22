@@ -533,7 +533,8 @@ describe('graphHelper.js', () => {
     graphHelper.updateNodes(graph, {
       color: {
         type: 'constant',
-        value: '#a1b8c3'
+        value: '#a1b8c380',
+        opacity: 50
       }
     })
     expect(graph.export().nodes).to.eql([
@@ -541,14 +542,14 @@ describe('graphHelper.js', () => {
         key: '1',
         attributes: {
           data: { type: 0, node_id: 1 },
-          color: '#a1b8c3'
+          color: '#a1b8c340'
         }
       },
       {
         key: '2',
         attributes: {
           data: { type: 0, node_id: 2 },
-          color: '#a1b8c3'
+          color: '#a1b8c340'
         }
       }
     ])
@@ -592,7 +593,7 @@ describe('graphHelper.js', () => {
       doc: [
         '{"type": 0, "node_id": 1, "color": "red", "points": 5}',
         '{"type": 0, "node_id": 2, "color": "#abcdff", "points": 15}',
-        '{"type": 0, "node_id": 3, "color": "#123456", "points": 10}'
+        '{"type": 0, "node_id": 3, "color": "#12345680", "points": 10}'
       ]
     }
     const graph = new Graph()
@@ -609,7 +610,8 @@ describe('graphHelper.js', () => {
       color: {
         type: 'variable',
         source: 'color',
-        sourceUsage: 'direct'
+        sourceUsage: 'direct',
+        opacity: 50
       }
     })
     expect(graph.export().nodes).to.eql([
@@ -617,21 +619,21 @@ describe('graphHelper.js', () => {
         key: '1',
         attributes: {
           data: { type: 0, node_id: 1, color: 'red', points: 5 },
-          color: '#ff0000'
+          color: '#ff000080'
         }
       },
       {
         key: '2',
         attributes: {
           data: { type: 0, node_id: 2, color: '#abcdff', points: 15 },
-          color: '#abcdff'
+          color: '#abcdff80'
         }
       },
       {
         key: '3',
         attributes: {
-          data: { type: 0, node_id: 3, color: '#123456', points: 10 },
-          color: '#123456'
+          data: { type: 0, node_id: 3, color: '#12345680', points: 10 },
+          color: '#12345640'
         }
       }
     ])
@@ -644,7 +646,8 @@ describe('graphHelper.js', () => {
         sourceUsage: 'map_to',
         colorscale,
         mode: 'categorical',
-        colorscaleDirection: 'normal'
+        colorscaleDirection: 'normal',
+        opacity: 50
       }
     })
     expect(graph.export().nodes).to.eql([
@@ -652,21 +655,21 @@ describe('graphHelper.js', () => {
         key: '1',
         attributes: {
           data: { type: 0, node_id: 1, color: 'red', points: 5 },
-          color: '#aaaaff'
+          color: '#aaaaff80'
         }
       },
       {
         key: '2',
         attributes: {
           data: { type: 0, node_id: 2, color: '#abcdff', points: 15 },
-          color: '#6666ff'
+          color: '#6666ff80'
         }
       },
       {
         key: '3',
         attributes: {
-          data: { type: 0, node_id: 3, color: '#123456', points: 10 },
-          color: '#8888ff'
+          data: { type: 0, node_id: 3, color: '#12345680', points: 10 },
+          color: '#8888ff80'
         }
       }
     ])
@@ -678,7 +681,8 @@ describe('graphHelper.js', () => {
         sourceUsage: 'map_to',
         colorscale,
         mode: 'categorical',
-        colorscaleDirection: 'reversed'
+        colorscaleDirection: 'reversed',
+        opacity: 50
       }
     })
 
@@ -687,21 +691,21 @@ describe('graphHelper.js', () => {
         key: '1',
         attributes: {
           data: { type: 0, node_id: 1, color: 'red', points: 5 },
-          color: '#0000ff'
+          color: '#0000ff80'
         }
       },
       {
         key: '2',
         attributes: {
           data: { type: 0, node_id: 2, color: '#abcdff', points: 15 },
-          color: '#6666ff'
+          color: '#6666ff80'
         }
       },
       {
         key: '3',
         attributes: {
-          data: { type: 0, node_id: 3, color: '#123456', points: 10 },
-          color: '#4444ff'
+          data: { type: 0, node_id: 3, color: '#12345680', points: 10 },
+          color: '#4444ff80'
         }
       }
     ])
@@ -713,7 +717,8 @@ describe('graphHelper.js', () => {
         sourceUsage: 'map_to',
         colorscale,
         mode: 'continious',
-        colorscaleDirection: 'normal'
+        colorscaleDirection: 'normal',
+        opacity: 50
       }
     })
     expect(graph.export().nodes).to.eql([
@@ -721,21 +726,21 @@ describe('graphHelper.js', () => {
         key: '1',
         attributes: {
           data: { type: 0, node_id: 1, color: 'red', points: 5 },
-          color: '#aaaaff'
+          color: '#aaaaff80'
         }
       },
       {
         key: '2',
         attributes: {
           data: { type: 0, node_id: 2, color: '#abcdff', points: 15 },
-          color: '#0000ff'
+          color: '#0000ff80'
         }
       },
       {
         key: '3',
         attributes: {
-          data: { type: 0, node_id: 3, color: '#123456', points: 10 },
-          color: '#6666ff'
+          data: { type: 0, node_id: 3, color: '#12345680', points: 10 },
+          color: '#6666ff80'
         }
       }
     ])
@@ -747,7 +752,8 @@ describe('graphHelper.js', () => {
         sourceUsage: 'map_to',
         colorscale,
         mode: 'continious',
-        colorscaleDirection: 'reversed'
+        colorscaleDirection: 'reversed',
+        opacity: 50
       }
     })
 
@@ -756,21 +762,21 @@ describe('graphHelper.js', () => {
         key: '1',
         attributes: {
           data: { type: 0, node_id: 1, color: 'red', points: 5 },
-          color: '#0000ff'
+          color: '#0000ff80'
         }
       },
       {
         key: '2',
         attributes: {
           data: { type: 0, node_id: 2, color: '#abcdff', points: 15 },
-          color: '#aaaaff'
+          color: '#aaaaff80'
         }
       },
       {
         key: '3',
         attributes: {
-          data: { type: 0, node_id: 3, color: '#123456', points: 10 },
-          color: '#6666ff'
+          data: { type: 0, node_id: 3, color: '#12345680', points: 10 },
+          color: '#6666ff80'
         }
       }
     ])
@@ -782,7 +788,8 @@ describe('graphHelper.js', () => {
         sourceUsage: 'map_to',
         colorscale: ['#aaaaff', '#0000ff'],
         mode: 'continious',
-        colorscaleDirection: 'normal'
+        colorscaleDirection: 'normal',
+        opacity: 50
       }
     })
 
@@ -791,21 +798,21 @@ describe('graphHelper.js', () => {
         key: '1',
         attributes: {
           data: { type: 0, node_id: 1, color: 'red', points: 5 },
-          color: '#aaaaff'
+          color: '#aaaaff80'
         }
       },
       {
         key: '2',
         attributes: {
           data: { type: 0, node_id: 2, color: '#abcdff', points: 15 },
-          color: '#0000ff'
+          color: '#0000ff80'
         }
       },
       {
         key: '3',
         attributes: {
-          data: { type: 0, node_id: 3, color: '#123456', points: 10 },
-          color: '#5555ff'
+          data: { type: 0, node_id: 3, color: '#12345680', points: 10 },
+          color: '#5555ff80'
         }
       }
     ])
@@ -834,7 +841,8 @@ describe('graphHelper.js', () => {
         source: 'country',
         sourceUsage: 'map_to',
         mode: 'continious',
-        colorscaleDirection: 'normal'
+        colorscaleDirection: 'normal',
+        opacity: 100
       }
     })
     expect(graph.export().nodes).to.eql([
@@ -842,14 +850,14 @@ describe('graphHelper.js', () => {
         key: '1',
         attributes: {
           data: { type: 0, node_id: 1, country: 'NL' },
-          color: '#000000'
+          color: '#000000ff'
         }
       },
       {
         key: '2',
         attributes: {
           data: { type: 0, node_id: 2, country: 'GB' },
-          color: '#000000'
+          color: '#000000ff'
         }
       }
     ])
@@ -887,15 +895,15 @@ describe('graphHelper.js', () => {
     expect(graph.export().edges.map(edge => edge.attributes)).to.eql([
       {
         data: { type: 1, source: 1, target: 2, color: 'red', weight: 5 },
-        color: '#ff0000'
+        color: '#ff0000ff'
       },
       {
         data: { type: 1, source: 1, target: 3, color: 'red', weight: 15 },
-        color: '#ff0000'
+        color: '#ff0000ff'
       },
       {
         data: { type: 1, source: 2, target: 3, color: 'red', weight: 10 },
-        color: '#ff0000'
+        color: '#ff0000ff'
       }
     ])
 
@@ -914,15 +922,15 @@ describe('graphHelper.js', () => {
     expect(graph.export().edges.map(edge => edge.attributes)).to.eql([
       {
         data: { type: 1, source: 1, target: 2, color: 'red', weight: 5 },
-        color: '#aaaaff'
+        color: '#aaaaffff'
       },
       {
         data: { type: 1, source: 1, target: 3, color: 'red', weight: 15 },
-        color: '#6666ff'
+        color: '#6666ffff'
       },
       {
         data: { type: 1, source: 2, target: 3, color: 'red', weight: 10 },
-        color: '#8888ff'
+        color: '#8888ffff'
       }
     ])
 
@@ -940,15 +948,15 @@ describe('graphHelper.js', () => {
     expect(graph.export().edges.map(edge => edge.attributes)).to.eql([
       {
         data: { type: 1, source: 1, target: 2, color: 'red', weight: 5 },
-        color: '#0000ff'
+        color: '#0000ffff'
       },
       {
         data: { type: 1, source: 1, target: 3, color: 'red', weight: 15 },
-        color: '#6666ff'
+        color: '#6666ffff'
       },
       {
         data: { type: 1, source: 2, target: 3, color: 'red', weight: 10 },
-        color: '#4444ff'
+        color: '#4444ffff'
       }
     ])
 
@@ -966,15 +974,15 @@ describe('graphHelper.js', () => {
     expect(graph.export().edges.map(edge => edge.attributes)).to.eql([
       {
         data: { type: 1, source: 1, target: 2, color: 'red', weight: 5 },
-        color: '#aaaaff'
+        color: '#aaaaffff'
       },
       {
         data: { type: 1, source: 1, target: 3, color: 'red', weight: 15 },
-        color: '#0000ff'
+        color: '#0000ffff'
       },
       {
         data: { type: 1, source: 2, target: 3, color: 'red', weight: 10 },
-        color: '#6666ff'
+        color: '#6666ffff'
       }
     ])
 
@@ -992,15 +1000,15 @@ describe('graphHelper.js', () => {
     expect(graph.export().edges.map(edge => edge.attributes)).to.eql([
       {
         data: { type: 1, source: 1, target: 2, color: 'red', weight: 5 },
-        color: '#0000ff'
+        color: '#0000ffff'
       },
       {
         data: { type: 1, source: 1, target: 3, color: 'red', weight: 15 },
-        color: '#aaaaff'
+        color: '#aaaaffff'
       },
       {
         data: { type: 1, source: 2, target: 3, color: 'red', weight: 10 },
-        color: '#6666ff'
+        color: '#6666ffff'
       }
     ])
   })
@@ -1035,7 +1043,8 @@ describe('graphHelper.js', () => {
         method: 'degree',
         colorscale,
         mode: 'categorical',
-        colorscaleDirection: 'normal'
+        colorscaleDirection: 'normal',
+        opacity: 50
       }
     })
     expect(graph.export().nodes).to.eql([
@@ -1043,21 +1052,21 @@ describe('graphHelper.js', () => {
         key: '1',
         attributes: {
           data: { type: 0, node_id: 1 },
-          color: '#aaaaff'
+          color: '#aaaaff80'
         }
       },
       {
         key: '2',
         attributes: {
           data: { type: 0, node_id: 2 },
-          color: '#8888ff'
+          color: '#8888ff80'
         }
       },
       {
         key: '3',
         attributes: {
           data: { type: 0, node_id: 3 },
-          color: '#8888ff'
+          color: '#8888ff80'
         }
       }
     ])
@@ -1068,7 +1077,8 @@ describe('graphHelper.js', () => {
         method: 'outDegree',
         colorscale,
         mode: 'categorical',
-        colorscaleDirection: 'reversed'
+        colorscaleDirection: 'reversed',
+        opacity: 50
       }
     })
 
@@ -1077,21 +1087,21 @@ describe('graphHelper.js', () => {
         key: '1',
         attributes: {
           data: { type: 0, node_id: 1 },
-          color: '#0000ff'
+          color: '#0000ff80'
         }
       },
       {
         key: '2',
         attributes: {
           data: { type: 0, node_id: 2 },
-          color: '#4444ff'
+          color: '#4444ff80'
         }
       },
       {
         key: '3',
         attributes: {
           data: { type: 0, node_id: 3 },
-          color: '#0000ff'
+          color: '#0000ff80'
         }
       }
     ])
@@ -1102,7 +1112,8 @@ describe('graphHelper.js', () => {
         method: 'degree',
         colorscale,
         mode: 'continious',
-        colorscaleDirection: 'normal'
+        colorscaleDirection: 'normal',
+        opacity: 100
       }
     })
     expect(graph.export().nodes).to.eql([
@@ -1110,21 +1121,21 @@ describe('graphHelper.js', () => {
         key: '1',
         attributes: {
           data: { type: 0, node_id: 1 },
-          color: '#aaaaff'
+          color: '#aaaaffff'
         }
       },
       {
         key: '2',
         attributes: {
           data: { type: 0, node_id: 2 },
-          color: '#0000ff'
+          color: '#0000ffff'
         }
       },
       {
         key: '3',
         attributes: {
           data: { type: 0, node_id: 3 },
-          color: '#0000ff'
+          color: '#0000ffff'
         }
       }
     ])
@@ -1135,7 +1146,8 @@ describe('graphHelper.js', () => {
         method: 'degree',
         colorscale,
         mode: 'continious',
-        colorscaleDirection: 'reversed'
+        colorscaleDirection: 'reversed',
+        opacity: 100
       }
     })
 
@@ -1144,21 +1156,21 @@ describe('graphHelper.js', () => {
         key: '1',
         attributes: {
           data: { type: 0, node_id: 1 },
-          color: '#0000ff'
+          color: '#0000ffff'
         }
       },
       {
         key: '2',
         attributes: {
           data: { type: 0, node_id: 2 },
-          color: '#aaaaff'
+          color: '#aaaaffff'
         }
       },
       {
         key: '3',
         attributes: {
           data: { type: 0, node_id: 3 },
-          color: '#aaaaff'
+          color: '#aaaaffff'
         }
       }
     ])

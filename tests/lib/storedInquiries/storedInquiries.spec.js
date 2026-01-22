@@ -18,7 +18,7 @@ describe('storedInquiries.js', () => {
     expect(inquiries).to.eql([])
   })
 
-  it('getStoredInquiries migrate and returns inquiries of v1', () => {
+  it('getStoredInquiries migrates and returns inquiries of v1', () => {
     localStorage.setItem(
       'myQueries',
       JSON.stringify([
@@ -51,6 +51,113 @@ describe('storedInquiries.js', () => {
         query: 'SELECT * FROM bar',
         viewType: 'chart',
         viewOptions: { here_are: 'bar chart settings' }
+      }
+    ])
+  })
+
+  it('getStoredInquiries migrates and returns inquiries of v2', () => {
+    localStorage.setItem(
+      'myInquiries',
+      JSON.stringify({
+        version: 2,
+        inquiries: [
+          {
+            id: 'Xh1Hc9v7P3mRPZVM59QiC',
+            query: 'SELECT * from doc',
+            viewType: 'graph',
+            viewOptions: {
+              structure: {
+                nodeId: 'node_id',
+                objectType: 'object_type',
+                edgeSource: 'source',
+                edgeTarget: 'target'
+              },
+              style: {
+                backgroundColor: 'white',
+                nodes: {
+                  size: { type: 'constant', value: 10 },
+                  color: {
+                    type: 'calculated',
+                    method: 'degree',
+                    colorscale: null,
+                    mode: 'continious',
+                    colorscaleDirection: 'reversed'
+                  },
+                  label: { source: 'label', color: '#444444' }
+                },
+                edges: {
+                  showDirection: true,
+                  size: { type: 'constant', value: 2 },
+                  color: { type: 'constant', value: '#a2b1c6' },
+                  label: { source: null, color: '#a2b1c6' }
+                }
+              },
+              layout: { type: 'circular', options: null }
+            },
+            name: 'student graph',
+            updatedAt: '2026-01-19T21:49:40.708Z',
+            createdAt: '2026-01-19T21:46:13.899Z'
+          },
+          {
+            id: 'Yh1Hc9v7P3mRPZVM59QiD',
+            query: 'SELECT * from test',
+            viewType: 'chart',
+            viewOptions: 'some chart view options',
+            name: 'student chart',
+            updatedAt: '2026-01-19T21:49:40.708Z',
+            createdAt: '2026-01-19T21:46:13.899Z'
+          }
+        ]
+      })
+    )
+    const inquiries = storedInquiries.getStoredInquiries()
+    expect(inquiries).to.eql([
+      {
+        id: 'Xh1Hc9v7P3mRPZVM59QiC',
+        query: 'SELECT * from doc',
+        viewType: 'graph',
+        viewOptions: {
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'object_type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          },
+          style: {
+            backgroundColor: 'white',
+            nodes: {
+              size: { type: 'constant', value: 10 },
+              color: {
+                type: 'calculated',
+                method: 'degree',
+                colorscale: null,
+                mode: 'continious',
+                colorscaleDirection: 'reversed',
+                opacity: 100
+              },
+              label: { source: 'label', color: '#444444' }
+            },
+            edges: {
+              showDirection: true,
+              size: { type: 'constant', value: 2 },
+              color: { type: 'constant', value: '#a2b1c6' },
+              label: { source: null, color: '#a2b1c6' }
+            }
+          },
+          layout: { type: 'circular', options: null }
+        },
+        name: 'student graph',
+        updatedAt: '2026-01-19T21:49:40.708Z',
+        createdAt: '2026-01-19T21:46:13.899Z'
+      },
+      {
+        id: 'Yh1Hc9v7P3mRPZVM59QiD',
+        query: 'SELECT * from test',
+        viewType: 'chart',
+        viewOptions: 'some chart view options',
+        name: 'student chart',
+        updatedAt: '2026-01-19T21:49:40.708Z',
+        createdAt: '2026-01-19T21:46:13.899Z'
       }
     ])
   })
@@ -136,7 +243,7 @@ describe('storedInquiries.js', () => {
     const str = storedInquiries.serialiseInquiries(inquiryList)
     const parsedJson = JSON.parse(str)
 
-    expect(parsedJson.version).to.equal(2)
+    expect(parsedJson.version).to.equal(3)
     expect(parsedJson.inquiries).to.have.lengthOf(2)
     expect(parsedJson.inquiries[1]).to.eql(inquiryList[1])
     expect(parsedJson.inquiries[0]).to.eql({
@@ -215,7 +322,7 @@ describe('storedInquiries.js', () => {
   it('deserialiseInquiries generates new id to avoid duplication', () => {
     storedInquiries.updateStorage([{ id: 1 }])
     const str = `{
-      "version": 2,
+      "version": 3,
       "inquiries": [
         {
           "id": 1,
@@ -275,7 +382,7 @@ describe('storedInquiries.js', () => {
 
   it('importInquiries', async () => {
     const str = `{
-      "version": 2,
+      "version": 3,
       "inquiries": [{
         "id": 1,
         "name": "foo",
@@ -327,7 +434,7 @@ describe('storedInquiries.js', () => {
 
   it('readPredefinedInquiries', async () => {
     const str = `{
-      "version": 2,
+      "version": 3,
       "inquiries": [
       {
         "id": 1,

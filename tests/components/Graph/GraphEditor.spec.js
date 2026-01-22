@@ -24,7 +24,8 @@ const defaultInitOptions = {
       },
       color: {
         type: 'constant',
-        value: '#1F77B4'
+        value: '#1F77B4',
+        opacity: 100
       },
       label: {
         source: null,
@@ -404,7 +405,7 @@ describe('GraphEditor', () => {
           doc: [
             '{"type": 0, "node_id": 1, "color": "#ff0000", "points": 5}',
             '{"type": 0, "node_id": 2, "color": "#abcdff", "points": 15}',
-            '{"type": 0, "node_id": 3, "color": "#123456", "points": 10}',
+            '{"type": 0, "node_id": 3, "color": "#12345680", "points": 10}',
             '{"type": 1, "source": 2, "target": 3}'
           ]
         },
@@ -440,11 +441,11 @@ describe('GraphEditor', () => {
     // Set constant color
     await wrapper
       .findAllComponents({ name: 'ColorPicker' })[1]
-      .vm.$emit('colorChange', '#ff00ff')
+      .vm.$emit('colorChange', '#ff00ff80')
 
-    expect(graph.export().nodes[0].attributes.color).to.equal('#ff00ff')
-    expect(graph.export().nodes[1].attributes.color).to.equal('#ff00ff')
-    expect(graph.export().nodes[2].attributes.color).to.equal('#ff00ff')
+    expect(graph.export().nodes[0].attributes.color).to.equal('#ff00ff80')
+    expect(graph.export().nodes[1].attributes.color).to.equal('#ff00ff80')
+    expect(graph.export().nodes[2].attributes.color).to.equal('#ff00ff80')
 
     // Switch to Variable
     const variable = wrapper.findAll('.test_node_color .radio-block__option')[1]
@@ -459,27 +460,27 @@ describe('GraphEditor', () => {
 
     await wrapper.findAll('.Select__menu .Select__option')[2].trigger('click')
 
-    expect(graph.export().nodes[0].attributes.color).to.equal('#fafa6e')
-    expect(graph.export().nodes[1].attributes.color).to.equal('#bdea75')
-    expect(graph.export().nodes[2].attributes.color).to.equal('#86d780')
+    expect(graph.export().nodes[0].attributes.color).to.equal('#fafa6eff')
+    expect(graph.export().nodes[1].attributes.color).to.equal('#bdea75ff')
+    expect(graph.export().nodes[2].attributes.color).to.equal('#86d780ff')
 
     // Select Direct mapping
     await wrapper
       .find('.test_node_color_mapping_mode .radio-block__option')
       .trigger('click')
 
-    expect(graph.export().nodes[0].attributes.color).to.equal('#ff0000')
-    expect(graph.export().nodes[1].attributes.color).to.equal('#abcdff')
-    expect(graph.export().nodes[2].attributes.color).to.equal('#123456')
+    expect(graph.export().nodes[0].attributes.color).to.equal('#ff0000ff')
+    expect(graph.export().nodes[1].attributes.color).to.equal('#abcdffff')
+    expect(graph.export().nodes[2].attributes.color).to.equal('#12345680')
 
     // Switch to Calculated
     const calculated = wrapper.findAll(
       '.test_node_color .radio-block__option'
     )[2]
     await calculated.trigger('click')
-    expect(graph.export().nodes[0].attributes.color).to.equal('#fafa6e')
-    expect(graph.export().nodes[1].attributes.color).to.equal('#2a4858')
-    expect(graph.export().nodes[2].attributes.color).to.equal('#2a4858')
+    expect(graph.export().nodes[0].attributes.color).to.equal('#fafa6eff')
+    expect(graph.export().nodes[1].attributes.color).to.equal('#2a4858ff')
+    expect(graph.export().nodes[2].attributes.color).to.equal('#2a4858ff')
     await nextTick()
 
     // Choose in-degree
@@ -491,45 +492,68 @@ describe('GraphEditor', () => {
 
     await wrapper.findAll('.Select__menu .Select__option')[1].trigger('click')
 
-    expect(graph.export().nodes[0].attributes.color).to.equal('#fafa6e')
-    expect(graph.export().nodes[1].attributes.color).to.equal('#fafa6e')
-    expect(graph.export().nodes[2].attributes.color).to.equal('#2a4858')
+    expect(graph.export().nodes[0].attributes.color).to.equal('#fafa6eff')
+    expect(graph.export().nodes[1].attributes.color).to.equal('#fafa6eff')
+    expect(graph.export().nodes[2].attributes.color).to.equal('#2a4858ff')
+    await nextTick()
+
+    // Set another opacity for calculated color
+    let opacityInput = wrapper.find(
+      '.test_node_opacity input.numeric-input__number'
+    )
+    await opacityInput.setValue(50)
+    opacityInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    expect(graph.export().nodes[0].attributes.color).to.equal('#fafa6e80')
+    expect(graph.export().nodes[1].attributes.color).to.equal('#fafa6e80')
+    expect(graph.export().nodes[2].attributes.color).to.equal('#2a485880')
     await nextTick()
 
     // Set Color as to Categorical
     await wrapper
       .findAll('.test_node_color_as .radio-block__option')[1]
       .trigger('click')
-    expect(graph.export().nodes[0].attributes.color).to.equal('#fafa6e')
-    expect(graph.export().nodes[1].attributes.color).to.equal('#fafa6e')
-    expect(graph.export().nodes[2].attributes.color).to.equal('#bdea75')
+    expect(graph.export().nodes[0].attributes.color).to.equal('#fafa6e80')
+    expect(graph.export().nodes[1].attributes.color).to.equal('#fafa6e80')
+    expect(graph.export().nodes[2].attributes.color).to.equal('#bdea7580')
     await nextTick()
 
     // Change colorscale direction
     await wrapper
       .findAll('.test_node_color_colorscale_direction .radio-block__option')[1]
       .trigger('click')
-    expect(graph.export().nodes[0].attributes.color).to.equal('#2a4858')
-    expect(graph.export().nodes[1].attributes.color).to.equal('#2a4858')
-    expect(graph.export().nodes[2].attributes.color).to.equal('#1f5f70')
+    expect(graph.export().nodes[0].attributes.color).to.equal('#2a485880')
+    expect(graph.export().nodes[1].attributes.color).to.equal('#2a485880')
+    expect(graph.export().nodes[2].attributes.color).to.equal('#1f5f7080')
     await nextTick()
 
     // Switch to Variable
     await variable.trigger('click')
 
     // The latest settings from variable mode are applied
-    expect(graph.export().nodes[0].attributes.color).to.equal('#ff0000')
-    expect(graph.export().nodes[1].attributes.color).to.equal('#abcdff')
-    expect(graph.export().nodes[2].attributes.color).to.equal('#123456')
+    expect(graph.export().nodes[0].attributes.color).to.equal('#ff0000ff')
+    expect(graph.export().nodes[1].attributes.color).to.equal('#abcdffff')
+    expect(graph.export().nodes[2].attributes.color).to.equal('#12345680')
 
     // Switch to Constant
     const constant = wrapper.findAll('.test_node_color .radio-block__option')[0]
     await constant.trigger('click')
 
     // The latest settings from constant mode are applied
-    expect(graph.export().nodes[0].attributes.color).to.equal('#ff00ff')
-    expect(graph.export().nodes[1].attributes.color).to.equal('#ff00ff')
-    expect(graph.export().nodes[2].attributes.color).to.equal('#ff00ff')
+    expect(graph.export().nodes[0].attributes.color).to.equal('#ff00ff80')
+    expect(graph.export().nodes[1].attributes.color).to.equal('#ff00ff80')
+    expect(graph.export().nodes[2].attributes.color).to.equal('#ff00ff80')
+
+    // Set another opacity for constant color
+    await opacityInput.setValue(50)
+    opacityInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    expect(graph.export().nodes[0].attributes.color).to.equal('#ff00ff40')
+    expect(graph.export().nodes[1].attributes.color).to.equal('#ff00ff40')
+    expect(graph.export().nodes[2].attributes.color).to.equal('#ff00ff40')
+    await nextTick()
 
     wrapper.unmount()
   })
@@ -840,26 +864,26 @@ describe('GraphEditor', () => {
       )
     await wrapper.findAll('.Select__menu .Select__option')[5].trigger('click')
 
-    expect(graph.export().edges[0].attributes.color).to.equal('#fafa6e')
-    expect(graph.export().edges[1].attributes.color).to.equal('#bdea75')
-    expect(graph.export().edges[2].attributes.color).to.equal('#86d780')
+    expect(graph.export().edges[0].attributes.color).to.equal('#fafa6eff')
+    expect(graph.export().edges[1].attributes.color).to.equal('#bdea75ff')
+    expect(graph.export().edges[2].attributes.color).to.equal('#86d780ff')
 
     // Set Color as to Continious
     await wrapper
       .findAll('.test_edge_color_as .radio-block__option')[0]
       .trigger('click')
-    expect(graph.export().edges[0].attributes.color).to.equal('#fafa6e')
-    expect(graph.export().edges[1].attributes.color).to.equal('#39b48d')
-    expect(graph.export().edges[2].attributes.color).to.equal('#2a4858')
+    expect(graph.export().edges[0].attributes.color).to.equal('#fafa6eff')
+    expect(graph.export().edges[1].attributes.color).to.equal('#39b48dff')
+    expect(graph.export().edges[2].attributes.color).to.equal('#2a4858ff')
     await nextTick()
 
     // Change colorscale direction
     await wrapper
       .findAll('.test_edge_color_colorscale_direction .radio-block__option')[1]
       .trigger('click')
-    expect(graph.export().edges[0].attributes.color).to.equal('#2a4858')
-    expect(graph.export().edges[1].attributes.color).to.equal('#139f8e')
-    expect(graph.export().edges[2].attributes.color).to.equal('#fafa6e')
+    expect(graph.export().edges[0].attributes.color).to.equal('#2a4858ff')
+    expect(graph.export().edges[1].attributes.color).to.equal('#139f8eff')
+    expect(graph.export().edges[2].attributes.color).to.equal('#fafa6eff')
     await nextTick()
 
     // Clear color source
@@ -883,9 +907,9 @@ describe('GraphEditor', () => {
       .find('.test_edge_color_mapping_mode .radio-block__option')
       .trigger('click')
 
-    expect(graph.export().edges[0].attributes.color).to.equal('#ff0000')
-    expect(graph.export().edges[1].attributes.color).to.equal('#abcdff')
-    expect(graph.export().edges[2].attributes.color).to.equal('#123456')
+    expect(graph.export().edges[0].attributes.color).to.equal('#ff0000ff')
+    expect(graph.export().edges[1].attributes.color).to.equal('#abcdffff')
+    expect(graph.export().edges[2].attributes.color).to.equal('#123456ff')
 
     // Switch to Constant
     const constant = wrapper.findAll('.test_edge_color .radio-block__option')[0]

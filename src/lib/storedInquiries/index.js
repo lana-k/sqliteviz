@@ -7,7 +7,7 @@ const migrate = migration._migrate
 const myInquiriesKey = 'myInquiries'
 
 export default {
-  version: 2,
+  version: 3,
   myInquiriesKey,
   getStoredInquiries() {
     let myInquiries = JSON.parse(localStorage.getItem(myInquiriesKey))
@@ -21,7 +21,13 @@ export default {
       return []
     }
 
-    return (myInquiries && myInquiries.inquiries) || []
+    if (myInquiries.version === 2) {
+      myInquiries = migrate(2, myInquiries.inquiries)
+      this.updateStorage(myInquiries)
+      return myInquiries
+    }
+
+    return myInquiries.inquiries || []
   },
 
   duplicateInquiry(baseInquiry) {
@@ -82,11 +88,11 @@ export default {
 
   importInquiries() {
     return fu.importFile().then(str => {
-      const inquires = this.deserialiseInquiries(str)
+      const inquiries = this.deserialiseInquiries(str)
 
-      events.send('inquiry.import', inquires.length)
+      events.send('inquiry.import', inquiries.length)
 
-      return inquires
+      return inquiries
     })
   },
   export(inquiryList, fileName) {
