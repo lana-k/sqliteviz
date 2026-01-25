@@ -13,16 +13,16 @@
       :style="movableSplitterStyle"
     />
     <div
+      v-show="!before.hidden"
       ref="left"
       class="splitpanes-pane"
-      :size="paneBefore.size"
-      max-size="30"
       :style="styles.before"
     >
       <slot name="left-pane" />
     </div>
     <!-- Splitter start-->
     <div
+      v-show="!before.hidden && !after.hidden"
       class="splitpanes-splitter"
       @mousedown="bindEvents"
       @touchstart="bindEvents"
@@ -64,7 +64,12 @@
       </div>
     </div>
     <!-- splitter end -->
-    <div ref="right" class="splitpanes-pane" :style="styles.after">
+    <div
+      v-show="!after.hidden"
+      ref="right"
+      class="splitpanes-pane"
+      :style="styles.after"
+    >
       <slot name="right-pane" />
     </div>
   </div>
@@ -114,10 +119,12 @@ export default {
     styles() {
       return {
         before: {
-          [this.horizontal ? 'height' : 'width']: `${this.paneBefore.size}%`
+          [this.horizontal ? 'height' : 'width']:
+            `${this.after.hidden ? 100 : this.paneBefore.size}%`
         },
         after: {
-          [this.horizontal ? 'height' : 'width']: `${this.paneAfter.size}%`
+          [this.horizontal ? 'height' : 'width']:
+            `${this.before.hidden ? 100 : this.paneAfter.size}%`
         }
       }
     },

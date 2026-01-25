@@ -13,21 +13,35 @@
         documentation</a
       >.
     </div>
-    <div
+    <splitpanes
+      :before="{ size: 70, max: 100 }"
+      :after="{ size: 30, max: 50, hidden: !showValueViewer }"
+      :default="{ before: 70, after: 30 }"
       class="graph"
       :style="{
         height:
           !dataSources || !dataSourceIsValid ? 'calc(100% - 40px)' : '100%'
       }"
     >
-      <GraphEditor
-        ref="graphEditor"
-        :dataSources="dataSources"
-        :initOptions="initOptions"
-        :showViewSettings="showViewSettings"
-        @update="$emit('update')"
-      />
-    </div>
+      <template #left-pane>
+        <div :style="{ height: '100%' }" ref="graphEditorContainer">
+          <GraphEditor
+            ref="graphEditor"
+            :dataSources="dataSources"
+            :initOptions="initOptions"
+            :showViewSettings="showViewSettings"
+            @update="$emit('update')"
+          />
+        </div>
+      </template>
+      <template v-if="showValueViewer" #right-pane>
+        <value-viewer
+          :empty="!selectedNode"
+          empty-message="No node selected to view"
+          :cellValue="'{}'"
+        />
+      </template>
+    </splitpanes>
   </div>
 </template>
 
@@ -35,17 +49,20 @@
 import 'react-chart-editor/lib/react-chart-editor.css'
 import GraphEditor from '@/components/Graph/GraphEditor.vue'
 import { dataSourceIsValid } from '@/lib/graphHelper'
+import ValueViewer from '@/components/ValueViewer'
+import Splitpanes from '@/components/Common/Splitpanes'
 
 export default {
   name: 'Graph',
-  components: { GraphEditor },
+  components: { GraphEditor, ValueViewer, Splitpanes },
   props: {
     dataSources: Object,
     initOptions: Object,
     exportToPngEnabled: Boolean,
     exportToSvgEnabled: Boolean,
     exportToHtmlEnabled: Boolean,
-    showViewSettings: Boolean
+    showViewSettings: Boolean,
+    showValueViewer: Boolean
   },
   emits: [
     'update:exportToSvgEnabled',
@@ -57,7 +74,8 @@ export default {
   ],
   data() {
     return {
-      resizeObserver: null
+      resizeObserver: null,
+      selectedNode: {}
     }
   },
   computed: {
@@ -83,10 +101,10 @@ export default {
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(this.handleResize)
-    this.resizeObserver.observe(this.$refs.graphContainer)
+    this.resizeObserver.observe(this.$refs.graphEditorContainer)
   },
   beforeUnmount() {
-    this.resizeObserver.unobserve(this.$refs.graphContainer)
+    this.resizeObserver.unobserve(this.$refs.graphEditorContainer)
   },
   methods: {
     getOptionsForSave() {
@@ -100,7 +118,7 @@ export default {
       return this.$refs.graphEditor.prepareCopy()
     },
     async handleResize() {
-      const renderer = this.$refs.graphEditor.renderer
+      const renderer = this.$refs.graphEditor?.renderer
       if (renderer) {
         renderer.refresh()
         renderer.getCamera().animatedReset({ duration: 600 })

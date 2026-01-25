@@ -1,48 +1,56 @@
 <template>
   <div class="value-viewer">
-    <div class="value-viewer-toolbar">
-      <button
-        v-for="format in formats"
-        :key="format.value"
-        type="button"
-        :aria-selected="currentFormat === format.value"
-        :class="format.value"
-        @click="currentFormat = format.value"
-      >
-        {{ format.text }}
-      </button>
+    <template v-if="!empty">
+      <div class="value-viewer-toolbar">
+        <button
+          v-for="format in formats"
+          :key="format.value"
+          type="button"
+          :aria-selected="currentFormat === format.value"
+          :class="format.value"
+          @click="currentFormat = format.value"
+        >
+          {{ format.text }}
+        </button>
 
-      <button type="button" class="copy" @click="copyToClipboard">Copy</button>
-      <button
-        type="button"
-        class="line-wrap"
-        :aria-selected="lineWrapping === true"
-        @click="lineWrapping = !lineWrapping"
-      >
-        Line wrap
-      </button>
-    </div>
-    <div class="value-body">
-      <codemirror
-        v-if="currentFormat === 'json' && formattedJson"
-        :value="formattedJson"
-        :options="cmOptions"
-        class="json-value original-style"
-      />
-      <pre
-        v-if="currentFormat === 'text'"
-        :class="[
-          'text-value',
-          { 'meta-value': isNull || isBlob },
-          { 'line-wrap': lineWrapping }
-        ]"
-        >{{ cellText }}</pre
-      >
-      <logs
-        v-if="messages && messages.length > 0"
-        :messages="messages"
-        class="messages"
-      />
+        <button type="button" class="copy" @click="copyToClipboard">
+          Copy
+        </button>
+        <button
+          type="button"
+          class="line-wrap"
+          :aria-selected="lineWrapping === true"
+          @click="lineWrapping = !lineWrapping"
+        >
+          Line wrap
+        </button>
+      </div>
+      <div class="value-body">
+        <codemirror
+          v-if="currentFormat === 'json' && formattedJson"
+          :value="formattedJson"
+          :options="cmOptions"
+          class="json-value original-style"
+        />
+        <pre
+          v-if="currentFormat === 'text'"
+          :class="[
+            'text-value',
+            { 'meta-value': isNull || isBlob },
+            { 'line-wrap': lineWrapping }
+          ]"
+          >{{ cellText }}</pre
+        >
+        <logs
+          v-if="messages && messages.length > 0"
+          :messages="messages"
+          class="messages"
+        />
+      </div>
+    </template>
+
+    <div v-show="empty" class="empty-message">
+      {{ emptyMessage }}
     </div>
   </div>
 </template>
@@ -65,7 +73,9 @@ export default {
     Logs
   },
   props: {
-    cellValue: [String, Number, Uint8Array]
+    cellValue: [String, Number, Uint8Array],
+    empty: Boolean,
+    emptyMessage: String
   },
   data() {
     return {
@@ -153,8 +163,10 @@ export default {
 .value-viewer {
   background-color: var(--color-white);
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 .value-viewer-toolbar {
   display: flex;
@@ -218,5 +230,15 @@ export default {
 :deep(.CodeMirror-cursor) {
   width: 1px;
   background: var(--color-text-base);
+}
+
+.empty-message {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--color-text-base);
+  font-size: 13px;
+  text-align: center;
 }
 </style>

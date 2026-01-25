@@ -37,7 +37,6 @@
       :disabled="!enableTeleport"
     >
       <run-result
-        :tab="tab"
         :result="tab.result"
         :isGettingResults="tab.isGettingResults"
         :error="tab.error"

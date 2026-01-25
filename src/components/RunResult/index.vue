@@ -1,40 +1,66 @@
 <template>
   <div ref="runResultPanel" class="run-result-panel">
-    <component
-      :is="viewValuePanelVisible ? 'splitpanes' : 'div'"
+    <splitpanes
       :before="{ size: 50, max: 100 }"
-      :after="{ size: 50, max: 100 }"
+      :after="{ size: 50, max: 100, hidden: !viewValuePanelVisible }"
       :default="{ before: 50, after: 50 }"
       class="run-result-panel-content"
     >
       <template #left-pane>
-        <div
-          :id="'run-result-left-pane-' + tab.id"
-          class="result-set-container"
-        />
-      </template>
-      <div
-        :id="'run-result-result-set-' + tab.id"
-        class="result-set-container"
-      />
-      <template v-if="viewValuePanelVisible" #right-pane>
-        <div class="value-viewer-container">
-          <value-viewer
-            v-show="selectedCell"
-            :cellValue="
-              selectedCell
-                ? result.values[result.columns[selectedCell.dataset.col]][
-                    selectedCell.dataset.row
-                  ]
-                : ''
-            "
-          />
-          <div v-show="!selectedCell" class="table-preview">
-            No cell selected to view
+        <div class="result-set-container">
+          <div
+            v-show="result === null && !isGettingResults && !error"
+            class="table-preview result-before"
+          >
+            Run your query and get results here
           </div>
+          <div v-if="isGettingResults" class="table-preview result-in-progress">
+            <loading-indicator :size="30" />
+            Fetching results...
+          </div>
+          <div
+            v-show="result === undefined && !isGettingResults && !error"
+            class="table-preview result-empty"
+          >
+            No rows retrieved according to your query
+          </div>
+          <logs v-if="error" :messages="[error]" />
+          <sql-table
+            v-if="result && !viewRecord"
+            :data-set="result"
+            :time="time"
+            :pageSize="pageSize"
+            :page="defaultPage"
+            :selectedCellCoordinates="defaultSelectedCell"
+            class="straight"
+            @update-selected-cell="onUpdateSelectedCell"
+          />
+
+          <record
+            v-if="result && viewRecord"
+            ref="recordView"
+            :data-set="result"
+            :time="time"
+            :selectedColumnIndex="selectedCell ? +selectedCell.dataset.col : 0"
+            :rowIndex="selectedCell ? +selectedCell.dataset.row : 0"
+            @update-selected-cell="onUpdateSelectedCell"
+          />
         </div>
       </template>
-    </component>
+      <template v-if="viewValuePanelVisible" #right-pane>
+        <value-viewer
+          :empty="!selectedCell"
+          empty-message="No cell selected to view"
+          :cellValue="
+            selectedCell
+              ? result.values[result.columns[selectedCell.dataset.col]][
+                  selectedCell.dataset.row
+                ]
+              : ''
+          "
+        />
+      </template>
+    </splitpanes>
 
     <side-tool-bar panel="table" @switch-to="$emit('switchTo', $event)">
       <icon-button
@@ -89,48 +115,6 @@
       @action="copyToClipboard"
       @cancel="cancelCopy"
     />
-
-    <teleport defer :to="resultSetTeleportTarget" :disabled="!enableTeleport">
-      <div>
-        <div
-          v-show="result === null && !isGettingResults && !error"
-          class="table-preview result-before"
-        >
-          Run your query and get results here
-        </div>
-        <div v-if="isGettingResults" class="table-preview result-in-progress">
-          <loading-indicator :size="30" />
-          Fetching results...
-        </div>
-        <div
-          v-show="result === undefined && !isGettingResults && !error"
-          class="table-preview result-empty"
-        >
-          No rows retrieved according to your query
-        </div>
-        <logs v-if="error" :messages="[error]" />
-        <sql-table
-          v-if="result && !viewRecord"
-          :data-set="result"
-          :time="time"
-          :pageSize="pageSize"
-          :page="defaultPage"
-          :selectedCellCoordinates="defaultSelectedCell"
-          class="straight"
-          @update-selected-cell="onUpdateSelectedCell"
-        />
-
-        <record
-          v-if="result && viewRecord"
-          ref="recordView"
-          :data-set="result"
-          :time="time"
-          :selectedColumnIndex="selectedCell ? +selectedCell.dataset.col : 0"
-          :rowIndex="selectedCell ? +selectedCell.dataset.row : 0"
-          @update-selected-cell="onUpdateSelectedCell"
-        />
-      </div>
-    </teleport>
   </div>
 </template>
 
@@ -151,7 +135,7 @@ import cIo from '@/lib/utils/clipboardIo'
 import time from '@/lib/utils/time'
 import loadingDialog from '@/components/Common/LoadingDialog'
 import events from '@/lib/utils/events'
-import ValueViewer from './ValueViewer'
+import ValueViewer from '@/components/ValueViewer'
 import Record from './Record/index.vue'
 
 export default {
@@ -172,7 +156,6 @@ export default {
     Splitpanes
   },
   props: {
-    tab: Object,
     result: Object,
     isGettingResults: Boolean,
     error: Object,
@@ -192,20 +175,6 @@ export default {
       defaultSelectedCell: null,
       enableTeleport: this.$store.state.isWorkspaceVisible,
       showLoadingDialog: false
-    }
-  },
-  computed: {
-    resultSetTeleportTarget() {
-      if (!this.enableTeleport) {
-        return undefined
-      }
-      const base = `#${
-        this.viewValuePanelVisible
-          ? 'run-result-left-pane'
-          : 'run-result-result-set'
-      }`
-      const tabIdPostfix = `-${this.tab.id}`
-      return base + tabIdPostfix
     }
   },
   watch: {
@@ -332,18 +301,11 @@ export default {
   width: 0;
 }
 
-.result-set-container,
-.result-set-container > div {
+.result-set-container {
   position: relative;
   height: 100%;
   width: 100%;
   box-sizing: border-box;
-}
-.value-viewer-container {
-  height: 100%;
-  width: 100%;
-  background-color: var(--color-white);
-  position: relative;
 }
 
 .table-preview {
