@@ -75,7 +75,11 @@ export default {
   props: {
     cellValue: [String, Number, Uint8Array],
     empty: Boolean,
-    emptyMessage: String
+    emptyMessage: String,
+    defaultFormat: {
+      type: String,
+      default: 'text'
+    }
   },
   data() {
     return {
@@ -83,7 +87,7 @@ export default {
         { text: 'Text', value: 'text' },
         { text: 'JSON', value: 'json' }
       ],
-      currentFormat: 'text',
+      currentFormat: this.defaultFormat,
       lineWrapping: false,
       formattedJson: '',
       messages: []
@@ -121,17 +125,23 @@ export default {
     }
   },
   watch: {
-    currentFormat() {
-      this.messages = []
-      this.formattedJson = ''
-      if (this.currentFormat === 'json') {
-        this.formatJson(this.cellValue)
+    currentFormat: {
+      immediate: true,
+      handler() {
+        this.messages = []
+        this.formattedJson = ''
+        if (this.currentFormat === 'json') {
+          this.formatJson(this.cellValue)
+        }
       }
     },
-    cellValue() {
-      this.messages = []
-      if (this.currentFormat === 'json') {
-        this.formatJson(this.cellValue)
+    cellValue: {
+      immediate: true,
+      handler() {
+        this.messages = []
+        if (this.currentFormat === 'json') {
+          this.formatJson(this.cellValue)
+        }
       }
     }
   },

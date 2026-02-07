@@ -31,14 +31,17 @@
             :initOptions="initOptions"
             :showViewSettings="showViewSettings"
             @update="$emit('update')"
+            @selectItem="selectedItem = $event"
+            @deselectItem="selectedItem = null"
           />
         </div>
       </template>
       <template v-if="showValueViewer" #right-pane>
         <value-viewer
-          :empty="!selectedNode"
-          empty-message="No node selected to view"
-          :cellValue="'{}'"
+          :empty="!selectedItem"
+          empty-message="No node or edge selected to view"
+          :cellValue="JSON.stringify(selectedItem)"
+          default-format="json"
         />
       </template>
     </splitpanes>
@@ -75,7 +78,7 @@ export default {
   data() {
     return {
       resizeObserver: null,
-      selectedNode: {}
+      selectedItem: {}
     }
   },
   computed: {

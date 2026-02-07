@@ -127,6 +127,107 @@ export function updateEdges(graph, attributeUpdates) {
   })
 }
 
+export function reduceNodes(node, data, interactionState, settings) {
+  const {
+    selectedNodeId,
+    hoveredNodeId,
+    selectedEdgeId,
+    hoveredEdgeId,
+    neighborsOfSelectedNode,
+    neighborsOfHoveredNode,
+    selectedEdgeExtremities,
+    hoveredEdgeExtremities
+  } = interactionState
+
+  const res = { ...data }
+
+  if (selectedNodeId || hoveredNodeId || hoveredEdgeId || selectedEdgeId) {
+    res.zIndex = 2
+    res.highlighted = node === selectedNodeId || node === hoveredNodeId
+
+    const isInHoveredFamily =
+      node === hoveredNodeId ||
+      neighborsOfHoveredNode?.has(node) ||
+      hoveredEdgeExtremities.includes(node)
+    const isInSelectedFamily =
+      node === selectedNodeId ||
+      neighborsOfSelectedNode?.has(node) ||
+      selectedEdgeExtremities.includes(node)
+    if (isInSelectedFamily || isInHoveredFamily) {
+      res.forceLabel = true
+    } else {
+      res.color = getDiminishedColor(data.color, settings.style.backgroundColor)
+      res.label = ''
+      res.zIndex = 1
+    }
+  }
+
+  return res
+}
+
+export function reduceEdges(edge, data, interactionState, settings, graph) {
+  const {
+    selectedNodeId,
+    hoveredNodeId,
+    selectedEdgeId,
+    hoveredEdgeId,
+    neighborsOfSelectedNode,
+    neighborsOfHoveredNode
+  } = interactionState
+
+  const res = { ...data }
+  if (hoveredEdgeId || selectedEdgeId || selectedNodeId || hoveredNodeId) {
+    const extremities = graph.extremities(edge)
+    res.zIndex = 2
+    const isHighlighted = hoveredEdgeId === edge || selectedEdgeId === edge
+
+    let isVisible
+    if (settings.style.highlightMode === 'node_alone') {
+      isVisible = isHighlighted
+    } else if (settings.style.highlightMode === 'node_and_neighbors') {
+      isVisible =
+        isHighlighted ||
+        (selectedNodeId && extremities.includes(selectedNodeId)) ||
+        (hoveredNodeId && extremities.includes(hoveredNodeId))
+    } else {
+      isVisible =
+        isHighlighted ||
+        (selectedNodeId &&
+          extremities.every(
+            n => n === selectedNodeId || neighborsOfSelectedNode.has(n)
+          )) ||
+        (hoveredNodeId &&
+          extremities.every(
+            n => n === hoveredNodeId || neighborsOfHoveredNode.has(n)
+          ))
+    }
+    if (isHighlighted) {
+      res.size = res.size * 2
+      res.forceLabel = true
+    } else if (!isVisible) {
+      res.color = getDiminishedColor(data.color, settings.style.backgroundColor)
+      res.zIndex = 1
+      res.label = ''
+    }
+  }
+  return res
+}
+
+export function getDiminishedColor(color, bgColor) {
+  const colorObj = tinycolor(color)
+  const colorOpacity = colorObj.getAlpha()
+  colorObj.setAlpha(0.25 * colorOpacity)
+
+  const fg = colorObj.toRgb()
+  const bg = tinycolor(bgColor).toRgb()
+
+  const r = Math.round(fg.r * fg.a + bg.r * (1 - fg.a))
+  const g = Math.round(fg.g * fg.a + bg.g * (1 - fg.a))
+  const b = Math.round(fg.b * fg.a + bg.b * (1 - fg.a))
+
+  return tinycolor({ r, g, b, a: 1 }).toHexString()
+}
+
 function getUpdateLabelMethod(labelSettings) {
   const { source, color } = labelSettings
   return attributes => {

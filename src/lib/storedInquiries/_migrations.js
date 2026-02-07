@@ -12,6 +12,7 @@ export default {
       inquiries.forEach(inquiry => {
         if (inquiry.viewType === 'graph') {
           inquiry.viewOptions.style.nodes.color.opacity = 100
+          inquiry.viewOptions.style.highlightMode = 'node_and_neighbors'
         }
       })
     }

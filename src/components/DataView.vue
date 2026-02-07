@@ -58,8 +58,9 @@
       </icon-button>
 
       <icon-button
-        ref="viewNodeValueBtn"
-        tooltip="View node"
+        v-if="mode === 'graph'"
+        ref="viewNodeOrEdgeBtn"
+        tooltip="View node or edge details"
         tooltipPosition="top-left"
         :active="viewValuePanelVisible"
         @click="viewValuePanelVisible = !viewValuePanelVisible"

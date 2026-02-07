@@ -67,6 +67,15 @@
                 @color-change="settings.style.backgroundColor = $event"
               />
             </Field>
+
+            <Field label="Highlight mode">
+              <Dropdown
+                :options="highlightModeOptions"
+                :value="settings.style.highlightMode"
+                className="test_highlight_mode_select"
+                @change="updateHighlightNodeMode"
+              />
+            </Field>
           </Fold>
         </Panel>
         <Panel group="Style" name="Nodes">
@@ -237,7 +246,9 @@ import {
   buildNodes,
   buildEdges,
   updateNodes,
-  updateEdges
+  updateEdges,
+  reduceNodes,
+  reduceEdges
 } from '@/lib/graphHelper'
 import Graph from 'graphology'
 import { circular, random, circlepack } from 'graphology-layout'
@@ -277,7 +288,7 @@ export default {
     initOptions: Object,
     showViewSettings: Boolean
   },
-  emits: ['update'],
+  emits: ['update', 'selectItem', 'deselectItem'],
   data() {
     return {
       graph: new Graph({ multi: true, allowSelfLoops: true }),
@@ -300,7 +311,10 @@ export default {
         circlepack: CirclePackLayoutSettings,
         forceAtlas2: ForceAtlasLayoutSettings
       }),
-
+      selectedNodeId: undefined,
+      hoveredNodeId: undefined,
+      selectedEdgeId: undefined,
+      hoveredEdgeId: undefined,
       settings: this.initOptions
         ? JSON.parse(JSON.stringify(this.initOptions))
         : {
@@ -312,6 +326,7 @@ export default {
             },
             style: {
               backgroundColor: 'white',
+              highlightMode: 'node_and_neighbors',
               nodes: {
                 size: {
                   type: 'constant',
@@ -352,7 +367,15 @@ export default {
         random: null,
         circlepack: null,
         forceAtlas2: null
-      }
+      },
+      highlightModeOptions: markRaw([
+        { label: 'Node alone', value: 'node_alone' },
+        { label: 'Node and neighbors', value: 'node_and_neighbors' },
+        {
+          label: 'Include edges between neighbors',
+          value: 'include_neighbor_edges'
+        }
+      ])
     }
   },
   computed: {
@@ -379,6 +402,46 @@ export default {
       }, new Set())
 
       return Array.from(keySet)
+    },
+    neighborsOfSelectedNode() {
+      if (this.settings.style.highlightMode === 'node_alone') {
+        return undefined
+      }
+      return this.selectedNodeId
+        ? new Set(this.graph.neighbors(this.selectedNodeId))
+        : undefined
+    },
+    neighborsOfHoveredNode() {
+      if (this.settings.style.highlightMode === 'node_alone') {
+        return undefined
+      }
+      return this.hoveredNodeId
+        ? new Set(this.graph.neighbors(this.hoveredNodeId))
+        : undefined
+    },
+    hoveredEdgeExtremities() {
+      return this.hoveredEdgeId
+        ? this.graph.extremities(this.hoveredEdgeId)
+        : []
+    },
+    selectedEdgeExtremities() {
+      return this.selectedEdgeId
+        ? this.graph.extremities(this.selectedEdgeId)
+        : []
+    },
+    interactionState() {
+      return {
+        selectedNodeId: this.selectedNodeId,
+        hoveredNodeId: this.hoveredNodeId,
+        selectedEdgeId: this.selectedEdgeId,
+        hoveredEdgeId: this.hoveredEdgeId,
+
+        neighborsOfSelectedNode: this.neighborsOfSelectedNode,
+        neighborsOfHoveredNode: this.neighborsOfHoveredNode,
+
+        hoveredEdgeExtremities: this.hoveredEdgeExtremities,
+        selectedEdgeExtremities: this.selectedEdgeExtremities
+      }
     }
   },
   watch: {
@@ -423,6 +486,7 @@ export default {
   },
   methods: {
     buildGraph() {
+      this.clearSelection()
       if (this.renderer) {
         this.renderer.kill()
       }
@@ -440,10 +504,83 @@ export default {
         renderEdgeLabels: true,
         allowInvalidContainer: true,
         labelColor: { attribute: 'labelColor', color: '#444444' },
-        edgeLabelColor: { attribute: 'labelColor', color: '#a2b1c6' }
+        edgeLabelColor: { attribute: 'labelColor', color: '#a2b1c6' },
+        enableEdgeEvents: true,
+        zIndex: true,
+        nodeReducer: (node, data) =>
+          reduceNodes(node, data, this.interactionState, this.settings),
+        edgeReducer: (edge, data) =>
+          reduceEdges(
+            edge,
+            data,
+            this.interactionState,
+            this.settings,
+            this.graph
+          )
       })
+      this.renderer.on('clickNode', ({ node }) => {
+        this.selectedNodeId = node
+        this.selectedEdgeId = undefined
+        this.$emit('selectItem', this.graph.getNodeAttributes(node).data)
+        this.renderer.refresh({
+          skipIndexation: true
+        })
+      })
+      this.renderer.on('clickEdge', ({ edge }) => {
+        this.selectedEdgeId = edge
+        this.selectedNodeId = undefined
+        this.$emit('selectItem', this.graph.getEdgeAttributes(edge).data)
+        this.renderer.refresh({
+          skipIndexation: true
+        })
+      })
+      this.renderer.on('clickStage', () => {
+        this.clearSelection()
+        this.renderer.refresh({
+          skipIndexation: true
+        })
+      })
+      this.renderer.on('enterNode', ({ node }) => {
+        this.hoveredNodeId = node
+        this.renderer.refresh({
+          skipIndexation: true
+        })
+      })
+      this.renderer.on('enterEdge', ({ edge }) => {
+        this.hoveredEdgeId = edge
+        this.renderer.refresh({
+          skipIndexation: true
+        })
+      })
+      this.renderer.on('leaveNode', () => {
+        this.hoveredNodeId = undefined
+        this.renderer.refresh({
+          skipIndexation: true
+        })
+      })
+      this.renderer.on('leaveEdge', () => {
+        this.hoveredEdgeId = undefined
+        this.renderer.refresh({
+          skipIndexation: true
+        })
+      })
+
       if (this.settings.layout.type === 'forceAtlas2') {
         this.autoRunFA2Layout()
+      }
+    },
+    clearSelection() {
+      this.selectedNodeId = undefined
+      this.selectedEdgeId = undefined
+      this.$emit('deselectItem')
+    },
+    updateHighlightNodeMode(mode) {
+      this.settings.style.highlightMode = mode
+
+      if (this.renderer) {
+        this.renderer.refresh({
+          skipIndexation: true
+        })
       }
     },
     updateStructure(attributeName, value) {
