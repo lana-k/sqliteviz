@@ -1215,4 +1215,982 @@ describe('graphHelper.js', () => {
       }
     ])
   })
+
+  it('getDiminishedColor', () => {
+    const diminishedColor = graphHelper.getDiminishedColor(
+      '#FF0000CC',
+      '#0000FF'
+    )
+    expect(diminishedColor).to.equal('#3300cc')
+  })
+
+  it('reduceNodes', () => {
+    const settings = {
+      style: {
+        backgroundColor: '#0000FF'
+      }
+    }
+
+    const nodeData = { color: '#FF0000CC', label: 'Node label' }
+
+    let interactionState = {
+      selectedNodeId: 'node-1',
+      hoveredNodeId: 'node-2',
+      selectedEdgeId: null,
+      hoveredEdgeId: null,
+      neighborsOfSelectedNode: new Set(['node-1.1']),
+      neighborsOfHoveredNode: new Set(['node-2.1']),
+      selectedEdgeExtremities: [],
+      hoveredEdgeExtremities: []
+    }
+
+    expect(
+      graphHelper.reduceNodes('node-1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: true,
+      forceLabel: true
+    })
+    expect(
+      graphHelper.reduceNodes('node-2', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: true,
+      forceLabel: true
+    })
+
+    expect(
+      graphHelper.reduceNodes('node-1.1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: false,
+      forceLabel: true
+    })
+
+    expect(
+      graphHelper.reduceNodes('node-2.1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: false,
+      forceLabel: true
+    })
+
+    expect(
+      graphHelper.reduceNodes('node-3', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#3300cc',
+      label: '',
+      zIndex: 1,
+      highlighted: false
+    })
+
+    interactionState = {
+      selectedNodeId: 'node-1',
+      hoveredNodeId: null,
+      selectedEdgeId: null,
+      hoveredEdgeId: 'edge-2-2.1',
+      neighborsOfSelectedNode: new Set(['node-1.1']),
+      neighborsOfHoveredNode: undefined,
+      selectedEdgeExtremities: [],
+      hoveredEdgeExtremities: ['node-2', 'node-2.1']
+    }
+
+    expect(
+      graphHelper.reduceNodes('node-1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: true,
+      forceLabel: true
+    })
+
+    expect(
+      graphHelper.reduceNodes('node-2', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: false,
+      forceLabel: true
+    })
+
+    expect(
+      graphHelper.reduceNodes('node-1.1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: false,
+      forceLabel: true
+    })
+
+    expect(
+      graphHelper.reduceNodes('node-1.1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: false,
+      forceLabel: true
+    })
+
+    expect(
+      graphHelper.reduceNodes('node-3', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#3300cc',
+      label: '',
+      zIndex: 1,
+      highlighted: false
+    })
+
+    interactionState = {
+      selectedNodeId: null,
+      hoveredNodeId: null,
+      selectedEdgeId: 'edge-1-1.1',
+      hoveredEdgeId: 'edge-2-2.1',
+      neighborsOfSelectedNode: undefined,
+      neighborsOfHoveredNode: undefined,
+      selectedEdgeExtremities: ['node-1', 'node-1.1'],
+      hoveredEdgeExtremities: ['node-2', 'node-2.1']
+    }
+
+    expect(
+      graphHelper.reduceNodes('node-1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: false,
+      forceLabel: true
+    })
+    expect(
+      graphHelper.reduceNodes('node-2', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: false,
+      forceLabel: true
+    })
+    expect(
+      graphHelper.reduceNodes('node-1.1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: false,
+      forceLabel: true
+    })
+    expect(
+      graphHelper.reduceNodes('node-2.1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: false,
+      forceLabel: true
+    })
+
+    expect(
+      graphHelper.reduceNodes('node-3', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#3300cc',
+      label: '',
+      zIndex: 1,
+      highlighted: false
+    })
+
+    interactionState = {
+      selectedNodeId: null,
+      hoveredNodeId: 'node-2',
+      selectedEdgeId: 'edge-1',
+      hoveredEdgeId: null,
+      neighborsOfSelectedNode: undefined,
+      neighborsOfHoveredNode: new Set(['node-2.1']),
+      selectedEdgeExtremities: ['node-1', 'node-1.1'],
+      hoveredEdgeExtremities: []
+    }
+
+    expect(
+      graphHelper.reduceNodes('node-1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: false,
+      forceLabel: true
+    })
+    expect(
+      graphHelper.reduceNodes('node-2', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: true,
+      forceLabel: true
+    })
+    expect(
+      graphHelper.reduceNodes('node-1.1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: false,
+      forceLabel: true
+    })
+    expect(
+      graphHelper.reduceNodes('node-2.1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      zIndex: 2,
+      highlighted: false,
+      forceLabel: true
+    })
+
+    expect(
+      graphHelper.reduceNodes('node-3', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#3300cc',
+      label: '',
+      zIndex: 1,
+      highlighted: false
+    })
+
+    interactionState = {
+      selectedNodeId: null,
+      hoveredNodeId: null,
+      selectedEdgeId: null,
+      hoveredEdgeId: null,
+      neighborsOfSelectedNode: undefined,
+      neighborsOfHoveredNode: undefined,
+      selectedEdgeExtremities: [],
+      hoveredEdgeExtremities: []
+    }
+
+    expect(
+      graphHelper.reduceNodes('node-1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label'
+    })
+    expect(
+      graphHelper.reduceNodes('node-2', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label'
+    })
+    expect(
+      graphHelper.reduceNodes('node-1.1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label'
+    })
+    expect(
+      graphHelper.reduceNodes('node-2.1', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label'
+    })
+
+    expect(
+      graphHelper.reduceNodes('node-3', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label'
+    })
+  })
+
+  it('reduceEdges - node_alone', () => {
+    const settings = {
+      style: {
+        backgroundColor: '#0000FF',
+        highlightMode: 'node_alone'
+      }
+    }
+
+    const edgeData = { color: '#FF0000CC', label: 'Edge label', size: 3 }
+    const graph = new Graph()
+    graph.addNode('node-1.1')
+    graph.addNode('node-1.2')
+    graph.addNode('node-1.3')
+    graph.addNode('node-2.1')
+    graph.addNode('node-2.2')
+    const edge1112 = graph.addEdge('node-1.1', 'node-1.2', edgeData)
+    const edge1113 = graph.addEdge('node-1.1', 'node-1.3', edgeData)
+    const edge1213 = graph.addEdge('node-1.2', 'node-1.3', edgeData)
+    const edge2122 = graph.addEdge('node-2.1', 'node-2.2', edgeData)
+
+    const hiddenEdgeStyle = { color: '#3300cc', label: '', zIndex: 1, size: 3 }
+    const highlightedEdgeStyle = {
+      color: '#FF0000CC',
+      label: 'Edge label',
+      zIndex: 2,
+      size: 6,
+      forceLabel: true
+    }
+
+    let interactionState = {
+      selectedNodeId: null,
+      hoveredNodeId: null,
+      selectedEdgeId: edge2122,
+      hoveredEdgeId: edge1112,
+      neighborsOfSelectedNode: undefined,
+      neighborsOfHoveredNode: undefined,
+      selectedEdgeExtremities: ['node-2.1', 'node-2.2'],
+      hoveredEdgeExtremities: ['node-1.1', 'node-1.2']
+    }
+    expect(
+      graphHelper.reduceEdges(
+        edge2122,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(highlightedEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1112,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(highlightedEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1113,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1213,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+
+    interactionState = {
+      selectedNodeId: 'node-1.1',
+      hoveredNodeId: null,
+      selectedEdgeId: null,
+      hoveredEdgeId: null,
+      neighborsOfSelectedNode: new Set(['node-1.2', 'node-1.3']),
+      neighborsOfHoveredNode: undefined,
+      selectedEdgeExtremities: [],
+      hoveredEdgeExtremities: []
+    }
+    expect(
+      graphHelper.reduceEdges(
+        edge2122,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1112,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1113,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1213,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+
+    interactionState = {
+      selectedNodeId: null,
+      hoveredNodeId: 'node-1.1',
+      selectedEdgeId: null,
+      hoveredEdgeId: null,
+      neighborsOfSelectedNode: undefined,
+      neighborsOfHoveredNode: new Set(['node-1.2', 'node-1.3']),
+      selectedEdgeExtremities: [],
+      hoveredEdgeExtremities: []
+    }
+    expect(
+      graphHelper.reduceEdges(
+        edge2122,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1112,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1113,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1213,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+
+    interactionState = {
+      selectedNodeId: null,
+      hoveredNodeId: null,
+      selectedEdgeId: null,
+      hoveredEdgeId: null,
+      neighborsOfSelectedNode: undefined,
+      neighborsOfHoveredNode: undefined,
+      selectedEdgeExtremities: [],
+      hoveredEdgeExtremities: []
+    }
+
+    expect(
+      graphHelper.reduceEdges(
+        edge2122,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(edgeData)
+    expect(
+      graphHelper.reduceEdges(
+        edge1112,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(edgeData)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1113,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(edgeData)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1213,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(edgeData)
+  })
+
+  it('reduceEdges - node_and_neighbors', () => {
+    const settings = {
+      style: {
+        backgroundColor: '#0000FF',
+        highlightMode: 'node_and_neighbors'
+      }
+    }
+
+    const edgeData = { color: '#FF0000CC', label: 'Edge label', size: 3 }
+    const graph = new Graph()
+    graph.addNode('node-1.1')
+    graph.addNode('node-1.2')
+    graph.addNode('node-1.3')
+    graph.addNode('node-2.1')
+    graph.addNode('node-2.2')
+    const edge1112 = graph.addEdge('node-1.1', 'node-1.2', edgeData)
+    const edge1113 = graph.addEdge('node-1.1', 'node-1.3', edgeData)
+    const edge1213 = graph.addEdge('node-1.2', 'node-1.3', edgeData)
+    const edge2122 = graph.addEdge('node-2.1', 'node-2.2', edgeData)
+
+    const hiddenEdgeStyle = { color: '#3300cc', label: '', zIndex: 1, size: 3 }
+    const highlightedEdgeStyle = {
+      color: '#FF0000CC',
+      label: 'Edge label',
+      zIndex: 2,
+      size: 6,
+      forceLabel: true
+    }
+    const visibleEdgeStyle = {
+      color: '#FF0000CC',
+      label: 'Edge label',
+      zIndex: 2,
+      size: 3
+    }
+
+    let interactionState = {
+      selectedNodeId: null,
+      hoveredNodeId: null,
+      selectedEdgeId: edge2122,
+      hoveredEdgeId: edge1112,
+      neighborsOfSelectedNode: undefined,
+      neighborsOfHoveredNode: undefined,
+      selectedEdgeExtremities: ['node-2.1', 'node-2.2'],
+      hoveredEdgeExtremities: ['node-1.1', 'node-1.2']
+    }
+    expect(
+      graphHelper.reduceEdges(
+        edge2122,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(highlightedEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1112,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(highlightedEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1113,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1213,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+
+    interactionState = {
+      selectedNodeId: 'node-1.1',
+      hoveredNodeId: null,
+      selectedEdgeId: null,
+      hoveredEdgeId: null,
+      neighborsOfSelectedNode: new Set(['node-1.2', 'node-1.3']),
+      neighborsOfHoveredNode: undefined,
+      selectedEdgeExtremities: [],
+      hoveredEdgeExtremities: []
+    }
+    expect(
+      graphHelper.reduceEdges(
+        edge2122,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1112,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(visibleEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1113,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(visibleEdgeStyle)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1213,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+
+    interactionState = {
+      selectedNodeId: null,
+      hoveredNodeId: 'node-1.1',
+      selectedEdgeId: null,
+      hoveredEdgeId: null,
+      neighborsOfSelectedNode: undefined,
+      neighborsOfHoveredNode: new Set(['node-1.2', 'node-1.3']),
+      selectedEdgeExtremities: [],
+      hoveredEdgeExtremities: []
+    }
+    expect(
+      graphHelper.reduceEdges(
+        edge2122,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1112,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(visibleEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1113,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(visibleEdgeStyle)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1213,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+
+    interactionState = {
+      selectedNodeId: null,
+      hoveredNodeId: null,
+      selectedEdgeId: null,
+      hoveredEdgeId: null,
+      neighborsOfSelectedNode: undefined,
+      neighborsOfHoveredNode: undefined,
+      selectedEdgeExtremities: [],
+      hoveredEdgeExtremities: []
+    }
+
+    expect(
+      graphHelper.reduceEdges(
+        edge2122,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(edgeData)
+    expect(
+      graphHelper.reduceEdges(
+        edge1112,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(edgeData)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1113,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(edgeData)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1213,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(edgeData)
+  })
+
+  it('reduceEdges - include_neighbor_edges', () => {
+    const settings = {
+      style: {
+        backgroundColor: '#0000FF',
+        highlightMode: 'include_neighbor_edges'
+      }
+    }
+
+    const edgeData = { color: '#FF0000CC', label: 'Edge label', size: 3 }
+    const graph = new Graph()
+    graph.addNode('node-1.1')
+    graph.addNode('node-1.2')
+    graph.addNode('node-1.3')
+    graph.addNode('node-2.1')
+    graph.addNode('node-2.2')
+    const edge1112 = graph.addEdge('node-1.1', 'node-1.2', edgeData)
+    const edge1113 = graph.addEdge('node-1.1', 'node-1.3', edgeData)
+    const edge1213 = graph.addEdge('node-1.2', 'node-1.3', edgeData)
+    const edge2122 = graph.addEdge('node-2.1', 'node-2.2', edgeData)
+
+    const hiddenEdgeStyle = { color: '#3300cc', label: '', zIndex: 1, size: 3 }
+    const highlightedEdgeStyle = {
+      color: '#FF0000CC',
+      label: 'Edge label',
+      zIndex: 2,
+      size: 6,
+      forceLabel: true
+    }
+    const visibleEdgeStyle = {
+      color: '#FF0000CC',
+      label: 'Edge label',
+      zIndex: 2,
+      size: 3
+    }
+
+    let interactionState = {
+      selectedNodeId: null,
+      hoveredNodeId: null,
+      selectedEdgeId: edge2122,
+      hoveredEdgeId: edge1112,
+      neighborsOfSelectedNode: undefined,
+      neighborsOfHoveredNode: undefined,
+      selectedEdgeExtremities: ['node-2.1', 'node-2.2'],
+      hoveredEdgeExtremities: ['node-1.1', 'node-1.2']
+    }
+    expect(
+      graphHelper.reduceEdges(
+        edge2122,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(highlightedEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1112,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(highlightedEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1113,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1213,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+
+    interactionState = {
+      selectedNodeId: 'node-1.1',
+      hoveredNodeId: null,
+      selectedEdgeId: null,
+      hoveredEdgeId: null,
+      neighborsOfSelectedNode: new Set(['node-1.2', 'node-1.3']),
+      neighborsOfHoveredNode: undefined,
+      selectedEdgeExtremities: [],
+      hoveredEdgeExtremities: []
+    }
+    expect(
+      graphHelper.reduceEdges(
+        edge2122,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1112,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(visibleEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1113,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(visibleEdgeStyle)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1213,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(visibleEdgeStyle)
+
+    interactionState = {
+      selectedNodeId: null,
+      hoveredNodeId: 'node-1.1',
+      selectedEdgeId: null,
+      hoveredEdgeId: null,
+      neighborsOfSelectedNode: undefined,
+      neighborsOfHoveredNode: new Set(['node-1.2', 'node-1.3']),
+      selectedEdgeExtremities: [],
+      hoveredEdgeExtremities: []
+    }
+    expect(
+      graphHelper.reduceEdges(
+        edge2122,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(hiddenEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1112,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(visibleEdgeStyle)
+    expect(
+      graphHelper.reduceEdges(
+        edge1113,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(visibleEdgeStyle)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1213,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(visibleEdgeStyle)
+
+    interactionState = {
+      selectedNodeId: null,
+      hoveredNodeId: null,
+      selectedEdgeId: null,
+      hoveredEdgeId: null,
+      neighborsOfSelectedNode: undefined,
+      neighborsOfHoveredNode: undefined,
+      selectedEdgeExtremities: [],
+      hoveredEdgeExtremities: []
+    }
+
+    expect(
+      graphHelper.reduceEdges(
+        edge2122,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(edgeData)
+    expect(
+      graphHelper.reduceEdges(
+        edge1112,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(edgeData)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1113,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(edgeData)
+
+    expect(
+      graphHelper.reduceEdges(
+        edge1213,
+        edgeData,
+        interactionState,
+        settings,
+        graph
+      )
+    ).to.eql(edgeData)
+  })
 })

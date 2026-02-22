@@ -127,7 +127,7 @@ export function updateEdges(graph, attributeUpdates) {
   })
 }
 
-export function reduceNodes(node, data, interactionState, settings) {
+export function reduceNodes(nodeId, nodeData, interactionState, settings) {
   const {
     selectedNodeId,
     hoveredNodeId,
@@ -139,24 +139,27 @@ export function reduceNodes(node, data, interactionState, settings) {
     hoveredEdgeExtremities
   } = interactionState
 
-  const res = { ...data }
+  const res = { ...nodeData }
 
   if (selectedNodeId || hoveredNodeId || hoveredEdgeId || selectedEdgeId) {
     res.zIndex = 2
-    res.highlighted = node === selectedNodeId || node === hoveredNodeId
+    res.highlighted = nodeId === selectedNodeId || nodeId === hoveredNodeId
 
     const isInHoveredFamily =
-      node === hoveredNodeId ||
-      neighborsOfHoveredNode?.has(node) ||
-      hoveredEdgeExtremities.includes(node)
+      nodeId === hoveredNodeId ||
+      neighborsOfHoveredNode?.has(nodeId) ||
+      hoveredEdgeExtremities.includes(nodeId)
     const isInSelectedFamily =
-      node === selectedNodeId ||
-      neighborsOfSelectedNode?.has(node) ||
-      selectedEdgeExtremities.includes(node)
+      nodeId === selectedNodeId ||
+      neighborsOfSelectedNode?.has(nodeId) ||
+      selectedEdgeExtremities.includes(nodeId)
     if (isInSelectedFamily || isInHoveredFamily) {
       res.forceLabel = true
     } else {
-      res.color = getDiminishedColor(data.color, settings.style.backgroundColor)
+      res.color = getDiminishedColor(
+        nodeData.color,
+        settings.style.backgroundColor
+      )
       res.label = ''
       res.zIndex = 1
     }
@@ -165,7 +168,13 @@ export function reduceNodes(node, data, interactionState, settings) {
   return res
 }
 
-export function reduceEdges(edge, data, interactionState, settings, graph) {
+export function reduceEdges(
+  edgeId,
+  edgeData,
+  interactionState,
+  settings,
+  graph
+) {
   const {
     selectedNodeId,
     hoveredNodeId,
@@ -175,11 +184,11 @@ export function reduceEdges(edge, data, interactionState, settings, graph) {
     neighborsOfHoveredNode
   } = interactionState
 
-  const res = { ...data }
+  const res = { ...edgeData }
   if (hoveredEdgeId || selectedEdgeId || selectedNodeId || hoveredNodeId) {
-    const extremities = graph.extremities(edge)
+    const extremities = graph.extremities(edgeId)
     res.zIndex = 2
-    const isHighlighted = hoveredEdgeId === edge || selectedEdgeId === edge
+    const isHighlighted = hoveredEdgeId === edgeId || selectedEdgeId === edgeId
 
     let isVisible
     if (settings.style.highlightMode === 'node_alone') {
@@ -205,7 +214,10 @@ export function reduceEdges(edge, data, interactionState, settings, graph) {
       res.size = res.size * 2
       res.forceLabel = true
     } else if (!isVisible) {
-      res.color = getDiminishedColor(data.color, settings.style.backgroundColor)
+      res.color = getDiminishedColor(
+        edgeData.color,
+        settings.style.backgroundColor
+      )
       res.zIndex = 1
       res.label = ''
     }
