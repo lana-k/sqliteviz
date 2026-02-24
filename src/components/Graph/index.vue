@@ -40,7 +40,7 @@
         <value-viewer
           :empty="!selectedItem"
           empty-message="No node or edge selected to view"
-          :cellValue="JSON.stringify(selectedItem)"
+          :value="JSON.stringify(selectedItem)"
           default-format="json"
         />
       </template>

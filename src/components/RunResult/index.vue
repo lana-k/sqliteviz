@@ -51,7 +51,7 @@
         <value-viewer
           :empty="!selectedCell"
           empty-message="No cell selected to view"
-          :cellValue="
+          :value="
             selectedCell
               ? result.values[result.columns[selectedCell.dataset.col]][
                   selectedCell.dataset.row

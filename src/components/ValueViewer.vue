@@ -73,7 +73,7 @@ export default {
     Logs
   },
   props: {
-    cellValue: [String, Number, Uint8Array],
+    value: [String, Number, Uint8Array],
     empty: Boolean,
     emptyMessage: String,
     defaultFormat: {
@@ -108,13 +108,13 @@ export default {
       }
     },
     isBlob() {
-      return this.cellValue && ArrayBuffer.isView(this.cellValue)
+      return this.value && ArrayBuffer.isView(this.value)
     },
     isNull() {
-      return this.cellValue === null
+      return this.value === null
     },
     cellText() {
-      const value = this.cellValue
+      const value = this.value
       if (this.isNull) {
         return 'NULL'
       }
@@ -131,16 +131,16 @@ export default {
         this.messages = []
         this.formattedJson = ''
         if (this.currentFormat === 'json') {
-          this.formatJson(this.cellValue)
+          this.formatJson(this.value)
         }
       }
     },
-    cellValue: {
+    value: {
       immediate: true,
       handler() {
         this.messages = []
         if (this.currentFormat === 'json') {
-          this.formatJson(this.cellValue)
+          this.formatJson(this.value)
         }
       }
     }
@@ -161,7 +161,7 @@ export default {
     },
     copyToClipboard() {
       cIo.copyText(
-        this.currentFormat === 'json' ? this.formattedJson : this.cellValue,
+        this.currentFormat === 'json' ? this.formattedJson : this.value,
         'The value is copied to clipboard.'
       )
     }
