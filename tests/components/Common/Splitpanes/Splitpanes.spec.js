@@ -49,6 +49,41 @@ describe('Splitpanes.vue', () => {
     ).to.equal('40%')
   })
 
+  it('renders correctly with hidden panels', async () => {
+    // mount the component
+    const wrapper = shallowMount(Splitpanes, {
+      attachTo: document.body,
+      slots: {
+        leftPane: '<div />',
+        rightPane: '<div />'
+      },
+      props: {
+        before: { size: 60, max: 100, hidden: true },
+        after: { size: 40, max: 100 },
+        horizontal: true
+      }
+    })
+
+    expect(wrapper.findAll('.splitpanes-pane')[0].isVisible()).to.equal(false)
+    expect(wrapper.find('.splitpanes-splitter').isVisible()).to.equal(false)
+    expect(
+      wrapper.findAll('.splitpanes-pane')[1].element.style.height
+    ).to.equal('100%')
+
+    await wrapper.setProps({
+      before: { size: 60, max: 100 },
+      after: { size: 40, max: 100, hidden: true }
+    })
+
+    expect(wrapper.findAll('.splitpanes-pane')[1].isVisible()).to.equal(false)
+    expect(wrapper.find('.splitpanes-splitter').isVisible()).to.equal(false)
+    expect(
+      wrapper.findAll('.splitpanes-pane')[0].element.style.height
+    ).to.equal('100%')
+
+    wrapper.unmount()
+  })
+
   it('toggles correctly - no maximized initially', async () => {
     // mount the component
     const wrapper = shallowMount(Splitpanes, {
