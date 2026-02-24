@@ -18,7 +18,6 @@ describe('RunResult.vue', () => {
     sinon.spy(window, 'alert')
     const wrapper = mount(RunResult, {
       props: {
-        tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
           values: {
@@ -54,7 +53,6 @@ describe('RunResult.vue', () => {
     const wrapper = mount(RunResult, {
       attachTo: document.body,
       props: {
-        tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
           values: {
@@ -114,7 +112,6 @@ describe('RunResult.vue', () => {
     const wrapper = mount(RunResult, {
       attachTo: document.body,
       props: {
-        tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
           values: {
@@ -154,7 +151,6 @@ describe('RunResult.vue', () => {
     const wrapper = mount(RunResult, {
       attachTo: document.body,
       props: {
-        tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
           values: {
@@ -196,7 +192,6 @@ describe('RunResult.vue', () => {
   it('shows value of selected cell - result set', async () => {
     const wrapper = mount(RunResult, {
       props: {
-        tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
           values: {
@@ -250,9 +245,9 @@ describe('RunResult.vue', () => {
 
     // Click on 'bar' cell again
     await rows[1].findAll('td')[1].trigger('click')
-    expect(
-      wrapper.find('.value-viewer-container .table-preview').text()
-    ).to.equals('No cell selected to view')
+    expect(wrapper.find('.value-viewer').text()).to.equals(
+      'No cell selected to view'
+    )
     wrapper.unmount()
   })
 
@@ -260,7 +255,6 @@ describe('RunResult.vue', () => {
     const wrapper = mount(RunResult, {
       attachTo: document.body,
       props: {
-        tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
           values: {
@@ -323,9 +317,9 @@ describe('RunResult.vue', () => {
 
     // Click on 'foo' cell again
     await rows[1].find('td').trigger('click')
-    expect(
-      wrapper.find('.value-viewer-container .table-preview').text()
-    ).to.equals('No cell selected to view')
+    expect(wrapper.find('.value-viewer').text()).to.equals(
+      'No cell selected to view'
+    )
     wrapper.unmount()
   })
 
@@ -333,7 +327,6 @@ describe('RunResult.vue', () => {
     const wrapper = mount(RunResult, {
       attachTo: document.body,
       props: {
-        tab: { id: 1 },
         result: {
           columns: ['id', 'name'],
           values: {
