@@ -92,11 +92,23 @@ module.exports = function (config) {
           'dom.w3c_touch_events.enabled': 1,
           'dom.events.asyncClipboard.clipboardItem': true
         }
+      },
+      ChromiumHeadlessWebGL: {
+        base: 'ChromiumHeadless',
+        flags: [
+          '--headless=new',
+          '--use-angle=swiftshader',
+          '--use-gl=angle',
+          '--enable-webgl',
+          '--ignore-gpu-blocklist',
+          '--disable-gpu-sandbox',
+          '--no-sandbox'
+        ]
       }
     },
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['ChromiumHeadless', 'FirefoxHeadlessTouch'],
+    browsers: ['ChromiumHeadlessWebGL', 'FirefoxHeadlessTouch'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
