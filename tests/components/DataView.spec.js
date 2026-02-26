@@ -418,4 +418,52 @@ describe('DataView.vue', () => {
       wrapper.findComponent({ name: 'graph' }).props('initOptions')
     ).to.eql({ test_options: 'latest_graph_options' })
   })
+
+  it('switches visibility of node or edge in graph mode', async () => {
+    const wrapper = mount(DataView, {
+      global: {
+        mocks: { $store },
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    // viewNodeOrEdgeBtn is not disaplyed in chart mode
+    expect(
+      wrapper.findComponent({ ref: 'viewNodeOrEdgeBtn' }).exists()
+    ).to.equal(false)
+
+    // Switch to pivot
+    const pivotBtn = wrapper.findComponent({ ref: 'pivotBtn' })
+    await pivotBtn.trigger('click')
+
+    // viewNodeOrEdgeBtn is not disaplyed in pivot mode
+    expect(
+      wrapper.findComponent({ ref: 'viewNodeOrEdgeBtn' }).exists()
+    ).to.equal(false)
+
+    // Switch to graph
+    const graphBtn = wrapper.findComponent({ ref: 'graphBtn' })
+    await graphBtn.trigger('click')
+
+    // viewNodeOrEdgeBtn is disaplyed in graph mode
+    const viewNodeOrEdgeBtn = wrapper.findComponent({
+      ref: 'viewNodeOrEdgeBtn'
+    })
+    expect(viewNodeOrEdgeBtn.exists()).to.equal(true)
+
+    // by default node viewer is hidden
+    expect(wrapper.findComponent({ name: 'value-viewer' }).exists()).to.equal(
+      false
+    )
+
+    // Click to show node viewer
+    await viewNodeOrEdgeBtn.trigger('click')
+    expect(wrapper.findComponent({ name: 'value-viewer' }).exists()).to.equal(
+      true
+    )
+
+    wrapper.unmount()
+  })
 })

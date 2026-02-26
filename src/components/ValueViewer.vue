@@ -68,6 +68,7 @@ import cIo from '@/lib/utils/clipboardIo'
 import Logs from '@/components/Common/Logs'
 
 export default {
+  name: 'ValueViewer',
   components: {
     Codemirror,
     Logs
