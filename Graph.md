@@ -38,7 +38,18 @@ This is already enough to build a graph with default styling and circular layout
 
 ### General
 
-Set a background color of the graph in `Style` > `General` panel.
+In `Style` > `General` panel you can:
+
+- Set a background color of the graph
+- Change the highlight mode. The highlight mode determines the graph styling
+  when selecting or hovering over a node.
+  - `Node alone` means that nothing but the node you hover over or select will be highlighted.
+    The rest graph will be dimmed.
+  - `Node and neighbours` means that in addition to the selected or hovered node,
+    its neighbours and the edges connecting the neighbours with the node will be highlighted.
+  - `Include edges between neighbours` means that the selected or hovered node will
+    be highlighted together with its neighbours, edges connecting the node with
+    the neighbours and the edges between the neighbours.
 
 ### Nodes
 
@@ -48,7 +59,6 @@ There are the following settings in `Style` > `Nodes` panel:
   size is too small, some labels can be visible only at a certain zoom level.
 - Label Color - a color of node labels
 - Size - set a node size. There are 3 modes of node sizing: constant, variable and calculated.
-
   - `Constant` means that all nodes have the same given size.
   - `Variable` allows you to choose a field where the node size is taken from.
   - `Calculated` allows you to choose a method that is used to calculate the node size.
@@ -61,7 +71,6 @@ There are the following settings in `Style` > `Nodes` panel:
   between node sizes is more noticeable.
 
 - Color - set a node color. There are 3 modes of node color: constant, variable and calculated.
-
   - `Constant` means that all nodes have the same color.
   - `Variable` allows you to choose a field by which the color is determined.
     With this option you can also choose if the color value should be taken directly or mapped to a
@@ -70,7 +79,6 @@ There are the following settings in `Style` > `Nodes` panel:
     `Direct` mode means that in the JSON document representing the node, the value in the selected
     field is used as a color. The color value in the JSON document can be set in different
     ways:
-
     1. As Hex, 8-digit (RGBA) Hex:
 
        ```
@@ -143,6 +151,7 @@ There are the following settings in `Style` > `Nodes` panel:
   out-edges. You can also choose a color palette that will be used in a mapping of calculated
   values into an actual color.
 
+- Opacity - defines node opacity.
 - Color As - defines how color mapping should work - continuously or categorically.
 
   Continuous mode is more suitable when the mapped values have a meaningful order. It looks more
@@ -163,7 +172,6 @@ There are the following settings in `Style` > `Edges` panel:
   some labels can be visible only at a certain zoom level.
 - Label Color - a color of edge labels
 - Size - set an edge thickness. There are 2 modes of edge sizing: constant and variable.
-
   - `Constant` means that all edges have the same thickness.
   - `Variable` allows you to choose a field where the edge size is taken from.
 
@@ -205,7 +213,15 @@ it is automatically run 50 iterations of the algorithm. You can change the amoun
 automatically in `Initial Iterations`. You can also run and stop the algorithm manually by
 clicking `Start`/`Stop` button.
 
-![Fig. 3: ForceAtlas2 layout](./img/Screenshot_graph_force_atlas2.png)
+![Fig. 4: ForceAtlas2 layout](./img/Screenshot_graph_force_atlas2.png)
+
+## View node and edge details
+
+To see the full object of the node or edge, first open the detail panel
+by clicking ![](./img/viewCellValue.svg) in the side menu. Then select the node
+or edge you are interested by clicking on it.
+
+![Fig. 5: node details](./img/Screenshot_node_details.png)
 
 [1]: ../How-to-get-result-set-suitable-for-graph-visualisation
 [2]: https://www.w3.org/TR/css-color-4/#named-colors
