@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import { mount, flushPromises } from '@vue/test-utils'
 import Graph from '@/components/Graph/index.vue'
+import { nextTick } from 'vue'
 
 function getPixels(canvas) {
   const context = canvas.getContext('webgl2')
@@ -159,6 +160,326 @@ describe('Graph.vue', () => {
 
     expect(canvas.scrollWidth).not.to.equal(initialCanvasWidth)
     expect(canvas.scrollHeight).not.to.equal(initialCanvasHeight)
+
+    wrapper.unmount()
+  })
+
+  it('the graph resizes when node viewer visibillity togglles', async () => {
+    const wrapper = mount(Graph, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"object_type":0,"node_id":"Gryffindor"}',
+            '{"object_type":0,"node_id":"Hufflepuff"}'
+          ]
+        },
+        initOptions: {
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'object_type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          },
+          style: {
+            backgroundColor: 'white',
+            nodes: {
+              size: {
+                type: 'constant',
+                value: 10
+              },
+              color: {
+                type: 'constant',
+                value: '#1F77B4'
+              },
+              label: {
+                source: null,
+                color: '#444444'
+              }
+            },
+            edges: {
+              showDirection: true,
+              size: {
+                type: 'constant',
+                value: 2
+              },
+              color: {
+                type: 'constant',
+                value: '#a2b1c6'
+              },
+              label: {
+                source: null,
+                color: '#a2b1c6'
+              }
+            }
+          },
+          layout: {
+            type: 'circular',
+            options: null
+          }
+        },
+        showValueViewer: false
+      },
+      global: {
+        mocks: { $store },
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const canvas = wrapper.find('canvas.sigma-nodes').wrapperElement
+    const initialCanvasWidth = canvas.scrollWidth
+
+    await wrapper.setProps({ showValueViewer: true })
+    await flushPromises()
+
+    expect(canvas.scrollWidth).not.to.equal(initialCanvasWidth)
+
+    await wrapper.setProps({ showValueViewer: false })
+    await flushPromises()
+
+    expect(canvas.scrollWidth).to.equal(initialCanvasWidth)
+
+    wrapper.unmount()
+  })
+
+  it('the graph resizes when the split pane resizes', async () => {
+    const wrapper = mount(Graph, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"object_type":0,"node_id":"Gryffindor"}',
+            '{"object_type":0,"node_id":"Hufflepuff"}'
+          ]
+        },
+        initOptions: {
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'object_type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          },
+          style: {
+            backgroundColor: 'white',
+            nodes: {
+              size: {
+                type: 'constant',
+                value: 10
+              },
+              color: {
+                type: 'constant',
+                value: '#1F77B4'
+              },
+              label: {
+                source: null,
+                color: '#444444'
+              }
+            },
+            edges: {
+              showDirection: true,
+              size: {
+                type: 'constant',
+                value: 2
+              },
+              color: {
+                type: 'constant',
+                value: '#a2b1c6'
+              },
+              label: {
+                source: null,
+                color: '#a2b1c6'
+              }
+            }
+          },
+          layout: {
+            type: 'circular',
+            options: null
+          }
+        },
+        showValueViewer: true
+      },
+      global: {
+        mocks: { $store },
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const container =
+      wrapper.find('.graph-container').wrapperElement.parentElement
+    const canvas = wrapper.find('canvas.sigma-nodes').wrapperElement
+
+    const initialContainerWidth = container.scrollWidth
+    const initialCanvasWidth = canvas.scrollWidth
+    await wrapper.find('.splitpanes-splitter').trigger('mousedown')
+    document.dispatchEvent(
+      new MouseEvent('mousemove', {
+        clientX: initialContainerWidth / 2,
+        clientY: 80
+      })
+    )
+    document.dispatchEvent(new MouseEvent('mouseup'))
+    await nextTick()
+    await nextTick()
+
+    await flushPromises()
+
+    expect(canvas.scrollWidth).not.to.equal(initialCanvasWidth)
+
+    wrapper.unmount()
+  })
+
+  it('opens and closes node viewer', async () => {
+    const wrapper = mount(Graph, {
+      props: {
+        dataSources: {
+          doc: [
+            '{"object_type":0,"node_id":"Gryffindor"}',
+            '{"object_type":0,"node_id":"Hufflepuff"}'
+          ]
+        },
+        initOptions: {
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'object_type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          },
+          style: {
+            backgroundColor: 'white',
+            nodes: {
+              size: {
+                type: 'constant',
+                value: 10
+              },
+              color: {
+                type: 'constant',
+                value: '#1F77B4'
+              },
+              label: {
+                source: null,
+                color: '#444444'
+              }
+            },
+            edges: {
+              showDirection: true,
+              size: {
+                type: 'constant',
+                value: 2
+              },
+              color: {
+                type: 'constant',
+                value: '#a2b1c6'
+              },
+              label: {
+                source: null,
+                color: '#a2b1c6'
+              }
+            }
+          },
+          layout: {
+            type: 'circular',
+            options: null
+          }
+        },
+        showValueViewer: false
+      },
+      global: {
+        mocks: { $store },
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    expect(wrapper.text()).not.contain('No node or edge selected to view')
+    await wrapper.setProps({ showValueViewer: true })
+    expect(wrapper.text()).contains('No node or edge selected to view')
+  })
+
+  it('passes selected item to node viewer', async () => {
+    const wrapper = mount(Graph, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"object_type":0,"node_id":"Gryffindor"}',
+            '{"object_type":0,"node_id":"Hufflepuff"}'
+          ]
+        },
+        initOptions: {
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'object_type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          },
+          style: {
+            backgroundColor: 'white',
+            nodes: {
+              size: {
+                type: 'constant',
+                value: 10
+              },
+              color: {
+                type: 'constant',
+                value: '#1F77B4'
+              },
+              label: {
+                source: null,
+                color: '#444444'
+              }
+            },
+            edges: {
+              showDirection: true,
+              size: {
+                type: 'constant',
+                value: 2
+              },
+              color: {
+                type: 'constant',
+                value: '#a2b1c6'
+              },
+              label: {
+                source: null,
+                color: '#a2b1c6'
+              }
+            }
+          },
+          layout: {
+            type: 'circular',
+            options: null
+          }
+        },
+        showValueViewer: true
+      },
+      global: {
+        mocks: { $store },
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    expect(wrapper.find('.value-viewer .value-body').exists()).to.equal(false)
+    await wrapper
+      .findComponent({ ref: 'graphEditor' })
+      .vm.$emit('selectItem', { object_type: 0, node_id: 'Gryffindor' })
+
+    expect(wrapper.find('.value-viewer .value-body').text()).contains(
+      '"object_type": 0,'
+    )
+    expect(wrapper.find('.value-viewer .value-body').text()).contains(
+      '"node_id": "Gryffindor"'
+    )
+
+    await wrapper
+      .findComponent({ ref: 'graphEditor' })
+      .vm.$emit('clearSelection')
+    expect(wrapper.find('.value-viewer .value-body').exists()).to.equal(false)
 
     wrapper.unmount()
   })

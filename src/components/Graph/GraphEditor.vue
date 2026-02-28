@@ -288,7 +288,7 @@ export default {
     initOptions: Object,
     showViewSettings: Boolean
   },
-  emits: ['update', 'selectItem', 'deselectItem'],
+  emits: ['update', 'selectItem', 'clearSelection'],
   data() {
     return {
       graph: new Graph({ multi: true, allowSelfLoops: true }),
@@ -572,7 +572,7 @@ export default {
     clearSelection() {
       this.selectedNodeId = undefined
       this.selectedEdgeId = undefined
-      this.$emit('deselectItem')
+      this.$emit('clearSelection')
     },
     updateHighlightNodeMode(mode) {
       this.settings.style.highlightMode = mode

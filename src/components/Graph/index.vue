@@ -32,7 +32,7 @@
             :showViewSettings="showViewSettings"
             @update="$emit('update')"
             @selectItem="selectedItem = $event"
-            @deselectItem="selectedItem = null"
+            @clearSelection="selectedItem = null"
           />
         </div>
       </template>
@@ -52,7 +52,7 @@
 import 'react-chart-editor/lib/react-chart-editor.css'
 import GraphEditor from '@/components/Graph/GraphEditor.vue'
 import { dataSourceIsValid } from '@/lib/graphHelper'
-import ValueViewer from '@/components/ValueViewer'
+import ValueViewer from '@/components/ValueViewer.vue'
 import Splitpanes from '@/components/Common/Splitpanes'
 
 export default {
@@ -78,7 +78,7 @@ export default {
   data() {
     return {
       resizeObserver: null,
-      selectedItem: {}
+      selectedItem: null
     }
   },
   computed: {
