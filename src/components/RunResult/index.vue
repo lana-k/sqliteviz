@@ -50,7 +50,7 @@
       <template v-if="viewValuePanelVisible" #right-pane>
         <value-viewer
           :empty="!selectedCell"
-          empty-message="No cell selected to view"
+          emptyMessage="No cell selected to view"
           :value="
             selectedCell
               ? result.values[result.columns[selectedCell.dataset.col]][

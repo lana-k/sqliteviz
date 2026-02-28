@@ -24,24 +24,24 @@
       }"
     >
       <template #left-pane>
-        <div :style="{ height: '100%' }" ref="graphEditorContainer">
+        <div ref="graphEditorContainer" :style="{ height: '100%' }">
           <GraphEditor
             ref="graphEditor"
             :dataSources="dataSources"
             :initOptions="initOptions"
             :showViewSettings="showViewSettings"
             @update="$emit('update')"
-            @selectItem="selectedItem = $event"
-            @clearSelection="selectedItem = null"
+            @select-item="selectedItem = $event"
+            @clear-selection="selectedItem = null"
           />
         </div>
       </template>
       <template v-if="showValueViewer" #right-pane>
         <value-viewer
           :empty="!selectedItem"
-          empty-message="No node or edge selected to view"
+          emptyMessage="No node or edge selected to view"
           :value="JSON.stringify(selectedItem)"
-          default-format="json"
+          defaultFormat="json"
         />
       </template>
     </splitpanes>
