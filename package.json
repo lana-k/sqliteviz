@@ -10,7 +10,8 @@
     "serve": "vite preview",
     "test": "karma start karma.conf.cjs",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
-    "format": "prettier .  --write"
+    "format": "prettier .  --write",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@sigma/export-image": "^3.0.0",
@@ -33,7 +34,7 @@
     "react-chart-editor": "^0.46.1",
     "react-dom": "^16.14.0",
     "seedrandom": "^3.0.5",
-    "sigma": "^3.0.1",
+    "sigma": "3.0.2",
     "sql.js": "file:./lib/sql-js",
     "tiny-emitter": "^2.1.0",
     "tinycolor2": "^1.4.2",
@@ -68,6 +69,8 @@
     "karma-spec-reporter": "^0.0.36",
     "karma-vite": "^1.0.5",
     "mocha": "^5.2.0",
+    "patch-package": "^8.0.1",
+    "postinstall-postinstall": "^2.1.0",
     "prettier": "3.5.3",
     "process": "^0.11.10",
     "url-loader": "^4.1.1",
