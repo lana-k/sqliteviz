@@ -3,12 +3,12 @@
 #     docker build -t sqliteviz/test -f Dockerfile.test .
 #
 
-FROM node:12.22-bullseye
+FROM node:18.20.8-bookworm
 
 RUN set -ex; \
     apt update; \
     apt install -y chromium firefox-esr; \
-    npm install -g npm@7
+    npm install -g npm@10
 
 WORKDIR /tmp/build
 
@@ -19,6 +19,6 @@ RUN npm install
 COPY . .
 
 RUN set -ex; \
-    sed -i 's/browsers: \[.*\],/browsers: ['"'FirefoxHeadlessTouch'"'],/' karma.conf.js
+    sed -i 's/browsers: \[.*\],/browsers: ['"'FirefoxHeadlessTouch'"'],/' karma.conf.cjs
 
 RUN npm run lint -- --no-fix && npm run test
