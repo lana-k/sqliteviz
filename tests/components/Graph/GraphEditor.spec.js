@@ -1309,7 +1309,7 @@ describe('GraphEditor', () => {
 
     expect(startSpy.calledOnce).to.equal(true)
     await waitCondition(() => stopSpy.callCount === 1)
-    expect(wrapper.text()).to.contain('Start')
+    expect(wrapper.text()).to.contain('Continue')
 
     const coordinates = graph
       .export()
@@ -1349,6 +1349,8 @@ describe('GraphEditor', () => {
           layout: {
             type: 'forceAtlas2',
             options: {
+              initialAlgorithm: 'circular',
+              seedValue: 1,
               initialIterationsAmount: 55,
               gravity: 1.5,
               scalingRatio: 1.2,
@@ -1383,7 +1385,7 @@ describe('GraphEditor', () => {
 
     expect(startSpy.calledOnce).to.equal(true)
     await waitCondition(() => stopSpy.callCount === 1)
-    expect(wrapper.text()).to.contain('Start')
+    expect(wrapper.text()).to.contain('Continue')
 
     const initialCoordinates = graph
       .export()
@@ -1397,13 +1399,37 @@ describe('GraphEditor', () => {
       new Event('blur', { bubbles: true })
     )
     // Call nextTick after setting number input,
-    // otherwise the value will be changed beck to initial for some reason
+    // otherwise the value will be changed back to initial for some reason
     await nextTick()
 
     expect(wrapper.vm.settings.layout.options.gravity).to.equal(12)
 
     // Algorithm wasn't called
     expect(startSpy.calledOnce).to.equal(true)
+
+    // Change initial algorithm
+    await wrapper
+      .find(
+        '.test_fa2_initial_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[1].trigger('click')
+    await nextTick()
+    expect(wrapper.vm.settings.layout.options.initialAlgorithm).to.equal(
+      'random'
+    )
+
+    // Change seed value
+    const seedValueInput = wrapper.find('.test_fa2_seed_value input')
+    await seedValueInput.setValue(123)
+    seedValueInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+    expect(wrapper.vm.settings.layout.options.seedValue).to.equal(123)
 
     // Change scaling ratio
     const scalingInput = wrapper.find('.test_fa2_scaling input')
@@ -1493,13 +1519,13 @@ describe('GraphEditor', () => {
       false
     )
 
-    // Click Start
+    // Click Continue
     const toggleButton = wrapper.find('button.test_fa2_toggle')
     await toggleButton.trigger('click')
-    expect(toggleButton.text()).to.contain('Stop')
+    expect(toggleButton.text()).to.contain('Pause')
     expect(startSpy.callCount).to.equal(2)
 
-    // Wait a bit and click Stop
+    // Wait a bit and click Pause
     await time.sleep(500)
     await toggleButton.trigger('click')
     expect(stopSpy.callCount).to.equal(2)
@@ -1513,9 +1539,11 @@ describe('GraphEditor', () => {
 
     // Click Reset
     await wrapper.find('button.test_fa2_reset').trigger('click')
-    expect(toggleButton.text()).to.contain('Start')
+    expect(toggleButton.text()).to.contain('Continue')
     expect(startSpy.callCount).to.equal(2)
     expect(wrapper.vm.settings.layout.options).to.eql({
+      initialAlgorithm: 'circular',
+      seedValue: 1,
       initialIterationsAmount: 55,
       gravity: 1.5,
       scalingRatio: 1.2,
@@ -1529,6 +1557,149 @@ describe('GraphEditor', () => {
       weightSource: 'wgt',
       edgeWeightInfluence: 0.5
     })
+
+    wrapper.unmount()
+  })
+
+  it('FA2: restarts and applies selected initial layout', async () => {
+    const stopSpy = sinon.spy(FA2Layout.prototype, 'stop')
+    const startSpy = sinon.spy(FA2Layout.prototype, 'start')
+    const wrapper = mount(GraphEditor, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"type": 0, "node_id": 1, "size": 20}',
+            '{"type": 0, "node_id": 2, "size": 2}',
+            '{"type": 0, "node_id": 3, "size": 2}',
+            '{"type": 0, "node_id": 4, "size": 2}',
+            '{"type": 1, "source": 1, "target": 3, "wgt": 20}',
+            '{"type": 1, "source": 1, "target": 2, "wgt": 15}',
+            '{"type": 1, "source": 1, "target": 4, "wgt": 5}'
+          ]
+        },
+        initOptions: {
+          ...defaultInitOptions,
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          },
+          layout: {
+            type: 'forceAtlas2',
+            options: {
+              initialAlgorithm: 'circular',
+              seedValue: 1,
+              initialIterationsAmount: 55,
+              gravity: 1.5,
+              scalingRatio: 1.2,
+              adjustSizes: true,
+              barnesHutOptimize: true,
+              barnesHutTheta: 0.5,
+              strongGravityMode: false,
+              linLogMode: true,
+              outboundAttractionDistribution: false,
+              slowDown: 1,
+              weightSource: 'wgt',
+              edgeWeightInfluence: 0.5
+            }
+          }
+        },
+        showViewSettings: true
+      },
+      global: {
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const graph = wrapper.vm.graph
+
+    const styleMenuItem = wrapper.findAll('.sidebar__group__title')[1]
+    await styleMenuItem.trigger('click')
+
+    const layoutMenuItem = wrapper.findAll('.sidebar__item')[4]
+    await layoutMenuItem.trigger('click')
+
+    expect(startSpy.calledOnce).to.equal(true)
+    await waitCondition(() => stopSpy.callCount === 1)
+
+    const initialCoordinates = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    // Change initial algorithm
+    await wrapper
+      .find(
+        '.test_fa2_initial_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[1].trigger('click')
+    await nextTick()
+
+    // Click Restart
+    const restartButton = wrapper.find('button.test_fa2_restart')
+    await restartButton.trigger('click')
+    const toggleButton = wrapper.find('button.test_fa2_toggle')
+    expect(toggleButton.text()).to.contain('Pause')
+    expect(startSpy.callCount).to.equal(2)
+
+    // Wait until restarting finished
+    await waitCondition(() => stopSpy.callCount === 2)
+
+    const randomCoordinates1 = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    // Change seed value
+    const seedValueInput = wrapper.find('.test_fa2_seed_value input')
+    await seedValueInput.setValue(123)
+    seedValueInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+
+    // Click Restart
+    await restartButton.trigger('click')
+    expect(toggleButton.text()).to.contain('Pause')
+    expect(startSpy.callCount).to.equal(3)
+
+    // Wait until restarting finished
+    await waitCondition(() => stopSpy.callCount === 3)
+
+    const randomCoordinates2 = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    // Change seed value back to 1
+    await seedValueInput.setValue(1)
+    seedValueInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+
+    // Click Restart
+    await restartButton.trigger('click')
+
+    // Wait until restarting finished
+    await waitCondition(() => stopSpy.callCount === 4)
+
+    const randomCoordinates1After = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
+    expect(initialCoordinates).not.to.equal(randomCoordinates1)
+    expect(randomCoordinates1).not.to.equal(randomCoordinates2)
+    expect(randomCoordinates1).to.equal(randomCoordinates1After)
 
     wrapper.unmount()
   })
@@ -1603,6 +1774,26 @@ describe('GraphEditor', () => {
     )
     await nextTick()
 
+    // Change initial algorithm
+    await wrapper
+      .find(
+        '.test_fa2_initial_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[1].trigger('click')
+    await nextTick()
+
+    // Change seed value
+    const seedValueInput = wrapper.find('.test_fa2_seed_value input')
+    await seedValueInput.setValue(123)
+    seedValueInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+
     // Change scaling ratio
     const scalingInput = wrapper.find('.test_fa2_scaling input')
     await scalingInput.setValue(2)
@@ -1671,6 +1862,8 @@ describe('GraphEditor', () => {
     await nextTick()
 
     expect(wrapper.vm.settings.layout.options).to.eql({
+      initialAlgorithm: 'random',
+      seedValue: 123,
       initialIterationsAmount: 120,
       gravity: 12,
       scalingRatio: 2,
@@ -1788,7 +1981,7 @@ describe('GraphEditor', () => {
     expect(startSpy.calledOnce).to.equal(true)
     await waitCondition(() => stopSpy.callCount === 1)
 
-    // Click Start
+    // Click Continue
     const toggleButton = wrapper.find('button.test_fa2_toggle')
     await toggleButton.trigger('click')
     expect(startSpy.callCount).to.equal(2)
@@ -1884,7 +2077,7 @@ describe('GraphEditor', () => {
 
     expect(startSpy.calledOnce).to.equal(true)
     await waitCondition(() => stopSpy.callCount === 1)
-    expect(wrapper.text()).to.contain('Start')
+    expect(wrapper.text()).to.contain('Continue')
 
     const coordinates = graph
       .export()

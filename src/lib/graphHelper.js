@@ -36,6 +36,13 @@ export function dataSourceIsValid(dataSources) {
   }
 }
 
+export function clearNodeCoordinates(graph) {
+  graph.forEachNode((nodeId, attributes) => {
+    delete attributes.x
+    delete attributes.y
+  })
+}
+
 export function buildNodes(graph, dataSources, options) {
   const docColumn = Object.keys(dataSources)[0]
   const { objectType, nodeId } = options.structure
@@ -144,6 +151,9 @@ export function reduceNodes(nodeId, nodeData, interactionState, settings) {
   if (selectedNodeId || hoveredNodeId || hoveredEdgeId || selectedEdgeId) {
     res.zIndex = 2
     res.highlighted = nodeId === selectedNodeId || nodeId === hoveredNodeId
+    if (res.highlighted) {
+      res.labelColor = 'black'
+    }
 
     const isInHoveredFamily =
       nodeId === hoveredNodeId ||

@@ -17,6 +17,18 @@ export default {
       })
     }
 
+    if (installedVersion < 4) {
+      inquiries.forEach(inquiry => {
+        if (
+          inquiry.viewType === 'graph' &&
+          inquiry.viewOptions.layout.type === 'forceAtlas2'
+        ) {
+          inquiry.viewOptions.layout.options.initialAlgorithm = 'circular'
+          inquiry.viewOptions.layout.options.seedValue = 1
+        }
+      })
+    }
+
     return inquiries
   }
 }

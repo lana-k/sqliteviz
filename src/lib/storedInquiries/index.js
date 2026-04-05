@@ -5,9 +5,10 @@ import migration from './_migrations'
 
 const migrate = migration._migrate
 const myInquiriesKey = 'myInquiries'
+const latestVersion = 4
 
 export default {
-  version: 3,
+  version: latestVersion,
   myInquiriesKey,
   getStoredInquiries() {
     let myInquiries = JSON.parse(localStorage.getItem(myInquiriesKey))
@@ -21,8 +22,8 @@ export default {
       return []
     }
 
-    if (myInquiries.version === 2) {
-      myInquiries = migrate(2, myInquiries.inquiries)
+    if (myInquiries.version < latestVersion) {
+      myInquiries = migrate(myInquiries.version, myInquiries.inquiries)
       this.updateStorage(myInquiries)
       return myInquiries
     }
@@ -69,8 +70,8 @@ export default {
       // Turn data into array if they are not
       inquiryList = !Array.isArray(inquiries) ? [inquiries] : inquiries
       inquiryList = migrate(1, inquiryList)
-    } else if (inquiries.version === 2) {
-      inquiryList = migrate(2, inquiries.inquiries)
+    } else if (inquiries.version < latestVersion) {
+      inquiryList = migrate(inquiries.version, inquiries.inquiries)
     } else {
       inquiryList = inquiries.inquiries || []
     }
@@ -110,8 +111,8 @@ export default {
 
     if (!data.version) {
       return data.length > 0 ? migrate(1, data) : []
-    } else if (data.version === 2) {
-      return migrate(2, data.inquiries)
+    } else if (data.version < latestVersion) {
+      return migrate(data.version, data.inquiries)
     } else {
       return data.inquiries
     }

@@ -92,9 +92,24 @@ describe('storedInquiries.js', () => {
                   label: { source: null, color: '#a2b1c6' }
                 }
               },
-              layout: { type: 'circular', options: null }
+              layout: {
+                type: 'forceAtlas2',
+                options: {
+                  initialIterationsAmount: 50,
+                  adjustSizes: false,
+                  barnesHutOptimize: false,
+                  barnesHutTheta: 0.5,
+                  edgeWeightInfluence: 0,
+                  gravity: 1,
+                  linLogMode: false,
+                  outboundAttractionDistribution: false,
+                  scalingRatio: 1,
+                  slowDown: 1,
+                  strongGravityMode: false
+                }
+              }
             },
-            name: 'student graph',
+            name: 'student graph FA2',
             updatedAt: '2026-01-19T21:49:40.708Z',
             createdAt: '2026-01-19T21:46:13.899Z'
           },
@@ -145,9 +160,26 @@ describe('storedInquiries.js', () => {
               label: { source: null, color: '#a2b1c6' }
             }
           },
-          layout: { type: 'circular', options: null }
+          layout: {
+            type: 'forceAtlas2',
+            options: {
+              initialAlgorithm: 'circular',
+              seedValue: 1,
+              initialIterationsAmount: 50,
+              adjustSizes: false,
+              barnesHutOptimize: false,
+              barnesHutTheta: 0.5,
+              edgeWeightInfluence: 0,
+              gravity: 1,
+              linLogMode: false,
+              outboundAttractionDistribution: false,
+              scalingRatio: 1,
+              slowDown: 1,
+              strongGravityMode: false
+            }
+          }
         },
-        name: 'student graph',
+        name: 'student graph FA2',
         updatedAt: '2026-01-19T21:49:40.708Z',
         createdAt: '2026-01-19T21:46:13.899Z'
       },
@@ -244,7 +276,7 @@ describe('storedInquiries.js', () => {
     const str = storedInquiries.serialiseInquiries(inquiryList)
     const parsedJson = JSON.parse(str)
 
-    expect(parsedJson.version).to.equal(3)
+    expect(parsedJson.version).to.equal(4)
     expect(parsedJson.inquiries).to.have.lengthOf(2)
     expect(parsedJson.inquiries[1]).to.eql(inquiryList[1])
     expect(parsedJson.inquiries[0]).to.eql({
@@ -339,7 +371,22 @@ describe('storedInquiries.js', () => {
                 "label": { "source": null, "color": "#a2b1c6" }
               }
             },
-            "layout": { "type": "circular", "options": null }
+            "layout": {
+                "type": "forceAtlas2",
+                "options": {
+                  "initialIterationsAmount": 50,
+                  "adjustSizes": false,
+                  "barnesHutOptimize": false,
+                  "barnesHutTheta": 0.5,
+                  "edgeWeightInfluence": 0,
+                  "gravity": 1,
+                  "linLogMode": false,
+                  "outboundAttractionDistribution": false,
+                  "scalingRatio": 1,
+                  "slowDown": 1,
+                  "strongGravityMode": false
+                }
+              }
           },
           "name": "student graph",
           "createdAt": "2026-01-19T21:46:13.899Z"
@@ -391,7 +438,24 @@ describe('storedInquiries.js', () => {
               label: { source: null, color: '#a2b1c6' }
             }
           },
-          layout: { type: 'circular', options: null }
+          layout: {
+            type: 'forceAtlas2',
+            options: {
+              initialAlgorithm: 'circular',
+              seedValue: 1,
+              initialIterationsAmount: 50,
+              adjustSizes: false,
+              barnesHutOptimize: false,
+              barnesHutTheta: 0.5,
+              edgeWeightInfluence: 0,
+              gravity: 1,
+              linLogMode: false,
+              outboundAttractionDistribution: false,
+              scalingRatio: 1,
+              slowDown: 1,
+              strongGravityMode: false
+            }
+          }
         },
         name: 'student graph',
         createdAt: '2026-01-19T21:46:13.899Z'
@@ -486,7 +550,7 @@ describe('storedInquiries.js', () => {
 
   it('importInquiries', async () => {
     const str = `{
-      "version": 3,
+      "version": 4,
       "inquiries": [{
         "id": 1,
         "name": "foo",
@@ -579,7 +643,22 @@ describe('storedInquiries.js', () => {
                 "label": { "source": null, "color": "#a2b1c6" }
               }
             },
-            "layout": { "type": "circular", "options": null }
+            "layout": {
+                "type": "forceAtlas2",
+                "options": {
+                  "initialIterationsAmount": 50,
+                  "adjustSizes": false,
+                  "barnesHutOptimize": false,
+                  "barnesHutTheta": 0.5,
+                  "edgeWeightInfluence": 0,
+                  "gravity": 1,
+                  "linLogMode": false,
+                  "outboundAttractionDistribution": false,
+                  "scalingRatio": 1,
+                  "slowDown": 1,
+                  "strongGravityMode": false
+                }
+              }
           },
           "name": "student graph",
           "createdAt": "2026-01-19T21:46:13.899Z"
@@ -632,7 +711,24 @@ describe('storedInquiries.js', () => {
               label: { source: null, color: '#a2b1c6' }
             }
           },
-          layout: { type: 'circular', options: null }
+          layout: {
+            type: 'forceAtlas2',
+            options: {
+              initialAlgorithm: 'circular',
+              seedValue: 1,
+              initialIterationsAmount: 50,
+              adjustSizes: false,
+              barnesHutOptimize: false,
+              barnesHutTheta: 0.5,
+              edgeWeightInfluence: 0,
+              gravity: 1,
+              linLogMode: false,
+              outboundAttractionDistribution: false,
+              scalingRatio: 1,
+              slowDown: 1,
+              strongGravityMode: false
+            }
+          }
         },
         name: 'student graph',
         createdAt: '2026-01-19T21:46:13.899Z'
@@ -642,7 +738,7 @@ describe('storedInquiries.js', () => {
 
   it('readPredefinedInquiries', async () => {
     const str = `{
-      "version": 3,
+      "version": 4,
       "inquiries": [
         {
           "id": 1,

@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import sinon from 'sinon'
 import * as graphHelper from '@/lib/graphHelper'
 import Graph from 'graphology'
+import { random } from 'graphology-layout'
 
 describe('graphHelper.js', () => {
   afterEach(() => {
@@ -1231,7 +1232,11 @@ describe('graphHelper.js', () => {
       }
     }
 
-    const nodeData = { color: '#FF0000CC', label: 'Node label' }
+    const nodeData = {
+      color: '#FF0000CC',
+      label: 'Node label',
+      labelColor: 'blue'
+    }
 
     let interactionState = {
       selectedNodeId: 'node-1',
@@ -1249,6 +1254,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'black',
       zIndex: 2,
       highlighted: true,
       forceLabel: true
@@ -1258,6 +1264,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'black',
       zIndex: 2,
       highlighted: true,
       forceLabel: true
@@ -1268,6 +1275,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'blue',
       zIndex: 2,
       highlighted: false,
       forceLabel: true
@@ -1278,6 +1286,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'blue',
       zIndex: 2,
       highlighted: false,
       forceLabel: true
@@ -1288,6 +1297,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#3300cc',
       label: '',
+      labelColor: 'blue',
       zIndex: 1,
       highlighted: false
     })
@@ -1308,6 +1318,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'black',
       zIndex: 2,
       highlighted: true,
       forceLabel: true
@@ -1318,6 +1329,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'blue',
       zIndex: 2,
       highlighted: false,
       forceLabel: true
@@ -1328,6 +1340,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'blue',
       zIndex: 2,
       highlighted: false,
       forceLabel: true
@@ -1338,6 +1351,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'blue',
       zIndex: 2,
       highlighted: false,
       forceLabel: true
@@ -1348,6 +1362,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#3300cc',
       label: '',
+      labelColor: 'blue',
       zIndex: 1,
       highlighted: false
     })
@@ -1368,6 +1383,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'blue',
       zIndex: 2,
       highlighted: false,
       forceLabel: true
@@ -1377,6 +1393,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'blue',
       zIndex: 2,
       highlighted: false,
       forceLabel: true
@@ -1386,6 +1403,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'blue',
       zIndex: 2,
       highlighted: false,
       forceLabel: true
@@ -1395,6 +1413,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'blue',
       zIndex: 2,
       highlighted: false,
       forceLabel: true
@@ -1405,6 +1424,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#3300cc',
       label: '',
+      labelColor: 'blue',
       zIndex: 1,
       highlighted: false
     })
@@ -1425,6 +1445,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'blue',
       zIndex: 2,
       highlighted: false,
       forceLabel: true
@@ -1434,6 +1455,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'black',
       zIndex: 2,
       highlighted: true,
       forceLabel: true
@@ -1443,6 +1465,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'blue',
       zIndex: 2,
       highlighted: false,
       forceLabel: true
@@ -1452,6 +1475,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
+      labelColor: 'blue',
       zIndex: 2,
       highlighted: false,
       forceLabel: true
@@ -1462,6 +1486,7 @@ describe('graphHelper.js', () => {
     ).to.eql({
       color: '#3300cc',
       label: '',
+      labelColor: 'blue',
       zIndex: 1,
       highlighted: false
     })
@@ -1481,32 +1506,37 @@ describe('graphHelper.js', () => {
       graphHelper.reduceNodes('node-1', nodeData, interactionState, settings)
     ).to.eql({
       color: '#FF0000CC',
-      label: 'Node label'
+      label: 'Node label',
+      labelColor: 'blue'
     })
     expect(
       graphHelper.reduceNodes('node-2', nodeData, interactionState, settings)
     ).to.eql({
       color: '#FF0000CC',
-      label: 'Node label'
+      label: 'Node label',
+      labelColor: 'blue'
     })
     expect(
       graphHelper.reduceNodes('node-1.1', nodeData, interactionState, settings)
     ).to.eql({
       color: '#FF0000CC',
-      label: 'Node label'
+      label: 'Node label',
+      labelColor: 'blue'
     })
     expect(
       graphHelper.reduceNodes('node-2.1', nodeData, interactionState, settings)
     ).to.eql({
       color: '#FF0000CC',
-      label: 'Node label'
+      label: 'Node label',
+      labelColor: 'blue'
     })
 
     expect(
       graphHelper.reduceNodes('node-3', nodeData, interactionState, settings)
     ).to.eql({
       color: '#FF0000CC',
-      label: 'Node label'
+      label: 'Node label',
+      labelColor: 'blue'
     })
   })
 
@@ -2192,5 +2222,41 @@ describe('graphHelper.js', () => {
         graph
       )
     ).to.eql(edgeData)
+  })
+
+  it('clearNodeCoordinates', () => {
+    const dataSources = {
+      doc: [
+        '{"type": 0, "node_id": 1, "label": "cat"}',
+        '{"type": 0, "node_id": 2, "label": "dog"}'
+      ]
+    }
+    const graph = new Graph()
+    const options = {
+      structure: {
+        nodeId: 'node_id',
+        objectType: 'type',
+        edgeSource: null,
+        edgeTarget: null
+      }
+    }
+
+    graphHelper.buildNodes(graph, dataSources, options)
+    random.assign(graph)
+    graphHelper.clearNodeCoordinates(graph)
+    expect(graph.export().nodes).to.eql([
+      {
+        key: '1',
+        attributes: {
+          data: { type: 0, node_id: 1, label: 'cat' }
+        }
+      },
+      {
+        key: '2',
+        attributes: {
+          data: { type: 0, node_id: 2, label: 'dog' }
+        }
+      }
+    ])
   })
 })
