@@ -12,9 +12,9 @@
   <component
     :is="layoutSettingsComponentMap[modelValue.initialAlgorithm]"
     v-if="modelValue.initialAlgorithm !== 'circular'"
-    :model-value="modelValue"
+    :modelValue="modelValue"
     :keyOptions="keyOptions"
-    @update:model-value="this.$emit('update:modelValue', $event)"
+    @update:model-value="$emit('update:modelValue', $event)"
   />
 </template>
 
