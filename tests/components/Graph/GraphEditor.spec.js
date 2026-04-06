@@ -1423,7 +1423,7 @@ describe('GraphEditor', () => {
     )
 
     // Change seed value
-    const seedValueInput = wrapper.find('.test_fa2_seed_value input')
+    const seedValueInput = wrapper.find('.test_seed_value input')
     await seedValueInput.setValue(123)
     seedValueInput.wrapperElement.dispatchEvent(
       new Event('blur', { bubbles: true })
@@ -1659,7 +1659,7 @@ describe('GraphEditor', () => {
       .join()
 
     // Change seed value
-    const seedValueInput = wrapper.find('.test_fa2_seed_value input')
+    const seedValueInput = wrapper.find('.test_seed_value input')
     await seedValueInput.setValue(123)
     seedValueInput.wrapperElement.dispatchEvent(
       new Event('blur', { bubbles: true })
@@ -1787,7 +1787,7 @@ describe('GraphEditor', () => {
     await nextTick()
 
     // Change seed value
-    const seedValueInput = wrapper.find('.test_fa2_seed_value input')
+    const seedValueInput = wrapper.find('.test_seed_value input')
     await seedValueInput.setValue(123)
     seedValueInput.wrapperElement.dispatchEvent(
       new Event('blur', { bubbles: true })

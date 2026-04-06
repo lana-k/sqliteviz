@@ -337,6 +337,12 @@ export default {
         circlepack: CirclePackLayoutSettings,
         forceAtlas2: ForceAtlasLayoutSettings
       }),
+      layoutMethodMap: markRaw({
+        circular: this.applyCircularLayout,
+        random: this.applyRandomLayout,
+        circlepack: this.applyCirclePackLayout,
+        forceAtlas2: this.applyFA2Layout
+      }),
       selectedNodeId: undefined,
       hoveredNodeId: undefined,
       selectedEdgeId: undefined,
@@ -668,54 +674,10 @@ export default {
         this.fa2Layout.kill()
       }
 
-      if (layoutType === 'circular') {
-        this.applyCircularLayout()
-        return
-      }
+      this.layoutMethodMap[layoutType]()
 
-      if (layoutType === 'random') {
-        this.applyRandomLayout()
-        return
-      }
-
-      if (layoutType === 'circlepack') {
-        this.graph.forEachNode(nodeId => {
-          this.graph.updateNode(nodeId, attributes => {
-            const newAttributes = { ...attributes }
-            // Delete old hierarchy attributes
-            Object.keys(newAttributes)
-              .filter(key => key.startsWith('hierarchyAttribute'))
-              .forEach(
-                hierarchyAttributeKey =>
-                  delete newAttributes[hierarchyAttributeKey]
-              )
-            // Set new hierarchy attributes
-            this.settings.layout.options.hierarchyAttributes?.forEach(
-              (hierarchyAttribute, index) => {
-                newAttributes['hierarchyAttribute' + index] =
-                  attributes.data[hierarchyAttribute]
-              }
-            )
-
-            return newAttributes
-          })
-        })
-
-        circlepack.assign(this.graph, {
-          hierarchyAttributes:
-            this.settings.layout.options.hierarchyAttributes?.map(
-              (_, index) => 'hierarchyAttribute' + index
-            ) || [],
-          rng: seedrandom(this.settings.layout.options.seedValue)
-        })
-        return
-      }
-
-      if (layoutType === 'forceAtlas2') {
-        this.applyFA2Layout()
-        if (layoutType !== prevLayout) {
-          this.autoRunFA2Layout()
-        }
+      if (layoutType === 'forceAtlas2' && layoutType !== prevLayout) {
+        this.autoRunFA2Layout()
       }
     },
     applyCircularLayout() {
@@ -726,6 +688,37 @@ export default {
         rng: seedrandom(this.settings.layout.options.seedValue)
       })
     },
+    applyCirclePackLayout() {
+      this.graph.forEachNode(nodeId => {
+        this.graph.updateNode(nodeId, attributes => {
+          const newAttributes = { ...attributes }
+          // Delete old hierarchy attributes
+          Object.keys(newAttributes)
+            .filter(key => key.startsWith('hierarchyAttribute'))
+            .forEach(
+              hierarchyAttributeKey =>
+                delete newAttributes[hierarchyAttributeKey]
+            )
+          // Set new hierarchy attributes
+          this.settings.layout.options.hierarchyAttributes?.forEach(
+            (hierarchyAttribute, index) => {
+              newAttributes['hierarchyAttribute' + index] =
+                attributes.data[hierarchyAttribute]
+            }
+          )
+
+          return newAttributes
+        })
+      })
+
+      circlepack.assign(this.graph, {
+        hierarchyAttributes:
+          this.settings.layout.options.hierarchyAttributes?.map(
+            (_, index) => 'hierarchyAttribute' + index
+          ) || [],
+        rng: seedrandom(this.settings.layout.options.seedValue)
+      })
+    },
     applyFA2Layout() {
       if (
         !this.graph.someNode(
@@ -733,20 +726,22 @@ export default {
             typeof attributes.x === 'number' && typeof attributes.y === 'number'
         )
       ) {
-        if (this.settings.layout.options.initialAlgorithm === 'circular') {
-          this.applyCircularLayout()
-        } else {
-          this.applyRandomLayout()
-        }
+        this.layoutMethodMap[this.settings.layout.options.initialAlgorithm]()
       }
 
+      const fa2settings = { ...this.settings.layout.options }
+      // delete all custom settings because they can break the algorithm running
+      delete fa2settings.initialAlgorithm
+      delete fa2settings.seedValue
+      delete fa2settings.initialIterationsAmount
+      delete fa2settings.hierarchyAttributes
       this.fa2Layout = markRaw(
         new FA2Layout(this.graph, {
           getEdgeWeight: (_, attr) =>
             this.settings.layout.options.weightSource
               ? attr.data[this.settings.layout.options.weightSource]
               : 1,
-          settings: this.settings.layout.options
+          settings: fa2settings
         })
       )
     },
@@ -773,6 +768,7 @@ export default {
       if (this.fa2Layout.isRunning()) {
         this.stopFA2Layout()
       }
+      this.fa2Layout.kill()
       clearNodeCoordinates(this.graph)
       this.applyFA2Layout()
       this.autoRunFA2Layout()

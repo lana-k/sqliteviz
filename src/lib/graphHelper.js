@@ -38,8 +38,8 @@ export function dataSourceIsValid(dataSources) {
 
 export function clearNodeCoordinates(graph) {
   graph.forEachNode((nodeId, attributes) => {
-    delete attributes.x
-    delete attributes.y
+    attributes.x = undefined
+    attributes.y = undefined
   })
 }
 

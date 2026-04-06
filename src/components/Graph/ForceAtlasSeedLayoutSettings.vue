@@ -9,16 +9,13 @@
     />
   </Field>
 
-  <Field
-    v-if="modelValue.initialAlgorithm === 'random'"
-    label="Seed value"
-    fieldContainerClassName="test_fa2_seed_value"
-  >
-    <NumericInput
-      :value="modelValue.seedValue"
-      @update="update('seedValue', $event)"
-    />
-  </Field>
+  <component
+    :is="layoutSettingsComponentMap[modelValue.initialAlgorithm]"
+    v-if="modelValue.initialAlgorithm !== 'circular'"
+    :model-value="modelValue"
+    :keyOptions="keyOptions"
+    @update:model-value="this.$emit('update:modelValue', $event)"
+  />
 </template>
 
 <script>
@@ -28,12 +25,16 @@ import Field from 'react-chart-editor/lib/components/fields/Field'
 import NumericInput from 'react-chart-editor/lib/components/widgets/NumericInput'
 import Dropdown from 'react-chart-editor/lib/components/widgets/Dropdown'
 import 'react-chart-editor/lib/react-chart-editor.css'
+import CirclePackLayoutSettings from '@/components/Graph/CirclePackLayoutSettings.vue'
+import RandomLayoutSettings from '@/components/Graph/RandomLayoutSettings.vue'
 
 export default {
   components: {
     Field: applyPureReactInVue(Field),
     Dropdown: applyPureReactInVue(Dropdown),
-    NumericInput: applyPureReactInVue(NumericInput)
+    NumericInput: applyPureReactInVue(NumericInput),
+    RandomLayoutSettings,
+    CirclePackLayoutSettings
   },
   props: {
     modelValue: Object,
@@ -44,8 +45,13 @@ export default {
     return {
       layoutOptions: markRaw([
         { label: 'Circular', value: 'circular' },
-        { label: 'Random', value: 'random' }
-      ])
+        { label: 'Random', value: 'random' },
+        { label: 'Circle pack', value: 'circlepack' }
+      ]),
+      layoutSettingsComponentMap: markRaw({
+        random: RandomLayoutSettings,
+        circlepack: CirclePackLayoutSettings
+      })
     }
   },
   methods: {
