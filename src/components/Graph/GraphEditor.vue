@@ -791,7 +791,6 @@ export default {
       const sensibleSettings = forceAtlas2.default.inferSettings(this.graph)
       this.settings.layout.options = {
         initialAlgorithm: 'circular',
-        seedValue: 1,
         initialIterationsAmount: 50,
         adjustSizes: false,
         barnesHutOptimize: false,

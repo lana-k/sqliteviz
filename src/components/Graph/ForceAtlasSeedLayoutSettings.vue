@@ -5,7 +5,7 @@
       :value="modelValue.initialAlgorithm"
       :clearable="false"
       className="test_fa2_initial_layout_algorithm_select"
-      @change="update('initialAlgorithm', $event)"
+      @change="updateInitialAlgorithm"
     />
   </Field>
 
@@ -51,14 +51,34 @@ export default {
       layoutSettingsComponentMap: markRaw({
         random: RandomLayoutSettings,
         circlepack: CirclePackLayoutSettings
-      })
+      }),
+      defaultSeedLayoutSettings: {
+        circular: { initialAlgorithm: 'circular' },
+        random: { initialAlgorithm: 'random', seedValue: 1 },
+        circlepack: {
+          initialAlgorithm: 'circlepack',
+          hierarchyAttributes: [],
+          seedValue: 1
+        }
+      }
     }
   },
   methods: {
-    update(attributeName, value) {
+    updateInitialAlgorithm(newAlgorithm) {
+      const newSettings = {
+        ...this.modelValue
+      }
+
+      const prevAlgorithmSettings =
+        this.defaultSeedLayoutSettings[this.modelValue.initialAlgorithm]
+      Object.keys(prevAlgorithmSettings).forEach(key => {
+        delete newSettings[key]
+        prevAlgorithmSettings[key] = this.modelValue[key]
+      })
+
       this.$emit('update:modelValue', {
-        ...this.modelValue,
-        [attributeName]: value
+        ...newSettings,
+        ...this.defaultSeedLayoutSettings[newAlgorithm]
       })
     }
   }

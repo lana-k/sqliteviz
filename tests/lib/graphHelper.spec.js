@@ -2248,13 +2248,17 @@ describe('graphHelper.js', () => {
       {
         key: '1',
         attributes: {
-          data: { type: 0, node_id: 1, label: 'cat' }
+          data: { type: 0, node_id: 1, label: 'cat' },
+          x: undefined,
+          y: undefined
         }
       },
       {
         key: '2',
         attributes: {
-          data: { type: 0, node_id: 2, label: 'dog' }
+          data: { type: 0, node_id: 2, label: 'dog' },
+          x: undefined,
+          y: undefined
         }
       }
     ])

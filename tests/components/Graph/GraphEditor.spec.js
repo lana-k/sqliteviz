@@ -1350,7 +1350,6 @@ describe('GraphEditor', () => {
             type: 'forceAtlas2',
             options: {
               initialAlgorithm: 'circular',
-              seedValue: 1,
               initialIterationsAmount: 55,
               gravity: 1.5,
               scalingRatio: 1.2,
@@ -1543,7 +1542,6 @@ describe('GraphEditor', () => {
     expect(startSpy.callCount).to.equal(2)
     expect(wrapper.vm.settings.layout.options).to.eql({
       initialAlgorithm: 'circular',
-      seedValue: 1,
       initialIterationsAmount: 55,
       gravity: 1.5,
       scalingRatio: 1.2,
@@ -1590,7 +1588,6 @@ describe('GraphEditor', () => {
             type: 'forceAtlas2',
             options: {
               initialAlgorithm: 'circular',
-              seedValue: 1,
               initialIterationsAmount: 55,
               gravity: 1.5,
               scalingRatio: 1.2,
@@ -1949,6 +1946,7 @@ describe('GraphEditor', () => {
           layout: {
             type: 'forceAtlas2',
             options: {
+              initialAlgorithm: 'circular',
               initialIterationsAmount: 50,
               gravity: 1.5,
               scalingRatio: 1.2,

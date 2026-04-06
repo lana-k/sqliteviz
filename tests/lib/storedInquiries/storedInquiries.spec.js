@@ -164,7 +164,6 @@ describe('storedInquiries.js', () => {
             type: 'forceAtlas2',
             options: {
               initialAlgorithm: 'circular',
-              seedValue: 1,
               initialIterationsAmount: 50,
               adjustSizes: false,
               barnesHutOptimize: false,
@@ -442,7 +441,6 @@ describe('storedInquiries.js', () => {
             type: 'forceAtlas2',
             options: {
               initialAlgorithm: 'circular',
-              seedValue: 1,
               initialIterationsAmount: 50,
               adjustSizes: false,
               barnesHutOptimize: false,
@@ -715,7 +713,6 @@ describe('storedInquiries.js', () => {
             type: 'forceAtlas2',
             options: {
               initialAlgorithm: 'circular',
-              seedValue: 1,
               initialIterationsAmount: 50,
               adjustSizes: false,
               barnesHutOptimize: false,
