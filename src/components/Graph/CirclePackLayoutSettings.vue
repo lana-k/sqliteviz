@@ -28,7 +28,7 @@
     </multiselect>
   </Field>
 
-  <Field label="Seed value">
+  <Field label="Seed value" fieldContainerClassName="test_seed_value">
     <NumericInput
       :value="modelValue.seedValue"
       @update="update('seedValue', $event)"

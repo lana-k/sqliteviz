@@ -1628,7 +1628,7 @@ describe('GraphEditor', () => {
       .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
       .join()
 
-    // Change initial algorithm
+    // Change initial algorithm to Random
     await wrapper
       .find(
         '.test_fa2_initial_layout_algorithm_select .dropdown-container .Select__indicator'
@@ -1655,8 +1655,8 @@ describe('GraphEditor', () => {
       .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
       .join()
 
-    // Change seed value
-    const seedValueInput = wrapper.find('.test_seed_value input')
+    // Change seed value to 123
+    let seedValueInput = wrapper.find('.test_seed_value input')
     await seedValueInput.setValue(123)
     seedValueInput.wrapperElement.dispatchEvent(
       new Event('blur', { bubbles: true })
@@ -1694,9 +1694,336 @@ describe('GraphEditor', () => {
       .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
       .join()
 
+    // Change initial algorithm to CirclePack
+    await wrapper
+      .find(
+        '.test_fa2_initial_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[2].trigger('click')
+    await nextTick()
+
+    // Change seed value to 456
+    seedValueInput = wrapper.find('.test_seed_value input')
+    await seedValueInput.setValue(456)
+    seedValueInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+
+    // Set another hierarchy
+    const hierarchyInput = wrapper.find(
+      '.multiselect.sqliteviz-select .multiselect__select'
+    )
+    await hierarchyInput.trigger('mousedown')
+    await wrapper
+      .find('ul.multiselect__content')
+      .findAll('li')[2]
+      .find('span')
+      .trigger('click')
+    await nextTick()
+
+    // Click Restart
+    await restartButton.trigger('click')
+    // Wait until restarting finished
+    await waitCondition(() => stopSpy.callCount === 5)
+
+    const circlePackCoordinates = graph
+      .export()
+      .nodes.map(node => `x:${node.attributes.x},y:${node.attributes.y}`)
+      .join()
+
     expect(initialCoordinates).not.to.equal(randomCoordinates1)
     expect(randomCoordinates1).not.to.equal(randomCoordinates2)
     expect(randomCoordinates1).to.equal(randomCoordinates1After)
+    expect(circlePackCoordinates).not.to.equal(randomCoordinates1After)
+    expect(circlePackCoordinates).not.to.equal(initialCoordinates)
+
+    wrapper.unmount()
+  })
+
+  it('FA2: restore previously set parameters for initial layout', async () => {
+    const wrapper = mount(GraphEditor, {
+      attachTo: document.body,
+      props: {
+        dataSources: {
+          doc: [
+            '{"type": 0, "node_id": 1}',
+            '{"type": 0, "node_id": 2}',
+            '{"type": 1, "source": 1, "target": 2, "wgt": 15}'
+          ]
+        },
+        initOptions: {
+          ...defaultInitOptions,
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          },
+          layout: {
+            type: 'forceAtlas2',
+            options: {
+              initialAlgorithm: 'circular',
+              initialIterationsAmount: 55,
+              gravity: 1.5,
+              scalingRatio: 1.2,
+              adjustSizes: true,
+              barnesHutOptimize: true,
+              barnesHutTheta: 0.5,
+              strongGravityMode: false,
+              linLogMode: true,
+              outboundAttractionDistribution: false,
+              slowDown: 1,
+              weightSource: 'wgt',
+              edgeWeightInfluence: 0.5
+            }
+          }
+        },
+        showViewSettings: true
+      },
+      global: {
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const styleMenuItem = wrapper.findAll('.sidebar__group__title')[1]
+    await styleMenuItem.trigger('click')
+
+    const layoutMenuItem = wrapper.findAll('.sidebar__item')[4]
+    await layoutMenuItem.trigger('click')
+
+    // Change initial algorithm to Random
+    await wrapper
+      .find(
+        '.test_fa2_initial_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[1].trigger('click')
+    await nextTick()
+
+    expect(wrapper.vm.settings.layout.options).to.eql({
+      initialAlgorithm: 'random',
+      seedValue: 1,
+      initialIterationsAmount: 55,
+      gravity: 1.5,
+      scalingRatio: 1.2,
+      adjustSizes: true,
+      barnesHutOptimize: true,
+      barnesHutTheta: 0.5,
+      strongGravityMode: false,
+      linLogMode: true,
+      outboundAttractionDistribution: false,
+      slowDown: 1,
+      weightSource: 'wgt',
+      edgeWeightInfluence: 0.5
+    })
+
+    // Change seed value to 123
+    let seedValueInput = wrapper.find('.test_seed_value input')
+    await seedValueInput.setValue(123)
+    seedValueInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+
+    expect(wrapper.vm.settings.layout.options).to.eql({
+      initialAlgorithm: 'random',
+      seedValue: 123,
+      initialIterationsAmount: 55,
+      gravity: 1.5,
+      scalingRatio: 1.2,
+      adjustSizes: true,
+      barnesHutOptimize: true,
+      barnesHutTheta: 0.5,
+      strongGravityMode: false,
+      linLogMode: true,
+      outboundAttractionDistribution: false,
+      slowDown: 1,
+      weightSource: 'wgt',
+      edgeWeightInfluence: 0.5
+    })
+
+    // Change initial algorithm to CirclePack
+    await wrapper
+      .find(
+        '.test_fa2_initial_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[2].trigger('click')
+    await nextTick()
+
+    expect(wrapper.vm.settings.layout.options).to.eql({
+      initialAlgorithm: 'circlepack',
+      seedValue: 1,
+      hierarchyAttributes: [],
+      initialIterationsAmount: 55,
+      gravity: 1.5,
+      scalingRatio: 1.2,
+      adjustSizes: true,
+      barnesHutOptimize: true,
+      barnesHutTheta: 0.5,
+      strongGravityMode: false,
+      linLogMode: true,
+      outboundAttractionDistribution: false,
+      slowDown: 1,
+      weightSource: 'wgt',
+      edgeWeightInfluence: 0.5
+    })
+
+    // Change seed value to 456
+    seedValueInput = wrapper.find('.test_seed_value input')
+    await seedValueInput.setValue(456)
+    seedValueInput.wrapperElement.dispatchEvent(
+      new Event('blur', { bubbles: true })
+    )
+    await nextTick()
+
+    expect(wrapper.vm.settings.layout.options).to.eql({
+      initialAlgorithm: 'circlepack',
+      seedValue: 456,
+      hierarchyAttributes: [],
+      initialIterationsAmount: 55,
+      gravity: 1.5,
+      scalingRatio: 1.2,
+      adjustSizes: true,
+      barnesHutOptimize: true,
+      barnesHutTheta: 0.5,
+      strongGravityMode: false,
+      linLogMode: true,
+      outboundAttractionDistribution: false,
+      slowDown: 1,
+      weightSource: 'wgt',
+      edgeWeightInfluence: 0.5
+    })
+
+    // Set another hierarchy
+    const hierarchyInput = wrapper.find(
+      '.multiselect.sqliteviz-select .multiselect__select'
+    )
+    await hierarchyInput.trigger('mousedown')
+    await wrapper
+      .find('ul.multiselect__content')
+      .findAll('li')[1]
+      .find('span')
+      .trigger('click')
+    await nextTick()
+
+    expect(wrapper.vm.settings.layout.options).to.eql({
+      initialAlgorithm: 'circlepack',
+      seedValue: 456,
+      hierarchyAttributes: ['node_id'],
+      initialIterationsAmount: 55,
+      gravity: 1.5,
+      scalingRatio: 1.2,
+      adjustSizes: true,
+      barnesHutOptimize: true,
+      barnesHutTheta: 0.5,
+      strongGravityMode: false,
+      linLogMode: true,
+      outboundAttractionDistribution: false,
+      slowDown: 1,
+      weightSource: 'wgt',
+      edgeWeightInfluence: 0.5
+    })
+
+    // Change initial algorithm to Random
+    await wrapper
+      .find(
+        '.test_fa2_initial_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[1].trigger('click')
+    await nextTick()
+
+    expect(wrapper.vm.settings.layout.options).to.eql({
+      initialAlgorithm: 'random',
+      seedValue: 123,
+      initialIterationsAmount: 55,
+      gravity: 1.5,
+      scalingRatio: 1.2,
+      adjustSizes: true,
+      barnesHutOptimize: true,
+      barnesHutTheta: 0.5,
+      strongGravityMode: false,
+      linLogMode: true,
+      outboundAttractionDistribution: false,
+      slowDown: 1,
+      weightSource: 'wgt',
+      edgeWeightInfluence: 0.5
+    })
+
+    // Change initial algorithm to Circular
+    await wrapper
+      .find(
+        '.test_fa2_initial_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[0].trigger('click')
+    await nextTick()
+
+    expect(wrapper.vm.settings.layout.options).to.eql({
+      initialAlgorithm: 'circular',
+      initialIterationsAmount: 55,
+      gravity: 1.5,
+      scalingRatio: 1.2,
+      adjustSizes: true,
+      barnesHutOptimize: true,
+      barnesHutTheta: 0.5,
+      strongGravityMode: false,
+      linLogMode: true,
+      outboundAttractionDistribution: false,
+      slowDown: 1,
+      weightSource: 'wgt',
+      edgeWeightInfluence: 0.5
+    })
+
+    // Change initial algorithm to CirclePack
+    await wrapper
+      .find(
+        '.test_fa2_initial_layout_algorithm_select .dropdown-container .Select__indicator'
+      )
+      .wrapperElement.dispatchEvent(
+        new MouseEvent('mousedown', { bubbles: true })
+      )
+
+    await wrapper.findAll('.Select__menu .Select__option')[2].trigger('click')
+    await nextTick()
+
+    expect(wrapper.vm.settings.layout.options).to.eql({
+      initialAlgorithm: 'circlepack',
+      seedValue: 456,
+      hierarchyAttributes: ['node_id'],
+      initialIterationsAmount: 55,
+      gravity: 1.5,
+      scalingRatio: 1.2,
+      adjustSizes: true,
+      barnesHutOptimize: true,
+      barnesHutTheta: 0.5,
+      strongGravityMode: false,
+      linLogMode: true,
+      outboundAttractionDistribution: false,
+      slowDown: 1,
+      weightSource: 'wgt',
+      edgeWeightInfluence: 0.5
+    })
 
     wrapper.unmount()
   })
