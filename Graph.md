@@ -210,8 +210,23 @@ hierarchy attributes to group nodes.
 A continuous graph layout algorithm. Read more details about the algorithm and its settings in the
 [article][3]. The algorithm works iteratively. When you choose ForceAtlas2 layout or run the query,
 it is automatically run 50 iterations of the algorithm. You can change the amount of steps run
-automatically in `Initial Iterations`. You can also run and stop the algorithm manually by
-clicking `Start`/`Stop` button.
+automatically in `Initial Iterations`.
+
+If you want to see the effect of further iterations, click `Continue`.
+Click `Pause` to stop the algorithm run.
+
+The graph must have an initial layout before running ForceAtlas2 algorithm.
+Different initial layout lead to different result. You can choose an initial
+layout in `Seed layout` fold.
+
+Note that to see the effect of another seed layout you need to restart the
+algorithm by clicking `Restart` button. It will make iterationы in the amount
+of `Initial Iterations` setting.
+
+Also note that seed layout will not be applied if the graph already had a layout
+other than ForceAtlas2. For example, if you first applied the random layout and
+then switched to ForseAtlas2. Click `Restart` button to make the algorithm
+start from the beginning using the seed layout.
 
 ![Fig. 4: ForceAtlas2 layout](./img/Screenshot_graph_force_atlas2.png)
 

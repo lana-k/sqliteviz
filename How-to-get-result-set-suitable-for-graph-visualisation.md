@@ -21,7 +21,7 @@ Let's say, you have 2 tables:
    | --- | -------------- | ---------- |
    | 1   | Harry Potter   | Gryffindor |
    | 2   | Ron Weasley    | Gryffindor |
-   | 3   | Draco Malfoy'  | Slytherin  |
+   | 3   | Draco Malfoy   | Slytherin  |
    | 4   | Luna Lovegood  | Ravenclaw  |
    | 5   | Cedric Diggory | Hufflepuff |
 
