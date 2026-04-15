@@ -102,7 +102,7 @@ export default {
       ]),
       сolorscaleDirections: markRaw([
         { label: 'Normal', value: 'normal' },
-        { label: 'Recersed', value: 'reversed' }
+        { label: 'Reversed', value: 'reversed' }
       ]),
       colorSourceUsageOptions: markRaw([
         { label: 'Direct', value: 'direct' },
