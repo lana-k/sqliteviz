@@ -21,6 +21,7 @@
         "title": "Examples and tutorials",
         "items": [
           "/docs/how-to-migrate-to-sqliteviz-dot-com/",
+          "/docs/how-to-view-point-details-in-chart-visualization/",
           "/docs/how-to-build-a-pivot-table-in-sq-lite/",
           "/docs/how-to-rename-tables-and-columns-after-csv-import/",
           "/docs/how-to-work-with-plotly-interactive-selection/",
