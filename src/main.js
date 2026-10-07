@@ -13,6 +13,7 @@ import '@/assets/styles/tooltips.css'
 import '@/assets/styles/messages.css'
 import 'vue-multiselect/dist/vue-multiselect.css'
 import '@/assets/styles/multiselect.css'
+import '@/assets/icons.css'
 import 'vue-final-modal/style.css'
 
 if (!['localhost', '127.0.0.1'].includes(location.hostname)) {

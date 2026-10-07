@@ -8,7 +8,12 @@
     <modal modalId="app-info" class="dialog" contentClass="app-info-modal">
       <div class="dialog-header">
         App info
-        <close-icon @click="$modal.hide('app-info')" />
+        <IconButton
+          icon="myicon myicon-close"
+          variant="secondary"
+          :icon-size="14"
+          @click="$modal.hide('app-info')"
+        />
       </div>
       <div class="dialog-body">
         <div v-for="(item, index) in info" :key="index" class="info-item">
@@ -26,12 +31,12 @@
 </template>
 
 <script>
-import CloseIcon from '@/components/svg/close'
+import IconButton from '@/components/Common/IconButton.vue'
 import { version } from '../../package.json'
 
 export default {
   name: 'AppDiagnosticInfo',
-  components: { CloseIcon },
+  components: { IconButton },
   data() {
     return {
       info: [

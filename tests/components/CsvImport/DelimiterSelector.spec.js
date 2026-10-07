@@ -29,7 +29,7 @@ describe('DelimiterSelector', async () => {
       props: { modelValue: ',' }
     })
 
-    await wrapper.findComponent({ name: 'clear-icon' }).trigger('click')
+    await wrapper.find('button.clear-btn').trigger('click')
 
     expect(wrapper.find('input').element.value).to.equal('')
     expect(wrapper.emitted().input).to.equal(undefined)
@@ -56,7 +56,7 @@ describe('DelimiterSelector', async () => {
       attachTo: document.body
     })
 
-    await wrapper.findComponent({ name: 'drop-down-chevron' }).trigger('click')
+    await wrapper.find('button.open-list-btn').trigger('click')
     expect(wrapper.find('.options').isVisible()).to.equal(true)
     await wrapper.find('.option').trigger('click')
     expect(wrapper.find('.options').isVisible()).to.equal(false)
@@ -101,11 +101,11 @@ describe('DelimiterSelector', async () => {
       attachTo: document.body
     })
 
-    await wrapper.findComponent({ name: 'clear-icon' }).trigger('click')
+    await wrapper.find('button.clear-btn').trigger('click')
 
     expect(wrapper.find('input').element.value).to.equal('|')
 
-    await wrapper.findComponent({ name: 'drop-down-chevron' }).trigger('click')
+    await wrapper.find('button.open-list-btn').trigger('click')
     expect(wrapper.find('.options').isVisible()).to.equal(false)
     wrapper.unmount()
   })

@@ -19,96 +19,89 @@
     <side-tool-bar panel="dataView" @switch-to="$emit('switchTo', $event)">
       <icon-button
         ref="chartBtn"
+        icon="myicon myicon-chart"
         :active="mode === 'chart'"
         tooltip="Switch to chart"
         tooltipPosition="top-left"
         @click="mode = 'chart'"
-      >
-        <chart-icon />
-      </icon-button>
+      />
       <icon-button
         ref="pivotBtn"
+        icon="myicon myicon-pivot"
         :active="mode === 'pivot'"
         tooltip="Switch to pivot"
         tooltipPosition="top-left"
         @click="mode = 'pivot'"
-      >
-        <pivot-icon />
-      </icon-button>
+      />
       <icon-button
         ref="graphBtn"
+        icon="myicon myicon-graph"
         :active="mode === 'graph'"
         tooltip="Switch to graph"
         tooltipPosition="top-left"
         @click="mode = 'graph'"
-      >
-        <graph-icon />
-      </icon-button>
+      />
 
       <div class="side-tool-bar-divider" />
 
       <icon-button
         ref="settingsBtn"
+        icon="myicon myicon-settings"
         :active="showViewSettings"
         tooltip="Toggle visualisation settings visibility"
         tooltipPosition="top-left"
         @click="showViewSettings = !showViewSettings"
-      >
-        <settings-icon />
-      </icon-button>
+      />
 
       <icon-button
         v-if="mode !== 'pivot'"
         ref="viewDetailsBtn"
+        icon="myicon myicon-view-cell-value"
         tooltip="View details"
         tooltipPosition="top-left"
         :active="viewValuePanelVisible"
         @click="viewValuePanelVisible = !viewValuePanelVisible"
-      >
-        <view-cell-value-icon />
-      </icon-button>
+      />
 
       <div class="side-tool-bar-divider" />
 
       <icon-button
         ref="pngExportBtn"
+        icon="myicon myicon-png"
         :disabled="!exportToPngEnabled || loadingImage"
         :loading="loadingImage"
         tooltip="Save as PNG image"
         tooltipPosition="top-left"
         @click="saveAsPng"
-      >
-        <png-icon />
-      </icon-button>
+      />
+
       <icon-button
         ref="svgExportBtn"
+        icon="myicon myicon-export-to-svg"
         :disabled="!exportToSvgEnabled"
         tooltip="Save as SVG"
         tooltipPosition="top-left"
         @click="saveAsSvg"
-      >
-        <export-to-svg-icon />
-      </icon-button>
+      />
 
       <icon-button
         ref="htmlExportBtn"
+        icon="myicon myicon-html"
         :disabled="!exportToHtmlEnabled"
         tooltip="Save as HTML"
         tooltipPosition="top-left"
         @click="saveAsHtml"
-      >
-        <HtmlIcon />
-      </icon-button>
+      />
+
       <icon-button
         ref="copyToClipboardBtn"
+        icon="myicon myicon-clipboard"
         :disabled="!exportToClipboardEnabled"
         :loading="copyingImage"
         tooltip="Copy visualisation to clipboard"
         tooltipPosition="top-left"
         @click="prepareCopy"
-      >
-        <clipboard-icon />
-      </icon-button>
+      />
     </side-tool-bar>
 
     <loading-dialog
@@ -130,15 +123,6 @@ import Pivot from '@/components/Pivot'
 import Graph from '@/components/Graph/index.vue'
 import SideToolBar from '@/components/SideToolBar'
 import IconButton from '@/components/Common/IconButton'
-import ChartIcon from '@/components/svg/chart'
-import PivotIcon from '@/components/svg/pivot'
-import GraphIcon from '@/components/svg/graph.vue'
-import SettingsIcon from '@/components/svg/settings.vue'
-import HtmlIcon from '@/components/svg/html'
-import ExportToSvgIcon from '@/components/svg/exportToSvg'
-import PngIcon from '@/components/svg/png'
-import ClipboardIcon from '@/components/svg/clipboard'
-import ViewCellValueIcon from '@/components/svg/viewCellValue'
 import cIo from '@/lib/utils/clipboardIo'
 import loadingDialog from '@/components/Common/LoadingDialog.vue'
 import time from '@/lib/utils/time'
@@ -152,15 +136,6 @@ export default {
     Graph,
     SideToolBar,
     IconButton,
-    ChartIcon,
-    PivotIcon,
-    GraphIcon,
-    SettingsIcon,
-    ExportToSvgIcon,
-    ViewCellValueIcon,
-    PngIcon,
-    HtmlIcon,
-    ClipboardIcon,
     loadingDialog
   },
   props: {

@@ -1,6 +1,11 @@
 <template>
   <div class="db-uploader-container" :style="{ width }">
-    <change-db-icon v-if="type === 'small'" @click="browse" />
+    <IconButton
+      v-if="type === 'small'"
+      icon="myicon myicon-change-db"
+      tooltip="Load another database, CSV, JSON or NDJSON"
+      @click="browse"
+    />
     <div v-if="type === 'illustrated'" class="drop-area-container">
       <div
         class="drop-area"
@@ -56,15 +61,15 @@
 
 <script>
 import fIo from '@/lib/utils/fileIo'
-import ChangeDbIcon from '@/components/svg/changeDb'
 import database from '@/lib/database'
 import CsvJsonImport from '@/components/CsvJsonImport'
 import events from '@/lib/utils/events'
+import IconButton from '@/components/Common/IconButton'
 
 export default {
   name: 'DbUploader',
   components: {
-    ChangeDbIcon,
+    IconButton,
     CsvJsonImport
   },
   props: {

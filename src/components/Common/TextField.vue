@@ -5,11 +5,14 @@
       :class="['text-field-label', { error: errorMsg }, { disabled: disabled }]"
     >
       {{ label }}
-      <hint-icon
+      <IconButton
         v-if="hint"
+        icon="myicon myicon-hint"
+        variant="secondary"
         class="hint"
-        :hint="hint"
-        :maxWidth="maxHintWidth || '149px'"
+        :tooltip="hint"
+        :max-tooltip-width="maxHintWidth"
+        :icon-size="20"
       />
     </div>
     <input
@@ -26,10 +29,11 @@
 </template>
 
 <script>
-import HintIcon from '@/components/svg/hint'
+import IconButton from '@/components/Common/IconButton.vue'
+
 export default {
   name: 'TextField',
-  components: { HintIcon },
+  components: { IconButton },
   props: {
     placeholder: String,
     label: String,
@@ -37,7 +41,7 @@ export default {
     modelValue: String,
     width: String,
     hint: String,
-    maxHintWidth: String,
+    maxHintWidth: { type: String, default: '149px' },
     disabled: Boolean
   },
   emits: ['update:modelValue']
@@ -86,8 +90,8 @@ input.error {
 
 .text-field-label .hint {
   position: absolute;
-  top: -2px;
-  right: -22px;
+  top: -6px;
+  right: -26px;
 }
 
 .text-field-label.error {
@@ -107,5 +111,14 @@ input.error {
 }
 .text-field-error:first-letter {
   text-transform: uppercase;
+}
+
+:deep(.icon-tooltip) {
+  display: block;
+  white-space: normal;
+  height: auto;
+  line-height: normal;
+  padding: 6px;
+  box-sizing: border-box;
 }
 </style>

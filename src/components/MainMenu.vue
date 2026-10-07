@@ -36,7 +36,12 @@
     <modal modalId="save" class="dialog" contentStyle="width: 560px;">
       <div class="dialog-header">
         Save inquiry
-        <close-icon @click="cancelSave" />
+        <IconButton
+          icon="myicon myicon-close"
+          variant="secondary"
+          :icon-size="14"
+          @click="cancelSave"
+        />
       </div>
       <div class="dialog-body">
         <div v-show="isPredefined" id="save-note">
@@ -67,7 +72,12 @@
     >
       <div class="dialog-header">
         Inquiry saving conflict
-        <close-icon @click="cancelSave" />
+        <IconButton
+          icon="myicon myicon-close"
+          variant="secondary"
+          :icon-size="14"
+          @click="cancelSave"
+        />
       </div>
       <div class="dialog-body">
         <div id="save-note">
@@ -88,7 +98,7 @@
 
 <script>
 import TextField from '@/components/Common/TextField'
-import CloseIcon from '@/components/svg/close'
+import IconButton from '@/components/Common/IconButton.vue'
 import storedInquiries from '@/lib/storedInquiries'
 import AppDiagnosticInfo from './AppDiagnosticInfo'
 import events from '@/lib/utils/events'
@@ -98,7 +108,7 @@ export default {
   name: 'MainMenu',
   components: {
     TextField,
-    CloseIcon,
+    IconButton,
     AppDiagnosticInfo
   },
   data() {

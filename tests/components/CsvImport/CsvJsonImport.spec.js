@@ -345,9 +345,9 @@ describe('CsvJsonImport.vue', () => {
     )
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      true
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.not.be.undefined
+
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#import-start').isVisible()).to.equal(true)
     await resolveParsing()
@@ -424,9 +424,8 @@ describe('CsvJsonImport.vue', () => {
     )
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      true
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.not.be.undefined
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#import-start').isVisible()).to.equal(true)
     await resolveImport()
@@ -502,9 +501,8 @@ describe('CsvJsonImport.vue', () => {
     )
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      true
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.not.be.undefined
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#import-start').isVisible()).to.equal(true)
     await resolveImport()
@@ -573,9 +571,8 @@ describe('CsvJsonImport.vue', () => {
     )
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(false)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(false)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      false
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.be.undefined
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#import-start').isVisible()).to.equal(true)
   })
@@ -651,9 +648,8 @@ describe('CsvJsonImport.vue', () => {
     )
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      true
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.not.be.undefined
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#import-start').isVisible()).to.equal(true)
     expect(wrapper.vm.db.addTableFromCsv.getCall(0).args[0]).to.equal('foo') // table name
@@ -726,9 +722,8 @@ describe('CsvJsonImport.vue', () => {
     )
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(false)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(false)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      false
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.be.undefined
     expect(wrapper.find('#import-finish').isVisible()).to.equal(true)
   })
 
@@ -790,9 +785,8 @@ describe('CsvJsonImport.vue', () => {
     )
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(false)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(false)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      false
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.be.undefined
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
   })
 
@@ -1060,9 +1054,8 @@ describe('CsvJsonImport.vue - json', () => {
     // All the dialog controls are disabled
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      true
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.not.be.undefined
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#import-start').isVisible()).to.equal(true)
     await resolveParsing()
@@ -1114,9 +1107,8 @@ describe('CsvJsonImport.vue - json', () => {
     // All the dialog controls are disabled
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      true
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.not.be.undefined
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#import-start').isVisible()).to.equal(true)
     expect(wrapper.vm.db.addTableFromCsv.getCall(0).args[0]).to.equal('foo') // table name
@@ -1156,9 +1148,8 @@ describe('CsvJsonImport.vue - json', () => {
     // All the dialog controls are enabled
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(false)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(false)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      false
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.be.undefined
     expect(wrapper.find('#import-finish').isVisible()).to.equal(true)
   })
 })
@@ -1316,9 +1307,8 @@ describe('CsvJsonImport.vue - ndjson', () => {
     // All the dialog controls are disabled
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      true
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.not.be.undefined
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#import-start').isVisible()).to.equal(true)
     await resolveParsing()
@@ -1395,9 +1385,8 @@ describe('CsvJsonImport.vue - ndjson', () => {
     // All the dialog controls are disabled
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(true)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(true)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      true
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.not.be.undefined
     expect(wrapper.find('#import-finish').isVisible()).to.equal(false)
     expect(wrapper.find('#import-start').isVisible()).to.equal(true)
     expect(wrapper.vm.db.addTableFromCsv.getCall(0).args[0]).to.equal('foo') // table name
@@ -1461,9 +1450,8 @@ describe('CsvJsonImport.vue - ndjson', () => {
     // All the dialog controls are enabled
     expect(wrapper.find('#import-cancel').element.disabled).to.equal(false)
     expect(wrapper.find('#import-finish').element.disabled).to.equal(false)
-    expect(wrapper.findComponent({ name: 'close-icon' }).vm.disabled).to.equal(
-      false
-    )
+    expect(wrapper.find('[data-test="import-close-btn"]').attributes().disabled)
+      .to.be.undefined
     expect(wrapper.find('#import-finish').isVisible()).to.equal(true)
   })
 })

@@ -14,7 +14,7 @@ module.exports = function (config) {
       coverage: {
         enable: true,
         include: 'src/*',
-        exclude: ['node_modules', 'src/components/svg/*'],
+        exclude: ['node_modules'],
         extension: ['.js', '.vue'],
         requireEnv: false
       }
@@ -108,7 +108,7 @@ module.exports = function (config) {
     },
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['ChromiumHeadlessWebGL', 'FirefoxHeadlessTouch'],
+    browsers: ['ChromiumHeadlessWebGL' /*, 'FirefoxHeadlessTouch'*/],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits

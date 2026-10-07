@@ -19,11 +19,23 @@
         <div class="name">{{ getSymbolName(modelValue) }}</div>
       </div>
       <div class="controls" @click.stop>
-        <clear-icon :disabled="disabled" @click="clear" />
-        <drop-down-chevron
+        <button
+          type="button"
           :disabled="disabled"
+          @click="clear"
+          class="clear-btn"
+        >
+          <i class="myicon myicon-clear" />
+        </button>
+
+        <button
+          type="button"
+          :disabled="disabled"
+          class="open-list-btn"
           @click="!disabled && (showOptions = !showOptions)"
-        />
+        >
+          <i class="myicon myicon-dropdown-chevron" />
+        </button>
       </div>
     </div>
     <div v-show="showOptions" class="options" :style="{ width: width }">
@@ -42,12 +54,9 @@
 
 <script>
 import ascii from './ascii'
-import DropDownChevron from '@/components/svg/dropDownChevron'
-import ClearIcon from '@/components/svg/clear'
 
 export default {
   name: 'DelimiterSelector',
-  components: { DropDownChevron, ClearIcon },
   props: {
     modelValue: String,
     width: String,
@@ -130,6 +139,7 @@ export default {
 .controls {
   display: flex;
   align-items: center;
+  gap: 4px;
 }
 
 .options {
@@ -206,5 +216,23 @@ input:disabled {
 
 .disabled .delimiter-selector-container {
   background: var(--color-bg-light);
+}
+
+.controls button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  height: 20px;
+  width: 20px;
+  color: var(--color-border);
+  font-size: 20px;
+}
+
+.clear-btn:not(:disabled):hover {
+  color: var(--color-danger);
+}
+
+.open-list-btn:not(:disabled):hover {
+  color: var(--color-accent);
 }
 </style>

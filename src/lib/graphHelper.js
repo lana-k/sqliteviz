@@ -143,29 +143,52 @@ export function reduceNodes(nodeId, nodeData, interactionState, settings) {
     neighborsOfSelectedNode,
     neighborsOfHoveredNode,
     selectedEdgeExtremities,
-    hoveredEdgeExtremities
+    hoveredEdgeExtremities,
+    nodesMatchingSearchQuery,
+    focusedFoundNodeId
   } = interactionState
 
   const res = { ...nodeData }
 
-  if (selectedNodeId || hoveredNodeId || hoveredEdgeId || selectedEdgeId) {
+  if (
+    selectedNodeId ||
+    hoveredNodeId ||
+    hoveredEdgeId ||
+    selectedEdgeId ||
+    nodesMatchingSearchQuery ||
+    focusedFoundNodeId
+  ) {
     res.zIndex = 2
-    res.highlighted = nodeId === selectedNodeId || nodeId === hoveredNodeId
+
+    const matchQuery =
+      nodesMatchingSearchQuery && nodesMatchingSearchQuery.includes(nodeId)
+
+    res.highlighted = [
+      selectedNodeId,
+      hoveredNodeId,
+      focusedFoundNodeId
+    ].includes(nodeId)
+
     if (res.highlighted) {
       res.labelColor = 'black'
     }
 
     const isInHoveredFamily =
-      nodeId === hoveredNodeId ||
       neighborsOfHoveredNode?.has(nodeId) ||
       hoveredEdgeExtremities.includes(nodeId)
     const isInSelectedFamily =
-      nodeId === selectedNodeId ||
       neighborsOfSelectedNode?.has(nodeId) ||
       selectedEdgeExtremities.includes(nodeId)
-    if (isInSelectedFamily || isInHoveredFamily) {
+
+    if (res.highlighted || isInSelectedFamily || isInHoveredFamily) {
       res.forceLabel = true
-    } else {
+    }
+    if (
+      !res.highlighted &&
+      !isInSelectedFamily &&
+      !isInHoveredFamily &&
+      !matchQuery
+    ) {
       res.color = getDiminishedColor(
         nodeData.color,
         settings.style.backgroundColor
@@ -191,14 +214,25 @@ export function reduceEdges(
     selectedEdgeId,
     hoveredEdgeId,
     neighborsOfSelectedNode,
-    neighborsOfHoveredNode
+    neighborsOfHoveredNode,
+    nodesMatchingSearchQuery
   } = interactionState
 
   const res = { ...edgeData }
-  if (hoveredEdgeId || selectedEdgeId || selectedNodeId || hoveredNodeId) {
+  if (
+    hoveredEdgeId ||
+    selectedEdgeId ||
+    selectedNodeId ||
+    hoveredNodeId ||
+    nodesMatchingSearchQuery
+  ) {
     const extremities = graph.extremities(edgeId)
     res.zIndex = 2
-    const isHighlighted = hoveredEdgeId === edgeId || selectedEdgeId === edgeId
+    const isHighlighted =
+      hoveredEdgeId === edgeId ||
+      selectedEdgeId === edgeId ||
+      (nodesMatchingSearchQuery &&
+        extremities.every(nodeId => nodesMatchingSearchQuery.includes(nodeId)))
 
     let isVisible
     if (settings.style.highlightMode === 'node_alone') {

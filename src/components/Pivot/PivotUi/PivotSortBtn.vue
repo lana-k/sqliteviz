@@ -1,22 +1,19 @@
 <template>
   <div :class="['pivot-sort-btn', direction]" @click="changeSorting">
     {{ modelValue.includes('key') ? 'key' : 'value' }}
-    <sort-icon
-      class="sort-icon"
-      :horizontal="direction === 'col'"
-      :asc="modelValue.includes('a_to_z')"
+    <i
+      :class="[
+        'myicon myicon-sort sort-icon',
+        { vertical: direction === 'row' },
+        { asc: modelValue.includes('a_to_z') }
+      ]"
     />
   </div>
 </template>
 
 <script>
-import SortIcon from '@/components/svg/sort'
-
 export default {
   name: 'PivotSortBtn',
-  components: {
-    SortIcon
-  },
   props: {
     direction: String,
     modelValue: String
@@ -56,9 +53,6 @@ export default {
   color: var(--color-text-active);
   border-color: var(--color-border-dark);
 }
-.pivot-sort-btn:hover :deep(.sort-icon path) {
-  fill: var(--color-text-active);
-}
 
 .pivot-sort-btn.col {
   flex-direction: column;
@@ -69,7 +63,19 @@ export default {
   flex-direction: row;
 }
 
-.pivot-sort-btn.row .sort-icon {
-  margin-left: 2px;
+.sort-icon {
+  font-size: 12px;
+}
+.sort-icon.asc {
+  transform: rotate(180deg);
+}
+.sort-icon.vertical {
+  transform: rotate(90deg);
+  margin-right: -3px;
+  margin-left: -1px;
+}
+
+.sort-icon.vertical.asc {
+  transform: rotate(-90deg);
 }
 </style>

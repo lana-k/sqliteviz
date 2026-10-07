@@ -8,7 +8,14 @@
   >
     <div class="dialog-header">
       {{ typeName }} import
-      <close-icon :disabled="disableDialog" @click="cancelImport" />
+      <IconButton
+        icon="myicon myicon-close"
+        variant="secondary"
+        :icon-size="14"
+        :disabled="disableDialog"
+        data-test="import-close-btn"
+        @click="cancelImport"
+      />
     </div>
     <div class="dialog-body">
       <text-field
@@ -101,7 +108,7 @@
 
 <script>
 import csv from '@/lib/csv'
-import CloseIcon from '@/components/svg/close'
+import IconButton from '@/components/Common/IconButton.vue'
 import TextField from '@/components/Common/TextField'
 import DelimiterSelector from './DelimiterSelector'
 import CheckBox from '@/components/Common/CheckBox'
@@ -114,8 +121,8 @@ import events from '@/lib/utils/events'
 export default {
   name: 'CsvJsonImport',
   components: {
-    CloseIcon,
     TextField,
+    IconButton,
     DelimiterSelector,
     CheckBox,
     SqlTable,

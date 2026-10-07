@@ -1,12 +1,22 @@
 <template>
   <button
-    :class="['icon-btn', { active }]"
+    :class="['icon-btn', { active }, 'icon-btn-' + variant]"
     :disabled="disabled"
-    @click="onClick"
+    :style="{
+      color: iconColor,
+      fontSize: iconSize + 'px',
+      width: width + 'px',
+      height: width + 'px'
+    }"
+    @click.stop="onClick"
     @mouseenter="showTooltip($event, tooltipPosition)"
     @mouseleave="hideTooltip"
   >
-    <div class="icon"><slot /></div>
+    <div class="icon">
+      <slot>
+        <i :class="icon" />
+      </slot>
+    </div>
     <div v-show="loading" class="icon-in-progress">
       <loading-indicator />
     </div>
@@ -14,7 +24,7 @@
       v-if="tooltip"
       ref="tooltip"
       class="icon-tooltip"
-      :style="tooltipStyle"
+      :style="{ ...tooltipStyle, maxWidth: maxTooltipWidth }"
     >
       {{ tooltip }}
     </span>
@@ -34,13 +44,30 @@ export default {
     disabled: Boolean,
     tooltip: String,
     tooltipPosition: String,
-    loading: Boolean
+    maxTooltipWidth: String,
+    loading: Boolean,
+    icon: String,
+    iconColor: { type: String, default: 'var(--color-text-light-2)' },
+    variant: {
+      type: String,
+      default: 'accent',
+      validator: value => ['accent', 'secondary'].includes(value)
+    },
+    iconSize: {
+      type: Number,
+      default: 18
+    }
   },
   emits: ['click'],
   methods: {
     onClick() {
       this.hideTooltip()
       this.$emit('click')
+    }
+  },
+  computed: {
+    width() {
+      return this.iconSize + 8
     }
   }
 }
@@ -49,8 +76,6 @@ export default {
 <style scoped>
 .icon-btn {
   box-sizing: border-box;
-  width: 26px;
-  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,30 +83,32 @@ export default {
   background-color: transparent;
   border: none;
 }
-.icon-btn:hover {
+
+.icon-btn .icon i {
+  font-size: inherit;
+}
+.icon-btn.icon-btn-accent:hover {
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-medium-2);
 }
 
-.icon-btn:hover .icon :deep(path),
-.icon-btn.active .icon :deep(path),
-.icon-btn:hover .icon :deep(circle),
-.icon-btn.active .icon :deep(circle) {
-  fill: var(--color-accent);
+.icon-btn.icon-btn-accent:hover,
+.icon-btn.icon-btn-accent.active {
+  color: var(--color-accent) !important;
 }
 
-.icon-btn:disabled .icon :deep(path),
-.icon-btn:disabled .icon :deep(circle) {
-  fill: var(--color-border);
+.icon-btn.icon-btn-secondary:hover,
+.icon-btn.icon-btn-secondary.active {
+  color: var(--color-text-base) !important;
+}
+
+.icon-btn:disabled {
+  color: var(--color-border) !important;
 }
 
 .icon-btn:disabled {
   cursor: default;
   pointer-events: none;
-}
-
-.disabled.icon-btn:hover .icon :deep(path) {
-  fill: var(--color-border);
 }
 
 .icon-in-progress {

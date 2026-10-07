@@ -12,13 +12,14 @@
           <span v-if="tab.name">{{ tab.name }}</span>
           <span v-else class="tab-untitled">{{ tab.tempName }}</span>
         </div>
-        <div>
-          <close-icon
-            class="close-icon"
-            :size="10"
-            @click="beforeCloseTab(tab)"
-          />
-        </div>
+
+        <IconButton
+          icon="myicon myicon-close"
+          variant="secondary"
+          :icon-size="10"
+          class="close-icon"
+          @click="beforeCloseTab(tab)"
+        />
       </div>
     </div>
     <tab v-for="tab in tabs" :key="tab.id" :tab="tab" />
@@ -37,7 +38,13 @@
             ? closingTab.name || `[${closingTab.tempName}]`
             : ''
         }}
-        <close-icon @click="$modal.hide('close-warn')" />
+
+        <IconButton
+          icon="myicon myicon-close"
+          variant="secondary"
+          :icon-size="14"
+          @click="$modal.hide('close-warn')"
+        />
       </div>
       <div class="dialog-body">
         You have unsaved changes. Save changes in
@@ -65,13 +72,13 @@
 
 <script>
 import Tab from './Tab'
-import CloseIcon from '@/components/svg/close'
+import IconButton from '@/components/Common/IconButton.vue'
 import eventBus from '@/lib/eventBus'
 
 export default {
   components: {
     Tab,
-    CloseIcon
+    IconButton
   },
   emits: [],
   data() {
@@ -155,6 +162,7 @@ export default {
   position: relative;
   max-width: 200px;
   display: flex;
+  align-items: center;
   flex-shrink: 1;
   min-width: 0;
 }

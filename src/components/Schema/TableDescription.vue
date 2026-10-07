@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="table-name" @click="colVisible = !colVisible">
-      <tree-chevron :expanded="colVisible" />
+      <i :class="['myicon myicon-tree-chevron', { expanded: colVisible }]" />
       {{ name }}
     </div>
     <div v-show="colVisible" class="columns">
@@ -14,11 +14,8 @@
 </template>
 
 <script>
-import TreeChevron from '@/components/svg/treeChevron'
-
 export default {
   name: 'TableDescription',
-  components: { TreeChevron },
   props: {
     name: String,
     columns: Array

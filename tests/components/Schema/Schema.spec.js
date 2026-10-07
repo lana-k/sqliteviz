@@ -144,10 +144,7 @@ describe('Schema.vue', () => {
       }
     })
 
-    await wrapper
-      .findComponent({ name: 'export-icon' })
-      .find('svg')
-      .trigger('click')
+    await wrapper.find('[data-test="export-db-btn"]').trigger('click')
     expect(state.db.export.calledOnceWith('fooDB'))
     wrapper.unmount()
   })
@@ -190,10 +187,7 @@ describe('Schema.vue', () => {
     sinon.spy(wrapper.vm, 'addCsvJson')
     sinon.spy(wrapper.vm.$refs.addCsvJson, 'loadToDb')
 
-    await wrapper
-      .findComponent({ name: 'add-table-icon' })
-      .find('svg')
-      .trigger('click')
+    await wrapper.find('[data-test="add-csv-json-btn"]').trigger('click')
     await wrapper.vm.$refs.addCsvJson.preview.returnValues[0]
     await wrapper.vm.addCsvJson.returnValues[0]
     await nextTick()

@@ -204,9 +204,9 @@
                 @click="toggleFA2Layout"
               >
                 <template #node:icon>
-                  <div>
-                    <RunIcon v-if="!fa2Running" />
-                    <PauseIcon v-else />
+                  <div class="button-icon-container">
+                    <i v-if="!fa2Running" class="myicon myicon-run" />
+                    <i v-else class="myicon myicon-pause" />
                   </div>
                 </template>
                 {{ fa2Running ? 'Pause' : 'Continue' }}
@@ -218,8 +218,8 @@
                 @click="restartFA2Layout"
               >
                 <template #node:icon>
-                  <div>
-                    <RestartIcon />
+                  <div class="button-icon-container">
+                    <i class="myicon myicon-restart" />
                   </div>
                 </template>
                 Restart
@@ -239,11 +239,20 @@
         backgroundColor: settings.style.backgroundColor
       }"
     />
+
+    <GraphSearchPanel
+      v-model:nodesMatchingSearchQuery="nodesMatchingSearchQuery"
+      v-model:focusedFoundNodeId="focusedFoundNodeId"
+      :graph="graph"
+      :renderer="renderer"
+      class="search-panel"
+    />
   </div>
 </template>
 
 <script>
 import { markRaw } from 'vue'
+import GraphSearchPanel from '@/components/Graph/GraphSearchPanel.vue'
 import { applyPureReactInVue } from 'veaury'
 import GraphEditorControls from '@/lib/GraphEditorControls.jsx'
 import { PanelMenuWrapper, Panel, Fold, Section } from 'react-chart-editor'
@@ -261,9 +270,6 @@ import AdvancedForceAtlasLayoutSettings from '@/components/Graph/AdvancedForceAt
 import CirclePackLayoutSettings from '@/components/Graph/CirclePackLayoutSettings.vue'
 import FA2Layout from 'graphology-layout-forceatlas2/worker'
 import * as forceAtlas2 from 'graphology-layout-forceatlas2'
-import RunIcon from '@/components/svg/run.vue'
-import RestartIcon from '@/components/svg/restart.vue'
-import PauseIcon from '@/components/svg/pause.vue'
 import { downloadAsPNG, drawOnCanvas } from '@sigma/export-image'
 import {
   buildNodes,
@@ -296,9 +302,6 @@ export default {
     Fold: applyPureReactInVue(Fold),
     Button: applyPureReactInVue(Button),
     ColorPicker: applyPureReactInVue(ColorPicker),
-    RunIcon,
-    RestartIcon,
-    PauseIcon,
     RandomLayoutSettings,
     CirclePackLayoutSettings,
     NodeColorSettings,
@@ -306,7 +309,8 @@ export default {
     EdgeSizeSettings,
     EdgeColorSettings,
     AdvancedForceAtlasLayoutSettings,
-    ForceAtlasSeedLayoutSettings
+    ForceAtlasSeedLayoutSettings,
+    GraphSearchPanel
   },
   inject: ['tabLayout'],
   props: {
@@ -317,6 +321,8 @@ export default {
   emits: ['update', 'selectItem', 'clearSelection'],
   data() {
     return {
+      nodesMatchingSearchQuery: null,
+      focusedFoundNodeId: null,
       graph: new Graph({ multi: true, allowSelfLoops: true }),
       renderer: null,
       fa2Layout: null,
@@ -472,7 +478,9 @@ export default {
         neighborsOfHoveredNode: this.neighborsOfHoveredNode,
 
         hoveredEdgeExtremities: this.hoveredEdgeExtremities,
-        selectedEdgeExtremities: this.selectedEdgeExtremities
+        selectedEdgeExtremities: this.selectedEdgeExtremities,
+        nodesMatchingSearchQuery: this.nodesMatchingSearchQuery,
+        focusedFoundNodeId: this.focusedFoundNodeId
       }
     }
   },
@@ -519,6 +527,8 @@ export default {
   methods: {
     buildGraph() {
       this.clearSelection()
+      this.focusedFoundNodeId = null
+      this.nodesMatchingSearchQuery = null
       if (this.renderer) {
         this.renderer.kill()
       }
@@ -835,6 +845,9 @@ export default {
 </script>
 
 <style scoped>
+.plotly_editor {
+  position: relative;
+}
 .plotly_editor.with_controls > div {
   display: flex !important;
 }
@@ -855,5 +868,20 @@ export default {
 
 .force-atlas-buttons :deep(.button__icon > div) {
   padding: 0 3px;
+}
+
+.search-panel {
+  top: 0;
+  right: 0;
+}
+
+.button-icon-container {
+  font-size: 16px;
+  filter: drop-shadow(0 1px 2px rgba(42, 63, 95, 0.7));
+  vertical-align: bottom;
+}
+
+.button-icon-container i {
+  vertical-align: top;
 }
 </style>

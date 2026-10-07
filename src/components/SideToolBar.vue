@@ -2,33 +2,30 @@
   <div class="side-tool-bar">
     <icon-button
       ref="sqlEditorBtn"
+      icon="myicon myicon-sql-editor"
       :active="panel === 'sqlEditor'"
       tooltip="Switch panel to SQL editor"
       tooltipPosition="top-left"
       @click="$emit('switchTo', 'sqlEditor')"
-    >
-      <sql-editor-icon />
-    </icon-button>
+    />
 
     <icon-button
       ref="tableBtn"
+      icon="myicon myicon-table"
       :active="panel === 'table'"
       tooltip="Switch panel to result set"
       tooltipPosition="top-left"
       @click="$emit('switchTo', 'table')"
-    >
-      <table-icon />
-    </icon-button>
+    />
 
     <icon-button
       ref="dataViewBtn"
+      icon="myicon myicon-data-view"
       :active="panel === 'dataView'"
       tooltip="Switch panel to data view"
       tooltipPosition="top-left"
       @click="$emit('switchTo', 'dataView')"
-    >
-      <data-view-icon />
-    </icon-button>
+    />
 
     <div v-if="$slots.default" class="side-tool-bar-divider" />
 
@@ -38,17 +35,11 @@
 
 <script>
 import IconButton from '@/components/Common/IconButton'
-import TableIcon from '@/components/svg/table'
-import SqlEditorIcon from '@/components/svg/sqlEditor'
-import DataViewIcon from '@/components/svg/dataView'
 
 export default {
   name: 'SideToolBar',
   components: {
-    IconButton,
-    SqlEditorIcon,
-    DataViewIcon,
-    TableIcon
+    IconButton
   },
   props: {
     panel: String

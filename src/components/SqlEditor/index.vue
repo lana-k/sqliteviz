@@ -12,14 +12,13 @@
     <side-tool-bar panel="sqlEditor" @switch-to="$emit('switchTo', $event)">
       <icon-button
         ref="runBtn"
+        icon="myicon myicon-run"
         :disabled="runDisabled"
         :loading="isGettingResults"
         tooltip="Run SQL query"
         tooltipPosition="top-left"
         @click="$emit('run')"
-      >
-        <run-icon :disabled="runDisabled" />
-      </icon-button>
+      />
     </side-tool-bar>
   </div>
 </template>
@@ -34,16 +33,14 @@ import 'codemirror/theme/neo.css'
 import 'codemirror/addon/hint/show-hint.css'
 import 'codemirror/addon/display/autorefresh.js'
 import SideToolBar from '../SideToolBar'
-import IconButton from '@/components/Common/IconButton'
-import RunIcon from '@/components/svg/run'
+import IconButton from '@/components/Common/IconButton.vue'
 
 export default {
   name: 'SqlEditor',
   components: {
     Codemirror,
     SideToolBar,
-    IconButton,
-    RunIcon
+    IconButton
   },
   props: { modelValue: String, isGettingResults: Boolean },
   emits: ['update:modelValue', 'run', 'switchTo'],

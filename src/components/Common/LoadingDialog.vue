@@ -9,7 +9,13 @@
   >
     <div class="dialog-header">
       {{ title }}
-      <close-icon :disabled="loading" @click="cancel" />
+      <IconButton
+        icon="myicon myicon-close"
+        variant="secondary"
+        :icon-size="14"
+        :disabled="loading"
+        @click="cancel"
+      />
     </div>
     <div class="dialog-body">
       <div v-if="loading" class="loading-dialog-body">
@@ -47,11 +53,11 @@
 
 <script>
 import LoadingIndicator from '@/components/Common/LoadingIndicator'
-import CloseIcon from '@/components/svg/close'
+import IconButton from '@/components/Common/IconButton.vue'
 
 export default {
   name: 'LoadingDialog',
-  components: { LoadingIndicator, CloseIcon },
+  components: { LoadingIndicator, IconButton },
   props: {
     modelValue: Boolean,
     loadingMsg: String,

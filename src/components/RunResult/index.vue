@@ -64,45 +64,41 @@
 
     <side-tool-bar panel="table" @switch-to="$emit('switchTo', $event)">
       <icon-button
+        icon="myicon myicon-export-to-csv"
         :disabled="!result"
         tooltip="Export result set to CSV file"
         tooltipPosition="top-left"
         @click="exportToCsv"
-      >
-        <export-to-csv-icon />
-      </icon-button>
+      />
 
       <icon-button
         ref="copyToClipboardBtn"
+        icon="myicon myicon-clipboard"
         :disabled="!result"
         tooltip="Copy result set to clipboard"
         tooltipPosition="top-left"
         @click="prepareCopy"
-      >
-        <clipboard-icon />
-      </icon-button>
+      />
 
       <icon-button
         ref="rowBtn"
+        icon="myicon myicon-row"
         :disabled="!result"
         tooltip="View record"
         tooltipPosition="top-left"
         :active="viewRecord"
         @click="toggleViewRecord"
-      >
-        <row-icon />
-      </icon-button>
+      />
 
       <icon-button
         ref="viewCellValueBtn"
+        icon="myicon myicon-view-cell-value"
         :disabled="!result"
         tooltip="View value"
         tooltipPosition="top-left"
         :active="viewValuePanelVisible"
         @click="toggleViewValuePanel"
-      >
-        <view-cell-value-icon />
-      </icon-button>
+      />
     </side-tool-bar>
 
     <loading-dialog
@@ -124,10 +120,6 @@ import SqlTable from '@/components/SqlTable'
 import LoadingIndicator from '@/components/Common/LoadingIndicator'
 import SideToolBar from '@/components/SideToolBar'
 import Splitpanes from '@/components/Common/Splitpanes'
-import ExportToCsvIcon from '@/components/svg/exportToCsv'
-import ClipboardIcon from '@/components/svg/clipboard'
-import ViewCellValueIcon from '@/components/svg/viewCellValue'
-import RowIcon from '@/components/svg/row'
 import IconButton from '@/components/Common/IconButton'
 import csv from '@/lib/csv'
 import fIo from '@/lib/utils/fileIo'
@@ -145,11 +137,7 @@ export default {
     LoadingIndicator,
     Logs,
     SideToolBar,
-    ExportToCsvIcon,
     IconButton,
-    ClipboardIcon,
-    ViewCellValueIcon,
-    RowIcon,
     loadingDialog,
     ValueViewer,
     Record,

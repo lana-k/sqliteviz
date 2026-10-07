@@ -265,10 +265,7 @@ describe('Inquiries.vue', () => {
     const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await nextTick()
-    await wrapper
-      .findComponent({ name: 'ExportIcon' })
-      .find('svg')
-      .trigger('click')
+    await wrapper.find('[data-test="export-btn"]').trigger('click')
     expect(
       fu.exportToFile.calledOnceWith('I am a serialized inquiry', 'foo.json')
     ).to.equals(true)
@@ -304,10 +301,7 @@ describe('Inquiries.vue', () => {
     const wrapper = mount(Inquiries, { global: { plugins: [store] } })
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await nextTick()
-    await wrapper
-      .findComponent({ name: 'CopyIcon' })
-      .find('svg')
-      .trigger('click')
+    await wrapper.find('[data-test="copy-btn"]').trigger('click')
 
     expect(
       storedInquiries.duplicateInquiry.calledOnceWith(inquiryInStorage)
@@ -353,10 +347,7 @@ describe('Inquiries.vue', () => {
       .findComponent({ ref: 'mainCheckBox' })
       .find('.checkbox-container')
       .trigger('click')
-    await wrapper
-      .findComponent({ name: 'CopyIcon' })
-      .find('svg')
-      .trigger('click')
+    await wrapper.find('[data-test="copy-btn"]').trigger('click')
 
     const checkboxes = wrapper.findAllComponents('[data-test="rowCheckBox"]')
     expect(checkboxes[0].vm.checked).to.equals(true)
@@ -460,10 +451,7 @@ describe('Inquiries.vue', () => {
     await nextTick()
 
     // click Rename icon in the grid
-    await wrapper
-      .findComponent({ name: 'RenameIcon' })
-      .find('svg')
-      .trigger('click')
+    await wrapper.find('[data-test="rename-btn"]').trigger('click')
 
     // check that rename dialog is open
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)
@@ -538,10 +526,7 @@ describe('Inquiries.vue', () => {
     await nextTick()
 
     // click Rename icon in the grid
-    await wrapper
-      .findComponent({ name: 'RenameIcon' })
-      .find('svg')
-      .trigger('click')
+    await wrapper.findComponent('[data-test="rename-btn"]').trigger('click')
 
     // change the name
     await wrapper.find('.dialog-body input').setValue('')
@@ -714,10 +699,7 @@ describe('Inquiries.vue', () => {
     await storedInquiries.readPredefinedInquiries.returnValues[0]
     await nextTick()
     // click Delete icon in the first row of the grid
-    await wrapper
-      .findComponent({ name: 'DeleteIcon' })
-      .find('svg')
-      .trigger('click')
+    await wrapper.findComponent('[data-test="delete-btn"]').trigger('click')
 
     // check that delete dialog is open
     expect(wrapper.find('.dialog.vfm').exists()).to.equal(true)

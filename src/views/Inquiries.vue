@@ -115,18 +115,35 @@
                       {{ createdAtFormatted(inquiry.createdAt) }}
                     </div>
                     <div class="icons-container">
-                      <rename-icon
+                      <IconButton
                         v-if="!inquiry.isPredefined"
+                        icon="myicon myicon-rename"
+                        tooltip="Rename inquiry"
+                        data-test="rename-btn"
                         @click="showRenameDialog(inquiry.id)"
                       />
-                      <copy-icon @click="duplicateInquiry(index)" />
-                      <export-icon
+
+                      <IconButton
+                        icon="myicon myicon-copy"
+                        tooltip="Duplicate inquiry"
+                        data-test="copy-btn"
+                        @click="duplicateInquiry(index)"
+                      />
+
+                      <IconButton
+                        icon="myicon myicon-export"
                         tooltip="Export inquiry to file"
                         tooltipPosition="top-left"
+                        data-test="export-btn"
                         @click="exportToFile([inquiry], `${inquiry.name}.json`)"
                       />
-                      <delete-icon
+
+                      <IconButton
                         v-if="!inquiry.isPredefined"
+                        icon="myicon myicon-delete"
+                        tooltip="Delete inquiry"
+                        tooltipPosition="top-left"
+                        data-test="delete-btn"
                         @click="showDeleteDialog(new Set().add(inquiry.id))"
                       />
                     </div>
@@ -143,7 +160,12 @@
     <modal modalId="rename" class="dialog" contentStyle="width: 560px;">
       <div class="dialog-header">
         Rename inquiry
-        <close-icon @click="$modal.hide('rename')" />
+        <IconButton
+          icon="myicon myicon-close"
+          variant="secondary"
+          :icon-size="14"
+          @click="$modal.hide('rename')"
+        />
       </div>
       <div class="dialog-body">
         <text-field
@@ -163,7 +185,12 @@
     <modal modalId="delete" class="dialog" contentStyle="width: 480px;">
       <div class="dialog-header">
         Delete {{ deleteGroup ? 'inquiries' : 'inquiry' }}
-        <close-icon @click="$modal.hide('delete')" />
+        <IconButton
+          icon="myicon myicon-close"
+          variant="secondary"
+          :icon-size="14"
+          @click="$modal.hide('delete')"
+        />
       </div>
       <div class="dialog-body">
         {{ deleteDialogMsg }}
@@ -184,11 +211,7 @@
 </template>
 
 <script>
-import RenameIcon from '@/components/svg/rename'
-import CopyIcon from '@/components/svg/copy'
-import ExportIcon from '@/components/svg/export'
-import DeleteIcon from '@/components/svg/delete'
-import CloseIcon from '@/components/svg/close'
+import IconButton from '@/components/Common/IconButton.vue'
 import TextField from '@/components/Common/TextField'
 import CheckBox from '@/components/Common/CheckBox'
 import LoadingIndicator from '@/components/Common/LoadingIndicator'
@@ -199,11 +222,7 @@ import eventBus from '@/lib/eventBus'
 export default {
   name: 'Inquiries',
   components: {
-    RenameIcon,
-    CopyIcon,
-    ExportIcon,
-    DeleteIcon,
-    CloseIcon,
+    IconButton,
     TextField,
     CheckBox,
     LoadingIndicator
@@ -609,6 +628,7 @@ table.sqliteviz-table {
 }
 .sqliteviz-table tbody tr:hover .icons-container {
   display: flex;
+  gap: 8px;
 }
 .dialog input {
   width: 100%;

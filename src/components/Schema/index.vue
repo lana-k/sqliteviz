@@ -5,12 +5,25 @@
     </div>
     <div id="db">
       <div class="db-name" @click="schemaVisible = !schemaVisible">
-        <tree-chevron v-show="schema.length > 0" :expanded="schemaVisible" />
+        <i
+          v-show="schema.length > 0"
+          :class="['myicon myicon-tree-chevron', { expanded: schemaVisible }]"
+        />
         {{ dbName }}
       </div>
       <db-uploader id="db-edit" type="small" />
-      <export-icon tooltip="Export database" @click="exportToFile" />
-      <add-table-icon @click="addCsvJson" />
+      <IconButton
+        icon="myicon myicon-export"
+        tooltip="Export database"
+        data-test="export-db-btn"
+        @click="exportToFile"
+      />
+      <IconButton
+        icon="myicon myicon-add-table"
+        tooltip=" Add new table from CSV, JSON or NDJSON"
+        data-test="add-csv-json-btn"
+        @click="addCsvJson"
+      />
     </div>
     <div v-show="schemaVisible" class="schema">
       <table-description
@@ -36,21 +49,17 @@ import fIo from '@/lib/utils/fileIo'
 import events from '@/lib/utils/events'
 import TableDescription from './TableDescription'
 import TextField from '@/components/Common/TextField'
-import TreeChevron from '@/components/svg/treeChevron'
 import DbUploader from '@/components/DbUploader'
-import ExportIcon from '@/components/svg/export'
-import AddTableIcon from '@/components/svg/addTable'
 import CsvJsonImport from '@/components/CsvJsonImport'
+import IconButton from '@/components/Common/IconButton'
 
 export default {
   name: 'Schema',
   components: {
     TableDescription,
     TextField,
-    TreeChevron,
     DbUploader,
-    ExportIcon,
-    AddTableIcon,
+    IconButton,
     CsvJsonImport
   },
   data() {
@@ -142,8 +151,20 @@ export default {
   flex-shrink: 0;
 }
 
-.db-name:hover .chevron-icon path,
-:deep(.table-name:hover .chevron-icon path) {
-  fill: var(--color-gray-dark);
+.db-name:hover .myicon-tree-chevron,
+:deep(.table-name:hover .myicon-tree-chevron) {
+  color: var(--color-gray-dark);
+}
+
+:deep(.myicon-tree-chevron) {
+  color: var(--color-border-dark);
+  font-size: 9px;
+  transition: transform 0.15s ease-in-out;
+}
+
+:deep(.myicon-tree-chevron.expanded) {
+  color: var(--color-border-dark);
+  transform: rotate(90deg);
+  color: var(--color-gray-dark);
 }
 </style>
