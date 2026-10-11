@@ -5,6 +5,7 @@
       :title="panelOpen ? 'Close search panel' : 'Open search panel'"
       variant="secondary"
       :class="{ 'close-search-panel': panelOpen }"
+      data-test="toggle-search-panel-visibility-btn"
       @click="panelOpen = !panelOpen"
     />
     <div v-show="panelOpen" class="graph-search-panel--search-controls">
@@ -21,12 +22,14 @@
         icon="myicon myicon-match-case"
         title="Match case"
         :active="matchCase"
+        data-test="match-case-btn"
         @click="matchCase = !matchCase"
       />
       <IconButton
         icon="myicon myicon-use-reg-exp"
         title="Use regular expression"
         :active="useRegExp"
+        data-test="use-reg-exp-btn"
         @click="useRegExp = !useRegExp"
       />
 
@@ -42,7 +45,7 @@
           v-if="
             nodesMatchingSearchQuery?.length > 0 && currentFoundNodeIndex !== -1
           "
-          >{{ currentFoundNodeIndex + 1 }} /
+          >{{ currentFoundNodeIndex + 1 }} of
           {{ nodesMatchingSearchQuery.length }}
         </span>
 
@@ -50,6 +53,7 @@
           v-show="
             nodesMatchingSearchQuery && nodesMatchingSearchQuery.length === 0
           "
+          data-test="no-results-text"
         >
           No results
         </span>
@@ -58,6 +62,7 @@
         icon="myicon myicon-arrow"
         title="Previous match"
         :disabled="arrowsDisabled"
+        data-test="previous-match-btn"
         @click="toNextFoundNode(-1)"
       />
 
@@ -66,6 +71,7 @@
         title="Next match"
         :disabled="arrowsDisabled"
         class="next-match-btn"
+        data-test="next-match-btn"
         @click="toNextFoundNode(1)"
       />
     </div>
@@ -92,12 +98,7 @@ export default {
     TextField,
     IconButton
   },
-  props: [
-    'graph',
-    'renderer',
-    'nodesMatchingSearchQuery',
-    'focusedFoundNodeId'
-  ],
+  props: ['graph', 'nodesMatchingSearchQuery', 'focusedFoundNodeId'],
   data() {
     return {
       searchQuery: '',
@@ -136,7 +137,7 @@ export default {
             }).format(count)
           : count
 
-      return `${formattedCount} nodes found`
+      return `${formattedCount} ${count === 1 ? 'node' : 'nodes'} found`
     }
   },
   watch: {
@@ -150,9 +151,7 @@ export default {
     },
     matchCase() {
       this.search()
-    },
-    nodesMatchingSearchQuery: 'refresh',
-    focusedFoundNodeId: 'refresh'
+    }
   },
   methods: {
     onSearchInput: time.debounce(function () {
@@ -179,9 +178,6 @@ export default {
       })
     },
     toNextFoundNode(direction = 1) {
-      if (this.nodesMatchingSearchQuery.length === 0) {
-        return
-      }
       this.currentFoundNodeIndex =
         (this.currentFoundNodeIndex +
           direction +
@@ -189,28 +185,6 @@ export default {
         this.nodesMatchingSearchQuery.length
       const nodeId = this.nodesMatchingSearchQuery[this.currentFoundNodeIndex]
       this.$emit('update:focusedFoundNodeId', nodeId)
-      if (this.renderer) {
-        this.renderer.refresh({
-          skipIndexation: true
-        })
-      }
-      this.moveCameraToNode(nodeId)
-    },
-    moveCameraToNode(nodeId) {
-      if (!this.graph) {
-        return
-      }
-      const nodePosition = this.renderer.getNodeDisplayData(nodeId)
-      this.renderer.getCamera().animate(nodePosition, {
-        duration: 500
-      })
-    },
-    refresh() {
-      if (this.renderer) {
-        this.renderer.refresh({
-          skipIndexation: true
-        })
-      }
     }
   }
 }

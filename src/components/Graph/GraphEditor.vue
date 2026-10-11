@@ -244,7 +244,6 @@
       v-model:nodesMatchingSearchQuery="nodesMatchingSearchQuery"
       v-model:focusedFoundNodeId="focusedFoundNodeId"
       :graph="graph"
-      :renderer="renderer"
       class="search-panel"
     />
   </div>
@@ -516,6 +515,23 @@ export default {
         if (this.tabLayout.dataView !== 'hidden' && this.renderer) {
           this.renderer.scheduleRender()
         }
+      }
+    },
+    nodesMatchingSearchQuery() {
+      if (this.renderer) {
+        this.renderer.refresh({
+          skipIndexation: true
+        })
+      }
+    },
+    focusedFoundNodeId() {
+      if (this.renderer) {
+        this.renderer.refresh({
+          skipIndexation: true
+        })
+      }
+      if (this.focusedFoundNodeId) {
+        this.moveCameraToNode(this.focusedFoundNodeId)
       }
     }
   },
@@ -838,6 +854,15 @@ export default {
     prepareCopy() {
       return drawOnCanvas(this.renderer, {
         backgroundColor: this.settings.style.backgroundColor
+      })
+    },
+    moveCameraToNode(nodeId) {
+      if (!this.graph) {
+        return
+      }
+      const nodePosition = this.renderer.getNodeDisplayData(nodeId)
+      this.renderer.getCamera().animate(nodePosition, {
+        duration: 500
       })
     }
   }
