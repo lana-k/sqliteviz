@@ -182,13 +182,7 @@ export function reduceNodes(nodeId, nodeData, interactionState, settings) {
 
     if (res.highlighted || isInSelectedFamily || isInHoveredFamily) {
       res.forceLabel = true
-    }
-    if (
-      !res.highlighted &&
-      !isInSelectedFamily &&
-      !isInHoveredFamily &&
-      !matchQuery
-    ) {
+    } else if (!matchQuery) {
       res.color = getDiminishedColor(
         nodeData.color,
         settings.style.backgroundColor
@@ -228,23 +222,21 @@ export function reduceEdges(
   ) {
     const extremities = graph.extremities(edgeId)
     res.zIndex = 2
-    const isHighlighted =
-      hoveredEdgeId === edgeId ||
-      selectedEdgeId === edgeId ||
+    const isHighlighted = hoveredEdgeId === edgeId || selectedEdgeId === edgeId
+
+    let isVisible =
+      isHighlighted ||
       (nodesMatchingSearchQuery &&
         extremities.every(nodeId => nodesMatchingSearchQuery.includes(nodeId)))
 
-    let isVisible
-    if (settings.style.highlightMode === 'node_alone') {
-      isVisible = isHighlighted
-    } else if (settings.style.highlightMode === 'node_and_neighbors') {
+    if (settings.style.highlightMode === 'node_and_neighbors') {
       isVisible =
-        isHighlighted ||
+        isVisible ||
         (selectedNodeId && extremities.includes(selectedNodeId)) ||
         (hoveredNodeId && extremities.includes(hoveredNodeId))
-    } else {
+    } else if (settings.style.highlightMode === 'include_neighbor_edges') {
       isVisible =
-        isHighlighted ||
+        isVisible ||
         (selectedNodeId &&
           extremities.every(
             n => n === selectedNodeId || neighborsOfSelectedNode.has(n)
@@ -254,6 +246,7 @@ export function reduceEdges(
             n => n === hoveredNodeId || neighborsOfHoveredNode.has(n)
           ))
     }
+
     if (isHighlighted) {
       res.size = res.size * 2
       res.forceLabel = true

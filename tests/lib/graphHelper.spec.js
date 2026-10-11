@@ -1246,7 +1246,9 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: new Set(['node-1.1']),
       neighborsOfHoveredNode: new Set(['node-2.1']),
       selectedEdgeExtremities: [],
-      hoveredEdgeExtremities: []
+      hoveredEdgeExtremities: [],
+      nodesMatchingSearchQuery: ['node-4', 'node-1', 'node-2', 'node-5'],
+      focusedFoundNodeId: 'node-5'
     }
 
     expect(
@@ -1261,6 +1263,17 @@ describe('graphHelper.js', () => {
     })
     expect(
       graphHelper.reduceNodes('node-2', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      labelColor: 'black',
+      zIndex: 2,
+      highlighted: true,
+      forceLabel: true
+    })
+
+    expect(
+      graphHelper.reduceNodes('node-5', nodeData, interactionState, settings)
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
@@ -1293,6 +1306,16 @@ describe('graphHelper.js', () => {
     })
 
     expect(
+      graphHelper.reduceNodes('node-4', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      labelColor: 'blue',
+      zIndex: 2,
+      highlighted: false
+    })
+
+    expect(
       graphHelper.reduceNodes('node-3', nodeData, interactionState, settings)
     ).to.eql({
       color: '#3300cc',
@@ -1310,7 +1333,9 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: new Set(['node-1.1']),
       neighborsOfHoveredNode: undefined,
       selectedEdgeExtremities: [],
-      hoveredEdgeExtremities: ['node-2', 'node-2.1']
+      hoveredEdgeExtremities: ['node-2', 'node-2.1'],
+      nodesMatchingSearchQuery: ['node-4', 'node-2'],
+      focusedFoundNodeId: null
     }
 
     expect(
@@ -1367,6 +1392,16 @@ describe('graphHelper.js', () => {
       highlighted: false
     })
 
+    expect(
+      graphHelper.reduceNodes('node-4', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      labelColor: 'blue',
+      zIndex: 2,
+      highlighted: false
+    })
+
     interactionState = {
       selectedNodeId: null,
       hoveredNodeId: null,
@@ -1375,7 +1410,9 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: undefined,
       neighborsOfHoveredNode: undefined,
       selectedEdgeExtremities: ['node-1', 'node-1.1'],
-      hoveredEdgeExtremities: ['node-2', 'node-2.1']
+      hoveredEdgeExtremities: ['node-2', 'node-2.1'],
+      nodesMatchingSearchQuery: [],
+      focusedFoundNodeId: null
     }
 
     expect(
@@ -1437,7 +1474,9 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: undefined,
       neighborsOfHoveredNode: new Set(['node-2.1']),
       selectedEdgeExtremities: ['node-1', 'node-1.1'],
-      hoveredEdgeExtremities: []
+      hoveredEdgeExtremities: [],
+      nodesMatchingSearchQuery: ['node-4'],
+      focusedFoundNodeId: null
     }
 
     expect(
@@ -1491,6 +1530,16 @@ describe('graphHelper.js', () => {
       highlighted: false
     })
 
+    expect(
+      graphHelper.reduceNodes('node-4', nodeData, interactionState, settings)
+    ).to.eql({
+      color: '#FF0000CC',
+      label: 'Node label',
+      labelColor: 'blue',
+      zIndex: 2,
+      highlighted: false
+    })
+
     interactionState = {
       selectedNodeId: null,
       hoveredNodeId: null,
@@ -1499,40 +1548,13 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: undefined,
       neighborsOfHoveredNode: undefined,
       selectedEdgeExtremities: [],
-      hoveredEdgeExtremities: []
+      hoveredEdgeExtremities: [],
+      nodesMatchingSearchQuery: null,
+      focusedFoundNodeId: null
     }
 
     expect(
-      graphHelper.reduceNodes('node-1', nodeData, interactionState, settings)
-    ).to.eql({
-      color: '#FF0000CC',
-      label: 'Node label',
-      labelColor: 'blue'
-    })
-    expect(
-      graphHelper.reduceNodes('node-2', nodeData, interactionState, settings)
-    ).to.eql({
-      color: '#FF0000CC',
-      label: 'Node label',
-      labelColor: 'blue'
-    })
-    expect(
-      graphHelper.reduceNodes('node-1.1', nodeData, interactionState, settings)
-    ).to.eql({
-      color: '#FF0000CC',
-      label: 'Node label',
-      labelColor: 'blue'
-    })
-    expect(
-      graphHelper.reduceNodes('node-2.1', nodeData, interactionState, settings)
-    ).to.eql({
-      color: '#FF0000CC',
-      label: 'Node label',
-      labelColor: 'blue'
-    })
-
-    expect(
-      graphHelper.reduceNodes('node-3', nodeData, interactionState, settings)
+      graphHelper.reduceNodes('node', nodeData, interactionState, settings)
     ).to.eql({
       color: '#FF0000CC',
       label: 'Node label',
@@ -1548,7 +1570,11 @@ describe('graphHelper.js', () => {
       }
     }
 
-    const edgeData = { color: '#FF0000CC', label: 'Edge label', size: 3 }
+    const edgeData = {
+      color: '#FF0000CC',
+      label: 'Edge label',
+      size: 3
+    }
     const graph = new Graph()
     graph.addNode('node-1.1')
     graph.addNode('node-1.2')
@@ -1568,7 +1594,18 @@ describe('graphHelper.js', () => {
       size: 6,
       forceLabel: true
     }
+    const visibleEdgeStyle = {
+      color: '#FF0000CC',
+      label: 'Edge label',
+      zIndex: 2,
+      size: 3
+    }
 
+    // No hovered or selected nodes,
+    // but hovered and selected edges
+    // Query matches some nodes connected by edge
+    // Expected: hovered and selected edges are highlighted,
+    // edge connected modes matching query is visible
     let interactionState = {
       selectedNodeId: null,
       hoveredNodeId: null,
@@ -1577,7 +1614,8 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: undefined,
       neighborsOfHoveredNode: undefined,
       selectedEdgeExtremities: ['node-2.1', 'node-2.2'],
-      hoveredEdgeExtremities: ['node-1.1', 'node-1.2']
+      hoveredEdgeExtremities: ['node-1.1', 'node-1.2'],
+      nodesMatchingSearchQuery: ['node-1.1', 'node-1.3', 'node-2.1', 'node-2.2']
     }
     expect(
       graphHelper.reduceEdges(
@@ -1605,8 +1643,7 @@ describe('graphHelper.js', () => {
         settings,
         graph
       )
-    ).to.eql(hiddenEdgeStyle)
-
+    ).to.eql(visibleEdgeStyle)
     expect(
       graphHelper.reduceEdges(
         edge1213,
@@ -1617,6 +1654,11 @@ describe('graphHelper.js', () => {
       )
     ).to.eql(hiddenEdgeStyle)
 
+    // No hovered nodes,
+    // One node selected
+    // No hovered or selected edges
+    // Query matches some nodes but no edges connecting 2 nodes matching the query
+    // Expected: all edges are hidden
     interactionState = {
       selectedNodeId: 'node-1.1',
       hoveredNodeId: null,
@@ -1625,7 +1667,8 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: new Set(['node-1.2', 'node-1.3']),
       neighborsOfHoveredNode: undefined,
       selectedEdgeExtremities: [],
-      hoveredEdgeExtremities: []
+      hoveredEdgeExtremities: [],
+      nodesMatchingSearchQuery: ['node-2.1', 'node-1.2']
     }
     expect(
       graphHelper.reduceEdges(
@@ -1665,6 +1708,11 @@ describe('graphHelper.js', () => {
       )
     ).to.eql(hiddenEdgeStyle)
 
+    // No selected nodes,
+    // One node hovered
+    // No hovered or selected edges
+    // Query does not match any nodes
+    // Expected: all edges are hidden
     interactionState = {
       selectedNodeId: null,
       hoveredNodeId: 'node-1.1',
@@ -1673,7 +1721,8 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: undefined,
       neighborsOfHoveredNode: new Set(['node-1.2', 'node-1.3']),
       selectedEdgeExtremities: [],
-      hoveredEdgeExtremities: []
+      hoveredEdgeExtremities: [],
+      nodesMatchingSearchQuery: []
     }
     expect(
       graphHelper.reduceEdges(
@@ -1713,6 +1762,10 @@ describe('graphHelper.js', () => {
       )
     ).to.eql(hiddenEdgeStyle)
 
+    // No hovered or selected nodes,
+    // No hovered or selected edges
+    // No query applied
+    // Expected: all edges are visible
     interactionState = {
       selectedNodeId: null,
       hoveredNodeId: null,
@@ -1721,7 +1774,8 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: undefined,
       neighborsOfHoveredNode: undefined,
       selectedEdgeExtremities: [],
-      hoveredEdgeExtremities: []
+      hoveredEdgeExtremities: [],
+      nodesMatchingSearchQuery: null
     }
 
     expect(
@@ -1772,7 +1826,11 @@ describe('graphHelper.js', () => {
       }
     }
 
-    const edgeData = { color: '#FF0000CC', label: 'Edge label', size: 3 }
+    const edgeData = {
+      color: '#FF0000CC',
+      label: 'Edge label',
+      size: 3
+    }
     const graph = new Graph()
     graph.addNode('node-1.1')
     graph.addNode('node-1.2')
@@ -1799,6 +1857,11 @@ describe('graphHelper.js', () => {
       size: 3
     }
 
+    // No hovered or selected nodes,
+    // but hovered and selected edges
+    // Query matches some nodes connected by edge
+    // Expected: hovered and selected edges are highlighted,
+    // edge connected modes matching query is visible
     let interactionState = {
       selectedNodeId: null,
       hoveredNodeId: null,
@@ -1807,7 +1870,8 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: undefined,
       neighborsOfHoveredNode: undefined,
       selectedEdgeExtremities: ['node-2.1', 'node-2.2'],
-      hoveredEdgeExtremities: ['node-1.1', 'node-1.2']
+      hoveredEdgeExtremities: ['node-1.1', 'node-1.2'],
+      nodesMatchingSearchQuery: ['node-1.1', 'node-1.3', 'node-2.1', 'node-2.2']
     }
     expect(
       graphHelper.reduceEdges(
@@ -1835,7 +1899,7 @@ describe('graphHelper.js', () => {
         settings,
         graph
       )
-    ).to.eql(hiddenEdgeStyle)
+    ).to.eql(visibleEdgeStyle)
 
     expect(
       graphHelper.reduceEdges(
@@ -1847,6 +1911,12 @@ describe('graphHelper.js', () => {
       )
     ).to.eql(hiddenEdgeStyle)
 
+    // No hovered nodes,
+    // One node selected
+    // No hovered or selected edges
+    // Query matches some nodes but no edges connecting 2 nodes matching the query
+    // Expected: edges connecting selected node with its neighbors are visible,
+    // all other edges are hidden
     interactionState = {
       selectedNodeId: 'node-1.1',
       hoveredNodeId: null,
@@ -1855,7 +1925,8 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: new Set(['node-1.2', 'node-1.3']),
       neighborsOfHoveredNode: undefined,
       selectedEdgeExtremities: [],
-      hoveredEdgeExtremities: []
+      hoveredEdgeExtremities: [],
+      nodesMatchingSearchQuery: ['node-2.1', 'node-1.2']
     }
     expect(
       graphHelper.reduceEdges(
@@ -1895,6 +1966,12 @@ describe('graphHelper.js', () => {
       )
     ).to.eql(hiddenEdgeStyle)
 
+    // No selected nodes,
+    // One node hovered
+    // No hovered or selected edges
+    // Query does not match any nodes
+    // Expected: edges connecting hovered node with its neighbors are visible,
+    // all other edges are hidden
     interactionState = {
       selectedNodeId: null,
       hoveredNodeId: 'node-1.1',
@@ -1903,7 +1980,8 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: undefined,
       neighborsOfHoveredNode: new Set(['node-1.2', 'node-1.3']),
       selectedEdgeExtremities: [],
-      hoveredEdgeExtremities: []
+      hoveredEdgeExtremities: [],
+      nodesMatchingSearchQuery: []
     }
     expect(
       graphHelper.reduceEdges(
@@ -1943,6 +2021,10 @@ describe('graphHelper.js', () => {
       )
     ).to.eql(hiddenEdgeStyle)
 
+    // No selected or hovered nodes,
+    // No hovered or selected edges
+    // Query is not applied
+    // Expected: all edges are visible
     interactionState = {
       selectedNodeId: null,
       hoveredNodeId: null,
@@ -1951,7 +2033,8 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: undefined,
       neighborsOfHoveredNode: undefined,
       selectedEdgeExtremities: [],
-      hoveredEdgeExtremities: []
+      hoveredEdgeExtremities: [],
+      nodesMatchingSearchQuery: null
     }
 
     expect(
@@ -2029,6 +2112,11 @@ describe('graphHelper.js', () => {
       size: 3
     }
 
+    // No hovered or selected nodes,
+    // but hovered and selected edges
+    // Query matches some nodes connected by edge
+    // Expected: hovered and selected edges are highlighted,
+    // edge connected modes matching query is visible
     let interactionState = {
       selectedNodeId: null,
       hoveredNodeId: null,
@@ -2037,7 +2125,8 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: undefined,
       neighborsOfHoveredNode: undefined,
       selectedEdgeExtremities: ['node-2.1', 'node-2.2'],
-      hoveredEdgeExtremities: ['node-1.1', 'node-1.2']
+      hoveredEdgeExtremities: ['node-1.1', 'node-1.2'],
+      nodesMatchingSearchQuery: ['node-1.1', 'node-1.3', 'node-2.1', 'node-2.2']
     }
     expect(
       graphHelper.reduceEdges(
@@ -2065,7 +2154,7 @@ describe('graphHelper.js', () => {
         settings,
         graph
       )
-    ).to.eql(hiddenEdgeStyle)
+    ).to.eql(visibleEdgeStyle)
 
     expect(
       graphHelper.reduceEdges(
@@ -2077,6 +2166,12 @@ describe('graphHelper.js', () => {
       )
     ).to.eql(hiddenEdgeStyle)
 
+    // No hovered nodes,
+    // One node selected
+    // No hovered or selected edges
+    // Query matches some nodes but no edges connecting 2 nodes matching the query
+    // Expected: edges connecting selected node with its neighbors
+    // and between neighbours are visible, all other edges are hidden
     interactionState = {
       selectedNodeId: 'node-1.1',
       hoveredNodeId: null,
@@ -2085,7 +2180,8 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: new Set(['node-1.2', 'node-1.3']),
       neighborsOfHoveredNode: undefined,
       selectedEdgeExtremities: [],
-      hoveredEdgeExtremities: []
+      hoveredEdgeExtremities: [],
+      nodesMatchingSearchQuery: ['node-2.1', 'node-1.2']
     }
     expect(
       graphHelper.reduceEdges(
@@ -2125,6 +2221,12 @@ describe('graphHelper.js', () => {
       )
     ).to.eql(visibleEdgeStyle)
 
+    // No selected nodes,
+    // One node hovered
+    // No hovered or selected edges
+    // Query does not match any nodes
+    // Expected: edges connecting hovered node with its neighbors
+    // and between beighbours are visible, all other edges are hidden
     interactionState = {
       selectedNodeId: null,
       hoveredNodeId: 'node-1.1',
@@ -2133,7 +2235,8 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: undefined,
       neighborsOfHoveredNode: new Set(['node-1.2', 'node-1.3']),
       selectedEdgeExtremities: [],
-      hoveredEdgeExtremities: []
+      hoveredEdgeExtremities: [],
+      nodesMatchingSearchQuery: []
     }
     expect(
       graphHelper.reduceEdges(
@@ -2173,6 +2276,10 @@ describe('graphHelper.js', () => {
       )
     ).to.eql(visibleEdgeStyle)
 
+    // No selected or hovered nodes,
+    // No hovered or selected edges
+    // Query is not applied
+    // Expected: all edges are visible
     interactionState = {
       selectedNodeId: null,
       hoveredNodeId: null,
@@ -2181,7 +2288,8 @@ describe('graphHelper.js', () => {
       neighborsOfSelectedNode: undefined,
       neighborsOfHoveredNode: undefined,
       selectedEdgeExtremities: [],
-      hoveredEdgeExtremities: []
+      hoveredEdgeExtremities: [],
+      nodesMatchingSearchQuery: null
     }
 
     expect(
