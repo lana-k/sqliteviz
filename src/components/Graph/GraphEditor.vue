@@ -857,9 +857,6 @@ export default {
       })
     },
     moveCameraToNode(nodeId) {
-      if (!this.graph) {
-        return
-      }
       const nodePosition = this.renderer.getNodeDisplayData(nodeId)
       this.renderer.getCamera().animate(nodePosition, {
         duration: 500

@@ -673,6 +673,151 @@ describe('Graph.vue', () => {
     wrapper.unmount()
   })
 
+  it('rerenders when search or navigate through found nodes', async () => {
+    const clock = sinon.useFakeTimers()
+    const wrapper = mount(Graph, {
+      attachTo: document.body,
+      props: {
+        showViewSettings: true,
+        dataSources: {
+          doc: [
+            '{"object_type": 0, "node_id": 1, "label": "Node Ab"}',
+            '{"object_type": 0, "node_id": 2, "label": "Node Ba"}',
+            '{"object_type": 0, "node_id": 3, "label": "Node Cc"}',
+            '{"object_type": 1, "source": 1, "target": 2}'
+          ]
+        },
+        initOptions: {
+          structure: {
+            nodeId: 'node_id',
+            objectType: 'object_type',
+            edgeSource: 'source',
+            edgeTarget: 'target'
+          },
+          style: {
+            backgroundColor: 'white',
+            highlightMode: 'node_and_neighbors',
+            nodes: {
+              size: {
+                type: 'constant',
+                value: 10
+              },
+              color: {
+                type: 'constant',
+                value: '#1F77B4',
+                opacity: 100
+              },
+              label: {
+                source: 'label',
+                color: '#444444'
+              }
+            },
+            edges: {
+              showDirection: true,
+              size: {
+                type: 'constant',
+                value: 2
+              },
+              color: {
+                type: 'constant',
+                value: '#a2b1c6'
+              },
+              label: {
+                source: null,
+                color: '#a2b1c6'
+              }
+            }
+          },
+          layout: {
+            type: 'circular',
+            options: null
+          }
+        }
+      },
+      global: {
+        mocks: { $store },
+        provide: {
+          tabLayout: { dataView: 'above' }
+        }
+      }
+    })
+
+    const container =
+      wrapper.find('.graph-container').wrapperElement.parentElement
+    container.style.height = '400px'
+
+    const nodeCanvasPixelsBefore = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-nodes').wrapperElement
+    )
+    const edgeCanvasPixelsBefore = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-edges').wrapperElement
+    )
+
+    await wrapper.find('.query-input input').setValue('a')
+    clock.tick(500)
+    await nextTick()
+
+    const nodeCanvasPixelsAfter = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-nodes').wrapperElement
+    )
+    const edgeCanvasPixelsAfter = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-edges').wrapperElement
+    )
+
+    expect(nodeCanvasPixelsBefore).not.equal(nodeCanvasPixelsAfter)
+    expect(edgeCanvasPixelsBefore).not.equal(edgeCanvasPixelsAfter)
+
+    await wrapper.find('[data-test="next-match-btn"]').trigger('click')
+    clock.tick(500)
+    await nextTick()
+
+    const nodeCanvasPixelsAfterFocusingFoundNode = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-nodes').wrapperElement
+    )
+    const edgeCanvasPixelsAfterAfterFocusingFoundNode = getPixels(
+      wrapper.find('.test_graph_output canvas.sigma-edges').wrapperElement
+    )
+
+    expect(nodeCanvasPixelsAfterFocusingFoundNode).not.equal(
+      nodeCanvasPixelsAfter
+    )
+    expect(edgeCanvasPixelsAfterAfterFocusingFoundNode).not.equal(
+      edgeCanvasPixelsAfter
+    )
+
+    await wrapper.setProps({
+      dataSources: {
+        doc: [
+          '{"object_type": 0, "node_id": 1, "label": "Node A"}',
+          '{"object_type": 0, "node_id": 2, "label": "Node B"}',
+          '{"object_type": 0, "node_id": 3, "label": "Node C"}',
+          '{"object_type": 1, "source": 1, "target": 2}',
+          '{"object_type": 1, "source": 1, "target": 3}'
+        ]
+      }
+    })
+
+    const searchPanel = wrapper.findComponent({ name: 'GraphSearchPanel' })
+    expect(searchPanel.find('.counter').text()).to.not.contain('1 of 2')
+    expect(searchPanel.find('[data-test="no-results-text"]').isVisible()).to.be
+      .false
+
+    await expect(
+      wrapper.find('[data-test="next-match-btn"]').attributes('disabled')
+    ).to.not.equal(undefined)
+    await expect(
+      wrapper.find('[data-test="previous-match-btn"]').attributes('disabled')
+    ).to.not.equal(undefined)
+
+    await wrapper
+      .find('.query-input input')
+      .trigger('keydown', { key: 'Enter' })
+    expect(searchPanel.find('.counter').text()).to.contain('1 node found')
+
+    clock.restore()
+    wrapper.unmount()
+  })
+
   it('saveAsPng', async () => {
     const wrapper = mount(Graph, {
       props: {
