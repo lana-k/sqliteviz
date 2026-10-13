@@ -22,8 +22,8 @@
         <button
           type="button"
           :disabled="disabled"
-          @click="clear"
           class="clear-btn"
+          @click="clear"
         >
           <i class="myicon myicon-clear" />
         </button>

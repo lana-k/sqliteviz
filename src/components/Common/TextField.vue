@@ -11,8 +11,8 @@
         variant="secondary"
         class="hint"
         :tooltip="hint"
-        :max-tooltip-width="maxHintWidth"
-        :icon-size="20"
+        :maxTooltipWidth="maxHintWidth"
+        :iconSize="20"
       />
     </div>
     <input

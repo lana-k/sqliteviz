@@ -39,7 +39,7 @@
         <IconButton
           icon="myicon myicon-close"
           variant="secondary"
-          :icon-size="14"
+          :iconSize="14"
           @click="cancelSave"
         />
       </div>
@@ -75,7 +75,7 @@
         <IconButton
           icon="myicon myicon-close"
           variant="secondary"
-          :icon-size="14"
+          :iconSize="14"
           @click="cancelSave"
         />
       </div>

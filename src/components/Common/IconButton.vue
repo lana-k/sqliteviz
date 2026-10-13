@@ -59,15 +59,15 @@ export default {
     }
   },
   emits: ['click'],
+  computed: {
+    width() {
+      return this.iconSize + 8
+    }
+  },
   methods: {
     onClick() {
       this.hideTooltip()
       this.$emit('click')
-    }
-  },
-  computed: {
-    width() {
-      return this.iconSize + 8
     }
   }
 }

@@ -2,7 +2,7 @@
   <div class="record-navigator">
     <icon-button
       icon="myicon myicon-edge-arrow"
-      icon-color="var(--color-text-base)"
+      iconColor="var(--color-text-base)"
       :disabled="modelValue === 0"
       tooltip="First row"
       tooltipPosition="top-left"
@@ -11,7 +11,7 @@
     />
     <icon-button
       icon="myicon myicon-arrow"
-      icon-color="var(--color-text-base)"
+      iconColor="var(--color-text-base)"
       :disabled="modelValue === 0"
       tooltip="Previous row"
       tooltipPosition="top-left"
@@ -20,7 +20,7 @@
     />
     <icon-button
       icon="myicon myicon-arrow"
-      icon-color="var(--color-text-base)"
+      iconColor="var(--color-text-base)"
       :disabled="modelValue === total - 1"
       tooltip="Next row"
       tooltipPosition="top-left"
@@ -29,7 +29,7 @@
     />
     <icon-button
       icon="myicon myicon-edge-arrow"
-      icon-color="var(--color-text-base)"
+      iconColor="var(--color-text-base)"
       :disabled="modelValue === total - 1"
       tooltip="Last row"
       tooltipPosition="top-left"

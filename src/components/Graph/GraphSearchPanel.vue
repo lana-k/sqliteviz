@@ -10,13 +10,13 @@
     />
     <div v-show="panelOpen" class="graph-search-panel--search-controls">
       <TextField
+        v-model.trim="searchQuery"
         width="250px"
         placeholder="Search nodes..."
-        v-model.trim="searchQuery"
         :errorMsg="regExpIsValid ? '' : 'Invalid regular expression'"
         class="query-input"
         @keydown.enter.prevent="search"
-        @update:modelValue="onSearchInput"
+        @update:model-value="onSearchInput"
       />
       <IconButton
         icon="myicon myicon-match-case"

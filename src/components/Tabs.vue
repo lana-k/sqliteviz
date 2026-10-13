@@ -16,7 +16,7 @@
         <IconButton
           icon="myicon myicon-close"
           variant="secondary"
-          :icon-size="10"
+          :iconSize="10"
           class="close-icon"
           @click="beforeCloseTab(tab)"
         />
@@ -42,7 +42,7 @@
         <IconButton
           icon="myicon myicon-close"
           variant="secondary"
-          :icon-size="14"
+          :iconSize="14"
           @click="$modal.hide('close-warn')"
         />
       </div>
