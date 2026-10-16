@@ -14,6 +14,7 @@
         width="250px"
         placeholder="Search nodes..."
         :errorMsg="regExpIsValid ? '' : 'Invalid regular expression'"
+        show-clear-button
         class="query-input"
         @keydown.enter.prevent="search"
         @update:model-value="onSearchInput"
@@ -199,6 +200,7 @@ export default {
   border-style: solid;
   border-color: var(--color-border-light);
   border-radius: 0 0 0 4px;
+  display: flex;
 }
 
 .graph-search-panel--search-controls {
@@ -213,7 +215,7 @@ export default {
 .close-search-panel :deep(i) {
   transform: scaleX(-1);
 }
-.query-input :deep(input) {
+.query-input :deep(.text-field-container) {
   height: 26px;
 }
 

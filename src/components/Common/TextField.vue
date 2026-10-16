@@ -15,15 +15,27 @@
         :iconSize="20"
       />
     </div>
-    <input
-      type="text"
-      :placeholder="placeholder"
-      :class="{ error: errorMsg }"
-      :style="{ width: width }"
-      :value="modelValue"
-      :disabled="disabled"
-      @input="$emit('update:modelValue', $event.target.value)"
-    />
+    <div :class="['text-field-container', { disabled }]">
+      <input
+        type="text"
+        :placeholder="placeholder"
+        :class="{ error: errorMsg }"
+        :style="{ width: width }"
+        :value="modelValue"
+        :disabled="disabled"
+        @input="$emit('update:modelValue', $event.target.value)"
+      />
+      <button
+        v-if="showClearButton"
+        type="button"
+        :disabled="disabled"
+        class="clear-btn"
+        @click="$emit('update:modelValue', '')"
+      >
+        <i class="myicon myicon-clear" />
+      </button>
+    </div>
+
     <div v-show="errorMsg" class="text-field-error">{{ errorMsg }}</div>
   </div>
 </template>
@@ -42,22 +54,40 @@ export default {
     width: String,
     hint: String,
     maxHintWidth: { type: String, default: '149px' },
-    disabled: Boolean
+    disabled: Boolean,
+    showClearButton: Boolean
   },
   emits: ['update:modelValue']
 }
 </script>
 
 <style scoped>
-input {
+.text-field-container {
   background: var(--color-white);
   border: 1px solid var(--color-border);
-  color: var(--color-text-base);
   border-radius: var(--border-radius-medium-2);
   height: 36px;
   padding: 0 8px;
   font-size: 13px;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.text-field-container.disabled {
+  background: var(--color-bg-light);
+}
+
+.text-field-container.error {
+  border-color: var(--color-text-error);
+}
+
+input {
+  background: inherit;
+  border: none;
+  color: var(--color-text-base);
+  height: 100%;
+  padding: 0;
   display: block;
 }
 
@@ -70,13 +100,8 @@ input:focus {
 }
 
 input:disabled {
-  background: var(--color-bg-light);
   color: var(--color-text-light-2);
   cursor: default;
-}
-
-input.error {
-  border-color: var(--color-text-error);
 }
 
 .text-field-label {
@@ -120,5 +145,23 @@ input.error {
   line-height: normal;
   padding: 6px;
   box-sizing: border-box;
+}
+
+.clear-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  height: 20px;
+  width: 20px;
+  color: var(--color-border);
+  font-size: 20px;
+}
+
+.clear-btn i {
+  display: block;
+}
+
+.clear-btn:not(:disabled):hover {
+  color: var(--color-danger);
 }
 </style>
