@@ -10,4 +10,5 @@
   border-radius: var(--border-radius-medium);
   white-space: nowrap;
   z-index: 999;
+  pointer-events: none;
 }
