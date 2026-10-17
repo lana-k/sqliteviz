@@ -14,7 +14,7 @@
         width="250px"
         placeholder="Search nodes..."
         :errorMsg="regExpIsValid ? '' : 'Invalid regular expression'"
-        show-clear-button
+        showClearButton
         class="query-input"
         @keydown.enter.prevent="search"
         @update:model-value="onSearchInput"
