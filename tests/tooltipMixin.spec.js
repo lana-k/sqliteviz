@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { mount } from '@vue/test-utils'
 import tooltipMixin from '@/tooltipMixin'
+import sinon from 'sinon'
 
 describe('tooltipMixin.js', () => {
   let container
@@ -23,6 +24,7 @@ describe('tooltipMixin.js', () => {
   })
 
   it('tooltipStyle is correct when showTooltip: top-right', async () => {
+    const clock = sinon.useFakeTimers()
     const component = {
       template:
         '<div :style="{...tooltipStyle, width: \'100px\'}" ref="tooltip"></div>',
@@ -38,15 +40,18 @@ describe('tooltipMixin.js', () => {
         clientY: 20
       })
     )
+    await clock.tick(500)
     expect(wrapper.vm.tooltipStyle).to.eql({
       visibility: 'visible',
       top: '8px',
       left: '22px'
     })
     expect(wrapper.find('div').isVisible()).to.equal(true)
+    clock.restore()
   })
 
   it('tooltipStyle is correct when showTooltip: top-left', async () => {
+    const clock = sinon.useFakeTimers()
     const component = {
       template:
         '<div :style="{...tooltipStyle, width: \'100px\'}" ref="tooltip"></div>',
@@ -61,6 +66,7 @@ describe('tooltipMixin.js', () => {
       }),
       'top-left'
     )
+    await clock.tick(500)
 
     expect(wrapper.vm.tooltipStyle).to.eql({
       visibility: 'visible',
@@ -69,9 +75,11 @@ describe('tooltipMixin.js', () => {
     })
 
     expect(wrapper.find('div').isVisible()).to.equal(true)
+    clock.restore()
   })
 
   it('tooltipStyle is correct when showTooltip: bottom-right', async () => {
+    const clock = sinon.useFakeTimers()
     const component = {
       template:
         '<div :style="{...tooltipStyle, width: \'100px\'}" ref="tooltip"></div>',
@@ -86,15 +94,18 @@ describe('tooltipMixin.js', () => {
       }),
       'bottom-right'
     )
+    await clock.tick(500)
     expect(wrapper.vm.tooltipStyle).to.eql({
       visibility: 'visible',
       top: '32px',
       left: '22px'
     })
     expect(wrapper.find('div').isVisible()).to.equal(true)
+    clock.restore()
   })
 
   it('tooltipStyle is correct when showTooltip: bottom-left', async () => {
+    const clock = sinon.useFakeTimers()
     const component = {
       template:
         '<div :style="{...tooltipStyle, width: \'100px\'}" ref="tooltip"></div>',
@@ -109,6 +120,7 @@ describe('tooltipMixin.js', () => {
       }),
       'bottom-left'
     )
+    await clock.tick(500)
 
     expect(wrapper.vm.tooltipStyle).to.eql({
       visibility: 'visible',
@@ -116,9 +128,11 @@ describe('tooltipMixin.js', () => {
       left: '100px'
     })
     expect(wrapper.find('div').isVisible()).to.equal(true)
+    clock.restore()
   })
 
   it('tooltip is not visible after hideTooltip', async () => {
+    const clock = sinon.useFakeTimers()
     const component = {
       template: '<div :style="tooltipStyle"></div>',
       mixins: [tooltipMixin]
@@ -131,6 +145,8 @@ describe('tooltipMixin.js', () => {
       })
     )
     await wrapper.vm.hideTooltip()
+    await clock.tick(500)
     expect(wrapper.find('div').isVisible()).to.equal(false)
+    clock.restore()
   })
 })
